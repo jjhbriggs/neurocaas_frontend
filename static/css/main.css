@@ -2173,6 +2173,9 @@ input, select, textarea {
 		}
 
 /* Header */
+    .button{
+        text-decoration:none!important;
+    }
 
 	#header {
 		position: relative;
@@ -2198,7 +2201,7 @@ input, select, textarea {
 			z-index: 1;
 			margin: 0;
 			display: inline-block;
-			vertical-align: middle;
+			/*vertical-align: middle;*/
 		}
 
 		#header header {
@@ -2218,6 +2221,7 @@ input, select, textarea {
 
 			#header h1 a {
 				color: inherit;
+				text-decoration:none;
 			}
 
 		#header .button {
