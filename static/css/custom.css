@@ -13,3 +13,7 @@
 .title hr {
     top:5px!important;
 }
+
+#nav a:hover, #nav a {
+    text-decoration: none;
+}
