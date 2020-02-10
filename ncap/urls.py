@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from account.forms import UserLoginForm
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 urlpatterns = [
@@ -27,3 +28,4 @@ urlpatterns = [
          name="login"),
     path('logout/', auth_views.LogoutView.as_view(), name="logout"),
 ]
+urlpatterns += staticfiles_urlpatterns()
