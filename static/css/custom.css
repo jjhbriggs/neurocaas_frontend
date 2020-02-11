@@ -17,3 +17,7 @@
 #nav a:hover, #nav a {
     text-decoration: none;
 }
+
+.input_disabled {
+    pointer-events:none;
+}
