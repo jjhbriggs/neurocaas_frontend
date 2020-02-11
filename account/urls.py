@@ -10,5 +10,5 @@ urlpatterns = [
          name="login"),
     path('logout/', auth_views.LogoutView.as_view(), name="logout"),
     path('aws_cred_request/', AWSCredRequestView.as_view(), name='aws_cred_request'),
-    path('change_pwd', ChangePWDView.as_view(), name='change_pwd')
+    path('user_password_change/', ChangePWDView.as_view(), name='user_password_change')
 ]
