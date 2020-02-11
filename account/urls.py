@@ -9,4 +9,5 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name="account/login.html", authentication_form=UserLoginForm),
          name="login"),
     path('logout/', auth_views.LogoutView.as_view(), name="logout"),
+    path('aws_cred_request/', AWSCredRequestView.as_view(), name='aws_cred_request')
 ]

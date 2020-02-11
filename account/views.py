@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model
+
 from django.views.generic import View
 from .models import *
 # Create your views here.
@@ -19,4 +20,10 @@ class ProfileView(View):
 class AWSCredRequestView(View):
 
     def get(self, request):
-        pass
+        aws_req = AWSRequest.objects.filter(user=request.user).first()
+        if aws_req:
+            aws_req.status = STATUS_PENDING
+        else:
+            aws_req = AWSRequest(user=request.user)
+        aws_req.save()
+        return redirect('profile')

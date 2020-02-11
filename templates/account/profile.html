@@ -28,8 +28,11 @@
                     <div class="col-8 text-left">
                         {% if aws_req %}
                         <label class="{{aws_req.get_status_display}}">{{aws_req.get_status_display}}</label>
+                            {% if aws_req.get_status_display == 'Denied' %}
+                                <a href="{% url 'aws_cred_request' %}" class="btn btn-warning ml-2">Send request again</a>
+                            {% endif %}
                         {% else %}
-                            <a href="/request" class="btn btn-warning">Send Request</a>
+                            <a href="{% url 'aws_cred_request' %}" class="btn btn-warning">Send Request</a>
                         {% endif %}
                     </div>
                 </div>
