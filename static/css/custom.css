@@ -36,3 +36,8 @@
     color: #17a2b8!important;
     font-weight: bold;
 }
+
+button{
+    padding: 0.65em 3em 0.65em 3em!important;
+    border-radius: 0.5em!important;
+}
