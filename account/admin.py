@@ -29,7 +29,17 @@ class UserAdministrator(UserAdmin):
     filter_horizontal = ()
 
 
+@admin.register(IAM)
+class IAMAdmin(admin.ModelAdmin):
+    list_display = ('user', 'aws_user', 'aws_access_key', 'created_on')
+
+
+@admin.register(AWSRequest)
+class AWSAdmin(admin.ModelAdmin):
+    list_display = ('user', 'status', 'created_on')
+
+
 admin.site.register(User, UserAdministrator)
 admin.site.unregister(Group)
-admin.site.register(IAM)
-admin.site.register(AWSRequest)
+# admin.site.register(IAM)
+# admin.site.register(AWSRequest)
