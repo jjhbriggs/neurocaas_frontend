@@ -11,44 +11,54 @@
                 <hr/>
             </div>
             <div class="col-xl-12">
-                <div class="form-group row pb-3">
-                    <label class="col-4 col-form-label">First Name</label>
-                    <div class="col-8">
-                        <input type="text" name="first_name" placeholder="First Name" class="form-control" value="{{user.first_name}}">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="email" value="{{user.email}}">
+                    <div class="form-group row pb-3">
+                        <label class="col-4 col-form-label">First Name</label>
+                        <div class="col-8">
+                            <input type="text" name="first_name" placeholder="First Name" class="form-control" value="{{user.first_name}}" required>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row pb-3">
-                    <label class="col-4 col-form-label">Last Name</label>
-                    <div class="col-8">
-                        <input name="last_name" placeholder="Last Name" class="form-control" type="text"  value="{{user.last_name}}">
+                    <div class="form-group row pb-3">
+                        <label class="col-4 col-form-label">Last Name</label>
+                        <div class="col-8">
+                            <input name="last_name" placeholder="Last Name" class="form-control" type="text"  value="{{user.last_name}}" required>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group row pb-3">
-                    <label for="select" class="col-4 col-form-label">AWS Credentials</label>
-                    <div class="col-8 text-left">
-                        {% if aws_req %}
-                        <label class="{{aws_req.get_status_display}}">{{aws_req.get_status_display}}</label>
-                            {% if aws_req.get_status_display == 'Denied' %}
-                                <a href="{% url 'aws_cred_request' %}" class="btn btn-warning ml-2">Send request again</a>
+                    <div class="form-group row pb-3">
+                        <label for="select" class="col-4 col-form-label">AWS Credentials</label>
+                        <div class="col-8 text-left">
+                            {% if aws_req %}
+                            <label class="{{aws_req.get_status_display}}">{{aws_req.get_status_display}}</label>
+                                {% if aws_req.get_status_display == 'Denied' %}
+                                    <a href="{% url 'aws_cred_request' %}" class="btn btn-warning ml-2">Send request again</a>
+                                {% endif %}
+                            {% else %}
+                                <a href="{% url 'aws_cred_request' %}" class="btn btn-warning">Send Request</a>
                             {% endif %}
-                        {% else %}
-                            <a href="{% url 'aws_cred_request' %}" class="btn btn-warning">Send Request</a>
-                        {% endif %}
+                        </div>
                     </div>
-                </div>
-                <!--<div class="form-group row pb-3">
-                    <label for="newpass" class="col-4 col-form-label">New Password</label>
-                    <div class="col-8">
-                        <input id="newpass" name="newpass" placeholder="New Password" class="form-control here" type="text">
+
+                    <div class="form-group row pb-3">
+                        <div class="col-4 text-left">
+                            <input type="submit" class="btn btn-primary" value="Save">
+                        </div>
+                        <div class="col-8 text-right">
+                            <button type="button" class="btn btn-primary" onclick="change_pwd()">Change Password?</button>
+                        </div>
                     </div>
-                </div>-->
-                <div class="form-group row pb-3">
-                    <div class="offset-4 col-8 text-right">
-                        <a class="btn btn-primary" href="{% url 'change_pwd' %}">Change Password?</a>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 
+{% endblock %}
+
+{% block js_content %}
+<script>
+    function change_pwd(){
+        window.location.href = "{% url 'change_pwd' %}";
+    }
+</script>
 {% endblock %}
