@@ -5,9 +5,14 @@ from django.views.generic import View
 # Create your views here.
 
 
-class AccountDetailView(View):
-    model = get_user_model()
-    template_name = "account/account_detail.html"
+class ProfileView(View):
+    template_name = "account/profile.html"
 
     def get(self, request):
         return render(request, template_name=self.template_name, context={"user": request.user})
+
+
+class AWSCredRequestView(View):
+
+    def get(self, request):
+        pass

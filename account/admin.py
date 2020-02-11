@@ -32,3 +32,4 @@ class UserAdministrator(UserAdmin):
 admin.site.register(User, UserAdministrator)
 admin.site.unregister(Group)
 admin.site.register(IAM)
+admin.site.register(AWSRequest)
