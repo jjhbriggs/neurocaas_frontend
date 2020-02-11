@@ -55,3 +55,10 @@ class UserLoginForm(AuthenticationForm):
             'id': 'password',
         }
     ))
+
+
+class ProfileChangeForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name',)
