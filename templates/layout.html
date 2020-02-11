@@ -26,8 +26,8 @@
 									<li>
 										<a href="#">{{user.first_name}} {{user.last_name}}</a>
 										<ul>
-											<li><a href="{% url 'account_detail' %}">Account</a></li>
-											<li><a href="{% url 'account_detail' %}">Change Password</a></li>
+											<li><a href="{% url 'profile' %}">Account</a></li>
+											<li><a href="{% url 'profile' %}">Change Password</a></li>
 											<li><a href="{% url 'logout' %}?next={% url 'home' %}">Logout</a></li>
 										</ul>
 									</li>
