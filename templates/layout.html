@@ -5,6 +5,8 @@
 		<title>NCAP | {% block title %}{% endblock %}</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="shortcut icon" href="http://stat.columbia.edu/~cunningham/images/favicon-crown.png" type="image/x-icon">
+
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 		<link rel="stylesheet" href="{% static 'css/main.css' %}" />
 		<link rel="stylesheet" href="{% static 'css/custom.css' %}" />
@@ -27,7 +29,7 @@
 										<a href="#">{{user.first_name}} {{user.last_name}}</a>
 										<ul>
 											<li><a href="{% url 'profile' %}">Account Detail</a></li>
-											<li><a href="{% url 'change_pwd' %}">Change Password</a></li>
+											<li><a href="{% url 'user_password_change' %}">Change Password</a></li>
 											<li><a href="{% url 'logout' %}?next={% url 'home' %}">Logout</a></li>
 										</ul>
 									</li>
@@ -43,6 +45,8 @@
 							{% block content %}{% endblock %}
 						</div>
 				</div>
+			<!--# END Header -->
+
 			<!-- Footer -->
 				<div id="footer">
 					<div class="container">
@@ -77,6 +81,8 @@
 						</div>
 					</div>
 				</div>
+			<!--# END Footer -->
+
         </div>
     </body>
         <script src="{% static 'js/jquery.min.js' %}"></script>
@@ -85,8 +91,12 @@
         <script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
         <script src="{% static 'js/browser.min.js' %}"></script>
         <script src="{% static 'js/breakpoints.min.js' %}"></script>
+
+		<!--  Notify Plugin	-->
 		<script src="{% static 'js/notify.js' %}"></script>
         <script src="{% static 'js/util.js' %}"></script>
+
+		<!--  Custom JS	-->
         <script src="{% static 'js/main.js' %}"></script>
 
 		{% block js_content %} {% endblock %}
@@ -94,7 +104,7 @@
 			$(document).ready(function(){
 				{% if messages %}
 					{% for message in messages %}
-						$.notify("{{message}}", {globalPosition: "right top", className: "{{message.tags}}", autoHideDelay: 1000} )
+						$.notify("{{message}}", {globalPosition: "right top", className: "{{message.tags}}", autoHideDelay: 2000} )
 					{% endfor %}
 				{% endif %}
 			});
