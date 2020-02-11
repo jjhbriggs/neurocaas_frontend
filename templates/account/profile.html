@@ -6,29 +6,37 @@
 
     <div class="container">
         <div class="col-xl-6 offset-xl-3 col-md-12">
+            <!-- Title -->
             <div class="title">
                 <h2>Account Detail</h2>
                 <hr/>
             </div>
+
             <div class="col-xl-12">
+                <!-- Profile Form -->
                 <form method="post">
                     {% csrf_token %}
-                    <input type="hidden" name="email" value="{{user.email}}">
+
+                    <!-- First Name -->
                     <div class="form-group row pb-3">
-                        <label class="col-4 col-form-label">First Name</label>
-                        <div class="col-8">
+                        <label class="col-5 col-form-label">First Name</label>
+                        <div class="col-7">
                             <input type="text" name="first_name" placeholder="First Name" class="form-control" value="{{user.first_name}}" required>
                         </div>
                     </div>
+
+                    <!-- Last Name -->
                     <div class="form-group row pb-3">
-                        <label class="col-4 col-form-label">Last Name</label>
-                        <div class="col-8">
+                        <label class="col-5 col-form-label">Last Name</label>
+                        <div class="col-7">
                             <input name="last_name" placeholder="Last Name" class="form-control" type="text"  value="{{user.last_name}}" required>
                         </div>
                     </div>
+
+                    <!-- AWS Credentials Status -->
                     <div class="form-group row pb-3">
-                        <label for="select" class="col-4 col-form-label">AWS Credentials</label>
-                        <div class="col-8 text-left">
+                        <label class="col-5 col-form-label">AWS Credentials Status</label>
+                        <div class="col-7 text-left">
                             {% if aws_req %}
                             <label class="{{aws_req.get_status_display}}">{{aws_req.get_status_display}}</label>
                                 {% if aws_req.get_status_display == 'Denied' %}
@@ -40,15 +48,18 @@
                         </div>
                     </div>
 
+                    <!-- Submit Button -->
                     <div class="form-group row pb-3">
-                        <div class="col-4 text-left">
+                        <div class="col-5 text-left">
                             <input type="submit" class="btn btn-primary" value="Save">
                         </div>
-                        <div class="col-8 text-right">
-                            <button type="button" class="btn btn-primary" onclick="change_pwd()">Change Password?</button>
+                        <div class="col-7 text-right">
+                            <button type="button" class="btn btn-primary" onclick="user_password_change()">Change Password?</button>
                         </div>
                     </div>
+
                 </form>
+                <!--# END Form -->
             </div>
         </div>
     </div>
@@ -56,9 +67,9 @@
 {% endblock %}
 
 {% block js_content %}
-<script>
-    function change_pwd(){
-        window.location.href = "{% url 'change_pwd' %}";
-    }
-</script>
+    <script>
+        function user_password_change(){
+            window.location.href = "{% url 'user_password_change' %}";
+        }
+    </script>
 {% endblock %}

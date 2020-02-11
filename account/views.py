@@ -61,4 +61,4 @@ class ChangePWDView(LoginRequiredMixin, View):
             return redirect('profile')
         else:
             messages.error(request, 'An Error was occurred, Please try again!')
-            return redirect('change_pwd')
+            return redirect('user_password_change')
