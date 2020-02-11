@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
-
+from datetime import datetime
 from .managers import UserManager
 
 # Create your models here.
@@ -44,11 +44,42 @@ class User(AbstractBaseUser):
         return True
 
 
-class IAM(models.Model):
+class Base(models.Model):
+    created_on = models.DateTimeField(auto_now_add=True, db_index=True,
+                                      help_text='(Read-only) Date/time when record was created.')
+    updated_on = models.DateTimeField(auto_now=True, db_index=True,
+                                      help_text='(Read-only) Date/time when record was updated.')
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            self.updated_on = datetime.utcnow()
+        super(Base, self).save(*args, **kwargs)
+
+
+class IAM(Base):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    aws_user = models.CharField(max_length=155)
-    aws_access_key = models.CharField(max_length=255)
-    aws_secret_access_key = models.CharField(max_length=255)
+    aws_user = models.CharField(max_length=155, help_text="AWS account username")
+    aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id")
+    aws_secret_access_key = models.CharField(max_length=255, help_text="AWS Secret key")
 
     def __str__(self):
-        return self.username
+        return self.user.email
+
+
+class AWSRequest(Base):
+    STATUS_PENDING = 'P'
+    STATUS_COMPLETED = 'C'
+    STATUS_DENIED = 'D'
+
+    STATUS_CHOICES = (
+        (STATUS_PENDING, 'Pending'),
+        (STATUS_DENIED, 'Denied'),
+        (STATUS_COMPLETED, 'Completed'),
+    )
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING,
+                              help_text="Status of request")
+
+    def __str__(self):
+        return self.user.email
