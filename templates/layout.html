@@ -27,7 +27,7 @@
 										<a href="#">{{user.first_name}} {{user.last_name}}</a>
 										<ul>
 											<li><a href="{% url 'profile' %}">Account</a></li>
-											<li><a href="{% url 'profile' %}">Change Password</a></li>
+											<li><a href="{% url 'change_pwd' %}">Change Password</a></li>
 											<li><a href="{% url 'logout' %}?next={% url 'home' %}">Logout</a></li>
 										</ul>
 									</li>
@@ -85,7 +85,18 @@
         <script src="{% static 'js/jquery.scrollex.min.js' %}"></script>
         <script src="{% static 'js/browser.min.js' %}"></script>
         <script src="{% static 'js/breakpoints.min.js' %}"></script>
+		<script src="{% static 'js/notify.js' %}"></script>
         <script src="{% static 'js/util.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
+
 		{% block js_content %} {% endblock %}
+		<script>
+			$(document).ready(function(){
+				{% if messages %}
+					{% for message in messages %}
+						$.notify("{{message}}", {globalPosition: "right top", className: "{{message.tags}}", autoHideDelay: 1000} )
+					{% endfor %}
+				{% endif %}
+			});
+		</script>
 </html>

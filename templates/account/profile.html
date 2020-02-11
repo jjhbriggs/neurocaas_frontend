@@ -28,8 +28,11 @@
                     <div class="col-8 text-left">
                         {% if aws_req %}
                         <label class="{{aws_req.get_status_display}}">{{aws_req.get_status_display}}</label>
+                            {% if aws_req.get_status_display == 'Denied' %}
+                                <a href="{% url 'aws_cred_request' %}" class="btn btn-warning ml-2">Send request again</a>
+                            {% endif %}
                         {% else %}
-                            <a href="/request" class="btn btn-warning">Send Request</a>
+                            <a href="{% url 'aws_cred_request' %}" class="btn btn-warning">Send Request</a>
                         {% endif %}
                     </div>
                 </div>
@@ -40,8 +43,8 @@
                     </div>
                 </div>-->
                 <div class="form-group row pb-3">
-                    <div class="offset-4 col-8">
-                        <button name="submit" type="submit" class="btn btn-primary">Change Password?</button>
+                    <div class="offset-4 col-8 text-right">
+                        <a class="btn btn-primary" href="{% url 'change_pwd' %}">Change Password?</a>
                     </div>
                 </div>
             </div>
