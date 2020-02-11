@@ -21,3 +21,18 @@
 .input_disabled {
     pointer-events:none;
 }
+
+.Pending{
+    color:#ffc107!important;
+    font-weight: bold;
+}
+
+.Denied{
+    color: #dc3545!important;
+    font-weight: bold;
+}
+
+.Completed {
+    color: #17a2b8!important;
+    font-weight: bold;
+}
