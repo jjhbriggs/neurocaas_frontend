@@ -5,6 +5,10 @@ from .managers import UserManager
 
 # Create your models here.
 
+STATUS_PENDING = 'P'
+STATUS_COMPLETED = 'C'
+STATUS_DENIED = 'D'
+
 
 class User(AbstractBaseUser):
     objects = UserManager()
@@ -65,12 +69,15 @@ class IAM(Base):
     def __str__(self):
         return self.user.email
 
+    def save(self, *args, **kwargs):
+        aws_req = AWSRequest.objects.filter(user=self.user).first()
+        if aws_req:
+            aws_req.status = STATUS_COMPLETED
+            aws_req.save()
+        super(IAM, self).save(*args, **kwargs)
+
 
 class AWSRequest(Base):
-    STATUS_PENDING = 'P'
-    STATUS_COMPLETED = 'C'
-    STATUS_DENIED = 'D'
-
     STATUS_CHOICES = (
         (STATUS_PENDING, 'Pending'),
         (STATUS_DENIED, 'Denied'),
