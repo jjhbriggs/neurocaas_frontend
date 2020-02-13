@@ -14,7 +14,8 @@
         var file, fileKey, buffer, bucket;
         var startTime = new Date();
         var partNum = 0;
-        var partSize = 1024 * 1024 * 5;
+        var defaultSize = 1024 * 1024 * 5;
+        var partSize = defaultSize;
         var numPartsLeft;
         var maxUploadTries = 3;
         var multiPartParams
@@ -41,6 +42,7 @@
                       console.log(err);
                     } else {
                       var delta = (new Date() - startTime) / 1000;
+                      alert("finished loading");
                       console.log('Completed upload in', delta, 'seconds');
                       console.log('Final upload data:', data);
                     }
@@ -67,6 +69,7 @@
                     };
                     console.log("Completed part", this.request.params.PartNumber);
                     console.log('mData', mData);
+
                     if (--numPartsLeft > 0) return; // complete only when all parts uploaded
 
                     var doneParams = {
@@ -94,6 +97,7 @@
                     startTime = new Date();
                     partNum = 0;
                     fileKey = file.name
+                    partSize = file.size / 10 > defaultSize ? file.size / 10 : defaultSize;
                     numPartsLeft = Math.ceil(file.size / partSize);
                     maxUploadTries = 3;
                     multiPartParams = {
