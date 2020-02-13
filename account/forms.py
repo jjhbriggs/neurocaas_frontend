@@ -1,7 +1,6 @@
 from django import forms
-from .models import User
+from .models import User, IAM
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from django.contrib.auth.forms import AuthenticationForm
 
 
 class UserCreationForm(forms.ModelForm):
@@ -42,17 +41,23 @@ class UserChangeForm(forms.ModelForm):
         return self.initial["password"]
 
 
-class UserLoginForm(AuthenticationForm):
-    def __init__(self, *args, **kwargs):
-        super(UserLoginForm, self).__init__(*args, **kwargs)
+class UserLoginForm(forms.ModelForm):
+    class Meta:
+        model = IAM
+        fields = ('aws_access_key', 'aws_secret_access_key',)
 
-    username = forms.EmailField(widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': '', 'id': 'email', 'type': 'email'}))
-    password = forms.CharField(widget=forms.PasswordInput(
+    aws_access_key = forms.CharField(widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': '',
-            'id': 'password',
+            'id': 'aws_access_key',
+            'type': 'text'
+        }
+    ))
+    aws_secret_access_key = forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'id': 'aws_secret_access_key',
+            'type': 'text'
         }
     ))
 
