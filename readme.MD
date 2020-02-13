@@ -10,7 +10,7 @@ Instruction
 Reference documentation
 -------------
  <a href="./NCAP Minimum Viable Product.pdf" target="_blank">NCAP Minimum Viable Product.pdf</a>
- [go](http://stackoverflow.com)
+ 
 Technologies
 ------------
  Project is created with
