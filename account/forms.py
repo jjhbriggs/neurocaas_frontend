@@ -35,6 +35,9 @@ class UserCreationForm(forms.ModelForm):
 
 
 class UserChangeForm(forms.ModelForm):
+    """A form for change users. Includes all the required
+        fields, plus a repeated password."""
+
     password = ReadOnlyPasswordHashField()
 
     class Meta:
@@ -46,6 +49,8 @@ class UserChangeForm(forms.ModelForm):
 
 
 class UserLoginForm(forms.ModelForm):
+    """A form for user login by aws credentials"""
+
     class Meta:
         model = IAM
         fields = ('aws_access_key', 'aws_secret_access_key',)
@@ -66,6 +71,7 @@ class UserLoginForm(forms.ModelForm):
 
 
 class ProfileChangeForm(forms.ModelForm):
+    """A form for change user's detail"""
 
     class Meta:
         model = User
