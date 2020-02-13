@@ -1,15 +1,32 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import update_session_auth_hash, login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.generic import View
 from .models import *
 from .forms import *
+from ncap.backends import authenticate
 
 from django.views.generic.edit import UpdateView
 # Create your views here.
+
+
+class LoginView(View):
+    template_name = "account/login.html"
+
+    def get(self, request):
+        form = UserLoginForm()
+        return render(request, template_name=self.template_name, context={'form': form})
+
+    def post(self, request):
+        form = UserLoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(aws_access_key=form.cleaned_data['aws_access_key'], aws_secret_access_key=form.cleaned_data['aws_secret_access_key'])
+            login(request, user)
+            return redirect('profile')
+        else:
+            return render(request, template_name=self.template_name, context={'form': form})
 
 
 class ProfileView(LoginRequiredMixin, View):
