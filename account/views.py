@@ -56,9 +56,11 @@ class ProfileView(LoginRequiredMixin, View):
 
     def get(self, request):
         aws_req = AWSRequest.objects.filter(user=request.user).first()
+        iam = IAM.objects.filter(user=request.user).first()
         return render(request, template_name=self.template_name, context={
             "user": request.user,
-            "aws_req": aws_req
+            "aws_req": aws_req,
+            "iam": iam
         })
 
     def post(self, request):
