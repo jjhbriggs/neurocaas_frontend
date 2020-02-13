@@ -54,7 +54,7 @@
                             <input type="submit" class="btn btn-primary" value="Save">
                         </div>
                         <div class="col-7 text-right">
-                            <button type="button" class="btn btn-primary" onclick="user_password_change()">Change Password?</button>
+                            <!--<button type="button" class="btn btn-primary" onclick="user_password_change()">Change Password?</button>-->
                         </div>
                     </div>
 
@@ -69,7 +69,7 @@
 {% block js_content %}
     <script>
         function user_password_change(){
-            window.location.href = "{% url 'user_password_change' %}";
+            window.location.href = "";
         }
     </script>
 {% endblock %}
