@@ -21,12 +21,14 @@ class LoginView(View):
 
     def post(self, request):
         form = UserLoginForm(request.POST)
-        if form.is_valid():
-            user = authenticate(aws_access_key=form.cleaned_data['aws_access_key'], aws_secret_access_key=form.cleaned_data['aws_secret_access_key'])
+        user = authenticate(aws_access_key=form.data['aws_access_key'],
+                            aws_secret_access_key=form.data['aws_secret_access_key'])
+        if user:
             login(request, user)
             return redirect('profile')
-        else:
-            return render(request, template_name=self.template_name, context={'form': form})
+
+        messages.error(request=request, message="Invalid Credentials, Try again!")
+        return redirect('login')
 
 
 class SignUpView(View):
