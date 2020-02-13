@@ -54,6 +54,7 @@ AUTH_USER_MODEL = 'account.User'  # new user model
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login'
 
+
 ROOT_URLCONF = 'ncap.urls'
 
 TEMPLATES = [
