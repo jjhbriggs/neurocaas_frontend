@@ -63,7 +63,7 @@ class Base(models.Model):
 class IAM(Base):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     aws_user = models.CharField(max_length=155, help_text="AWS account username")
-    aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id")
+    aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id", unique=True)
     aws_secret_access_key = models.CharField(max_length=255, help_text="AWS Secret key")
 
     def __str__(self):
