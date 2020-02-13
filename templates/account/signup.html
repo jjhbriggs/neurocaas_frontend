@@ -1,1 +1,33 @@
 {% extends "layout.html" %}
+{% block title %}Signup{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="col-xl-4 offset-xl-4 col-md-12">
+        <!-- Title -->
+        <div class="title">
+            <h2>Sign Up into NCAP</h2>
+            <hr />
+        </div>
+
+        <!-- Form -->
+        <form method="post" class="mt-3">
+            {% csrf_token %}
+            {% for field in form %}
+                <!-- Email -->
+                <div class="form-group">
+                    {% for error in field.errors %}
+                        <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                    {{ field }}
+
+                </div>
+            {% endfor %}
+            <div class="form-group mt-5">
+                <input type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
