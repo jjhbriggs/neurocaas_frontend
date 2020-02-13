@@ -7,12 +7,16 @@ class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
 
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    password2 = forms.CharField(label='Password confirmation',
+                                widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+    email = forms.CharField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = User
-        fields = ('email',)
+        fields = ('email', 'first_name', 'last_name', 'password1', 'password2')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -46,18 +50,17 @@ class UserLoginForm(forms.ModelForm):
         model = IAM
         fields = ('aws_access_key', 'aws_secret_access_key',)
 
-    aws_access_key = forms.CharField(widget=forms.TextInput(
+    aws_access_key = forms.CharField(label='AWS Access Key', widget=forms.TextInput(
         attrs={
             'class': 'form-control',
             'id': 'aws_access_key',
             'type': 'text'
         }
     ))
-    aws_secret_access_key = forms.CharField(widget=forms.PasswordInput(
+    aws_secret_access_key = forms.CharField(label='AWS Secret Access Key', widget=forms.PasswordInput(
         attrs={
             'class': 'form-control',
             'id': 'aws_secret_access_key',
-            'type': 'text'
         }
     ))
 

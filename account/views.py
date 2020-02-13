@@ -29,6 +29,28 @@ class LoginView(View):
             return render(request, template_name=self.template_name, context={'form': form})
 
 
+class SignUpView(View):
+    template_name = "account/signup.html"
+
+    def get(self, request):
+        form = UserCreationForm()
+        return render(request=request, template_name=self.template_name, context={
+            "form": form
+        })
+
+    def post(self, request):
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            # create AWS Request object for created user
+            aws_req = AWSRequest(user=user)
+            aws_req.save()
+
+            messages.success(request, 'Successfully Registered, Please wait for email from us!')
+            return redirect('profile')
+        return render(request, template_name=self.template_name, context={"form": form})
+
+
 class ProfileView(LoginRequiredMixin, View):
     template_name = "account/profile.html"
 
@@ -42,7 +64,8 @@ class ProfileView(LoginRequiredMixin, View):
     def post(self, request):
         form = ProfileChangeForm(request.POST, instance=request.user)
         if form.is_valid():
-            form.save()
+            user = form.save()
+
             messages.success(request, 'Successfully updated!')
 
         return redirect('profile')
