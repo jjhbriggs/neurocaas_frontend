@@ -6,8 +6,10 @@ Instruction
 
    NCAP (Neuroscience Cloud Analysis Platform) Web Interface <br/>
    (Minimum Viable Product)
-
- 
+    
+Reference documentation
+-------------
+ <a href="./NCAP Minimum Viable Product.pdf" target="_blank">NCAP Minimum Viable Product.pdf</a>
  
 Technologies
 ------------
