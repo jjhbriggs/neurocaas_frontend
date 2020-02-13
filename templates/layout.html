@@ -29,12 +29,13 @@
 										<a href="#">{{user.first_name}} {{user.last_name}}</a>
 										<ul>
 											<li><a href="{% url 'profile' %}">Account Detail</a></li>
-											<li><a href="{% url 'user_password_change' %}">Change Password</a></li>
+											<!--<li><a href="{% url 'profile' %}">Change Password</a></li>-->
 											<li><a href="{% url 'logout' %}?next={% url 'home' %}">Logout</a></li>
 										</ul>
 									</li>
 								{% else %}
 									<li><a href="/login">Login</a></li>
+									<li><a href="/login">SignUp</a></li>
 								{% endif %}
 
 								<!--<li><a href="right-sidebar.html">Right Sidebar</a></li>-->
