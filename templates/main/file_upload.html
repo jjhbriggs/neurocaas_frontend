@@ -57,11 +57,12 @@
             <p>Upload file to S3</p>
             <input type="file" id="fileElem" accept="*/*" onchange="handleFiles(this.files)">
             <progress id="progress-bar" max=100 value=0></progress>
-            <label class="btn btn-primary" for="fileElem">Select some files</label>
+            <label class="btn btn-primary" for="fileElem">Select a file</label>
         </form>
         <div id="gallery"></div>
     </div>
 <!--    <label class="btn btn-primary" for="fileElem">Resume Uploading</label>-->
+    <input id="upload" type="button" class="btn btn-primary" value="Upload" />
 </div>
 
 {% endblock %}
@@ -141,9 +142,12 @@
           let reader = new FileReader()
           reader.readAsDataURL(file)
           reader.onloadend = function() {
-            let img = document.createElement('img')
-            img.src = reader.result
-            document.getElementById('gallery').appendChild(img)
+            let label = document.createElement('lable');
+            label.innerText = file.name;
+            document.getElementById('gallery').appendChild(label)
+            //let img = document.createElement('img')
+            //img.src = reader.result
+            //document.getElementById('gallery').appendChild(img)
           }
         }
 
@@ -248,12 +252,14 @@
 
                     console.log("Completing upload...");
                     completeMultipartUpload(s3, doneParams);
+                    $("#upload").attr("disabled", false);
                 });
             }
 
 
             $('#upload').click(function(e){
-                file = $('#file').prop('files')[0];
+                $("#upload").attr("disabled", true);
+                file = $('#fileElem').prop('files')[0];
 
                 const reader = new FileReader();
                 reader.readAsArrayBuffer(file)
