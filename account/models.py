@@ -38,7 +38,9 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False, help_text="Flag for administrator account")
+    data_transfer_permission = models.BooleanField(default=True,
+                                                   help_text="Permission for individual users access to data transfer")
 
     def get_full_name(self):
         # The user is identified by their email address
