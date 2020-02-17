@@ -8,7 +8,7 @@ from .models import *
 from .forms import *
 from ncap.backends import authenticate
 
-from django.views.generic.edit import UpdateView
+
 # Create your views here.
 
 
