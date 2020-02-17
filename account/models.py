@@ -5,6 +5,22 @@ from .managers import UserManager
 
 # Create your models here.
 
+
+class Base(models.Model):
+    created_on = models.DateTimeField(auto_now_add=True, db_index=True,
+                                      help_text='(Read-only) Date/time when record was created.')
+    updated_on = models.DateTimeField(auto_now=True, db_index=True,
+                                      help_text='(Read-only) Date/time when record was updated.')
+
+    def save(self, *args, **kwargs):
+        if self.pk is not None:
+            self.updated_on = datetime.utcnow()
+        super(Base, self).save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+
 STATUS_PENDING = 'P'
 STATUS_COMPLETED = 'C'
 STATUS_DENIED = 'D'
@@ -48,23 +64,12 @@ class User(AbstractBaseUser):
         return True
 
 
-class Base(models.Model):
-    created_on = models.DateTimeField(auto_now_add=True, db_index=True,
-                                      help_text='(Read-only) Date/time when record was created.')
-    updated_on = models.DateTimeField(auto_now=True, db_index=True,
-                                      help_text='(Read-only) Date/time when record was updated.')
-
-    def save(self, *args, **kwargs):
-        if self.pk is not None:
-            self.updated_on = datetime.utcnow()
-        super(Base, self).save(*args, **kwargs)
-
-
 class IAM(Base):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     aws_user = models.CharField(max_length=155, help_text="AWS account username")
     aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id", unique=True)
     aws_secret_access_key = models.CharField(max_length=255, help_text="AWS Secret key")
+    bucket_list = models.ManyToManyField("main.Bucket", help_text="Buckets list assigned to user")
 
     def __str__(self):
         return self.user.email

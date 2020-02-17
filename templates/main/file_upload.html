@@ -196,7 +196,8 @@
 
 
         $(document).ready(function(){
-            bucket = "jfourie-test"
+            bucket = "jfourie-test";
+
             AWS.config.apiVersions = {
                 s3: '2006-03-01'
             };
@@ -213,7 +214,7 @@
                       console.log(err);
                     } else {
                       var delta = (new Date() - startTime) / 1000;
-                      alert("finished loading");
+                      alert("Finished loading!");
                       console.log('Completed upload in', delta, 'seconds');
                       console.log('Final upload data:', data);
                     }
