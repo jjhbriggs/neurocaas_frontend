@@ -25,9 +25,7 @@ class FileItem(Base):
         return self.name
 
 
-class Process(Base):
-
-    pass
-
+class Algorithm(Base):
+    name = models.CharField(max_length=100, help_text='Algorithm Name')
 
 
