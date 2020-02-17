@@ -74,7 +74,7 @@ class IAM(Base):
     bucket_list = models.ManyToManyField("main.Bucket", help_text="Buckets list assigned to user")
 
     def __str__(self):
-        return self.user.email
+        return self.aws_user
 
     def save(self, *args, **kwargs):
         aws_req = AWSRequest.objects.filter(user=self.user).first()
