@@ -6,9 +6,15 @@ from .models import *
 
 @admin.register(Bucket)
 class BucketAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_on',)
+    list_display = ('name', 'algorithrm', 'description', 'created_on',)
 
 
 @admin.register(FileItem)
 class FileItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'link', 'uploaded',)
+    list_display = ('name', 'link', 'uploaded', 'created_on',)
+
+
+@admin.register(Process)
+class ProcessAdmin(admin.ModelAdmin):
+    list_display = ('name', 'iam', 'bucket', 'created_on',)
+
