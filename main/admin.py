@@ -11,4 +11,10 @@ class BucketAdmin(admin.ModelAdmin):
 
 @admin.register(FileItem)
 class FileItemAdmin(admin.ModelAdmin):
-    list_display = ('name', 'link', 'uploaded',)
+    list_display = ('name', 'link', 'uploaded', 'created_on',)
+
+
+@admin.register(Algorithm)
+class AlgoAdmin(admin.ModelAdmin):
+    list_display = ('name', 'created_on',)
+
