@@ -12,12 +12,12 @@
                 <form>
                     <div class="form-group">
                         <h2 class="mb-4">Select S3 Bucket</h2>
-                        <select class="form-control" required>
+                        <select class="form-control" id="bucket-list" required>
                             <option selected="" hidden> --- s3 bucket ----</option>
-                            <option>jfourie-test</option>
-                            <option>dlc_ncap</option>
-                            <option>loca-pmd-ncap</option>
-                            <option>caiman-ncap</option>
+                            <option value="jfourie-test">jfourie-test</option>
+                            <option value="dlc_ncap">dlc_ncap</option>
+                            <option value="loca-pmd-ncap">loca-pmd-ncap</option>
+                            <option value="caiman-ncap">caiman-ncap</option>
                         </select>
                     </div>
                 </form>
@@ -61,7 +61,7 @@
         </div>
     </div>
     <div class="col-md-12">
-        <input id="upload" type="button" class="btn btn-primary" value="Upload" />
+        <input id="process" type="button" class="btn btn-primary" value="Process" />
     </div>
 </div>
 
@@ -74,9 +74,16 @@
     <script>
         video_area = new FileUpload();
         video_area.init("video-area");
+
         param_area = new FileUpload();
         param_area.init("param-area");
         config_area = new FileUpload();
         config_area.init("config-area");
+
+
+        document.getElementById("bucket-list").addEventListener("change", function(e) {
+            video_area.set_bucket(e.target.value);
+        });
+
     </script>
 {% endblock %}
