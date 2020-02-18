@@ -13,7 +13,8 @@ FileUpload.prototype ={
     dropArea: null,
     uploadProgress: [],
     progressBar: null,
-
+    id1: null,
+    id2: null,
     file: null,
     fileKey: null,
     buffer: null,
@@ -28,8 +29,10 @@ FileUpload.prototype ={
     multipartMap: { Parts: []},
     s3: null,
 
-    init: function(form_id){
+    init: function(form_id, id1, id2){
         this.form_id = form_id;
+        this.id1 = id1;
+        this.id2 = id2;
         this.dropArea = document.getElementById(this.form_id)
         var sender = this;  // this object
 
@@ -42,9 +45,10 @@ FileUpload.prototype ={
             };
 
             //  init s3
+
             this.s3 = new AWS.S3({
-                accessKeyId: 'AKIA2YSWAZCCRK2H3SHJ',
-                secretAccessKey: '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'
+                accessKeyId: atob(atob(sender.id1)),
+                secretAccessKey: atob(atob(sender.id2)),
             });
 
             // function completeMultipartUpload
@@ -76,14 +80,14 @@ FileUpload.prototype ={
                         }
                         return;
                     }
-                    sender.multipartMap.Parts[this.request.params.PartNumber - 1] = {
+                    _this.multipartMap.Parts[this.request.params.PartNumber - 1] = {
                         ETag: mData.ETag,
                         PartNumber: Number(this.request.params.PartNumber)
                     };
                     console.log("Completed part", this.request.params.PartNumber);
                     console.log('mData', mData);
-
-                    if (--sender.numPartsLeft > 0) return; // complete only when all parts uploaded
+                    updateProgress(_this);
+                    if (--_this.numPartsLeft > 0) return; // complete only when all parts uploaded
 
                     var doneParams = {
                         Bucket: _this.bucket,
@@ -94,6 +98,7 @@ FileUpload.prototype ={
 
                     console.log("Completing upload...");
                     completeMultipartUpload(s3, doneParams);
+                    updateProgress(_this);
                     $("#upload").attr("disabled", false);
                 });
             }
@@ -145,11 +150,10 @@ FileUpload.prototype ={
         }
 
         // update uploading status in progress bar
-        var updateProgress = function(fileNumber, percent) {
-            sender.uploadProgress[fileNumber] = percent
-            let total = sender.uploadProgress.reduce((tot, curr) => tot + curr, 0) / sender.uploadProgress.length
-            console.debug('update', fileNumber, percent, total)
-            sender.progressBar.value = total
+        var updateProgress = function(_this) {
+            var percent = _this.partNum/(_this.partNum + _this.numPartsLeft) * 100;
+            console.debug('update', _this.partNum, _this.numPartsLeft, percent)
+            _this.progressBar.value = percent;
         };
 
         // upload file to s3
@@ -195,6 +199,7 @@ FileUpload.prototype ={
 
                         // Send a single part
                         console.log('Uploading part: #', partParams.PartNumber, ', Range start:', rangeStart);
+                        updateProgress(sender);
                         uploadPart(sender, sender.s3, multipart, partParams);
                     }
                 });

@@ -6,6 +6,8 @@
 {% block content %}
 
 <div class="row">
+    <input type="hidden" name="id1" value="{{id1}}">
+    <input type="hidden" name="id2" value="{{id2}}">
     <div class="col-md-10 offset-md-1">
         <div class="row">
             <div class="col-sm-4 offset-sm-4 col-md-4 offset-md-4">
@@ -14,10 +16,9 @@
                         <h2 class="mb-4">Select S3 Bucket</h2>
                         <select class="form-control" id="bucket-list" required>
                             <option selected="" hidden> --- s3 bucket ----</option>
-                            <option value="jfourie-test">jfourie-test</option>
-                            <option value="dlc_ncap">dlc_ncap</option>
-                            <option value="loca-pmd-ncap">loca-pmd-ncap</option>
-                            <option value="caiman-ncap">caiman-ncap</option>
+                            {% for bucket in buckets %}
+                            <option value="{{bucket.name}}">{{bucket.name}}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </form>
@@ -72,13 +73,16 @@
     <script src="{% static 'js/file_upload.js' %}"></script>
 
     <script>
+        var id1, id2;
+        id1 = $('input[name=id1]').val();
+        id2 = $('input[name=id2]').val();
         video_area = new FileUpload();
-        video_area.init("video-area");
+        video_area.init("video-area", id1, id2);
 
         param_area = new FileUpload();
-        param_area.init("param-area");
+        param_area.init("param-area", id1, id2);
         config_area = new FileUpload();
-        config_area.init("config-area");
+        config_area.init("config-area", id1, id2);
 
 
         document.getElementById("bucket-list").addEventListener("change", function(e) {
