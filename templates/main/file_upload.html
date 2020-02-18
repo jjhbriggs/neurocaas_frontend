@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% load static %}
 {% block title %}Home{% endblock %}
 
 {% block css_content %}
@@ -48,110 +49,148 @@
 
 
 {% block content %}
-<!--    <input type="file" name="file" id="file">-->
-<!--    <input type="button" id="upload" value="Upload">-->
 
-<div class="container">
-    <div id="drop-area">
-        <form class="my-form">
-            <p>Upload file to S3</p>
-            <input type="file" id="fileElem" accept="*/*" onchange="handleFiles(this.files)">
-            <progress id="progress-bar" max=100 value=0></progress>
-            <label class="btn btn-primary" for="fileElem">Select a file</label>
-        </form>
-        <div id="gallery"></div>
+<div class="row">
+    <div class="col-md-4">
+        <h2>Upload Video file to S3</h2>
+        <div id="drop-area">
+            <form class="drop-area">
+                <input type="file" class="fileElem" accept="*/*">
+                <progress class="progress-bar" max=100 value=0></progress>
+            </form>
+            <div class="gallery"></div>
+        </div>
+
+        <input id="upload" type="button" class="btn btn-primary" value="Upload" />
     </div>
-<!--    <label class="btn btn-primary" for="fileElem">Resume Uploading</label>-->
-    <input id="upload" type="button" class="btn btn-primary" value="Upload" />
+
+    <div class="col-md-4">
+        <h2>Upload Paramter file to S3</h2>
+        <div id="drop-area">
+            <form class="my-form">
+                <input type="file" id="fileElem" accept="*/*" onchange="handleFiles(this.files)">
+                <progress id="progress-bar" max=100 value=0></progress>
+    <!--            <label class="btn btn-primary" for="fileElem">Select a file</label>-->
+            </form>
+            <div id="gallery"></div>
+        </div>
+        <input id="upload" type="button" class="btn btn-primary" value="Upload" />
+    </div>
+
+    <div class="col-md-4">
+        <h2>Upload Config file to S3</h2>
+        <div id="drop-area">
+            <form class="my-form">
+                <input type="file" id="fileElem" accept="*/*" onchange="handleFiles(this.files)">
+                <progress id="progress-bar" max=100 value=0></progress>
+    <!--            <label class="btn btn-primary" for="fileElem">Select a file</label>-->
+            </form>
+            <div id="gallery"></div>
+        </div>
+        <input id="upload" type="button" class="btn btn-primary" value="Upload" />
+    </div>
 </div>
 
 {% endblock %}
 
 {% block js_content %}
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.617.0.min.js"></script>
+    <script src="{% static 'js/file_upload.js' %}"></script>
+
+    <script>
+        upload = new FileUpload();
+        upload.init("drop-area");
+    </script>
+
     <script>
 
         // ************************ Drag and drop ***************** //
-        let dropArea = document.getElementById("drop-area")
+        //let dropArea = document.getElementById("drop-area")
 
         // Prevent default drag behaviors
-        ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-          dropArea.addEventListener(eventName, preventDefaults, false)
-          document.body.addEventListener(eventName, preventDefaults, false)
-        })
+        //;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        //    dropArea.addEventListener(eventName, preventDefaults, false)
+        //    document.body.addEventListener(eventName, preventDefaults, false)
+        //})
 
         // Highlight drop area when item is dragged over it
-        ;['dragenter', 'dragover'].forEach(eventName => {
-          dropArea.addEventListener(eventName, highlight, false)
-        })
+        //;['dragenter', 'dragover'].forEach(eventName => {
+        //    dropArea.addEventListener(eventName, highlight, false)
+        //})
 
-        ;['dragleave', 'drop'].forEach(eventName => {
-          dropArea.addEventListener(eventName, unhighlight, false)
-        })
+        //;['dragleave', 'drop'].forEach(eventName => {
+        //    dropArea.addEventListener(eventName, unhighlight, false)
+        //})
 
         // Handle dropped files
-        dropArea.addEventListener('drop', handleDrop, false)
+        //dropArea.addEventListener('drop', handleDrop, false)
 
-        function preventDefaults (e) {
-          e.preventDefault()
-          e.stopPropagation()
-        }
+       // dropArea.addEventListener('click',function(){
+         //   $('#fileElem').trigger('click');
+        //})
 
-        function highlight(e) {
-          dropArea.classList.add('highlight')
-        }
+       // function preventDefaults (e) {
+       //     e.preventDefault()
+       //     e.stopPropagation()
+        //}
 
-        function unhighlight(e) {
-          dropArea.classList.remove('active')
-        }
+       // function highlight(e) {
+       //     dropArea.classList.add('highlight')
+        //}
 
-        function handleDrop(e) {
-          var dt = e.dataTransfer
-          var files = dt.files
+        //function unhighlight(e) {
+        //    dropArea.classList.remove('active')
+        //}
 
-          handleFiles(files)
-        }
+        //function handleDrop(e) {
+        //    var dt = e.dataTransfer
+        //    var files = dt.files
 
-        let uploadProgress = []
-        let progressBar = document.getElementById('progress-bar')
+         //   handleFiles(files)
+       // }
 
-        function initializeProgress(numFiles) {
-          progressBar.value = 0
-          uploadProgress = []
+        //let uploadProgress = []
+        //let progressBar = document.getElementById('progress-bar')
 
-          for(let i = numFiles; i > 0; i--) {
-            uploadProgress.push(0)
-          }
-        }
+        //function initializeProgress(numFiles) {
+        //    progressBar.value = 0
+        //    uploadProgress = []
 
-        function updateProgress(fileNumber, percent) {
-          uploadProgress[fileNumber] = percent
-          let total = uploadProgress.reduce((tot, curr) => tot + curr, 0) / uploadProgress.length
-          console.debug('update', fileNumber, percent, total)
-          progressBar.value = total
-        }
+        //    for(let i = numFiles; i > 0; i--) {
+        //        uploadProgress.push(0)
+        //    }
+        //    $('#gallery').html("");
+       // }
 
-        function handleFiles(files) {
-          files = [...files]
-          initializeProgress(files.length)
-          files.forEach(uploadFile)
-          files.forEach(previewFile)
-        }
+        //function updateProgress(fileNumber, percent) {
+        //    uploadProgress[fileNumber] = percent
+        //    let total = uploadProgress.reduce((tot, curr) => tot + curr, 0) / uploadProgress.length
+        //    console.debug('update', fileNumber, percent, total)
+         //   progressBar.value = total
+        //}
 
+        //function handleFiles(files) {
+        //    files = [...files]
+        //    initializeProgress(files.length)
+        //    files.forEach(uploadFile)
+        //    files.forEach(previewFile)
+        //}
+
+        /*
         function previewFile(file) {
-          let reader = new FileReader()
-          reader.readAsDataURL(file)
-          reader.onloadend = function() {
-            let label = document.createElement('lable');
-            label.innerText = file.name;
-            document.getElementById('gallery').appendChild(label)
-            //let img = document.createElement('img')
-            //img.src = reader.result
-            //document.getElementById('gallery').appendChild(img)
-          }
-        }
+            let reader = new FileReader()
+            reader.readAsDataURL(file)
+            reader.onloadend = function() {
+                let label = document.createElement('lable');
+                label.innerText = file.name;
+                document.getElementById('gallery').appendChild(label)
+                //let img = document.createElement('img')
+                //img.src = reader.result
+                //document.getElementById('gallery').appendChild(img)
+            }
+        }*/
 
-        function uploadFile(file, i) {
+        /*function uploadFile(file, i) {
           var url = 'https://api.cloudinary.com/v1_1/joezimim007/image/upload'
           var xhr = new XMLHttpRequest()
           var formData = new FormData()
@@ -175,7 +214,7 @@
           formData.append('upload_preset', 'ujpu6gyk')
           formData.append('file', file)
           xhr.send(formData)
-        }
+        }*/
 
     </script>
 
