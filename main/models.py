@@ -23,17 +23,29 @@ def rand_id():
     return str(uuid.uuid1())
 
 
+class SubFolder(Base):
+    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE, help_text="  of subfolder")
+    name = models.CharField(max_length=100, default=rand_id, help_text='Subfolder name {Random Field}', unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Process(Base):
     STATUS_CHOICES = (
         (STATUS_PENDING, 'Pending'),
         (STATUS_FAILED, 'Failed'),
         (STATUS_COMPLETED, 'Completed'),
     )
-    iam = models.ForeignKey("account.IAM", on_delete=models.CASCADE, help_text="User IAM for process")
+
     name = models.CharField(max_length=100, default=rand_id, help_text='Process name {Random Field}', unique=True)
-    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE, help_text='Bucket of files')
+    iam = models.ForeignKey("account.IAM", on_delete=models.CASCADE, help_text="User IAM for process")
+    subfolder = models.ForeignKey(SubFolder, on_delete=models.CASCADE, help_text='Subfolder of files')
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING,
                               help_text="Status of process")
+
+    def __str__(self):
+        return self.name
 
 
 class FileItem(Base):
