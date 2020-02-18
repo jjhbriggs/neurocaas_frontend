@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from base64 import b64encode
+from .models import *
+from account.models import *
 # Create your views here.
 
 
@@ -26,7 +29,16 @@ class FileUploadView(LoginRequiredMixin, View):
     template_name = "main/file_upload.html"
 
     def get(self, request):
-        return render(request=request, template_name=self.template_name, context={})
+        iam = IAM.objects.filter(user=request.user).first()
+        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
+        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+        buckets = Bucket.objects.all().order_by('name')
+
+        return render(request=request, template_name=self.template_name, context={
+            "id1": access_id,
+            "id2": secret_key,
+            "buckets": buckets,
+        })
 
 
 class ProcessView(LoginRequiredMixin, View):
