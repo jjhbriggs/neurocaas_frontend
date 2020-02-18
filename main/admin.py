@@ -16,5 +16,9 @@ class FileItemAdmin(admin.ModelAdmin):
 
 @admin.register(Process)
 class ProcessAdmin(admin.ModelAdmin):
-    list_display = ('name', 'iam', 'bucket', 'created_on',)
+    list_display = ('name', 'iam', 'subfolder', 'created_on',)
 
+
+@admin.register(SubFolder)
+class SubFolderAdmin(admin.ModelAdmin):
+    list_display = ('name', 'bucket', 'created_on', )
