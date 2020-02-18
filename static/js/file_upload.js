@@ -16,9 +16,10 @@ FileUpload.prototype ={
     id1: null,
     id2: null,
     file: null,
+    bucket: null,
+    subfolder: null,
     fileKey: null,
     buffer: null,
-    bucket: null,
     startTime: new Date(),
     partNum: 0,
     defaultSize: 1024 * 1024 * 5,
@@ -29,10 +30,12 @@ FileUpload.prototype ={
     multipartMap: { Parts: []},
     s3: null,
 
-    init: function(form_id, id1, id2){
+    init: function(form_id, id1, id2, bucket, subfolder){
         this.form_id = form_id;
         this.id1 = id1;
         this.id2 = id2;
+        this.bucket = bucket;
+        this.subfolder = subfolder;
         this.dropArea = document.getElementById(this.form_id)
         var sender = this;  // this object
 
@@ -151,8 +154,8 @@ FileUpload.prototype ={
 
         // update uploading status in progress bar
         var updateProgress = function(_this) {
-            var percent = _this.partNum/(_this.partNum + _this.numPartsLeft) * 100;
-            console.debug('update', _this.partNum, _this.numPartsLeft, percent)
+            var percent = (_this.partNum - _this.numPartsLeft)/_this.partNum * 100;
+            console.log('update', _this.partNum, _this.numPartsLeft, percent)
             _this.progressBar.value = percent;
         };
 
@@ -199,7 +202,7 @@ FileUpload.prototype ={
 
                         // Send a single part
                         console.log('Uploading part: #', partParams.PartNumber, ', Range start:', rangeStart);
-                        updateProgress(sender);
+                        //updateProgress(sender);
                         uploadPart(sender, sender.s3, multipart, partParams);
                     }
                 });
