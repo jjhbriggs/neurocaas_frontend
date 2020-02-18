@@ -84,17 +84,7 @@ button{
     margin-right: 10px;
     vertical-align: middle;
 }
-.button {
-    display: inline-block;
-    padding: 10px;
-    background: #ccc;
-    cursor: pointer;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-}
-.button:hover {
-    background: #ddd;
-}
+
 .fileElem {
     display: none;
 }
