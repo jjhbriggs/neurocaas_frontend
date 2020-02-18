@@ -1,4 +1,11 @@
 
+/*
+*   FileUpload Object.
+*   % Drag & Drop, Browser direct upload to s3, Resume uploading if net failed, Show uploading progress bar
+*
+*   Created by Johan on 2/18/2020
+*/
+
 var FileUpload = function(){}
 
 FileUpload.prototype ={
