@@ -9,7 +9,7 @@
             border-radius: 20px;
             width: 480px;
             font-family: sans-serif;
-            margin: 100px auto;
+            margin: 30px auto;
             padding: 20px;
             cursor:pointer;
         }
@@ -61,7 +61,23 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-10 offset-md-1">
+        <div class="row">
+            <div class="col-sm-4 offset-sm-4 col-md-4 offset-md-4">
+                <form>
+                    <div class="form-group">
+                        <h2 class="mb-4">Select S3 Bucket</h2>
+                        <select class="form-control">
+                            <option>jfourie-test</option>
+                            <option>dc-lcp</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <hr>
+    </div>
+    <div class="col-md-4 mt-2">
         <h2>Upload Video file to S3</h2>
         <div id="video-area">
             <form class="drop-area">
@@ -71,11 +87,9 @@
             </form>
             <div class="gallery"></div>
         </div>
-
-        <input id="upload" type="button" class="btn btn-primary" value="Upload" />
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-4  mt-2">
         <h2>Upload Paramter file to S3</h2>
         <div id="param-area">
             <form class="drop-area">
@@ -85,12 +99,10 @@
             </form>
             <div class="gallery"></div>
         </div>
-
-        <input id="upload" type="button" class="btn btn-primary" value="Upload" />
     </div>
 
-    <div class="col-md-4">
-        <h2>Upload Config file to S</h2>
+    <div class="col-md-4  mt-2">
+        <h2>Upload Config file to S3</h2>
         <div id="config-area">
             <form class="drop-area">
                 <p>Drag & Drop or Click!</p>
@@ -99,7 +111,8 @@
             </form>
             <div class="gallery"></div>
         </div>
-
+    </div>
+    <div class="col-md-12">
         <input id="upload" type="button" class="btn btn-primary" value="Upload" />
     </div>
 </div>
@@ -111,8 +124,12 @@
     <script src="{% static 'js/file_upload.js' %}"></script>
 
     <script>
-        upload = new FileUpload();
-        upload.init("drop-area");
+        video_area = new FileUpload();
+        video_area.init("video-area");
+        param_area = new FileUpload();
+        param_area.init("param-area");
+        config_area = new FileUpload();
+        config_area.init("config-area");
     </script>
 
     <script>
