@@ -16,9 +16,10 @@ FileUpload.prototype ={
     id1: null,
     id2: null,
     file: null,
+    bucket: null,
+    subfolder: null,
     fileKey: null,
     buffer: null,
-    bucket: null,
     startTime: new Date(),
     partNum: 0,
     defaultSize: 1024 * 1024 * 5,
@@ -28,11 +29,14 @@ FileUpload.prototype ={
     multiPartParams: null,
     multipartMap: { Parts: []},
     s3: null,
+    status: false,
 
-    init: function(form_id, id1, id2){
+    init: function(form_id, id1, id2, bucket, subfolder){
         this.form_id = form_id;
         this.id1 = id1;
         this.id2 = id2;
+        this.bucket = bucket;
+        this.subfolder = subfolder;
         this.dropArea = document.getElementById(this.form_id)
         var sender = this;  // this object
 
@@ -59,7 +63,7 @@ FileUpload.prototype ={
                       console.log(err);
                     } else {
                       var delta = (new Date() - sender.startTime) / 1000;
-                      alert("Finished loading!");
+                      //alert("Finished loading!");
                       console.log('Completed upload in', delta, 'seconds');
                       console.log('Final upload data:', data);
                     }
@@ -91,7 +95,7 @@ FileUpload.prototype ={
 
                     var doneParams = {
                         Bucket: _this.bucket,
-                        Key: _this.fileKey,
+                        Key: _this.subfolder + "/" + _this.fileKey,
                         MultipartUpload: _this.multipartMap,
                         UploadId: multipart.UploadId
                     };
@@ -99,6 +103,8 @@ FileUpload.prototype ={
                     console.log("Completing upload...");
                     completeMultipartUpload(s3, doneParams);
                     updateProgress(_this);
+                    _this.status = true;
+                    $('#' + _this.form_id + ' p').html("Uploading was finished!");
                     $("#upload").attr("disabled", false);
                 });
             }
@@ -123,6 +129,7 @@ FileUpload.prototype ={
 
         // On Click event when user click drop area
         this.dropArea.addEventListener('click', function(e){
+            if (sender.status) return;
             $('#' + sender.form_id + ' .fileElem').trigger('click');
         }, false);
 
@@ -151,8 +158,8 @@ FileUpload.prototype ={
 
         // update uploading status in progress bar
         var updateProgress = function(_this) {
-            var percent = _this.partNum/(_this.partNum + _this.numPartsLeft) * 100;
-            console.debug('update', _this.partNum, _this.numPartsLeft, percent)
+            var percent = (_this.partNum - _this.numPartsLeft)/_this.partNum * 100;
+            console.log('update', _this.partNum, _this.numPartsLeft, percent)
             _this.progressBar.value = percent;
         };
 
@@ -173,7 +180,7 @@ FileUpload.prototype ={
                 sender.maxUploadTries = 3;
                 sender.multiPartParams = {
                     Bucket: sender.bucket,
-                    Key: sender.fileKey,
+                    Key: sender.subfolder + "/" + sender.fileKey,
                     ContentType: file.type
                 };
                 var multipartMap = {
@@ -192,42 +199,18 @@ FileUpload.prototype ={
                             partParams = {
                               Body: sender.buffer.slice(rangeStart, end),
                               Bucket: sender.bucket,
-                              Key: sender.fileKey,
+                              Key: sender.subfolder + "/" + sender.fileKey,
                               PartNumber: String(sender.partNum),
                               UploadId: multipart.UploadId
                             };
 
                         // Send a single part
                         console.log('Uploading part: #', partParams.PartNumber, ', Range start:', rangeStart);
-                        updateProgress(sender);
+                        //updateProgress(sender);
                         uploadPart(sender, sender.s3, multipart, partParams);
                     }
                 });
             }
-
-            /*var url = 'https://api.cloudinary.com/v1_1/joezimim007/image/upload'
-            var xhr = new XMLHttpRequest()
-            var formData = new FormData()
-            xhr.open('POST', url, true)
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
-
-            // Update progress (can be used to show progress indicator)
-            xhr.upload.addEventListener("progress", function(e) {
-                updateProgress(i, (e.loaded * 100.0 / e.total) || 100)
-            })
-
-            xhr.addEventListener('readystatechange', function(e) {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                  updateProgress(i, 100) // <- Add this
-                }
-                else if (xhr.readyState == 4 && xhr.status != 200) {
-                  // Error. Inform the user
-                }
-            })
-
-            formData.append('upload_preset', 'ujpu6gyk')
-            formData.append('file', file)
-            xhr.send(formData)*/
         }
 
         // Handle files of file tag
@@ -244,6 +227,7 @@ FileUpload.prototype ={
 
         // Handle dropped files
         this.dropArea.addEventListener('drop', function(e){
+            if (sender.status) return;
             var dt = e.dataTransfer
             var files = dt.files
             handleFiles(files)
