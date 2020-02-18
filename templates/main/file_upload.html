@@ -4,7 +4,7 @@
 
 {% block css_content %}
     <style>
-        #drop-area {
+        #video-area, #param-area, #config-area{
             border: 2px dashed #ccc;
             border-radius: 20px;
             width: 480px;
@@ -63,7 +63,7 @@
 <div class="row">
     <div class="col-md-4">
         <h2>Upload Video file to S3</h2>
-        <div id="drop-area">
+        <div id="video-area">
             <form class="drop-area">
                 <p>Drag & Drop or Click!</p>
                 <input type="file" class="fileElem" accept="*/*">
@@ -77,27 +77,29 @@
 
     <div class="col-md-4">
         <h2>Upload Paramter file to S3</h2>
-        <div id="drop-area">
-            <form class="my-form">
-                <input type="file" id="fileElem" accept="*/*" onchange="handleFiles(this.files)">
-                <progress id="progress-bar" max=100 value=0></progress>
-    <!--            <label class="btn btn-primary" for="fileElem">Select a file</label>-->
+        <div id="param-area">
+            <form class="drop-area">
+                <p>Drag & Drop or Click!</p>
+                <input type="file" class="fileElem" accept="*/*">
+                <progress class="progress-bar" max=100 value=0></progress>
             </form>
-            <div id="gallery"></div>
+            <div class="gallery"></div>
         </div>
+
         <input id="upload" type="button" class="btn btn-primary" value="Upload" />
     </div>
 
     <div class="col-md-4">
-        <h2>Upload Config file to S3</h2>
-        <div id="drop-area">
-            <form class="my-form">
-                <input type="file" id="fileElem" accept="*/*" onchange="handleFiles(this.files)">
-                <progress id="progress-bar" max=100 value=0></progress>
-    <!--            <label class="btn btn-primary" for="fileElem">Select a file</label>-->
+        <h2>Upload Config file to S</h2>
+        <div id="config-area">
+            <form class="drop-area">
+                <p>Drag & Drop or Click!</p>
+                <input type="file" class="fileElem" accept="*/*">
+                <progress class="progress-bar" max=100 value=0></progress>
             </form>
-            <div id="gallery"></div>
+            <div class="gallery"></div>
         </div>
+
         <input id="upload" type="button" class="btn btn-primary" value="Upload" />
     </div>
 </div>
