@@ -2,3 +2,6 @@ venv
 .idea
 __pycache__
 static/admin
+static/cms/
+static/rest_framework/
+static/suit/

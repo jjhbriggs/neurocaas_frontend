@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash, login
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.generic import View
@@ -16,11 +17,10 @@ class LoginView(View):
     template_name = "account/login.html"
 
     def get(self, request):
-        if request.user:
-            return redirect('profile')
-
-        form = UserLoginForm()
-        return render(request, template_name=self.template_name, context={'form': form})
+        if request.user.is_anonymous:
+            form = UserLoginForm()
+            return render(request, template_name=self.template_name, context={'form': form})
+        return redirect('profile')
 
     def post(self, request):
         form = UserLoginForm(request.POST)
