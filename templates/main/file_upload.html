@@ -5,44 +5,54 @@
 {% block css_content %}
     <style>
         #drop-area {
-          border: 2px dashed #ccc;
-          border-radius: 20px;
-          width: 480px;
-          font-family: sans-serif;
-          margin: 100px auto;
-          padding: 20px;
+            border: 2px dashed #ccc;
+            border-radius: 20px;
+            width: 480px;
+            font-family: sans-serif;
+            margin: 100px auto;
+            padding: 20px;
+            cursor:pointer;
         }
+
+        .progress-bar{
+            width: 100%;
+        }
+
+        #drop-area:hover{
+            border-color: #ff9f9f;
+        }
+
         #drop-area.highlight {
-          border-color: purple;
+            border-color: purple;
         }
         p {
-          margin-top: 0;
+            margin-top: 0;
         }
         .my-form {
-          margin-bottom: 10px;
+            margin-bottom: 10px;
         }
-        #gallery {
-          margin-top: 10px;
+        .gallery {
+            margin-top: 10px;
         }
-        #gallery img {
-          width: 150px;
-          margin-bottom: 10px;
-          margin-right: 10px;
-          vertical-align: middle;
+        .gallery img {
+            width: 150px;
+            margin-bottom: 10px;
+            margin-right: 10px;
+            vertical-align: middle;
         }
         .button {
-          display: inline-block;
-          padding: 10px;
-          background: #ccc;
-          cursor: pointer;
-          border-radius: 5px;
-          border: 1px solid #ccc;
+            display: inline-block;
+            padding: 10px;
+            background: #ccc;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
         .button:hover {
-          background: #ddd;
+            background: #ddd;
         }
-        #fileElem {
-          display: none;
+        .fileElem {
+            display: none;
         }
     </style>
 {% endblock %}
@@ -55,6 +65,7 @@
         <h2>Upload Video file to S3</h2>
         <div id="drop-area">
             <form class="drop-area">
+                <p>Drag & Drop or Click!</p>
                 <input type="file" class="fileElem" accept="*/*">
                 <progress class="progress-bar" max=100 value=0></progress>
             </form>
@@ -101,123 +112,6 @@
         upload = new FileUpload();
         upload.init("drop-area");
     </script>
-
-    <script>
-
-        // ************************ Drag and drop ***************** //
-        //let dropArea = document.getElementById("drop-area")
-
-        // Prevent default drag behaviors
-        //;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        //    dropArea.addEventListener(eventName, preventDefaults, false)
-        //    document.body.addEventListener(eventName, preventDefaults, false)
-        //})
-
-        // Highlight drop area when item is dragged over it
-        //;['dragenter', 'dragover'].forEach(eventName => {
-        //    dropArea.addEventListener(eventName, highlight, false)
-        //})
-
-        //;['dragleave', 'drop'].forEach(eventName => {
-        //    dropArea.addEventListener(eventName, unhighlight, false)
-        //})
-
-        // Handle dropped files
-        //dropArea.addEventListener('drop', handleDrop, false)
-
-       // dropArea.addEventListener('click',function(){
-         //   $('#fileElem').trigger('click');
-        //})
-
-       // function preventDefaults (e) {
-       //     e.preventDefault()
-       //     e.stopPropagation()
-        //}
-
-       // function highlight(e) {
-       //     dropArea.classList.add('highlight')
-        //}
-
-        //function unhighlight(e) {
-        //    dropArea.classList.remove('active')
-        //}
-
-        //function handleDrop(e) {
-        //    var dt = e.dataTransfer
-        //    var files = dt.files
-
-         //   handleFiles(files)
-       // }
-
-        //let uploadProgress = []
-        //let progressBar = document.getElementById('progress-bar')
-
-        //function initializeProgress(numFiles) {
-        //    progressBar.value = 0
-        //    uploadProgress = []
-
-        //    for(let i = numFiles; i > 0; i--) {
-        //        uploadProgress.push(0)
-        //    }
-        //    $('#gallery').html("");
-       // }
-
-        //function updateProgress(fileNumber, percent) {
-        //    uploadProgress[fileNumber] = percent
-        //    let total = uploadProgress.reduce((tot, curr) => tot + curr, 0) / uploadProgress.length
-        //    console.debug('update', fileNumber, percent, total)
-         //   progressBar.value = total
-        //}
-
-        //function handleFiles(files) {
-        //    files = [...files]
-        //    initializeProgress(files.length)
-        //    files.forEach(uploadFile)
-        //    files.forEach(previewFile)
-        //}
-
-        /*
-        function previewFile(file) {
-            let reader = new FileReader()
-            reader.readAsDataURL(file)
-            reader.onloadend = function() {
-                let label = document.createElement('lable');
-                label.innerText = file.name;
-                document.getElementById('gallery').appendChild(label)
-                //let img = document.createElement('img')
-                //img.src = reader.result
-                //document.getElementById('gallery').appendChild(img)
-            }
-        }*/
-
-        /*function uploadFile(file, i) {
-          var url = 'https://api.cloudinary.com/v1_1/joezimim007/image/upload'
-          var xhr = new XMLHttpRequest()
-          var formData = new FormData()
-          xhr.open('POST', url, true)
-          xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
-
-          // Update progress (can be used to show progress indicator)
-          xhr.upload.addEventListener("progress", function(e) {
-            updateProgress(i, (e.loaded * 100.0 / e.total) || 100)
-          })
-
-          xhr.addEventListener('readystatechange', function(e) {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-              updateProgress(i, 100) // <- Add this
-            }
-            else if (xhr.readyState == 4 && xhr.status != 200) {
-              // Error. Inform the user
-            }
-          })
-
-          formData.append('upload_preset', 'ujpu6gyk')
-          formData.append('file', file)
-          xhr.send(formData)
-        }*/
-
-    </script>
-
 
     <script>
 
