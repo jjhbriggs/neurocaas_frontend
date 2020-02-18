@@ -16,6 +16,9 @@ class LoginView(View):
     template_name = "account/login.html"
 
     def get(self, request):
+        if request.user:
+            return redirect('profile')
+
         form = UserLoginForm()
         return render(request, template_name=self.template_name, context={'form': form})
 
