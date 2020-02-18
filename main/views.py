@@ -65,9 +65,10 @@ class ProcessView(LoginRequiredMixin, View):
     """
         Step 3 View for processing files
     """
-    template_name = "main/file_upload.html"
+    template_name = "main/result.html"
 
-    def get(self, request):
+    def post(self, request):
+
         iam = IAM.objects.filter(user=request.user).first()
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
@@ -78,3 +79,14 @@ class ProcessView(LoginRequiredMixin, View):
             "id2": secret_key,
             "buckets": buckets,
         })
+
+
+class ResultView(LoginRequiredMixin, View):
+    """
+        View for showing processing results
+    """
+    template_name = "main/result.html"
+
+    def get(self, request):
+
+        return render(request=request, template_name=self.template_name)
