@@ -14,6 +14,19 @@ FileUpload.prototype ={
     uploadProgress: [],
     progressBar: null,
 
+    file: null,
+    fileKey: null,
+    buffer: null,
+    bucket: null,
+    startTime: new Date(),
+    partNum: 0,
+    defaultSize: 1024 * 1024 * 5,
+    partSize: 1024 * 1024 * 5,
+    numPartsLeft: null,
+    maxUploadTries: 3,
+    multiPartParams: null,
+    multipartMap: { Parts: []},
+    s3: null,
 
     init: function(form_id){
         this.form_id = form_id;
@@ -22,6 +35,70 @@ FileUpload.prototype ={
 
         this.uploadProgress = []
         this.progressBar = document.querySelector('#' + this.form_id + ' .progress-bar')
+
+        /* S3 bucket options */
+            AWS.config.apiVersions = {
+                s3: '2006-03-01'
+            };
+
+            //  init s3
+            this.s3 = new AWS.S3({
+                accessKeyId: 'AKIA2YSWAZCCRK2H3SHJ',
+                secretAccessKey: '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'
+            });
+
+            // function completeMultipartUpload
+            completeMultipartUpload = function(s3, doneParams) {
+                s3.completeMultipartUpload(doneParams, function(err, data) {
+                    if (err) {
+                      console.log("An error occurred while completing the multipart upload");
+                      console.log(err);
+                    } else {
+                      var delta = (new Date() - sender.startTime) / 1000;
+                      alert("Finished loading!");
+                      console.log('Completed upload in', delta, 'seconds');
+                      console.log('Final upload data:', data);
+                    }
+                });
+            }
+
+            // function uploadPart
+            uploadPart = function(_this, s3, multipart, partParams, tryNum) {
+                var tryNum = tryNum || 1;
+                s3.uploadPart(partParams, function(multiErr, mData) {
+                    if (multiErr){
+                        console.log('multiErr, upload part error:', multiErr);
+                        if (tryNum < maxUploadTries) {
+                            console.log('Retrying upload of part: #', partParams.PartNumber)
+                            uploadPart(_this, s3, multipart, partParams, tryNum + 1);
+                        } else {
+                            console.log('Failed uploading part: #', partParams.PartNumber)
+                        }
+                        return;
+                    }
+                    sender.multipartMap.Parts[this.request.params.PartNumber - 1] = {
+                        ETag: mData.ETag,
+                        PartNumber: Number(this.request.params.PartNumber)
+                    };
+                    console.log("Completed part", this.request.params.PartNumber);
+                    console.log('mData', mData);
+
+                    if (--sender.numPartsLeft > 0) return; // complete only when all parts uploaded
+
+                    var doneParams = {
+                        Bucket: _this.bucket,
+                        Key: _this.fileKey,
+                        MultipartUpload: _this.multipartMap,
+                        UploadId: multipart.UploadId
+                    };
+
+                    console.log("Completing upload...");
+                    completeMultipartUpload(s3, doneParams);
+                    $("#upload").attr("disabled", false);
+                });
+            }
+
+        /* End S3 bucket options */
 
         // Prevent default drag behaviors
         ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
@@ -76,8 +153,54 @@ FileUpload.prototype ={
         };
 
         // upload file to s3
+
         var uploadFile = function(file, i) {
-            var url = 'https://api.cloudinary.com/v1_1/joezimim007/image/upload'
+            const reader = new FileReader();
+            reader.readAsArrayBuffer(file)
+
+            reader.onloadend = function onloadend(){
+                console.log('on_loaded');
+                sender.buffer = reader.result;
+                sender.startTime = new Date();
+                sender.partNum = 0;
+                sender.fileKey = file.name
+                sender.partSize = file.size / 10 > sender.defaultSize ? file.size / 10 : sender.defaultSize;
+                sender.numPartsLeft = Math.ceil(file.size / sender.partSize);
+                sender.maxUploadTries = 3;
+                sender.multiPartParams = {
+                    Bucket: sender.bucket,
+                    Key: sender.fileKey,
+                    ContentType: file.type
+                };
+                var multipartMap = {
+                    Parts: []
+                };
+
+                console.log("Creating multipart upload for:", sender.fileKey);
+                sender.s3.createMultipartUpload(sender.multiPartParams, function(mpErr, multipart){
+                    if (mpErr) { console.log('Error!', mpErr); return; }
+                    console.log("Got upload ID", multipart.UploadId);
+
+                    // Grab each partSize chunk and upload it as a part
+                    for (var rangeStart = 0; rangeStart < sender.buffer.byteLength; rangeStart += sender.partSize) {
+                        sender.partNum++;
+                        var end = Math.min(rangeStart + sender.partSize, sender.buffer.byteLength),
+                            partParams = {
+                              Body: sender.buffer.slice(rangeStart, end),
+                              Bucket: sender.bucket,
+                              Key: sender.fileKey,
+                              PartNumber: String(sender.partNum),
+                              UploadId: multipart.UploadId
+                            };
+
+                        // Send a single part
+                        console.log('Uploading part: #', partParams.PartNumber, ', Range start:', rangeStart);
+                        uploadPart(sender, sender.s3, multipart, partParams);
+                    }
+                });
+            }
+
+            /*var url = 'https://api.cloudinary.com/v1_1/joezimim007/image/upload'
             var xhr = new XMLHttpRequest()
             var formData = new FormData()
             xhr.open('POST', url, true)
@@ -99,7 +222,7 @@ FileUpload.prototype ={
 
             formData.append('upload_preset', 'ujpu6gyk')
             formData.append('file', file)
-            xhr.send(formData)
+            xhr.send(formData)*/
         }
 
         // Handle files of file tag
@@ -135,136 +258,11 @@ FileUpload.prototype ={
 
     unhighlight(e) {
         this.classList.remove('active')
+    },
+    set_bucket(bucket){
+        console.log(this.bucket);
+        this.bucket = bucket;
+        console.log(this.bucket);
+        console.log("--------------------------");
     }
 }
-
-
-
-
-
-var file, fileKey, buffer, bucket;
-var startTime = new Date();
-var partNum = 0;
-var defaultSize = 1024 * 1024 * 5;
-var partSize = defaultSize;
-var numPartsLeft;
-var maxUploadTries = 3;
-var multiPartParams
-var multipartMap = {
-    Parts: []
-};
-
-
-$(document).ready(function(){
-    bucket = "jfourie-test";
-
-    AWS.config.apiVersions = {
-        s3: '2006-03-01'
-    };
-
-    var s3 = new AWS.S3({
-        accessKeyId: 'AKIA2YSWAZCCRK2H3SHJ',
-        secretAccessKey: '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'
-    });
-
-    function completeMultipartUpload(s3, doneParams) {
-        s3.completeMultipartUpload(doneParams, function(err, data) {
-            if (err) {
-              console.log("An error occurred while completing the multipart upload");
-              console.log(err);
-            } else {
-              var delta = (new Date() - startTime) / 1000;
-              alert("Finished loading!");
-              console.log('Completed upload in', delta, 'seconds');
-              console.log('Final upload data:', data);
-            }
-        });
-    }
-
-
-    function uploadPart(s3, multipart, partParams, tryNum) {
-        var tryNum = tryNum || 1;
-        s3.uploadPart(partParams, function(multiErr, mData) {
-            if (multiErr){
-                console.log('multiErr, upload part error:', multiErr);
-                if (tryNum < maxUploadTries) {
-                    console.log('Retrying upload of part: #', partParams.PartNumber)
-                    uploadPart(s3, multipart, partParams, tryNum + 1);
-                } else {
-                    console.log('Failed uploading part: #', partParams.PartNumber)
-                }
-                return;
-            }
-            multipartMap.Parts[this.request.params.PartNumber - 1] = {
-                ETag: mData.ETag,
-                PartNumber: Number(this.request.params.PartNumber)
-            };
-            console.log("Completed part", this.request.params.PartNumber);
-            console.log('mData', mData);
-
-            if (--numPartsLeft > 0) return; // complete only when all parts uploaded
-
-            var doneParams = {
-                Bucket: bucket,
-                Key: fileKey,
-                MultipartUpload: multipartMap,
-                UploadId: multipart.UploadId
-            };
-
-            console.log("Completing upload...");
-            completeMultipartUpload(s3, doneParams);
-            $("#upload").attr("disabled", false);
-        });
-    }
-
-
-    $('#upload').click(function(e){
-        $("#upload").attr("disabled", true);
-        file = $('#fileElem').prop('files')[0];
-
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(file)
-
-        reader.onloadend = function onloadend(){
-            console.log('on_loaded');
-            buffer = reader.result;
-            startTime = new Date();
-            partNum = 0;
-            fileKey = file.name
-            partSize = file.size / 10 > defaultSize ? file.size / 10 : defaultSize;
-            numPartsLeft = Math.ceil(file.size / partSize);
-            maxUploadTries = 3;
-            multiPartParams = {
-                Bucket: bucket,
-                Key: fileKey,
-                ContentType: file.type
-            };
-            var multipartMap = {
-                Parts: []
-            };
-
-            console.log("Creating multipart upload for:", fileKey);
-            s3.createMultipartUpload(multiPartParams, function(mpErr, multipart){
-                if (mpErr) { console.log('Error!', mpErr); return; }
-                console.log("Got upload ID", multipart.UploadId);
-
-                // Grab each partSize chunk and upload it as a part
-                for (var rangeStart = 0; rangeStart < buffer.byteLength; rangeStart += partSize) {
-                    partNum++;
-                    var end = Math.min(rangeStart + partSize, buffer.byteLength),
-                        partParams = {
-                          Body: buffer.slice(rangeStart, end),
-                          Bucket: bucket,
-                          Key: fileKey,
-                          PartNumber: String(partNum),
-                          UploadId: multipart.UploadId
-                        };
-
-                    // Send a single part
-                    console.log('Uploading part: #', partParams.PartNumber, ', Range start:', rangeStart);
-                    uploadPart(s3, multipart, partParams);
-                }
-            });
-        }
-    })
-});
