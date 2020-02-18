@@ -227,6 +227,10 @@ FileUpload.prototype ={
 
         // Handle files of file tag
         var handleFiles = function(files) {
+            if (!sender.bucket){
+                alert("Select a bucket for uploading");
+                return;
+            }
             files = [...files]
             initializeProgress(files.length)
             files.forEach(uploadFile)
