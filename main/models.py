@@ -24,7 +24,7 @@ def rand_id():
 
 
 class SubFolder(Base):
-    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE, help_text="  of subfolder")
+    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE, help_text="bucket")
     name = models.CharField(max_length=100, default=rand_id, help_text='Subfolder name {Random Field}', unique=True)
 
     def __str__(self):
