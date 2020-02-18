@@ -9,6 +9,10 @@
         <input type="hidden" name="id2" value="{{id2}}">
         <input type="hidden" name="subfolder" value="{{subfolder.name}}">
         <input type="hidden" name="bucket" value="{{subfolder.bucket.name}}">
+        <div class="col-md-6 offset-md-3">
+            <h2>File Uploading</h2>
+            <hr />
+        </div>
         <div class="col-md-4 mt-2">
             <h3>Upload Video file to S3</h3>
             <div id="video-area">
@@ -71,5 +75,8 @@
         config_area = new FileUpload();
         config_area.init("config-area", id1, id2, bucket, subfolder);
 
+        $('#process').click(function(){
+
+        });
     </script>
 {% endblock %}
