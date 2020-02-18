@@ -10,9 +10,11 @@
                 <p>Minimum Viable Product</p>
             </header>
             <footer>
-
-                    <a href=" {% if not user.is_authenticated %} /login {% endif %}" class="button circled scrolly">Start</a>
-
+                {% if not user.is_authenticated %}
+                <a href="{% url 'login' %}" class="button circled scrolly">Start</a>
+                {% else %}
+                <a href="{% url 'select_bucket' %}" class="button circled scrolly">Start</a>
+                {% endif %}
             </footer>
         </div>
 {% endblock %}
