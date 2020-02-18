@@ -24,13 +24,13 @@
 						<nav id="nav">
 							<ul>
 								<li><a href="/">Home</a></li>
+								<li><a href="{% url 'instruction' %}">Usage Instructions</a></li>
 								{% if user.is_authenticated %}
 									<li>
 										<a href="#">{{user.first_name}} {{user.last_name}}</a>
 										<ul>
 											<li><a href="{% url 'profile' %}">Account Detail</a></li>
 											<li><a href="{% url 'file_upload' %}">File Upload</a></li>
-											<li><a href="{% url 'instruction' %}">Usage Instructions</a></li>
 											<li><a href="{% url 'logout' %}?next={% url 'home' %}">Logout</a></li>
 										</ul>
 									</li>
