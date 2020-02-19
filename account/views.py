@@ -17,18 +17,21 @@ class LoginView(View):
     template_name = "account/login.html"
 
     def get(self, request):
+        next_url = request.GET.get('next') if 'next' in request.GET else 'profile'
         if request.user.is_anonymous:
             form = UserLoginForm()
-            return render(request, template_name=self.template_name, context={'form': form})
-        return redirect('profile')
+            return render(request, template_name=self.template_name, context={'form': form, "next": next_url})
+        return redirect("profile")
 
     def post(self, request):
         form = UserLoginForm(request.POST)
         user = authenticate(aws_access_key=form.data['aws_access_key'],
                             aws_secret_access_key=form.data['aws_secret_access_key'])
+
         if user:
             login(request, user)
-            return redirect('profile')
+            next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
+            return redirect(next_url)
 
         messages.error(request=request, message="Invalid Credentials, Try again!")
         return redirect('login')
