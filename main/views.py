@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from base64 import b64encode
 from .models import *
 from account.models import *
+import boto3
 # Create your views here.
 
 
@@ -68,6 +69,9 @@ class ProcessView(LoginRequiredMixin, View):
     """
     template_name = "main/result.html"
 
+    def get(self, request):
+        return render(request=request, template_name=self.template_name)
+
     def post(self, request):
 
         iam = IAM.objects.filter(user=request.user).first()
@@ -93,7 +97,7 @@ class ResultView(LoginRequiredMixin, View):
         return render(request=request, template_name=self.template_name)
 
 
-def check_progress(process_id):
+def check_progress(process_id, iam):
     return True
 
 
@@ -103,6 +107,7 @@ class CheckProcessView(View):
     """
 
     def get(self, request):
+        iam = IAM.objects.filter(user=request.user).first()
         process_id = request.GET['process_id']
-        res = check_progress(process_id=process_id)
+        res = check_progress(process_id=process_id, iam=iam)
         return JsonResponse({"status": res})
