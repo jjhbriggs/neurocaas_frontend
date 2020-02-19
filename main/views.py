@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from django.views.generic import TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from base64 import b64encode
@@ -90,3 +91,18 @@ class ResultView(LoginRequiredMixin, View):
     def get(self, request):
 
         return render(request=request, template_name=self.template_name)
+
+
+def check_progress(process_id):
+    return True
+
+
+class CheckProcessView(View):
+    """
+    View for checking processing progress
+    """
+
+    def get(self, request):
+        process_id = request.GET['process_id']
+        res = check_progress(process_id=process_id)
+        return JsonResponse({"status": res})
