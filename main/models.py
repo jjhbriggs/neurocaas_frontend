@@ -31,6 +31,16 @@ class SubFolder(Base):
         return self.name
 
 
+class FileItem(Base):
+    name = models.CharField(max_length=100, null=False, blank=False, help_text='File Name')
+    link = models.CharField(max_length=100, null=False, blank=False, help_text='Link of S3 bucket')
+    uploaded = models.BooleanField(default=False, help_text="Flag to show complete of uploading")
+    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE, help_text="Bucket of file")
+
+    def __str__(self):
+        return self.name
+
+
 class Process(Base):
     STATUS_CHOICES = (
         (STATUS_PENDING, 'Pending'),
@@ -40,21 +50,14 @@ class Process(Base):
 
     name = models.CharField(max_length=100, default=rand_id, help_text='Process name {Random Field}', unique=True)
     iam = models.ForeignKey("account.IAM", on_delete=models.CASCADE, help_text="User IAM for process")
-    subfolder = models.ForeignKey(SubFolder, on_delete=models.CASCADE, help_text='Subfolder of files')
+    subfolder = models.ForeignKey(SubFolder, on_delete=models.CASCADE, help_text='Subfolder of files',
+                                  null=True, blank=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING,
                               help_text="Status of process")
 
-    def __str__(self):
-        return self.name
-
-
-class FileItem(Base):
-    iam = models.ForeignKey("account.IAM", on_delete=models.CASCADE, help_text='User of s3 bucket')
-    name = models.CharField(max_length=100, null=False, blank=False, help_text='File Name')
-    link = models.CharField(max_length=100, null=False, blank=False, help_text='Link of S3 bucket')
-    process = models.ForeignKey(Process, on_delete=models.CASCADE, help_text='Process')
-    size = models.BigIntegerField(default=0, help_text="The size of file")
-    uploaded = models.BooleanField(default=False, help_text="Flag to show complete of uploading")
+    uploaded_file = models.ForeignKey(FileItem, on_delete=models.CASCADE, help_text="Uploaded json file")
+    s3_path = models.CharField(max_length=200, null=True, blank=True, help_text="Result path of s3")
+    local_file = models.CharField(max_length=200, null=True, blank=True, help_text="Result file of server")
 
     def __str__(self):
         return self.name
