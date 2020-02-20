@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.generic import TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -113,7 +113,7 @@ class CheckProcessView(View):
         return JsonResponse({"status": res})
 
 
-class DemoView(View):
+class DemoView(LoginRequiredMixin, View):
     """
         View for demo in Feb
     """
@@ -131,8 +131,31 @@ class DemoView(View):
             "bucket": bucket
         })
 
-    def post(self, request):
-        bucket = request.POST['bucket']
-        file = request.POST['file']
+
+class DemoResultView(LoginRequiredMixin, View):
+    """
+    Demo Result View
+        """
+    template_name = "demo_result.html"
+
+    def get(self, request):
         iam = IAM.objects.filter(user=request.user).first()
-        proc = Process(iam=iam)
+        process_id = request.GET['process']
+        res = check_progress(process_id=process_id, iam=iam)
+        return JsonResponse({"status": res})
+
+    def post(self, request):
+        bucket_name = request.POST['bucket']
+        bucket = Bucket.objects.get(name=bucket_name)
+        iam = IAM.objects.filter(user=request.user).first()
+
+        file_name = request.POST['file']
+        file = FileItem(name=file_name, bucket=bucket, uploaded=True)
+        file.save()
+
+        proc = Process(iam=iam, uploaded_file=file)
+        proc.save()
+
+        return render(request=request, template_name=self.template_name, context={
+            "process": proc
+        })
