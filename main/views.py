@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
 from django.views.generic import TemplateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from base64 import b64encode
 from .models import *
 from account.models import *
+from .demo_utils import check_process
 # Create your views here.
 
 
@@ -67,6 +69,9 @@ class ProcessView(LoginRequiredMixin, View):
     """
     template_name = "main/result.html"
 
+    def get(self, request):
+        return render(request=request, template_name=self.template_name)
+
     def post(self, request):
 
         iam = IAM.objects.filter(user=request.user).first()
@@ -90,3 +95,76 @@ class ResultView(LoginRequiredMixin, View):
     def get(self, request):
 
         return render(request=request, template_name=self.template_name)
+
+
+class CheckProcessView(View):
+    """
+    View for checking processing progress
+    """
+
+    def get(self, request):
+        iam = IAM.objects.filter(user=request.user).first()
+        process_name = request.GET['process']
+        proc = Process.objects.get(name=process_name)
+        res = check_process(iam=iam, process=proc)
+        return JsonResponse({"status": True})
+        # return JsonResponse({"status": res})
+
+
+class DemoView(LoginRequiredMixin, View):
+    """
+        View for demo in Feb
+    """
+    template_name = "main/demo.html"
+
+    def get(self, request):
+        bucket = Bucket.objects.get(name='epi-ncap')
+        iam = IAM.objects.filter(user=request.user).first()
+        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
+        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+        prefix = "cunninghamlabEPI/inputs"
+        return render(request=request, template_name=self.template_name, context={
+            "id1": access_id,
+            "id2": secret_key,
+            "bucket": bucket,
+            "prefix": prefix
+        })
+
+
+class DemoResultView(LoginRequiredMixin, View):
+    """
+    Demo Result View
+        """
+    template_name = "main/demo_result.html"
+
+    def get(self, request):
+        proc = Process.objects.get(name=request.GET['process'])
+        return render(request=request, template_name=self.template_name, context={
+            "process": proc
+        })
+
+    def post(self, request):
+        bucket_name = request.POST['bucket']
+        bucket = Bucket.objects.get(name=bucket_name)
+        iam = IAM.objects.filter(user=request.user).first()
+
+        file_name = request.POST['file']
+        file = FileItem(name=file_name, bucket=bucket, uploaded=True)
+        file.save()
+
+        proc = Process(iam=iam, uploaded_file=file)
+        proc.save()
+        url = '/demo_result?process=%s' % proc.name
+        return redirect(url)
+
+
+class DemoCheckView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        iam = IAM.objects.filter(user=request.user).first()
+        proc = Process.objects.get(name=request.GET['process'])
+        link = check_process(process=proc, iam=iam)
+        return JsonResponse({
+            "status": True,
+            "link": link
+        })
