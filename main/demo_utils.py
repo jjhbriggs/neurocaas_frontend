@@ -151,7 +151,7 @@ def check_process(iam, process):
 
     extract_path = "cunninghamlabEPI/results"
     file_extension = ".mp4"
-    startafter = "%s/%s/" % (BASE, last_proc.result_path)
+    startafter = "%s/%s/" % (BASE, last_proc.s3_path)
 
     folder_lists = get_list_of_tables(root_path_or_bucket=root_path_or_bucket,
                                       extract_path=extract_path,
