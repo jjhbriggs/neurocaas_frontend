@@ -21,7 +21,6 @@
                         Your browser does not support HTML5 video.
                     </video>
                 </div>
-                <h4 class="text-danger mt-3">Please don't close the page, if then, you will lost results</h4>
             </div>
         </div>
     </div>
@@ -47,10 +46,10 @@
                     console.log(res);
 
                     if (res.link) {
-                        alert('Success');
+                        //alert('Success');
                         show_result(res);
                     }
-                    else setTimeout(check_progress, 6000);
+                    else setTimeout(check_progress, 5000);
                 },
                 error: function(err){
                     console.log(err);
