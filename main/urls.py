@@ -15,4 +15,5 @@ urlpatterns = [
 
     #""" demo """
     path('demo/', DemoView.as_view(), name='demo'),
+    path('demo_result/', DemoResultView.as_view(), name='demo_result'),
 ]
