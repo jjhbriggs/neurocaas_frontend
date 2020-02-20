@@ -111,3 +111,28 @@ class CheckProcessView(View):
         process_id = request.GET['process_id']
         res = check_progress(process_id=process_id, iam=iam)
         return JsonResponse({"status": res})
+
+
+class DemoView(View):
+    """
+        View for demo in Feb
+    """
+    template_name = "main/demo.html"
+
+    def get(self, request):
+        bucket = Bucket.objects.get(name='epi-ncap')
+        iam = IAM.objects.filter(user=request.user).first()
+        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
+        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+
+        return render(request=request, template_name=self.template_name, context={
+            "id1": access_id,
+            "id2": secret_key,
+            "bucket": bucket
+        })
+
+    def post(self, request):
+        bucket = request.POST['bucket']
+        file = request.POST['file']
+        iam = IAM.objects.filter(user=request.user).first()
+        proc = Process(iam=iam)
