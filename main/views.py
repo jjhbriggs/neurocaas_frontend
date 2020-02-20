@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from base64 import b64encode
 from .models import *
 from account.models import *
-from .utils import check_process
+from .demo_utils import check_process
 # Create your views here.
 
 
