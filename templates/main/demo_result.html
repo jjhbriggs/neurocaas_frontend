@@ -16,8 +16,8 @@
                     <h3>Process is running now ...</h3>
                 </div>
                 <div class="result" style="display:none;">
-                    <video width="400" controls>
-                        <source src="http://distribution.bbb3d.renderfarming.net/video/mp4/bbb_sunflower_1080p_60fps_stereo_abl.mp4" type="video/mp4">
+                    <video width="350" controls id="video" muted="muted">
+                        <source id="video_source" src="" type="video/mp4">
                         Your browser does not support HTML5 video.
                     </video>
                 </div>
@@ -35,25 +35,27 @@
         function show_result(res){
             $('.waiting').css('display', 'none');
             $('.result').css('display', 'block');
+            $('#video_source').attr('src', res.link);
+            document.getElementById("video").load()
+            document.getElementById("video").play()
         }
 
         function check_progress(){
             $.ajax({
-                url: '/demo_result?process=' + process,
+                url: '/demo_check?process=' + process,
                 success: function(res){
                     console.log(res);
 
-                    if (res.status === true) {
+                    if (res.link) {
                         alert('Success');
                         show_result(res);
                     }
-                    else setTimeout(check_progress, 3000);
+                    else setTimeout(check_progress, 6000);
                 },
                 error: function(err){
                     console.log(err);
                 }
             })
-            //clearInterval(interval);
         }
 
         $(document).ready(function(){
