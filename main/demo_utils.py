@@ -123,6 +123,7 @@ def check_file_existed(iam, bucket, key):
             aws_access_key_id=iam.aws_access_key,
             aws_secret_access_key=iam.aws_secret_access_key
         )
+
         s3.Object(bucket, key).load()
         object_acl = s3.ObjectAcl(bucket, key)
         object_acl.put(ACL='public-read')
