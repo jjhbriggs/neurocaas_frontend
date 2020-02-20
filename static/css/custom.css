@@ -88,3 +88,27 @@ button{
 .fileElem {
     display: none;
 }
+
+
+/* Spinner */
+.text-purple{
+    color: #7266ba!important;
+}
+
+.text-success {
+    color: #27c24c!important;
+}
+
+.text-info {
+    color: #23b7e5!important;
+}
+
+.text-bold {
+    font-weight: bold !important;
+}
+.text-lg {
+    font-size: 30px;
+}
+.mb-lg{
+    font-size: 36px!important;
+}
