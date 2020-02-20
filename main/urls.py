@@ -11,5 +11,8 @@ urlpatterns = [
     path('step3/', ProcessView.as_view(), name='process'),
     path('result/', ResultView.as_view(), name='result'),
     # path('file_upload/', FileUploadView.as_view(), name='file_upload'),
-    path('check_process/', CheckProcessView.as_view(), name='check_process')
+    path('check_process/', CheckProcessView.as_view(), name='check_process'),
+
+    #""" demo """
+    path('demo/', DemoView.as_view(), name='demo'),
 ]

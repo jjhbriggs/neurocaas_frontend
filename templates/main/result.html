@@ -29,5 +29,34 @@
 
 
 {% block js_content %}
+    <script>
 
+        function show_result(res){
+            $('.waiting').css('display', 'none');
+            $('.result').css('display', 'block');
+        }
+
+        function check_progress(){
+            $.ajax({
+                url: '/check_process?process_id=' + '1',
+                success: function(res){
+                    console.log(res);
+
+                    if (res.status === true) {
+                        alert('Success');
+                        show_result(res);
+                    }
+                    else setTimeout(check_progress, 3000);
+                },
+                error: function(err){
+                    console.log(err);
+                }
+            })
+            //clearInterval(interval);
+        }
+
+        $(document).ready(function(){
+            check_progress();
+        });
+    </script>
 {% endblock %}
