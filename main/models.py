@@ -54,8 +54,10 @@ class Process(Base):
                                   null=True, blank=True)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING,
                               help_text="Status of process")
+
     uploaded_file = models.ForeignKey(FileItem, on_delete=models.CASCADE, help_text="Uploaded json file")
-    result_path = models.CharField(max_length=200, null=True, blank=True, help_text="Result path of s3")
+    s3_path = models.CharField(max_length=200, null=True, blank=True, help_text="Result path of s3")
+    local_file = models.CharField(max_length=200, null=True, blank=True, help_text="Result file of server")
 
     def __str__(self):
         return self.name
