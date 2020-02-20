@@ -8,14 +8,17 @@
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-md-3">
-                <h2>Processing results</h2>
-                <hr>
-            </div>
-            <div class="col-md-6 offset-md-3">
-                <div class="waiting">
-                    <h3>Process is running now ...</h3>
+                <div class="waiting text-center">
+                    <h1 class="mb-lg"><sup><em class="fa fa-cog fa-2x text-muted fa-spin text-info"></em></sup>
+                       <em class="fa fa-cog fa-5x text-muted fa-spin text-purple"></em>
+                       <em class="fa fa-cog fa-lg text-muted fa-spin text-success"></em>
+                    </h1>
+                    <div class="text-bold text-lg mb-lg mt-3">Process is running now ...</div>
                 </div>
+
                 <div class="result" style="display:none;">
+                    <h2>Processing results</h2>
+                    <hr>
                     <video width="350" controls id="video" muted="muted">
                         <source id="video_source" src="" type="video/mp4">
                         Your browser does not support HTML5 video.
@@ -60,7 +63,7 @@
         }
 
         $(document).ready(function(){
-            check_progress();
+            //check_progress();
         });
     </script>
 {% endblock %}
