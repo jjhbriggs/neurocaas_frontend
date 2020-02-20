@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from base64 import b64encode
 from .models import *
 from account.models import *
-import boto3
+from .utils import check_process
 # Create your views here.
 
 
@@ -97,10 +97,6 @@ class ResultView(LoginRequiredMixin, View):
         return render(request=request, template_name=self.template_name)
 
 
-def check_progress(process_id, iam):
-    return True
-
-
 class CheckProcessView(View):
     """
     View for checking processing progress
@@ -108,9 +104,11 @@ class CheckProcessView(View):
 
     def get(self, request):
         iam = IAM.objects.filter(user=request.user).first()
-        process_id = request.GET['process_id']
-        res = check_progress(process_id=process_id, iam=iam)
-        return JsonResponse({"status": res})
+        process_name = request.GET['process']
+        proc = Process.objects.get(name=process_name)
+        res = check_process(iam=iam, process=proc)
+        return JsonResponse({"status": True})
+        # return JsonResponse({"status": res})
 
 
 class DemoView(LoginRequiredMixin, View):
@@ -136,13 +134,13 @@ class DemoResultView(LoginRequiredMixin, View):
     """
     Demo Result View
         """
-    template_name = "demo_result.html"
+    template_name = "main/demo_result.html"
 
     def get(self, request):
-        iam = IAM.objects.filter(user=request.user).first()
-        process_id = request.GET['process']
-        res = check_progress(process_id=process_id, iam=iam)
-        return JsonResponse({"status": res})
+        proc = Process.objects.get(name=request.GET['process'])
+        return render(request=request, template_name=self.template_name, context={
+            "process": proc
+        })
 
     def post(self, request):
         bucket_name = request.POST['bucket']
@@ -155,7 +153,17 @@ class DemoResultView(LoginRequiredMixin, View):
 
         proc = Process(iam=iam, uploaded_file=file)
         proc.save()
+        url = '/demo_result?process=%s' % proc.name
+        return redirect(url)
 
-        return render(request=request, template_name=self.template_name, context={
-            "process": proc
+
+class DemoCheckView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        iam = IAM.objects.filter(user=request.user).first()
+        proc = Process.objects.get(name=request.GET['process'])
+        link = check_process(process=proc, iam=iam)
+        return JsonResponse({
+            "status": True,
+            "link": link
         })

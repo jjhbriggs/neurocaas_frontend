@@ -8,7 +8,6 @@
 <div class="row">
     <input type="hidden" name="id1" value="{{id1}}">
     <input type="hidden" name="id2" value="{{id2}}">
-    <input type="hidden" name="bucket" value="{{bucket}}">
     <div class="col-md-12 mt-2">
         <h3>Upload Json file to S3</h3>
         <div id="video-area">
@@ -20,9 +19,13 @@
             <div class="gallery"></div>
         </div>
     </div>
-
     <div class="col-md-12">
-        <input id="process" type="button" class="btn btn-primary" value="Check Process" />
+        <form method="post" action="{% url 'demo_result' %}">
+            {% csrf_token %}
+            <input type="hidden" name="bucket" value="{{bucket}}">
+            <input type="hidden" name="file" value="submit.json">
+            <input id="process" type="submit" class="btn btn-primary" value="Check Process" />
+        </form>
     </div>
 </div>
 
