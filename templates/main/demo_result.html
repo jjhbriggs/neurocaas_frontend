@@ -34,7 +34,9 @@
         function show_result(res){
             $('.waiting').css('display', 'none');
             $('.result').css('display', 'block');
-            $('#video_source').attr('src', res.link);
+            var url = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port + "/" + res.link
+            $('#video_source').attr('src', url);
+
             document.getElementById("video").load()
             document.getElementById("video").play()
         }

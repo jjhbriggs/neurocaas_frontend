@@ -1,5 +1,6 @@
 import boto3
 from .models import *
+import os
 
 
 def get_matching_s3_objects(bucket,
@@ -23,8 +24,6 @@ def get_matching_s3_objects(bucket,
                       aws_secret_access_key=aws_secret_access_key)
     kwargs = {'Bucket': bucket}
 
-    # If the prefix is a single string (not a tuple of strings), we can
-    # do the filtering directly in the S3 API.
     if isinstance(prefix, str):
         kwargs['Prefix'] = prefix
     else:
@@ -36,9 +35,6 @@ def get_matching_s3_objects(bucket,
     kwargs['MaxKeys'] = max_keys_per_request
 
     while True:
-
-        # The S3 API response is a large blob of metadata.
-        # 'Contents' contains information about the listed objects.
         resp = s3.list_objects_v2(**kwargs)
 
         try:
@@ -51,9 +47,6 @@ def get_matching_s3_objects(bucket,
             if key.startswith(prefix) and key.endswith(suffix):
                 yield obj
 
-        # The S3 API is paginated, returning up to 1000 keys at a time.
-        # Pass the continuation token into the next response, until we
-        # reach the final page (when this field is missing).
         try:
             kwargs['ContinuationToken'] = resp['NextContinuationToken']
         except KeyError:
@@ -116,7 +109,7 @@ def get_list_of_tables(root_path_or_bucket,
     return list(set(tables))
 
 
-def check_file_existed(iam, bucket, key):
+def get_download_file(iam, bucket, key, proc_name):
     try:
         s3 = boto3.resource(
             's3',
@@ -124,12 +117,17 @@ def check_file_existed(iam, bucket, key):
             aws_secret_access_key=iam.aws_secret_access_key
         )
 
-        s3.Object(bucket, key).load()
-        object_acl = s3.ObjectAcl(bucket, key)
-        object_acl.put(ACL='public-read')
-        return True
-    except:
-        return False
+        folder = "static/downloads/%s" % proc_name
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+
+        output = "%s/epi_opt.mp4" % folder
+        s3.Bucket(bucket).download_file(key, output)
+
+        return output
+    except Exception as e:
+        print(e)
+        return None
 
 
 #####################################################
@@ -138,32 +136,31 @@ def check_process(iam, process):
     root_path_or_bucket = process.uploaded_file.bucket.name
     last_proc = Process.objects.all().order_by('-created_on')[1]
 
-    if process.result_path:
-        result_key = "%s/%s/search_output/epi_opt.mp4" % (BASE, last_proc.result_path)
-        if check_file_existed(iam=iam, bucket=root_path_or_bucket, key=result_key):
-            url = "https://%s.s3.amazonaws.com/%s/%s/search_output/epi_opt.mp4" % (
-                root_path_or_bucket,
-                BASE,
-                process.result_path
-            )
-            return url
+    if process.local_file:
+        return process.local_file
+
+    elif process.s3_path:
+        result_key = "%s/%s/search_output/epi_opt.mp4" % (BASE, last_proc.s3_path)
+        file_path = get_download_file(iam=iam, bucket=root_path_or_bucket, key=result_key, proc_name=process.name)
+        if file_path:
+            process.local_file = file_path
+            process.save()
+            return file_path
         else:
             return None
 
     extract_path = "cunninghamlabEPI/results"
-    aws_access_key_id = iam.aws_access_key
-    aws_secret_access_key = iam.aws_secret_access_key
     file_extension = ".mp4"
     startafter = "%s/%s/" % (BASE, last_proc.result_path)
 
     folder_lists = get_list_of_tables(root_path_or_bucket=root_path_or_bucket,
                                       extract_path=extract_path,
-                                      aws_access_key_id=aws_access_key_id,
-                                      aws_secret_access_key=aws_secret_access_key,
+                                      aws_access_key_id=iam.aws_access_key,
+                                      aws_secret_access_key=iam.aws_secret_access_key,
                                       file_extension=file_extension,
                                       startafter=startafter)
     if len(folder_lists) > 1:
-        process.result_path = folder_lists[1]
+        process.s3_path = folder_lists[1]
         process.save()
 
     return None

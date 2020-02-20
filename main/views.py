@@ -122,11 +122,12 @@ class DemoView(LoginRequiredMixin, View):
         iam = IAM.objects.filter(user=request.user).first()
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-
+        prefix = "cunninghamlabEPI/inputs"
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
-            "bucket": bucket
+            "bucket": bucket,
+            "prefix": prefix
         })
 
 
