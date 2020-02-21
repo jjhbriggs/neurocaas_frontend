@@ -2,6 +2,8 @@ import boto3
 from .models import *
 import os
 
+search_outputdir = "hp_optimum"
+
 
 def get_matching_s3_objects(bucket,
                             aws_access_key_id,
@@ -132,6 +134,7 @@ def get_download_file(iam, bucket, key, proc_name):
 
 #####################################################
 def check_process(iam, process):
+    global search_outputdir
     BASE = 'cunninghamlabEPI/results'
     root_path_or_bucket = process.uploaded_file.bucket.name
     last_proc = Process.objects.all().order_by('-created_on')[1]
@@ -140,7 +143,7 @@ def check_process(iam, process):
         return process.local_file
 
     elif process.s3_path:
-        result_key = "%s/%s/search_output/epi_opt.mp4" % (BASE, last_proc.s3_path)
+        result_key = "%s/%s/%s/epi_opt.mp4" % (BASE, last_proc.s3_path, search_outputdir)
         file_path = get_download_file(iam=iam, bucket=root_path_or_bucket, key=result_key, proc_name=process.name)
         if file_path:
             process.local_file = file_path
@@ -160,7 +163,9 @@ def check_process(iam, process):
                                       file_extension=file_extension,
                                       startafter=startafter)
     if len(folder_lists) > 1:
-        process.s3_path = folder_lists[1]
-        process.save()
+        for folder in folder_lists:
+            if folder != last_proc.s3_path:
+                process.s3_path = folder
+                process.save()
 
     return None
