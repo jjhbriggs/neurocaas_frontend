@@ -128,6 +128,7 @@ def get_download_file(iam, bucket, key, proc_name):
 
         return output
     except Exception as e:
+        print(key)
         print(e)
         return None
 
@@ -143,7 +144,7 @@ def check_process(iam, process):
         return process.local_file
 
     elif process.s3_path:
-        result_key = "%s/%s/%s/epi_opt.mp4" % (BASE, last_proc.s3_path, search_outputdir)
+        result_key = "%s/%s/%s/epi_opt.mp4" % (BASE, process.s3_path, search_outputdir)
         file_path = get_download_file(iam=iam, bucket=root_path_or_bucket, key=result_key, proc_name=process.name)
         if file_path:
             process.local_file = file_path
