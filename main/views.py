@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from django.views.generic import TemplateView, View
+from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from base64 import b64encode
 from .models import *
