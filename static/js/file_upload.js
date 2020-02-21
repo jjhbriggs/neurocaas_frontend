@@ -30,13 +30,15 @@ FileUpload.prototype ={
     multipartMap: { Parts: []},
     s3: null,
     status: false,
+    file_tag_id: null,
 
-    init: function(form_id, id1, id2, bucket, subfolder){
+    init: function(form_id, id1, id2, bucket, subfolder, file_tag_id){
         this.form_id = form_id;
         this.id1 = id1;
         this.id2 = id2;
         this.bucket = bucket;
         this.subfolder = subfolder;
+        this.file_tag_id = file_tag_id;
         this.dropArea = document.getElementById(this.form_id)
         var sender = this;  // this object
 
@@ -106,6 +108,7 @@ FileUpload.prototype ={
                     _this.status = true;
                     $('#' + _this.form_id + ' p').html("Uploading was finished!");
                     $("#upload").attr("disabled", false);
+                    $('#' + _this.file_tag_id).val(_this.fileKey);
                 });
             }
 
