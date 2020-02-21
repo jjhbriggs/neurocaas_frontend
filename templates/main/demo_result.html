@@ -54,7 +54,7 @@
                         //alert('Success');
                         show_result(res);
                     }
-                    else setTimeout(check_progress, 5000);
+                    else setTimeout(check_progress, 10000);
                 },
                 error: function(err){
                     console.log(err);
@@ -66,4 +66,5 @@
             check_progress();
         });
     </script>
+
 {% endblock %}
