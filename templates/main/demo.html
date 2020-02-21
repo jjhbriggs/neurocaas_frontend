@@ -20,11 +20,11 @@
         </div>
     </div>
     <div class="col-md-12">
-        <form method="post" action="{% url 'demo_result' %}">
+        <form method="post" action="{% url 'demo_result' %}" id="submit_form">
             {% csrf_token %}
             <input type="hidden" name="bucket" value="{{bucket}}">
-            <input type="hidden" name="file" value="submit.json">
-            <input id="process" type="submit" class="btn btn-primary" value="Check Process" />
+            <input type="hidden" name="file" id="uploaded_file" value="">
+            <input id="process" type="button" class="btn btn-primary" value="Check Process" />
         </form>
     </div>
 </div>
@@ -44,5 +44,9 @@
         video_area = new FileUpload();
         video_area.init("video-area", id1, id2, bucket, prefix);
 
+        $('#process').click(function(e){
+            if ($('#uploaded_file').val()) $('#submit_form').submit();
+            else alert("Upload file first plase!");
+        })
     </script>
 {% endblock %}
