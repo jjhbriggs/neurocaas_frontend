@@ -78,7 +78,7 @@ FileUpload.prototype ={
                 s3.uploadPart(partParams, function(multiErr, mData) {
                     if (multiErr){
                         console.log('multiErr, upload part error:', multiErr);
-                        if (tryNum < maxUploadTries) {
+                        if (tryNum < _this.maxUploadTries) {
                             console.log('Retrying upload of part: #', partParams.PartNumber)
                             uploadPart(_this, s3, multipart, partParams, tryNum + 1);
                         } else {

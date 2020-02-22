@@ -8,7 +8,7 @@
 <div class="row">
     <input type="hidden" name="id1" value="{{id1}}">
     <input type="hidden" name="id2" value="{{id2}}">
-    <div class="col-md-12 mt-2">
+    <div class="col-md-4 mt-2">
         <h3>Upload Json file to S3</h3>
         <div id="video-area">
             <form class="drop-area">
@@ -17,6 +17,19 @@
                 <progress class="progress-bar" max=100 value=0></progress>
             </form>
             <div class="gallery"></div>
+        </div>
+    </div>
+    <div class="col-md-4 result">
+        <h3>Processing results</h3>
+        <div class="waiting text-center" style="display:none;">
+            <h1 class="mb-lg"><sup><em class="fa fa-cog fa-2x text-muted fa-spin text-info"></em></sup>
+               <em class="fa fa-cog fa-5x text-muted fa-spin text-purple"></em>
+               <em class="fa fa-cog fa-lg text-muted fa-spin text-success"></em>
+            </h1>
+            <div class="text-bold text-lg mb-lg mt-3">Process is running now ...</div>
+        </div>
+
+        <div class="result" style="display:block;">
         </div>
     </div>
     <div class="col-md-12">
