@@ -40,15 +40,42 @@
 
     <div class="col-md-4 status-div">
         <h3>Processing Result</h3>
-        <div class="spinner-div mt-5">
-            <div class="text-center pt-5" style="display:block;">
+        <div class="spinner mt-5" style="display:none;">
+            <div class="text-center pt-5">
                 <h6 class="mb-lg"><sup><em class="fa fa-cog fa-2x text-muted fa-spin text-info"></em></sup>
                    <em class="fa fa-cog fa-5x text-muted fa-spin text-purple"></em>
                    <em class="fa fa-cog fa-lg text-muted fa-spin text-success"></em>
                 </h6>
             </div>
         </div>
-        <div class="status mt-4">
+        <div class="result mt-4" style="/*display: none;*/">
+            <h6 class="border-bottom pb-2 mb-0 text-white">Per DataSet</h6>
+            <div class="p-3 bg-transparent rounded box-shadow">
+                <div class="media">
+                    <p class="media-body mb-0 small lh-125 border-bottom border-gray">
+                        <a href="#" class="text-warning">DATASET_NAME:dataset1.json_STATUS.txt</a>
+                    </p>
+                </div>
+                <div class="media">
+                    <p class="media-body mb-0 small lh-125 border-bottom border-gray">
+                        <a href="#" class="text-warning">DATASET_NAME:dataset2.json_STATUS.txt</a>
+                    </p>
+                </div>
+                <div class="media">
+                    <p class="media-body mb-0 small lh-125 border-bottom border-gray">
+                        <a href="#" class="text-warning">DATASET_NAME:dataset3.json_STATUS.txt</a>
+                    </p>
+                </div>
+            </div>
+
+            <h6 class="border-bottom pb-2 mb-0 text-white mt-4">Result Video</h6>
+            <div class="p-3 bg-transparent rounded box-shadow">
+                <div class="media">
+                    <p class="media-body mb-0 small lh-125">
+                        <a href="#" class="text-warning">epi_opt.mp4</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
