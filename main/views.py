@@ -15,9 +15,10 @@ from .demo_utils import *
 
 mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
 cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
-dataset_folder = "cunninghamlabEPI/inputs/epidata"
-
+log_dir = "cunninghamlabEPI/results/jobepi_demo/logs"
+dataset_dir = "cunninghamlabEPI/inputs/epidata"
 bucket_name = "epi-ncap"
+upload_dir = "cunninghamlabEPI/inputs"
 
 
 class DemoView(LoginRequiredMixin, View):
@@ -27,16 +28,16 @@ class DemoView(LoginRequiredMixin, View):
     template_name = "main/demo.html"
 
     def get(self, request):
-        bucket = Bucket.objects.get(name='epi-ncap')
         iam = IAM.objects.filter(user=request.user).first()
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-        prefix = "cunninghamlabEPI/inputs"
+
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
-            "bucket": bucket,
-            "prefix": prefix
+            "bucket": bucket_name,
+            "upload_dir": upload_dir,
+            'dataset_dir': dataset_dir
         })
 
 
