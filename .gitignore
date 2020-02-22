@@ -5,4 +5,4 @@ static/admin
 static/cms/
 static/rest_framework/
 static/suit/
-test.py
+/test.py
