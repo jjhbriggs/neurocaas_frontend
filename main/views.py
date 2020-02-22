@@ -111,6 +111,11 @@ class CheckProcessView(View):
         # return JsonResponse({"status": res})
 
 
+mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
+cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
+bucket_name = "epi-ncap"
+
+
 class DemoView(LoginRequiredMixin, View):
     """
         View for demo in Feb
@@ -131,6 +136,10 @@ class DemoView(LoginRequiredMixin, View):
         })
 
 
+def get_iam(request):
+    return IAM.objects.filter(user=request.user).first()
+
+
 class DemoResultView(LoginRequiredMixin, View):
     """
     Demo Result View
@@ -138,15 +147,16 @@ class DemoResultView(LoginRequiredMixin, View):
     template_name = "main/demo_result.html"
 
     def get(self, request):
-        proc = Process.objects.get(name=request.GET['process'])
-        return render(request=request, template_name=self.template_name, context={
-            "process": proc
+        iam = get_iam(request)
+
+        cert_content = get_file_content(iam=iam, bucket=bucket_name, key=cert_file)
+        return JsonResponse({
+            "status": True,
+            "cert_file": cert_content
         })
 
     def post(self, request):
-        bucket_name = "epi-ncap"
         iam = IAM.objects.filter(user=request.user).first()
-        mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
 
         timestamp = get_last_modified_timestamp(iam=iam, bucket=bucket_name, key=mp4_file)
 
@@ -173,8 +183,9 @@ class DemoResultView(LoginRequiredMixin, View):
 class DemoCheckView(LoginRequiredMixin, View):
 
     def get(self, request):
-        cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
+
         action = request.POST['action']
+        timestamp = request.POST['timestamp']
 
         iam = IAM.objects.filter(user=request.user).first()
         proc = Process.objects.get(name=request.GET['process'])

@@ -212,3 +212,20 @@ def remove_files():
                 shutil.rmtree(file_path)
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+
+def get_file_content(iam, bucket, key):
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=iam.aws_access_key,
+        aws_secret_access_key=iam.aws_secret_access_key
+    )
+
+    # obj = s3.Object("epi-ncap", "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4")
+    obj = s3.Object(bucket, key)
+
+    try:
+        body = obj.get()['Content']
+        return body
+    except:
+        return None
