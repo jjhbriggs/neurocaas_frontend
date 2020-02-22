@@ -5,7 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from base64 import b64encode
 from .models import *
 from account.models import *
-from .demo_utils import check_process
+from .demo_utils import *
 # Create your views here.
 
 
@@ -144,10 +144,18 @@ class DemoResultView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
-        bucket_name = request.POST['bucket']
-        bucket = Bucket.objects.get(name=bucket_name)
-        iam = IAM.objects.filter(user=request.user).first()
+        bucket_name = "epi-ncap"
+        cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
 
+        action = request.POST['action']
+        iam = IAM.objects.filter(user=request.user).first()
+        mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
+
+        timestamp = get_last_modified_timestamp(iam=iam, bucket=bucket_name, key=mp4_file)
+                
+
+
+        """
         file_name = request.POST['file']
         file = FileItem(name=file_name, bucket=bucket, uploaded=True)
         file.save()
@@ -156,6 +164,7 @@ class DemoResultView(LoginRequiredMixin, View):
         proc.save()
         url = '/demo_result?process=%s' % proc.name
         return redirect(url)
+        """
 
 
 class DemoCheckView(LoginRequiredMixin, View):
@@ -164,6 +173,7 @@ class DemoCheckView(LoginRequiredMixin, View):
         iam = IAM.objects.filter(user=request.user).first()
         proc = Process.objects.get(name=request.GET['process'])
         link = check_process(process=proc, iam=iam)
+
         return JsonResponse({
             "status": True,
             "link": link
