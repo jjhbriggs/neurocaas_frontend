@@ -145,15 +145,18 @@ class DemoResultView(LoginRequiredMixin, View):
 
     def post(self, request):
         bucket_name = "epi-ncap"
-        cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
-
-        action = request.POST['action']
         iam = IAM.objects.filter(user=request.user).first()
         mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
 
         timestamp = get_last_modified_timestamp(iam=iam, bucket=bucket_name, key=mp4_file)
-                
 
+        # remove last process files
+        remove_files()
+
+        return JsonResponse({
+            "status": True,
+            "timestamp": timestamp
+        })
 
         """
         file_name = request.POST['file']
@@ -170,6 +173,9 @@ class DemoResultView(LoginRequiredMixin, View):
 class DemoCheckView(LoginRequiredMixin, View):
 
     def get(self, request):
+        cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
+        action = request.POST['action']
+
         iam = IAM.objects.filter(user=request.user).first()
         proc = Process.objects.get(name=request.GET['process'])
         link = check_process(process=proc, iam=iam)
