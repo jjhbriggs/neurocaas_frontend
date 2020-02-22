@@ -6,6 +6,9 @@ from base64 import b64encode
 from .models import *
 from account.models import *
 from .demo_utils import *
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+
 # Create your views here.
 
 
@@ -19,6 +22,10 @@ log_dir = "cunninghamlabEPI/results/jobepi_demo/logs"
 dataset_dir = "cunninghamlabEPI/inputs/epidata"
 bucket_name = "epi-ncap"
 upload_dir = "cunninghamlabEPI/inputs"
+
+
+def get_iam(request):
+    return IAM.objects.filter(user=request.user).first()
 
 
 class DemoView(LoginRequiredMixin, View):
@@ -41,10 +48,7 @@ class DemoView(LoginRequiredMixin, View):
         })
 
 
-def get_iam(request):
-    return IAM.objects.filter(user=request.user).first()
-
-
+@method_decorator(csrf_exempt, name='dispatch')
 class DemoResultView(LoginRequiredMixin, View):
     """
     Demo Result View
@@ -60,17 +64,27 @@ class DemoResultView(LoginRequiredMixin, View):
             "cert_file": cert_content
         })
 
+
     def post(self, request):
         iam = IAM.objects.filter(user=request.user).first()
+        from_timestamp = int(request.POST['timestamp'])
 
         timestamp = get_last_modified_timestamp(iam=iam, bucket=bucket_name, key=mp4_file)
 
-        # remove last process files
-        remove_files()
+        # video & dataset files logs
+        video_link = None
+        dtset_logs = []
+        if from_timestamp > timestamp:
+            # remove last process files
+            remove_files()
+        else:
+            video_link = get_download_file(iam, bucket_name, mp4_file)
+            dtset_logs = []
 
         return JsonResponse({
-            "status": True,
-            "timestamp": timestamp
+            "status": 200,
+            "video_link": video_link,
+            "dtset_logs": dtset_logs
         })
 
         """
@@ -84,7 +98,7 @@ class DemoResultView(LoginRequiredMixin, View):
         return redirect(url)
         """
 
-
+"""
 class DemoCheckView(LoginRequiredMixin, View):
 
     def get(self, request):
@@ -100,3 +114,4 @@ class DemoCheckView(LoginRequiredMixin, View):
             "status": True,
             "link": link
         })
+"""
