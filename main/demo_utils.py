@@ -1,6 +1,8 @@
 import boto3
 from .models import *
 import os
+import os, shutil
+
 
 search_outputdir = "hp_optimum"
 
@@ -173,6 +175,9 @@ def check_process(iam, process):
 
 
 def get_last_modified_timestamp(iam, bucket, key):
+    """
+        Return last process files' timestamp
+    """
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
@@ -191,3 +196,19 @@ def get_last_modified_timestamp(iam, bucket, key):
         print(e)
 
     return 0
+
+
+def remove_files():
+    """
+        Remove last process files
+    """
+    folder = 'static/downloads'
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
