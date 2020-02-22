@@ -107,7 +107,6 @@ FileUpload.prototype ={
                     updateProgress(_this);
                     _this.status = true;
                     $('#' + _this.form_id + ' p').html("Uploading was finished!");
-                    $("#upload").attr("disabled", false);
                     $('#' + _this.file_tag_id).val(_this.fileKey);
                 });
             }
