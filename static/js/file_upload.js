@@ -31,8 +31,10 @@ FileUpload.prototype ={
     s3: null,
     status: false,
     file_tag_id: null,
-
-    init: function(form_id, id1, id2, bucket, subfolder, file_tag_id){
+    file_count: 0,
+    uploaded_count: 0,
+    trigger: null,
+    init: function(form_id, id1, id2, bucket, subfolder, file_tag_id, trigger=null){
         this.form_id = form_id;
         this.id1 = id1;
         this.id2 = id2;
@@ -41,9 +43,9 @@ FileUpload.prototype ={
         this.file_tag_id = file_tag_id;
         this.dropArea = document.getElementById(this.form_id)
         var sender = this;  // this object
-
         this.uploadProgress = []
         this.progressBar = document.querySelector('#' + this.form_id + ' .progress-bar')
+        this.trigger = trigger;
 
         /* S3 bucket options */
             AWS.config.apiVersions = {
@@ -137,10 +139,11 @@ FileUpload.prototype ={
 
         // preview file after drop a file
         var previewFile = function(file) {
+            console.log(file.name)
             let reader = new FileReader()
             reader.readAsDataURL(file)
             reader.onloadend = function() {
-                let label = document.createElement('lable');
+                let label = document.createElement('label');
                 label.innerText = file.name;
                 console.log(document.querySelector('#' + sender.form_id + ' .gallery'));
                 document.querySelector('#' + sender.form_id + ' .gallery').appendChild(label)
@@ -171,6 +174,29 @@ FileUpload.prototype ={
             const reader = new FileReader();
             reader.readAsArrayBuffer(file)
 
+            var params = {
+                Bucket: sender.bucket,
+                Key: sender.subfolder + "/" + file.name,
+                Body: file
+            };
+
+            sender.s3.upload(params, function(err, data) {
+                if (err) {
+                    console.log(err, err.stack);
+                } else {
+                    console.log(data.key + ' successfully uploaded to' + data.Location);
+                    var percent = ++sender.uploaded_count/sender.file_count * 100;
+                    sender.progressBar.value = percent;
+                    if (percent >= 100) {
+                        sender.status = true;
+                        $('#' + sender.form_id + ' p').html("Uploading was finished!");
+                        if (sender.trigger) sender.trigger();
+                    }
+                }
+            });
+
+            /* Disabled the multipart upload for demo */
+            /*
             reader.onloadend = function onloadend(){
                 console.log('on_loaded');
                 sender.buffer = reader.result;
@@ -213,6 +239,7 @@ FileUpload.prototype ={
                     }
                 });
             }
+            */
         }
 
         // Handle files of file tag
@@ -223,6 +250,7 @@ FileUpload.prototype ={
             }
             files = [...files]
             initializeProgress(files.length)
+            sender.file_count = files.length
             files.forEach(uploadFile)
             files.forEach(previewFile)
         }

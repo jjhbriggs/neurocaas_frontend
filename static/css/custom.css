@@ -85,6 +85,10 @@ button{
     vertical-align: middle;
 }
 
+.gallery label{
+    padding: 5px;
+}
+
 .fileElem {
     display: none;
 }

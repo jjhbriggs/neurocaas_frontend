@@ -7,7 +7,7 @@ import os, shutil
 search_outputdir = "hp_optimum"
 
 
-def get_download_file(iam, bucket, key, proc_name):
+def get_download_file(iam, bucket, key):
     """
         Download file from s3 and return link of it
         """
@@ -18,11 +18,11 @@ def get_download_file(iam, bucket, key, proc_name):
             aws_secret_access_key=iam.aws_secret_access_key
         )
 
-        folder = "static/downloads/%s" % proc_name
+        folder = "static/downloads"
         if not os.path.exists(folder):
             os.mkdir(folder)
 
-        output = "%s/epi_opt.mp4" % folder
+        output = "%s/%s" % (folder, key.split("/")[-1])
         s3.Bucket(bucket).download_file(key, output)
 
         return output
@@ -86,7 +86,8 @@ def get_file_content(iam, bucket, key):
     obj = s3.Object(bucket, key)
 
     try:
-        body = obj.get()['Content']
+        body = obj.get()['Body'].read().decode('utf-8')
         return body
-    except:
+    except Exception as e:
+        print(e)
         return None
