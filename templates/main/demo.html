@@ -6,7 +6,9 @@
 {% block content %}
 
 <div class="row">
+
     <div class="col-md-4 mt-2">
+        <!--    DataSet Uploading Area    -->
         <h3>Upload Dataset Json files to S3</h3>
         <div class="upload-div" id="dataset-area">
             <form class="drop-area">
@@ -17,6 +19,8 @@
             <div class="gallery"></div>
         </div>
         <hr>
+
+        <!--    Jong file Uploading Area    -->
         <div class="mt-2">
             <h3>Upload Json file to S3 for Processing</h3>
             <div class="upload-div" id="submit-area">
@@ -29,17 +33,22 @@
             </div>
         </div>
     </div>
+    <!--# END Uploading Area    -->
 
-
+    <!--    Processing Status    -->
     <div class="col-md-4 status-div">
         <h3>Processing Status</h3>
         <div class="status mt-4">
-            <textarea class="form-control status-text" id="status" disabled>...</textarea>
+            <textarea class="form-control status-text" id="status-text" disabled>...</textarea>
         </div>
     </div>
+    <!--# END Processing Status  -->
 
+    <!--# Processing Result -->
     <div class="col-md-4 status-div">
         <h3>Processing Result</h3>
+
+        <!-- Spinner -->
         <div class="spinner mt-5" style="display:none;">
             <div class="text-center pt-5">
                 <h6 class="mb-lg"><sup><em class="fa fa-cog fa-2x text-muted fa-spin text-info"></em></sup>
@@ -48,36 +57,35 @@
                 </h6>
             </div>
         </div>
+        <!-- #END Spinner -->
+
+        <!-- Result View -->
         <div class="result mt-4" style="/*display: none;*/">
+
+            <!-- Result per Dataset -->
             <h6 class="border-bottom pb-2 mb-0 text-white">Per DataSet</h6>
-            <div class="p-3 bg-transparent rounded box-shadow">
+            <div class="p-3 bg-transparent rounded box-shadow" id="dtset-result-view">
                 <div class="media">
                     <p class="media-body mb-0 small lh-125 border-bottom border-gray">
                         <a href="#" class="text-warning">DATASET_NAME:dataset1.json_STATUS.txt</a>
                     </p>
                 </div>
-                <div class="media">
-                    <p class="media-body mb-0 small lh-125 border-bottom border-gray">
-                        <a href="#" class="text-warning">DATASET_NAME:dataset2.json_STATUS.txt</a>
-                    </p>
-                </div>
-                <div class="media">
-                    <p class="media-body mb-0 small lh-125 border-bottom border-gray">
-                        <a href="#" class="text-warning">DATASET_NAME:dataset3.json_STATUS.txt</a>
-                    </p>
-                </div>
             </div>
+            <!-- #END Result per Dataset -->
 
+            <!-- Result Video -->
             <h6 class="border-bottom pb-2 mb-0 text-white mt-4">Result Video</h6>
             <div class="p-3 bg-transparent rounded box-shadow">
                 <div class="media">
                     <p class="media-body mb-0 small lh-125">
-                        <a href="#" class="text-warning">epi_opt.mp4</a>
+                        <a href="#" class="text-warning" id="result-video">epi_opt.mp4</a>
                     </p>
                 </div>
             </div>
+            <!-- # END Result video -->
         </div>
     </div>
+    <!--# END Processing Result  -->
 </div>
 
 {% endblock %}
@@ -94,14 +102,9 @@
         id2 = "{{id2}}";
         bucket = "{{bucket}}";
 
-        video_area = new FileUpload();
-        video_area.init("submit-area", id1, id2, bucket, upload_dir, file_tag_id);
+        dataset_area = new FileUpload();
+        dataset_area.init("submit-area", id1, id2, bucket, upload_dir, file_tag_id);
 
-        /*8
-        $('#process').click(function(e){
-            if ($('#' + file_tag_id).val()) $('#submit_form').submit();
-            else alert("Upload file first plase!");
-        })*/
 
     </script>
 {% endblock %}
