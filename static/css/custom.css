@@ -49,7 +49,7 @@ button{
 
 /* Custom css for file uploading form */
 
-#video-area, #param-area, #config-area{
+.upload-div{
     border: 2px dashed #ccc;
     border-radius: 20px;
     width: 480px;
