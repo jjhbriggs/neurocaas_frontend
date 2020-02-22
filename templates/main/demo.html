@@ -31,26 +31,25 @@
     </div>
 
 
-    <div class="col-md-4 result">
-        <h3>Processing results</h3>
-        <div class="waiting text-center" style="display:none;">
-            <h1 class="mb-lg"><sup><em class="fa fa-cog fa-2x text-muted fa-spin text-info"></em></sup>
-               <em class="fa fa-cog fa-5x text-muted fa-spin text-purple"></em>
-               <em class="fa fa-cog fa-lg text-muted fa-spin text-success"></em>
-            </h1>
-            <div class="text-bold text-lg mb-lg mt-3">Process is running now ...</div>
-        </div>
-
-        <div class="result" style="display:block;">
+    <div class="col-md-4 status-div">
+        <h3>Processing Status</h3>
+        <div class="status mt-4">
+            <textarea class="form-control status-text" id="status" disabled>...</textarea>
         </div>
     </div>
-    <div class="col-md-12">
-        <form method="post" action="{% url 'demo_result' %}" id="submit_form">
-            {% csrf_token %}
-            <input type="hidden" name="bucket" value="{{bucket}}">
-            <input type="hidden" name="file" id="uploaded_file" value="">
-            <input id="process" type="button" class="btn btn-primary" value="Check Process" />
-        </form>
+
+    <div class="col-md-4 status-div">
+        <h3>Processing Result</h3>
+        <div class="spinner-div mt-5">
+            <div class="text-center pt-5" style="display:block;">
+                <h6 class="mb-lg"><sup><em class="fa fa-cog fa-2x text-muted fa-spin text-info"></em></sup>
+                   <em class="fa fa-cog fa-5x text-muted fa-spin text-purple"></em>
+                   <em class="fa fa-cog fa-lg text-muted fa-spin text-success"></em>
+                </h6>
+            </div>
+        </div>
+        <div class="status mt-4">
+        </div>
     </div>
 </div>
 
