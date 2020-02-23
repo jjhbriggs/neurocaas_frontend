@@ -1,0 +1,39 @@
+{
+  "status": "SUCCESS",
+  "cpu_usage": [
+    "25"
+  ],
+  "stdout": [
+    "execpath\n",
+    "ncap_remote/ncap_utils SCRIPTPATH\n",
+    "ncap_remote/run_epi.sh\n",
+    "epi-ncap/cunninghamlabEPI/results/jobepi_demo/logs/DATASET_NAME:dataset1.json_STATUS.txt\n",
+    "Completed 242 Bytes/242 Bytes (5.9 KiB/s) with 1 file(s) remaining\rdownload: s3://epi-ncap/cunninghamlabEPI/results/jobepi_demo/logs/DATASET_NAME:dataset1.json_STATUS.txt to ncap_remote/ncap_utils/statusdict.json\n",
+    "Completed 258 Bytes/258 Bytes (2.1 KiB/s) with 1 file(s) remaining\rupload: ncap_remote/ncap_utils/statusdict.json to s3://epi-ncap/cunninghamlabEPI/results/jobepi_demo/logs/DATASET_NAME:dataset1.json_STATUS.txt\n",
+    "2750, is the pid of the background process\n",
+    "execpath\n",
+    "/home/ubuntu/ncap_remote/run_epi_internal.sh\n",
+    "1\n"
+  ],
+  "instance": "i-0e45cf04feadbc053",
+  "reason": [
+    "aws s3 sync ./ \"s3://$bucketname/$groupdir/$resultdir/per_hp\""
+  ],
+  "command": "3c971542-6524-46c5-91d1-4e3936e8892f",
+  "stderr": [
+    "2020-02-22 14:42:03.450452: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer.so.6'; dlerror: libnvinfer.so.6: cannot open shared object file: No such file or directory\n",
+    "2020-02-22 14:42:03.450582: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer_plugin.so.6'; dlerror: libnvinfer_plugin.so.6: cannot open shared object file: No such file or directory\n",
+    "2020-02-22 14:42:03.450598: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:30] Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.\n",
+    "2020-02-22 14:42:33.102453: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1\n",
+    "2020-02-22 14:42:33.505287: E tensorflow/stream_executor/cuda/cuda_driver.cc:351] failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected\n",
+    "2020-02-22 14:42:33.505324: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (ip-172-31-6-222): /proc/driver/nvidia/version does not exist\n",
+    "2020-02-22 14:42:33.505684: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 AVX512F FMA\n",
+    "2020-02-22 14:42:33.590493: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2499995000 Hz\n",
+    "2020-02-22 14:42:33.591009: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x55bda4296590 initialized for platform Host (this does not guarantee that XLA will be used). Devices:\n",
+    "2020-02-22 14:42:33.591032: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version\n",
+    "WARNING:tensorflow:From /home/ubuntu/anaconda3/envs/epi/lib/python3.6/site-packages/tensorflow_probability/python/bijectors/masked_autoregressive.py:310: AffineScalar.__init__ (from tensorflow_probability.python.bijectors.affine_scalar) is deprecated and will be removed after 2020-01-01.\n",
+    "Instructions for updating:\n",
+    "`AffineScalar` bijector is deprecated; please use `tfb.Shift(loc)(tfb.Scale(...))` instead.\n"
+  ],
+  "input": "cunninghamlabEPI/inputs/epidata/dataset1.json"
+}

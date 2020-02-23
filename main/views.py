@@ -79,7 +79,10 @@ class DemoResultView(LoginRequiredMixin, View):
             remove_files()
         else:
             video_link = get_download_file(iam, bucket_name, mp4_file)
+            dtset_logs_keys = get_dataset_logs(iam=iam, bucket=bucket_name)
             dtset_logs = []
+            for key in dtset_logs_keys:
+                dtset_logs.append(get_download_file(iam, bucket_name, key))
 
         return JsonResponse({
             "status": 200,
