@@ -3,7 +3,6 @@ from .models import *
 import os
 import os, shutil
 
-
 search_outputdir = "hp_optimum"
 
 
@@ -11,25 +10,26 @@ def get_download_file(iam, bucket, key):
     """
         Download file from s3 and return link of it
         """
-    try:
-        s3 = boto3.resource(
-            's3',
-            aws_access_key_id=iam.aws_access_key,
-            aws_secret_access_key=iam.aws_secret_access_key
-        )
+    # try:
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=iam.aws_access_key,
+        aws_secret_access_key=iam.aws_secret_access_key
+    )
 
-        folder = "static/downloads"
-        if not os.path.exists(folder):
-            os.mkdir(folder)
+    folder = "static/downloads"
+    if not os.path.exists(folder):
+        os.mkdir(folder)
 
-        output = "%s/%s" % (folder, key.split("/")[-1])
-        s3.Bucket(bucket).download_file(key, output)
+    output = "%s/%s" % (folder, key.split("/")[-1])
+    print(key)
+    s3.Bucket(bucket).download_file(key, output)
 
-        return output
-    except Exception as e:
-        print(key)
-        print(e)
-        return None
+    return output
+    # except Exception as e:
+    #     print(key)
+    #     print(e)
+    #     return None
 
 
 def get_last_modified_timestamp(iam, bucket, key):
@@ -91,3 +91,24 @@ def get_file_content(iam, bucket, key):
     except Exception as e:
         print(e)
         return None
+
+
+def get_dataset_logs(iam, bucket):
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=iam.aws_access_key,
+        aws_secret_access_key=iam.aws_secret_access_key
+    )
+
+    ## Bucket to use
+    bucket = s3.Bucket(bucket)
+
+    ## log files
+    file_keys = []
+    ## List objects within a given prefix
+    for obj in bucket.objects.filter(Delimiter='/', Prefix='cunninghamlabEPI/results/jobepi_demo/logs/'):
+        if obj.key.endswith('certificate.txt'):
+            continue
+        file_keys.append(obj.key)
+
+    return file_keys
