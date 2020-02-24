@@ -1,0 +1,49 @@
+{
+  "status": "SUCCESS",
+  "cpu_usage": [
+    "24"
+  ],
+  "stdout": [
+    "EPI(k= 2,i= 300): cost -2.10E+00, H  3.40E+00, |R|^2 1.04E+01\n",
+    "EPI(k= 2,i= 350): cost -2.28E+00, H  3.51E+00, |R|^2 9.66E+00\n",
+    "EPI(k= 2,i= 400): cost -2.17E+00, H  3.48E+00, |R|^2 1.07E+01\n",
+    "EPI(k= 2,i= 450): cost -2.30E+00, H  3.41E+00, |R|^2 8.18E+00\n",
+    "EPI(k= 2,i= 500): cost -2.19E+00, H  3.52E+00, |R|^2 1.07E+01\n",
+    "EPI(k= 2,i= 550): cost -2.13E+00, H  3.42E+00, |R|^2 1.02E+01\n",
+    "EPI(k= 2,i= 600): cost -2.08E+00, H  3.39E+00, |R|^2 1.06E+01\n",
+    "EPI(k= 2,i= 650): cost -2.14E+00, H  3.23E+00, |R|^2 7.97E+00\n",
+    "EPI(k= 2,i= 700): cost -2.12E+00, H  3.31E+00, |R|^2 9.02E+00\n",
+    "EPI(k= 2,i= 750): cost -2.13E+00, H  3.27E+00, |R|^2 8.43E+00\n",
+    "EPI(k= 2,i= 800): cost -2.26E+00, H  3.39E+00, |R|^2 8.49E+00\n",
+    "EPI(k= 2,i= 850): cost -2.28E+00, H  3.44E+00, |R|^2 8.73E+00\n",
+    "EPI(k= 2,i= 900): cost -2.24E+00, H  3.44E+00, |R|^2 9.21E+00\n",
+    "EPI(k= 2,i= 950): cost -2.23E+00, H  3.19E+00, |R|^2 6.56E+00\n",
+    "EPI(k= 2,i=1000): cost -2.24E+00, H  3.21E+00, |R|^2 6.76E+00\n",
+    "EPI done.\n",
+    "Saved to data/lds_linear2D_freq_mu=0.00E+00_6.25E-02_6.28E+00_3.95E-01/D4_AR1_L2_U15_bnmom=9.90E-01_PA_lb=4x-1.00E+01_ub=4x1.00E+01_rs1_N368_lr2.35E-04_c0=6.23E-02_gamma4.79E-01_beta2.09E+00/.\n",
+    "Writing movie...\n",
+    "done.\n",
+    "results aimed at s3://epi-ncap/cunninghamlabEPI/results/jobepi_demo/\n"
+  ],
+  "instance": "i-047666af7e0edc6bf",
+  "reason": [
+    "aws s3 sync ./ \"s3://$bucketname/$groupdir/$resultdir/per_hp\""
+  ],
+  "command": "2f898b71-42bd-4c05-8fd2-ce2dc808a66a",
+  "stderr": [
+    "2020-02-23 05:32:51.821966: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer.so.6'; dlerror: libnvinfer.so.6: cannot open shared object file: No such file or directory\n",
+    "2020-02-23 05:32:51.822089: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer_plugin.so.6'; dlerror: libnvinfer_plugin.so.6: cannot open shared object file: No such file or directory\n",
+    "2020-02-23 05:32:51.822103: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:30] Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.\n",
+    "2020-02-23 05:33:34.790688: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1\n",
+    "2020-02-23 05:33:35.267455: E tensorflow/stream_executor/cuda/cuda_driver.cc:351] failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected\n",
+    "2020-02-23 05:33:35.267491: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (ip-172-31-70-179): /proc/driver/nvidia/version does not exist\n",
+    "2020-02-23 05:33:35.267891: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 AVX512F FMA\n",
+    "2020-02-23 05:33:35.362342: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2499995000 Hz\n",
+    "2020-02-23 05:33:35.362906: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x563c15f80590 initialized for platform Host (this does not guarantee that XLA will be used). Devices:\n",
+    "2020-02-23 05:33:35.362936: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version\n",
+    "WARNING:tensorflow:From /home/ubuntu/anaconda3/envs/epi/lib/python3.6/site-packages/tensorflow_probability/python/bijectors/masked_autoregressive.py:310: AffineScalar.__init__ (from tensorflow_probability.python.bijectors.affine_scalar) is deprecated and will be removed after 2020-01-01.\n",
+    "Instructions for updating:\n",
+    "`AffineScalar` bijector is deprecated; please use `tfb.Shift(loc)(tfb.Scale(...))` instead.\n"
+  ],
+  "input": "cunninghamlabEPI/inputs/epidata/dataset2.json"
+}
