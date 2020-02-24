@@ -101,8 +101,8 @@
         }
 
         /* function to show processing status from certificate.txt */
-        function get_status(){
-            url = "/demo_result/";
+        function get_status(timestamp){
+            url = "/demo_result/?timestamp=" + timestamp;
             $.ajax({
                 url: url,
                 success: function(res){
@@ -110,8 +110,8 @@
                     $('#status-text').html(res.cert_file);
                     if (processing_status)
                         setTimeout(function(){
-                            get_status()
-                        }, 20000);
+                            get_status(timestamp)
+                        }, 12000);
                 }
             })
         }
@@ -158,9 +158,10 @@
         }
 
         var trigger_function = function(){
+            $('.spinner').css('display', 'block');
             setTimeout(function(){
-                get_status();
                 timestamp = Math.floor(Date.now()/1000);
+                get_status(timestamp);
                 get_results(timestamp);
             }, 1000);
         }
@@ -171,6 +172,9 @@
         var josn_area = new FileUpload();
         josn_area.init("submit-area", id1, id2, bucket, upload_dir, "", trigger_function)
 
+        $(document).ready(function(){
+            $('.spinner').css('display', 'none');
+        })
 
     </script>
 {% endblock %}

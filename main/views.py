@@ -57,8 +57,12 @@ class DemoResultView(LoginRequiredMixin, View):
 
     def get(self, request):
         iam = get_iam(request)
-
-        cert_content = get_file_content(iam=iam, bucket=bucket_name, key=cert_file)
+        from_timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
+        timestamp = get_last_modified_timestamp(iam=iam, bucket=bucket_name, key=cert_file)
+        if from_timestamp > timestamp:
+            cert_content = ""
+        else:
+            cert_content = get_file_content(iam=iam, bucket=bucket_name, key=cert_file)
         return JsonResponse({
             "status": True,
             "cert_file": cert_content
