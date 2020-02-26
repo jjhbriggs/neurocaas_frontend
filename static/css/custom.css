@@ -148,3 +148,7 @@ button{
         border-right: none;
     }
 }
+
+#navButton{
+    display:none;
+}
