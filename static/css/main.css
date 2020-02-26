@@ -3068,8 +3068,9 @@ input, select, textarea {
 
 				#header .inner {
 					padding-top: 1.5em;
-					padding-left: 1em;
-					padding-right: 1em;
+					padding-left: 1.5em;
+					padding-right: 1.5em;
+					width:100%!important;
 				}
 
 				#header header > p {
