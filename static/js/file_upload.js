@@ -34,7 +34,8 @@ FileUpload.prototype ={
     file_count: 0,
     uploaded_count: 0,
     trigger: null,
-    init: function(form_id, id1, id2, bucket, subfolder, file_tag_id, trigger=null){
+    contentious: false,
+    init: function(form_id, id1, id2, bucket, subfolder, file_tag_id, trigger=null, contentious=false){
         this.form_id = form_id;
         this.id1 = id1;
         this.id2 = id2;
@@ -46,6 +47,7 @@ FileUpload.prototype ={
         this.uploadProgress = []
         this.progressBar = document.querySelector('#' + this.form_id + ' .progress-bar')
         this.trigger = trigger;
+        this.contentious = contentious;
 
         /* S3 bucket options */
             AWS.config.apiVersions = {
@@ -133,8 +135,8 @@ FileUpload.prototype ={
 
         // On Click event when user click drop area
         this.dropArea.addEventListener('click', function(e){
-            if (sender.status) return;
-            $('#' + sender.form_id + ' .fileElem').trigger('click');
+            if ( !sender.contentious && sender.status ) return;
+            $( '#' + sender.form_id + ' .fileElem' ).trigger('click');
         }, false);
 
         // preview file after drop a file
@@ -257,7 +259,7 @@ FileUpload.prototype ={
 
         // Handle dropped files
         this.dropArea.addEventListener('drop', function(e){
-            if (sender.status) return;
+            if (!sender.contentious && sender.status) return;
             var dt = e.dataTransfer
             var files = dt.files
             handleFiles(files)
