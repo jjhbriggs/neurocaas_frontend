@@ -34,7 +34,7 @@ class LoginView(View):
             return redirect(next_url)
 
         messages.error(request=request, message="Invalid Credentials, Try again!")
-        return redirect('login')
+        return redirect('/')
 
 
 class SignUpView(View):
