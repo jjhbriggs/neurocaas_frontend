@@ -127,3 +127,9 @@ button{
     height: 450px!important;
     resize: none;
 }
+
+
+/* Home Page */
+.gap{
+    border-right: 1px solid rgba(192, 192, 192, 0.35);
+}
