@@ -46,7 +46,6 @@ class HomeView(View):
         return render(request=request, template_name=self.template_name, context=context)
 
 
-
 def get_iam(request):
     return IAM.objects.filter(user=request.user).first()
 
@@ -91,7 +90,6 @@ class DemoResultView(LoginRequiredMixin, View):
             "cert_file": cert_content
         })
 
-
     def post(self, request):
         iam = IAM.objects.filter(user=request.user).first()
         from_timestamp = int(request.POST['timestamp'])
@@ -127,6 +125,7 @@ class DemoResultView(LoginRequiredMixin, View):
         url = '/demo_result?process=%s' % proc.name
         return redirect(url)
         """
+
 
 """
 class DemoCheckView(LoginRequiredMixin, View):
