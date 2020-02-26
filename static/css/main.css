@@ -2196,7 +2196,7 @@ input, select, textarea {
 		background-attachment: fixed;
 		color: #fff;
 		text-align: center;
-		padding: 7.5em 0 2em 0;
+		padding: 3.5em 0 2em 0;
 		cursor: default;
 	}
 
@@ -3087,7 +3087,7 @@ input, select, textarea {
 
 			body.homepage #header {
 				min-height: 0;
-				padding: 5.5em 0 5em 0;
+				padding: 3.5em 0 5em 0;
 				height: auto;
 			}
 
