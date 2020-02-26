@@ -8,6 +8,7 @@ from account.models import *
 from .demo_utils import *
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
+from account.forms import UserLoginForm, UserCreationForm
 
 # Create your views here.
 
@@ -22,6 +23,28 @@ log_dir = "cunninghamlabEPI/results/jobepi_demo/logs"
 dataset_dir = "cunninghamlabEPI/inputs/epidata"
 bucket_name = "epi-ncap"
 upload_dir = "cunninghamlabEPI/inputs"
+
+
+class HomeView(View):
+    """
+        Home Page View
+        """
+    template_name = "main/home.html"
+
+    def get(self, request):
+
+        if request.user.is_anonymous:
+            context = {
+                "logged_in": False,
+                "login_form": UserLoginForm(),
+                "reg_form": UserCreationForm()
+            }
+        else:
+            context = {
+                "logged_in": True
+            }
+        return render(request=request, template_name=self.template_name, context=context)
+
 
 
 def get_iam(request):
