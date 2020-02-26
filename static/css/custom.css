@@ -52,7 +52,7 @@ button{
 .upload-div{
     border: 2px dashed #ccc;
     border-radius: 20px;
-    width: 480px;
+    max-width: 480px;
     font-family: sans-serif;
     margin: 30px auto;
     padding: 20px;
@@ -137,4 +137,14 @@ button{
 .subtitle{
     font-size: 1.3rem;
     font-weight:lighter;
+}
+
+@media screen and (max-width: 1024px) {
+    em.fa.fa-cog.fa-5x.text-muted.fa-spin.text-purple{
+        font-size: 130px;
+    }
+
+    .gap{
+        border-right: none;
+    }
 }
