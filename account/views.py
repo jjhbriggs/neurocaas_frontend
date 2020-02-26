@@ -55,7 +55,10 @@ class SignUpView(View):
             aws_req.save()
 
             messages.success(request, 'Successfully Registered, Please wait for email from us!')
-            return redirect('profile')
+            next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
+            return redirect(next_url)
+            # return redirect('profile')
+
         return render(request, template_name=self.template_name, context={"form": form})
 
 
