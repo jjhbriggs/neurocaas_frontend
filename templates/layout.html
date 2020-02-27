@@ -19,28 +19,10 @@
         <div id="page-wrapper">
             <!-- Header -->
 				<div id="header">
-
-					<!-- Nav -->
-						<nav id="nav">
-							<!--
-							<ul>
-								<li><a href="/">Home</a></li>
-								<li><a href="{% url 'instruction' %}">Usage Instructions</a></li>
-								{% if user.is_authenticated %}
-									<li>
-										<a href="#">{{user.first_name}} {{user.last_name}}</a>
-										<ul>
-											<li><a href="{% url 'profile' %}">Account Detail</a></li>
-											<li><a href="{% url 'logout' %}?next={% url 'home' %}">Logout</a></li>
-										</ul>
-									</li>
-								{% else %}
-									<li><a href="/login">Login</a></li>
-									<li><a href="/signup">Sign Up</a></li>
-								{% endif %}
-							</ul>-->
-						</nav>
-						<div class="inner" style="width: 98%;">
+						<div class="container">
+							{% block title_content %}{% endblock %}
+						</div>
+						<div class="inner mt-4" style="width: 98%;">
 							{% block content %}{% endblock %}
 						</div>
 				</div>
