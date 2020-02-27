@@ -160,7 +160,8 @@ button{
 
 .clickable {
     font-size: 20px;
-    font-weight: 900;
+    font-weight: 300;
+    word-spacing: 2px;
 }
 
 .text-white{
