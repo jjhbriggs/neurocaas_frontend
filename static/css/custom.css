@@ -156,3 +156,7 @@ button{
 .text-large{
     font-size: 3.5rem!important;
 }
+
+.clickable h2:hover{
+    color: #ef8376;
+}
