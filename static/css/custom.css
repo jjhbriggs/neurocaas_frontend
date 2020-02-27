@@ -153,10 +153,16 @@ button{
     display:none;
 }
 
-.text-large{
-    font-size: 3.5rem!important;
+.clickable:hover, .clickable:active{
+    color: #ef8376!important;
+    cursor: pointer;
 }
 
-.clickable h2:hover{
-    color: #ef8376;
+.clickable {
+    font-size: 2.5rem;
+    font-weight: 900;
+}
+
+.text-white{
+    color: white;
 }
