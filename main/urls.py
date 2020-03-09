@@ -8,4 +8,5 @@ urlpatterns = [
     #""" demo """
     path('demo/', DemoView.as_view(), name='demo'),
     path('demo_result/', DemoResultView.as_view(), name='demo_result'),
+    path('demo_bucket/', DemoDataBucketView.as_view(), name='data_bucket')
 ]
