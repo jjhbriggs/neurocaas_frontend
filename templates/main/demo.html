@@ -17,24 +17,9 @@
         </div>
     </div>
 
-    <div class="col-md-4 mt-4">
+    <div class="col-md-4">
         <!--    DataSet Uploading Area    -->
-        <h3>Select or Upload Dataset(s)</h3>
-        <div class="form-group">
-            <table id="example" class="display" cellspacing="0" width="100%">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                        <th>Extn.</th>
-                        <th>Start date</th>
-                        <th>Salary</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
+        <h3>Upload Dataset(s)</h3>
         <div class="upload-div" id="dataset-area">
             <form class="drop-area">
                 <p>Drag & Drop or Click!</p>
@@ -61,7 +46,7 @@
     <!--# END Uploading Area    -->
 
     <!--  Processing Status    -->
-    <div class="col-md-4 status-div mt-4">
+    <div class="col-md-4 status-div">
         <h3>Status</h3>
         <div class="status mt-4">
             <textarea class="form-control status-text" id="status-text" disabled>...</textarea>
@@ -70,7 +55,7 @@
     <!--# END Processing Status  -->
 
     <!--# Processing Result -->
-    <div class="col-md-4 status-div mt-4">
+    <div class="col-md-4 result-div">
         <h3>Results</h3>
 
         <!-- Spinner -->
@@ -86,16 +71,16 @@
         <!-- #END Spinner -->
 
         <!-- Result View -->
-        <div class="result mt-4" style="display: none;">
+        <div class="result" style="display: none;">
 
             <!-- Result per Dataset -->
-            <h6 class="border-bottom pb-2 mb-0 text-white">Results Per DataSet</h6>
+            <h6 class="border-bottom pb-2 mb-0 text-white">Per DataSet</h6>
             <div class="p-3 bg-transparent rounded box-shadow" id="dtset-result-view">
             </div>
             <!-- #END Result per Dataset -->
 
             <!-- Result Video -->
-            <h6 class="border-bottom pb-2 mb-0 text-white mt-4">Output Video</h6>
+            <h6 class="border-bottom pb-2 mb-0 text-white mt-4">Result Video</h6>
             <div class="p-3 bg-transparent rounded box-shadow" id="video-result-view">
             </div>
             <!-- # END Result video -->
