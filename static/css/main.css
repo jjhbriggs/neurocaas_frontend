@@ -722,7 +722,8 @@ input, select, textarea {
 				}
 
 					.row > * {
-						padding: 40px 0 0 40px;
+						/*padding: 40px 0 0 40px;*/
+						padding: 0px 15px 0 15px;
 					}
 
 					.row.gtr-uniform {
@@ -969,7 +970,7 @@ input, select, textarea {
 				}
 
 					.row > * {
-						/*padding: 0px 0 0 0px;*/
+						padding: 0px 15px 0 15px;
 					}
 
 					.row.gtr-uniform {
@@ -1209,12 +1210,15 @@ input, select, textarea {
 						}
 
 				.row {
-					margin-top: -32px;
-					margin-left: -32px;
+					/*margin-top: -32px;
+					margin-left: -32px;*/
+				    margin-right: -15px;
+    				margin-left: -15px;
 				}
 
 					.row > * {
-						padding: 32px 0 0 32px;
+						/*padding: 32px 0 0 32px;*/
+						padding:0px 15px 0 15px
 					}
 
 					.row.gtr-uniform {
@@ -1454,12 +1458,15 @@ input, select, textarea {
 						}
 
 				.row {
-					margin-top: -32px;
-					margin-left: -32px;
+					/*margin-top: -32px;
+					margin-left: -32px;*/
+				    margin-right: -15px;
+    				margin-left: -15px;
 				}
 
 					.row > * {
-						padding: 32px 0 0 32px;
+						/*padding: 32px 0 0 32px;*/
+						padding: 0px 15px 0 15px
 					}
 
 					.row.gtr-uniform {
@@ -1706,7 +1713,7 @@ input, select, textarea {
 				}
 
 					.row > * {
-						padding: 0px 0 0 0px;
+						padding: 0px 15px 0 15px;
 					}
 
 					.row.gtr-uniform {
