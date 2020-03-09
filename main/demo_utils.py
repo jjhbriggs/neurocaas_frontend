@@ -112,3 +112,33 @@ def get_dataset_logs(iam, bucket):
         file_keys.append(obj.key)
 
     return file_keys
+
+
+# function to get all files of folder in bucket
+def get_file_list(iam, folder):
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=iam.aws_access_key,
+        aws_secret_access_key=iam.aws_secret_access_key)
+
+    bucket = s3.Bucket(iam.data_bucket.name)
+
+    file_keys = []
+
+    prefix = "%s/" % folder
+
+    # reterive keys from s3 bucket
+    # try:
+    for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
+        if obj.key.endswith('.json'):
+            file_keys.append(obj.key)
+    # except Exception as e:
+    #     print(e)
+    return file_keys
+
+
+def get_name_only(key):
+    """
+        Function to get only file name from link or full path
+    """
+    return key.split('/')[-1]

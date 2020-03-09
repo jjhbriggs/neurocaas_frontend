@@ -66,7 +66,8 @@ class DemoView(LoginRequiredMixin, View):
             "id2": secret_key,
             "bucket": bucket_name,
             "upload_dir": upload_dir,
-            'dataset_dir': dataset_dir
+            'dataset_dir': dataset_dir,
+            'data_bucket': iam.data_bucket
         })
 
 
@@ -125,6 +126,33 @@ class DemoResultView(LoginRequiredMixin, View):
         url = '/demo_result?process=%s' % proc.name
         return redirect(url)
         """
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class DemoDataBucketView(LoginRequiredMixin, View):
+    """
+        Demo DataBucket View
+        """
+    def get(self, request):
+        iam = IAM.objects.filter(user=request.user).first()
+
+        # dataset files list
+        folder = 'dataset'
+        dataset_keys = get_file_list(iam=iam, folder=folder)
+        dataset_names = []
+        [dataset_names.append(get_name_only(key=key)) for key in dataset_keys]
+
+        # config files list
+        folder = 'config'
+        config_keys = get_file_list(iam=iam, folder=folder)
+        config_names = []
+        [config_names.append(get_name_only(key=key)) for key in config_keys]
+
+        return JsonResponse({
+            "status": 200,
+            "datasets": dataset_names,
+            "configs": config_names
+        })
 
 
 """
