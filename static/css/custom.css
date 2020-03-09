@@ -159,11 +159,22 @@ button{
 }
 
 .clickable {
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 300;
     word-spacing: 2px;
 }
 
 .text-white{
     color: white;
+}
+
+@media screen and (max-width: 767px){
+    .result-div{
+        margin-top: 20px;
+    }
+}
+
+#header .inner{
+    padding-left: 2em;
+    padding-right: 2em;
 }
