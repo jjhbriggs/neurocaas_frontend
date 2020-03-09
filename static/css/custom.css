@@ -178,3 +178,24 @@ button{
     padding-left: 2em;
     padding-right: 2em;
 }
+
+
+table {
+    border: 1px solid rgba(192, 192, 192, 0.35);
+}
+
+table tr {
+    border-bottom: 1px solid rgba(192, 192, 192, 0.25);
+}
+
+input[type="checkbox" i] {
+    background-color: initial;
+    cursor: default;
+    -webkit-appearance: checkbox;
+    box-sizing: border-box;
+    margin: 3px 3px 3px 4px;
+    padding: initial;
+    border: initial;
+}
+
+
