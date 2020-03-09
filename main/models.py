@@ -8,7 +8,7 @@ import uuid
 class Bucket(Base):
     name = models.CharField(max_length=100, null=False, blank=False, help_text='Bucket name')
     description = models.TextField(blank=True, null=True, help_text="Description of bucket")
-    algorithrm = models.CharField(max_length=100, null=False, blank=False, help_text='Algorithm name')
+    algorithrm = models.CharField(max_length=100, null=True, blank=True, help_text='Algorithm name')
 
     def __str__(self):
         return self.name
