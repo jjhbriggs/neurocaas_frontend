@@ -1,7 +1,7 @@
 // show dataset and config file list
 
 function get_tr_template(file, type, name){
-	return '<tr><td>' + file + '</td><td><input type="' + type + '" name="' + name + '"></td>';
+	return '<tr><td class="value">' + file + '</td><td><input type="' + type + '" name="' + name + '"></td>';
 }
 
 function refresh_databucket_list(){
@@ -30,12 +30,16 @@ function refresh_databucket_list(){
 				// add eventlistener for each tr
 				$('tr').click(function(event){
 					if (event.target.type !== 'checkbox') {
-                        $(':checkbox', this).trigger('click');
+                        $(':checkbox', this).trigger('click');                        
                     }
 
                     if (event.target.type !== 'radio') {
-                        $(':radio', this).trigger('click');
+                        $(':radio', this).trigger('click');                        
                     }
+                    if ($(this).find('input').is(":checked") === true)
+                    	$(this).find('td').addClass('active');
+                    else
+                    	$(this).find('td').removeClass('active');  
 				})
 			}
 		}
@@ -46,4 +50,44 @@ function submit(){
     var dataset_files = [];
     var config_file = null;
 
+    // get list of dataset files' names
+    var checkboxes = $('input[name="dataset_file"]:checked').parent().parent().find('td:first');
+
+    for ( var i = 0 ; i < checkboxes.length; i++ ){
+    	console.log(checkboxes[i].textContent)
+    	dataset_files.push(checkboxes[i].textContent);
+    }
+
+    if (dataset_files.length === 0) {
+    	alert('Select dataset files');
+    	return;
+    }
+
+    // get config file name
+
+    var radiobox = $('input[name="config_file"]:checked').parent().parent().find('td:first');
+    
+    if (radiobox.length === 0) {
+    	alert('Select config file');
+    	return;
+    }
+    config_file = radiobox[0].textContent;
+
+    $.ajax({
+    	url: '/demo/',
+    	method: 'POST',
+    	data: {
+    		dataset_files: dataset_files,
+    		config_file: config_file
+    	},
+    	success: function(res){
+    		console.log(res)
+    		trigger_function();
+    	},
+    	error: function(err){
+    		console.log(err);
+    		$('#submit_button').attr('disabled', false);		
+    	}
+    })
+    $('#submit_button').attr('disabled', true);
 }
