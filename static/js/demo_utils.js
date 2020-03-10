@@ -78,6 +78,12 @@ function submit(){
     	},
     	success: function(res){
     		console.log(res)
+    		trigger_function();
+    	},
+    	error: function(err){
+    		console.log(err);
+    		$('#submit_button').attr('disabled', false);		
     	}
-    })    
+    })
+    $('#submit_button').attr('disabled', true);
 }
