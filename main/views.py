@@ -21,7 +21,7 @@ mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
 cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
 log_dir = "cunninghamlabEPI/results/jobepi_demo/logs"
 dataset_dir = "cunninghamlabEPI/inputs/epidata"
-bucket_name = "epi-ncap"
+work_bucket = "epi-ncap"
 upload_dir = "cunninghamlabEPI/inputs"
 
 
@@ -65,7 +65,7 @@ class DemoView(LoginRequiredMixin, View):
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
-            "bucket": bucket_name,
+            "bucket": work_bucket,
             "upload_dir": upload_dir,
             'dataset_dir': dataset_dir,
             'data_bucket': iam.data_bucket,
@@ -77,7 +77,32 @@ class DemoView(LoginRequiredMixin, View):
         iam = IAM.objects.filter(user=request.user).first()
         dataset_files = request.POST.getlist('dataset_files[]')
         config_file = request.POST['config_file']
-        print(dataset_files, config_file)
+
+        # remove existing dataset files from epi bucket
+        delete_jsons_from_bucket(iam=iam, bucket_name=work_bucket, prefix="%s/" % dataset_dir)
+
+        # remove config file from epi bucket
+        delete_file_from_bucket(iam=iam, bucket_name=work_bucket, key="%s/config.json" % upload_dir)
+
+        # copy dataset files to work_bucket
+        for file in dataset_files:
+            from_key = "dataset/%s" % file
+            to_key = "%s/%s" % (dataset_dir, file)
+            copy_file_to_bucket(iam=iam, from_bucket=iam.data_bucket.name, from_key=from_key, to_bucket=work_bucket,
+                                to_key=to_key)
+
+        # copy config file to work_bucket
+        config_to_key = "%s/%s" % (upload_dir, config_file)
+        from_key = "config/%s" % config_file
+        copy_file_to_bucket(iam=iam, from_bucket=iam.data_bucket.name, from_key=from_key, to_bucket=work_bucket,
+                            to_key=config_to_key)
+
+        submit_data = {
+            "dataname": "cunninghamlabEPI/inputs/epidata/",
+            "configname": config_to_key
+        }
+        submit_key = "%s/submit.json" % upload_dir
+        create_submit_json(iam=iam, work_bucket=work_bucket, key=submit_key, json_data=submit_data)
         return JsonResponse({"status": True})
 
 
@@ -91,11 +116,11 @@ class DemoResultView(LoginRequiredMixin, View):
     def get(self, request):
         iam = get_iam(request)
         from_timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
-        timestamp = get_last_modified_timestamp(iam=iam, bucket=bucket_name, key=cert_file)
+        timestamp = get_last_modified_timestamp(iam=iam, bucket=work_bucket, key=cert_file)
         if from_timestamp > timestamp:
             cert_content = ""
         else:
-            cert_content = get_file_content(iam=iam, bucket=bucket_name, key=cert_file)
+            cert_content = get_file_content(iam=iam, bucket=work_bucket, key=cert_file)
         return JsonResponse({
             "status": True,
             "cert_file": cert_content
@@ -105,7 +130,7 @@ class DemoResultView(LoginRequiredMixin, View):
         iam = IAM.objects.filter(user=request.user).first()
         from_timestamp = int(request.POST['timestamp'])
 
-        timestamp = get_last_modified_timestamp(iam=iam, bucket=bucket_name, key=mp4_file)
+        timestamp = get_last_modified_timestamp(iam=iam, bucket=work_bucket, key=mp4_file)
 
         # video & dataset files logs
         video_link = None
@@ -114,11 +139,11 @@ class DemoResultView(LoginRequiredMixin, View):
             # remove last process files
             remove_files()
         else:
-            video_link = get_download_file(iam, bucket_name, mp4_file)
-            dtset_logs_keys = get_dataset_logs(iam=iam, bucket=bucket_name)
+            video_link = get_download_file(iam, work_bucket, mp4_file)
+            dtset_logs_keys = get_dataset_logs(iam=iam, bucket=work_bucket)
             dtset_logs = []
             for key in dtset_logs_keys:
-                dtset_logs.append(get_download_file(iam, bucket_name, key))
+                dtset_logs.append(get_download_file(iam, work_bucket, key))
 
         return JsonResponse({
             "status": 200,
@@ -143,6 +168,7 @@ class DemoDataBucketView(LoginRequiredMixin, View):
     """
         Demo DataBucket View
         """
+
     def get(self, request):
         iam = IAM.objects.filter(user=request.user).first()
 
