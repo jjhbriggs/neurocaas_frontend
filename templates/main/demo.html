@@ -24,12 +24,7 @@
             <table class="mt-3" id="dataset_table">
                 <tbody>
                     <tr>
-                        <td>Test1.json</td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                    <tr>
-                        <td>Test1.json</td>
-                        <td><input type="checkbox"></td>
+                        <td>loading ...</td>
                     </tr>
                 </tbody>
             </table>
@@ -51,17 +46,12 @@
                 <table class="mt-3" id="config_table">
                     <tbody>
                         <tr>
-                            <td>Test1.json</td>
-                            <td><input type="checkbox"></td>
-                        </tr>
-                        <tr>
-                            <td>Test1.json</td>
-                            <td><input type="checkbox"></td>
+                            <td>loading ...</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="upload-div" id="submit-area">
+            <div class="upload-div" id="config-area">
                 <form class="drop-area">
                     <p>Drag & Drop or Click!</p>
                     <input type="file" class="fileElem" accept=".json" multiple>
@@ -69,6 +59,9 @@
                 </form>
                 <div class="gallery"></div>
             </div>
+        </div>
+        <div class="mt-2">
+            <button>Submit</button>
         </div>
     </div>
     <!--# END Uploading Area    -->
@@ -208,7 +201,7 @@
         dataset_area.init("dataset-area", id1, id2, bucket, dataset_dir, file_tag_id, null, true);
 
         var josn_area = new FileUpload();
-        josn_area.init("submit-area", id1, id2, bucket, upload_dir, "", trigger_function)
+        josn_area.init("config-area", id1, id2, bucket, upload_dir, "", trigger_function)
 
         $(document).ready(function(){
             $('.spinner').css('display', 'none');
