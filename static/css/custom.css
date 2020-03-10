@@ -206,7 +206,7 @@ input[type="checkbox" i], input[type="radio" i] {
     width: 16px;
 }
 
-td.active{
+tr.active{
     background: #21252942;
 }
 
