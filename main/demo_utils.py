@@ -140,5 +140,48 @@ def get_file_list(iam, folder):
 def get_name_only(key):
     """
         Function to get only file name from link or full path
-    """
+        """
     return key.split('/')[-1]
+
+
+def copy_file_to_bucket(iam, from_bucket, from_key, to_bucket, to_key):
+    """
+        Copy file from data bucket and paste to work bucket
+        """
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=iam.aws_access_key,
+        aws_secret_access_key=iam.aws_secret_access_key)
+    copy_source = {
+        'Bucket': from_bucket,
+        'Key': from_key
+    }
+    bucket = s3.Bucket(to_bucket)
+    bucket.copy(copy_source, to_key)
+
+
+def delete_jsons_from_bucket(iam, bucket, prefix):
+    """
+        Delete existing json files from s3 before start new job
+        """
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=iam.aws_access_key,
+        aws_secret_access_key=iam.aws_secret_access_key)
+    bucket = s3.Bucket(bucket)
+
+    for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
+        if obj.key.endswith('.json'):
+            obj.delete()
+
+
+def delete_file_from_bucket(iam, bucket, key):
+    """
+        Delete a file from s3 bucket
+        """
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=iam.aws_access_key,
+        aws_secret_access_key=iam.aws_secret_access_key)
+    obj = s3.Object(bucket, key)
+    obj.delete()
