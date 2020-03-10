@@ -1,0 +1,225 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block title_content %}
+    <h2 class="clickable text-white mt-4">CaImAn PMD LocaNMF DeepLabCut EPI</h2>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-4 offset-md-4 mt-5">
+                <h2>EPI</h2>
+                <hr style="top:0px;"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!--    DataSet Uploading Area    -->
+        <h3>Select or upload dataset(s)</h3>
+        <div class="table-div">
+            <table class="mt-3" id="dataset_table">
+                <tbody>
+                    <tr>
+                        <td>loading ...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="upload-div" id="dataset-area">
+            <form class="drop-area">
+                <p>Drag & Drop or Click!</p>
+                <input type="file" class="fileElem" accept=".json" multiple>
+                <progress class="progress-bar" max=100 value=0></progress>
+            </form>
+            <div class="gallery"></div>
+        </div>
+        <hr>
+
+        <!-- Json file Uploading Area    -->
+        <div class="mt-2">
+            <h3>Select or upload config</h3>
+            <div class="table-div">
+                <table class="mt-3" id="config_table">
+                    <tbody>
+                        <tr>
+                            <td>loading ...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="upload-div" id="config-area">
+                <form class="drop-area">
+                    <p>Drag & Drop or Click!</p>
+                    <input type="file" class="fileElem" accept=".json" multiple>
+                    <progress class="progress-bar" max=100 value=0></progress>
+                </form>
+                <div class="gallery"></div>
+            </div>
+        </div>
+        <div class="mt-2">
+            <button>Submit</button>
+        </div>
+    </div>
+    <!--# END Uploading Area    -->
+
+    <!--  Processing Status    -->
+    <div class="col-md-4 status-div">
+        <h3>Status</h3>
+        <div class="status mt-4">
+            <textarea class="form-control status-text" id="status-text" disabled>...</textarea>
+        </div>
+    </div>
+    <!--# END Processing Status  -->
+
+    <!--# Processing Result -->
+    <div class="col-md-4 result-div">
+        <h3>Results</h3>
+
+        <!-- Spinner -->
+        <div class="spinner mt-5" style="display:block;">
+            <div class="text-center pt-5">
+                <h6 class="mb-lg"><sup><em class="fa fa-cog fa-2x text-muted fa-spin text-info"></em></sup>
+                   <em class="fa fa-cog fa-5x text-muted fa-spin text-purple"></em>
+                   <em class="fa fa-cog fa-lg text-muted fa-spin text-success"></em>
+                </h6>
+            </div>
+            <h3 class="mt-5">Processing...</h3>
+        </div>
+        <!-- #END Spinner -->
+
+        <!-- Result View -->
+        <div class="result" style="display: none;">
+
+            <!-- Result per Dataset -->
+            <h6 class="border-bottom pb-2 mb-0 text-white">Per DataSet</h6>
+            <div class="p-3 bg-transparent rounded box-shadow" id="dtset-result-view">
+            </div>
+            <!-- #END Result per Dataset -->
+
+            <!-- Result Video -->
+            <h6 class="border-bottom pb-2 mb-0 text-white mt-4">Output</h6>
+            <div class="p-3 bg-transparent rounded box-shadow" id="video-result-view">
+            </div>
+            <!-- # END Result video -->
+        </div>
+    </div>
+    <!--# END Processing Result  -->
+</div>
+
+{% endblock %}
+
+{% block js_content %}
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.617.0.min.js"></script>
+    <script src="{% static 'js/file_upload.js' %}"></script>
+
+    <script>
+        var id1, id2;
+        var upload_dir = "{{upload_dir}}";
+        var id1 = "{{id1}}";
+        var id2 = "{{id2}}";
+        var bucket = "{{bucket}}";
+        var dataset_dir = "{{dataset_dir}}";
+        var processing_status = true;
+        var data_dataset_dir = "{{data_dataset_dir}}";
+        var data_config_dir = "{{data_config_dir}}";
+        var data_bucket = "{{data_bucket}}";
+
+
+        var dataset_area = new FileUpload();
+        var config_area = new FileUpload();
+        /* get file name from url */
+        function get_file_name(url){
+            return url.split("/").slice(-1)[0]
+        }
+
+        /* function to show processing status from certificate.txt */
+        function get_status(timestamp){
+            url = "/demo_result/?timestamp=" + timestamp;
+            $.ajax({
+                url: url,
+                success: function(res){
+                    console.log(res);
+                    $('#status-text').html(res.cert_file);
+                    if (processing_status)
+                        setTimeout(function(){
+                            get_status(timestamp)
+                        }, 12000);
+                }
+            })
+        }
+
+        /* function to show processing results from log and hp_optimum folder */
+        function get_results(timestamp){
+            url = "/demo_result/";
+            $.ajax({
+                url: url,
+                method: "POST",
+                data: {
+                    timestamp: timestamp
+                },
+                success: function(res){
+                    console.log(res);
+                    if(res.dtset_logs.length > 0) {
+                        processing_status = false;
+                        $('.spinner').css('display', 'none');
+                        $('.result').css('display', 'block');
+
+                        // append the log result to log table
+                        var html = "";
+                        for ( i = 0; i < res.dtset_logs.length; i++){
+                            html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
+                            html += '<a href="../' + res.dtset_logs[i] + '" class="text-warning" target="_blank">';
+                            html += get_file_name(res.dtset_logs[i]) + '</a></p></div>';
+                        }
+                        $('#dtset-result-view').html(html);
+                    }
+                    if(res.video_link) {
+                        // show video result
+                        html = '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
+                        html += '<a href="../' + res.video_link + '" class="text-warning" target="_blank">';
+                        html += get_file_name(res.video_link) + '</a></p></div>';
+                        $('#video-result-view').html(html);
+                    }
+
+                    if (processing_status)
+                        setTimeout(function(){
+                            get_results(timestamp)
+                        }, 20000);
+                }
+            })
+        }
+
+        var trigger_function = function(){
+            $('.spinner').css('display', 'block');
+            setTimeout(function(){
+                timestamp = Math.floor(Date.now()/1000);
+                get_status(timestamp);
+                get_results(timestamp);
+            }, 1000);
+        }
+
+        var submit_trigger = function(){
+            setTimeout(function(){
+                refresh_databucket_list();
+                dataset_area.clear_status();
+                config_area.clear_status();
+            }, 700);
+        }
+
+        
+        dataset_area.init("dataset-area", id1, id2, data_bucket, data_dataset_dir, "", submit_trigger, true);
+
+        
+        config_area.init("config-area", id1, id2, data_bucket, data_config_dir, "", submit_trigger, true)
+
+        $(document).ready(function(){
+            $('.spinner').css('display', 'none');
+            refresh_databucket_list();
+        })
+
+    </script>
+{% endblock %}
