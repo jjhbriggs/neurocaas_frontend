@@ -182,6 +182,11 @@
                         html = '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
                         html += '<a href="../' + res.video_link + '" class="text-warning" target="_blank">';
                         html += get_file_name(res.video_link) + '</a></p></div>';
+
+                        html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
+                        html += '<a href="../' + res.csv_link + '" class="text-warning" target="_blank">';
+                        html += get_file_name(res.csv_link) + '</a></p></div>';
+
                         $('#video-result-view').html(html);
                     }
 
