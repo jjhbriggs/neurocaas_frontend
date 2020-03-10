@@ -50,6 +50,7 @@ def get_iam(request):
     return IAM.objects.filter(user=request.user).first()
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class DemoView(LoginRequiredMixin, View):
     """
         View for demo in Feb
@@ -71,6 +72,13 @@ class DemoView(LoginRequiredMixin, View):
             "data_dataset_dir": "dataset",
             "data_config_dir": "config",
         })
+
+    def post(self, request):
+        iam = IAM.objects.filter(user=request.user).first()
+        dataset_files = request.POST.getlist('dataset_files[]')
+        config_file = request.POST['config_file']
+        print(dataset_files, config_file)
+        return JsonResponse({"status": True})
 
 
 @method_decorator(csrf_exempt, name='dispatch')

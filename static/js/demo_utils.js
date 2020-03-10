@@ -68,4 +68,16 @@ function submit(){
     	return;
     }
     config_file = radiobox[0].textContent;
+
+    $.ajax({
+    	url: '/demo/',
+    	method: 'POST',
+    	data: {
+    		dataset_files: dataset_files,
+    		config_file: config_file
+    	},
+    	success: function(res){
+    		console.log(res)
+    	}
+    })    
 }
