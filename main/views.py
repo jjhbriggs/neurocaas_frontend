@@ -67,7 +67,9 @@ class DemoView(LoginRequiredMixin, View):
             "bucket": bucket_name,
             "upload_dir": upload_dir,
             'dataset_dir': dataset_dir,
-            'data_bucket': iam.data_bucket
+            'data_bucket': iam.data_bucket,
+            "data_dataset_dir": "dataset",
+            "data_config_dir": "config",
         })
 
 
@@ -152,6 +154,13 @@ class DemoDataBucketView(LoginRequiredMixin, View):
             "status": 200,
             "datasets": dataset_names,
             "configs": config_names
+        })
+
+    def delete(self, request):
+        file_name = request.GET['file_name'];
+        return JsonResponse({
+            "status": 200,
+            "message": file_name
         })
 
 
