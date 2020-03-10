@@ -1,7 +1,7 @@
 // show dataset and config file list
 
 function get_tr_template(file, type, name){
-	return '<tr><td>' + file + '</td><td><input type="' + type + '" name="' + name + '"></td>';
+	return '<tr><td class="value">' + file + '</td><td><input type="' + type + '" name="' + name + '"></td>';
 }
 
 function refresh_databucket_list(){
@@ -46,4 +46,26 @@ function submit(){
     var dataset_files = [];
     var config_file = null;
 
+    // get list of dataset files' names
+    var checkboxes = $('input[name="dataset_file"]:checked').parent().parent().find('td:first');
+
+    for ( var i = 0 ; i < checkboxes.length; i++ ){
+    	console.log(checkboxes[i].textContent)
+    	dataset_files.push(checkboxes[i].textContent);
+    }
+
+    if (dataset_files.length === 0) {
+    	alert('Select dataset files');
+    	return;
+    }
+
+    // get config file name
+
+    var radiobox = $('input[name="config_file"]:checked').parent().parent().find('td:first');
+    
+    if (radiobox.length === 0) {
+    	alert('Select config file');
+    	return;
+    }
+    config_file = radiobox[0].textContent;
 }
