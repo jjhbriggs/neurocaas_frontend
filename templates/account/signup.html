@@ -3,31 +3,38 @@
 {% block content %}
 
 <div class="container">
-    <div class="col-xl-4 offset-xl-4 col-md-12">
+    <div class="col-xl-12 col-md-12">
         <!-- Title -->
-        <div class="title">
-            <h2>Sign Up into NCAP</h2>
-            <hr />
+        <div class="title text-center">
+            <h2>Sign Up for NCAP</h2>
+            <div class="col-xl-4 offset-xl-4 col-md-12">
+                <hr class="mb-5"/>
+            </div>
+            <p class="text-center">NCAP is in closed alpha. We will get back to you with details on usage soon.</p>
         </div>
 
-        <!-- Form -->
-        <form method="post" class="mt-3">
-            {% csrf_token %}
-            {% for field in form %}
-                <!-- Email -->
-                <div class="form-group">
-                    {% for error in field.errors %}
-                        <p style="color: red">{{ error }}</p>
-                    {% endfor %}
-                    <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
-                    {{ field }}
+        <div class="row">
+            <div class="col-xl-4 offset-xl-4 col-md-12">
+            <!-- Form -->
+                <form method="post" class="mt-3">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <!-- Email -->
+                        <div class="form-group">
+                            {% for error in field.errors %}
+                                <p style="color: red">{{ error }}</p>
+                            {% endfor %}
+                            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                            {{ field }}
 
-                </div>
-            {% endfor %}
-            <div class="form-group mt-5">
-                <input type="submit" value="Submit">
+                        </div>
+                    {% endfor %}
+                    <div class="form-group mt-5">
+                        <input type="submit" value="Submit">
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock %}

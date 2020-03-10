@@ -30,18 +30,24 @@ FileUpload.prototype ={
     multipartMap: { Parts: []},
     s3: null,
     status: false,
-
-    init: function(form_id, id1, id2, bucket, subfolder){
+    file_tag_id: null,
+    file_count: 0,
+    uploaded_count: 0,
+    trigger: null,
+    contentious: false,
+    init: function(form_id, id1, id2, bucket, subfolder, file_tag_id, trigger=null, contentious=false){
         this.form_id = form_id;
         this.id1 = id1;
         this.id2 = id2;
         this.bucket = bucket;
         this.subfolder = subfolder;
+        this.file_tag_id = file_tag_id;
         this.dropArea = document.getElementById(this.form_id)
         var sender = this;  // this object
-
         this.uploadProgress = []
         this.progressBar = document.querySelector('#' + this.form_id + ' .progress-bar')
+        this.trigger = trigger;
+        this.contentious = contentious;
 
         /* S3 bucket options */
             AWS.config.apiVersions = {
@@ -76,7 +82,7 @@ FileUpload.prototype ={
                 s3.uploadPart(partParams, function(multiErr, mData) {
                     if (multiErr){
                         console.log('multiErr, upload part error:', multiErr);
-                        if (tryNum < maxUploadTries) {
+                        if (tryNum < _this.maxUploadTries) {
                             console.log('Retrying upload of part: #', partParams.PartNumber)
                             uploadPart(_this, s3, multipart, partParams, tryNum + 1);
                         } else {
@@ -105,7 +111,7 @@ FileUpload.prototype ={
                     updateProgress(_this);
                     _this.status = true;
                     $('#' + _this.form_id + ' p').html("Uploading was finished!");
-                    $("#upload").attr("disabled", false);
+                    $('#' + _this.file_tag_id).val(_this.fileKey);
                 });
             }
 
@@ -129,16 +135,17 @@ FileUpload.prototype ={
 
         // On Click event when user click drop area
         this.dropArea.addEventListener('click', function(e){
-            if (sender.status) return;
-            $('#' + sender.form_id + ' .fileElem').trigger('click');
+            if ( !sender.contentious && sender.status ) return;
+            $( '#' + sender.form_id + ' .fileElem' ).trigger('click');
         }, false);
 
         // preview file after drop a file
         var previewFile = function(file) {
+            console.log(file.name)
             let reader = new FileReader()
             reader.readAsDataURL(file)
             reader.onloadend = function() {
-                let label = document.createElement('lable');
+                let label = document.createElement('label');
                 label.innerText = file.name;
                 console.log(document.querySelector('#' + sender.form_id + ' .gallery'));
                 document.querySelector('#' + sender.form_id + ' .gallery').appendChild(label)
@@ -169,6 +176,29 @@ FileUpload.prototype ={
             const reader = new FileReader();
             reader.readAsArrayBuffer(file)
 
+            var params = {
+                Bucket: sender.bucket,
+                Key: sender.subfolder + "/" + file.name,
+                Body: file
+            };
+
+            sender.s3.upload(params, function(err, data) {
+                if (err) {
+                    console.log(err, err.stack);
+                } else {
+                    console.log(data.key + ' successfully uploaded to' + data.Location);
+                    var percent = ++sender.uploaded_count/sender.file_count * 100;
+                    sender.progressBar.value = percent;
+                    if (percent >= 100) {
+                        sender.status = true;
+                        $('#' + sender.form_id + ' p').html("Uploading was finished!");
+                        if (sender.trigger) sender.trigger();
+                    }
+                }
+            });
+
+            /* Disabled the multipart upload for demo */
+            /*
             reader.onloadend = function onloadend(){
                 console.log('on_loaded');
                 sender.buffer = reader.result;
@@ -211,6 +241,7 @@ FileUpload.prototype ={
                     }
                 });
             }
+            */
         }
 
         // Handle files of file tag
@@ -221,13 +252,14 @@ FileUpload.prototype ={
             }
             files = [...files]
             initializeProgress(files.length)
+            sender.file_count = files.length
             files.forEach(uploadFile)
             files.forEach(previewFile)
         }
 
         // Handle dropped files
         this.dropArea.addEventListener('drop', function(e){
-            if (sender.status) return;
+            if (!sender.contentious && sender.status) return;
             var dt = e.dataTransfer
             var files = dt.files
             handleFiles(files)
@@ -251,6 +283,11 @@ FileUpload.prototype ={
 
     unhighlight(e) {
         this.classList.remove('active')
+    },
+    clear_status: function(){
+        this.progressBar.value = 0;
+        $('#' + this.form_id + ' p').html("Drag & Drop or Click!");
+        $('#' + this.form_id + ' .gallery').html("");        
     },
     set_bucket(bucket){
         console.log(this.bucket);

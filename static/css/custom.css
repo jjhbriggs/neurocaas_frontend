@@ -49,10 +49,10 @@ button{
 
 /* Custom css for file uploading form */
 
-#video-area, #param-area, #config-area{
+.upload-div{
     border: 2px dashed #ccc;
     border-radius: 20px;
-    width: 480px;
+    max-width: 480px;
     font-family: sans-serif;
     margin: 30px auto;
     padding: 20px;
@@ -85,6 +85,125 @@ button{
     vertical-align: middle;
 }
 
+.gallery label{
+    padding: 5px;
+}
+
 .fileElem {
     display: none;
 }
+
+
+/* Spinner */
+.text-purple{
+    color: #7266ba!important;
+}
+
+.text-success {
+    color: #27c24c!important;
+}
+
+.text-info {
+    color: #23b7e5!important;
+}
+
+.text-bold {
+    font-weight: bold !important;
+}
+.text-lg {
+    font-size: 30px;
+}
+.mb-lg{
+    font-size: 36px!important;
+}
+
+
+/* Status text */
+.status-text{
+    background-color: black!important;
+    color: white;
+    border: none;
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0, 0, 0, 0.5);
+    height: 450px!important;
+    resize: none;
+}
+
+
+/* Home Page */
+.gap{
+    border-right: 1px solid rgba(192, 192, 192, 0.35);
+}
+
+.subtitle{
+    font-size: 1.3rem;
+    font-weight:lighter;
+}
+
+@media screen and (max-width: 1024px) {
+    em.fa.fa-cog.fa-5x.text-muted.fa-spin.text-purple{
+        font-size: 130px;
+    }
+
+    .gap{
+        border-right: none;
+    }
+}
+
+#navButton{
+    display:none;
+}
+
+.clickable:hover, .clickable:active{
+    color: #ef8376!important;
+    cursor: pointer;
+}
+
+.clickable {
+    font-size: 19px;
+    font-weight: 300;
+    word-spacing: 2px;
+}
+
+.text-white{
+    color: white;
+}
+
+@media screen and (max-width: 767px){
+    .result-div{
+        margin-top: 20px;
+    }
+}
+
+#header .inner{
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+
+table {
+    border: 1px solid rgba(192, 192, 192, 0.35);
+}
+
+table tr {
+    border-bottom: 1px solid rgba(192, 192, 192, 0.25);
+    cursor: pointer;
+}
+
+input[type="checkbox" i], input[type="radio" i] {
+    background-color: initial;
+    cursor: pointer;
+    -webkit-appearance: checkbox;
+    box-sizing: border-box;
+    margin: 10px 3px 3px 4px;
+    padding: initial;
+    border: initial;
+    height: 16px;
+    width: 16px;
+}
+
+.table-div {
+    max-width: 480px;
+    font-family: sans-serif;
+    margin: 30px auto;
+}
+
