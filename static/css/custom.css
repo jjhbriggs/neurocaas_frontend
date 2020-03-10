@@ -212,3 +212,8 @@ input[type="checkbox" i], input[type="radio" i] {
     margin: 30px auto;
 }
 
+button:disabled,
+button[disabled] {
+    background: #bb9595;
+    cursor: not-allowed;
+}
