@@ -284,6 +284,11 @@ FileUpload.prototype ={
     unhighlight(e) {
         this.classList.remove('active')
     },
+    clear_status: function(){
+        this.progressBar.value = 0;
+        $('#' + this.form_id + ' p').html("Drag & Drop or Click!");
+        $('#' + this.form_id + ' .gallery').html("");        
+    },
     set_bucket(bucket){
         console.log(this.bucket);
         this.bucket = bucket;
