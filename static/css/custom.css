@@ -206,6 +206,10 @@ input[type="checkbox" i], input[type="radio" i] {
     width: 16px;
 }
 
+td.active{
+    background: chocolate;
+}
+
 .table-div {
     max-width: 480px;
     font-family: sans-serif;

@@ -30,12 +30,16 @@ function refresh_databucket_list(){
 				// add eventlistener for each tr
 				$('tr').click(function(event){
 					if (event.target.type !== 'checkbox') {
-                        $(':checkbox', this).trigger('click');
+                        $(':checkbox', this).trigger('click');                        
                     }
 
                     if (event.target.type !== 'radio') {
-                        $(':radio', this).trigger('click');
+                        $(':radio', this).trigger('click');                        
                     }
+                    if ($(this).find('input').is(":checked") === true)
+                    	$(this).find('td').addClass('active');
+                    else
+                    	$(this).find('td').removeClass('active');  
 				})
 			}
 		}
