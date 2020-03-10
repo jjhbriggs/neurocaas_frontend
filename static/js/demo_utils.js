@@ -35,11 +35,17 @@ function refresh_databucket_list(){
 
                     if (event.target.type !== 'radio') {
                         $(':radio', this).trigger('click');                        
-                    }
+                    }                    
+
                     if ($(this).find('input').is(":checked") === true)
-                    	$(this).find('td').addClass('active');
+                    	$(this).addClass('active');
                     else
-                    	$(this).find('td').removeClass('active');  
+                    	$(this).removeClass('active');
+
+                    if ($(this).find('input[type="radio"]').val() === 'on'){
+                        $('input[type="radio"]').parent().parent().removeClass('active');
+                        $(this).addClass('active');
+                    }
 				})
 			}
 		}
