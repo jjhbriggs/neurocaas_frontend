@@ -189,7 +189,7 @@ table tr {
     cursor: pointer;
 }
 
-input[type="checkbox" i] {
+input[type="checkbox" i], input[type="radio" i] {
     background-color: initial;
     cursor: pointer;
     -webkit-appearance: checkbox;
