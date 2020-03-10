@@ -1,7 +1,10 @@
-import boto3
-from .models import *
+import json
 import os
-import os, shutil
+import shutil
+
+import boto3
+
+from .models import *
 
 search_outputdir = "hp_optimum"
 
@@ -100,12 +103,12 @@ def get_dataset_logs(iam, bucket):
         aws_secret_access_key=iam.aws_secret_access_key
     )
 
-    ## Bucket to use
+    # Bucket to use
     bucket = s3.Bucket(bucket)
 
-    ## log files
+    # log files
     file_keys = []
-    ## List objects within a given prefix
+    # List objects within a given prefix
     for obj in bucket.objects.filter(Delimiter='/', Prefix='cunninghamlabEPI/results/jobepi_demo/logs/'):
         if obj.key.endswith('certificate.txt'):
             continue
@@ -127,7 +130,7 @@ def get_file_list(iam, folder):
 
     prefix = "%s/" % folder
 
-    # reterive keys from s3 bucket
+    # Retrieve keys from s3 bucket
     # try:
     for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
         if obj.key.endswith('.json'):
@@ -160,7 +163,7 @@ def copy_file_to_bucket(iam, from_bucket, from_key, to_bucket, to_key):
     bucket.copy(copy_source, to_key)
 
 
-def delete_jsons_from_bucket(iam, bucket, prefix):
+def delete_jsons_from_bucket(iam, bucket_name, prefix):
     """
         Delete existing json files from s3 before start new job
         """
@@ -168,14 +171,14 @@ def delete_jsons_from_bucket(iam, bucket, prefix):
         's3',
         aws_access_key_id=iam.aws_access_key,
         aws_secret_access_key=iam.aws_secret_access_key)
-    bucket = s3.Bucket(bucket)
+    bucket = s3.Bucket(bucket_name)
 
     for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
         if obj.key.endswith('.json'):
             obj.delete()
 
 
-def delete_file_from_bucket(iam, bucket, key):
+def delete_file_from_bucket(iam, bucket_name, key):
     """
         Delete a file from s3 bucket
         """
@@ -183,5 +186,18 @@ def delete_file_from_bucket(iam, bucket, key):
         's3',
         aws_access_key_id=iam.aws_access_key,
         aws_secret_access_key=iam.aws_secret_access_key)
-    obj = s3.Object(bucket, key)
+    obj = s3.Object(bucket_name, key)
     obj.delete()
+
+
+def create_submit_json(iam, work_bucket, key, json_data):
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=iam.aws_access_key,
+        aws_secret_access_key=iam.aws_secret_access_key)
+    s3object = s3.Object(work_bucket, key)
+
+    s3object.put(
+        Body=(bytes(json.dumps(json_data).encode('UTF-8')))
+    )
+    print("successfully created submit.json")
