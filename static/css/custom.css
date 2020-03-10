@@ -186,6 +186,7 @@ table {
 
 table tr {
     border-bottom: 1px solid rgba(192, 192, 192, 0.25);
+    cursor: pointer;
 }
 
 input[type="checkbox" i] {
@@ -193,7 +194,7 @@ input[type="checkbox" i] {
     cursor: pointer;
     -webkit-appearance: checkbox;
     box-sizing: border-box;
-    margin: 7px 3px 3px 4px;
+    margin: 10px 3px 3px 4px;
     padding: initial;
     border: initial;
     height: 16px;
