@@ -1,0 +1,55 @@
+{
+  "status": "SUCCESS",
+  "cpu_usage": [
+    "26"
+  ],
+  "stdout": [
+    "EPI(k=10,i= 300): cost -7.28E+00, H  7.40E+00, |R|^2 1.82E-02\n",
+    "EPI(k=10,i= 350): cost -7.20E+00, H  7.32E+00, |R|^2 1.26E-02\n",
+    "EPI(k=10,i= 400): cost -6.97E+00, H  7.39E+00, |R|^2 4.11E-02\n",
+    "EPI(k=10,i= 450): cost -7.32E+00, H  7.45E+00, |R|^2 2.24E-02\n",
+    "EPI(k=10,i= 500): cost -6.70E+00, H  7.62E+00, |R|^2 1.35E-01\n",
+    "EPI(k=10,i= 550): cost -7.21E+00, H  7.50E+00, |R|^2 1.80E-02\n",
+    "EPI(k=10,i= 600): cost -7.30E+00, H  7.41E+00, |R|^2 1.13E-02\n",
+    "EPI(k=10,i= 650): cost -7.21E+00, H  7.51E+00, |R|^2 4.02E-02\n",
+    "EPI(k=10,i= 700): cost -7.38E+00, H  7.51E+00, |R|^2 5.14E-03\n",
+    "EPI(k=10,i= 750): cost -6.63E+00, H  7.56E+00, |R|^2 1.36E-01\n",
+    "EPI(k=10,i= 800): cost -7.17E+00, H  7.52E+00, |R|^2 3.19E-02\n",
+    "EPI(k=10,i= 850): cost -7.43E+00, H  7.59E+00, |R|^2 1.76E-02\n",
+    "EPI(k=10,i= 900): cost -7.34E+00, H  7.55E+00, |R|^2 1.59E-02\n",
+    "EPI(k=10,i= 950): cost -7.35E+00, H  7.51E+00, |R|^2 2.33E-02\n",
+    "EPI(k=10,i=1000): cost -7.30E+00, H  7.48E+00, |R|^2 1.37E-02\n",
+    "EPI done.\n",
+    "Saved to data/lds_2D_linear2D_freq//D4_C3_L1_U22_rs1/.\n",
+    "Writing movie...\n",
+    "done.\n",
+    "results aimed at s3://epi-ncap/cunninghamlabEPI/results/jobepi_demo/\n"
+  ],
+  "instance": "i-0a2f834e23b8ec3a8",
+  "reason": [
+    "aws s3 sync ./ \"s3://$bucketname/$groupdir/$resultdir/per_hp\""
+  ],
+  "command": "7ae03211-79bf-4398-838f-cbf26eda7b11",
+  "stderr": [
+    "2020-03-10 14:02:12.504070: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer.so.6'; dlerror: libnvinfer.so.6: cannot open shared object file: No such file or directory\n",
+    "2020-03-10 14:02:12.504153: W tensorflow/stream_executor/platform/default/dso_loader.cc:55] Could not load dynamic library 'libnvinfer_plugin.so.6'; dlerror: libnvinfer_plugin.so.6: cannot open shared object file: No such file or directory\n",
+    "2020-03-10 14:02:12.504162: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:30] Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.\n",
+    "2020-03-10 14:02:47.158460: I tensorflow/stream_executor/platform/default/dso_loader.cc:44] Successfully opened dynamic library libcuda.so.1\n",
+    "2020-03-10 14:02:47.638000: E tensorflow/stream_executor/cuda/cuda_driver.cc:351] failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected\n",
+    "2020-03-10 14:02:47.638045: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:156] kernel driver does not appear to be running on this host (ip-172-31-71-41): /proc/driver/nvidia/version does not exist\n",
+    "2020-03-10 14:02:47.638602: I tensorflow/core/platform/cpu_feature_guard.cc:142] Your CPU supports instructions that this TensorFlow binary was not compiled to use: AVX2 AVX512F FMA\n",
+    "2020-03-10 14:02:47.734206: I tensorflow/core/platform/profile_utils/cpu_utils.cc:94] CPU Frequency: 2499995000 Hz\n",
+    "2020-03-10 14:02:47.735081: I tensorflow/compiler/xla/service/service.cc:168] XLA service 0x5649a3c00270 initialized for platform Host (this does not guarantee that XLA will be used). Devices:\n",
+    "2020-03-10 14:02:47.735105: I tensorflow/compiler/xla/service/service.cc:176]   StreamExecutor device (0): Host, Default Version\n",
+    "WARNING:tensorflow:From /home/ubuntu/anaconda3/envs/epi/lib/python3.6/site-packages/tensorflow_probability/python/bijectors/real_nvp.py:386: dense (from tensorflow.python.layers.core) is deprecated and will be removed in a future version.\n",
+    "Instructions for updating:\n",
+    "Use keras.layers.Dense instead.\n",
+    "WARNING:tensorflow:From /home/ubuntu/anaconda3/envs/epi/lib/python3.6/site-packages/tensorflow_core/python/layers/core.py:187: Layer.apply (from tensorflow.python.keras.engine.base_layer) is deprecated and will be removed in a future version.\n",
+    "Instructions for updating:\n",
+    "Please use `layer.__call__` method instead.\n",
+    "WARNING:tensorflow:From /home/ubuntu/anaconda3/envs/epi/lib/python3.6/site-packages/tensorflow_probability/python/bijectors/real_nvp.py:222: AffineScalar.__init__ (from tensorflow_probability.python.bijectors.affine_scalar) is deprecated and will be removed after 2020-01-01.\n",
+    "Instructions for updating:\n",
+    "`AffineScalar` bijector is deprecated; please use `tfb.Shift(loc)(tfb.Scale(...))` instead.\n"
+  ],
+  "input": "cunninghamlabEPI/inputs/epidata/dataset9.json"
+}
