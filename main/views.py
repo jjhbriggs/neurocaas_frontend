@@ -18,6 +18,7 @@ from account.forms import UserLoginForm, UserCreationForm
 """
 
 mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
+csv_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/opt_data.csv"
 cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
 log_dir = "cunninghamlabEPI/results/jobepi_demo/logs"
 dataset_dir = "cunninghamlabEPI/inputs/epidata"
@@ -92,7 +93,7 @@ class DemoView(LoginRequiredMixin, View):
                                 to_key=to_key)
 
         # copy config file to work_bucket
-        config_to_key = "%s/%s" % (upload_dir, config_file)
+        config_to_key = "%s/config.json" % upload_dir
         from_key = "config/%s" % config_file
         copy_file_to_bucket(iam=iam, from_bucket=iam.data_bucket.name, from_key=from_key, to_bucket=work_bucket,
                             to_key=config_to_key)
@@ -134,12 +135,15 @@ class DemoResultView(LoginRequiredMixin, View):
 
         # video & dataset files logs
         video_link = None
+        csv_link = None
+
         dtset_logs = []
         if from_timestamp > timestamp:
             # remove last process files
             remove_files()
         else:
             video_link = get_download_file(iam, work_bucket, mp4_file)
+            csv_link = get_download_file(iam, work_bucket, csv_file)
             dtset_logs_keys = get_dataset_logs(iam=iam, bucket=work_bucket)
             dtset_logs = []
             for key in dtset_logs_keys:
@@ -148,6 +152,7 @@ class DemoResultView(LoginRequiredMixin, View):
         return JsonResponse({
             "status": 200,
             "video_link": video_link,
+            "csv_link": csv_link,
             "dtset_logs": dtset_logs
         })
 
