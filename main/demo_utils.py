@@ -96,7 +96,7 @@ def get_file_content(iam, bucket, key):
         return None
 
 
-def get_dataset_logs(iam, bucket):
+def get_dataset_logs(iam, bucket, log_dir):
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
@@ -109,7 +109,7 @@ def get_dataset_logs(iam, bucket):
     # log files
     file_keys = []
     # List objects within a given prefix
-    for obj in bucket.objects.filter(Delimiter='/', Prefix='cunninghamlabEPI/results/jobepi_demo/logs/'):
+    for obj in bucket.objects.filter(Delimiter='/', Prefix=log_dir):
         if obj.key.endswith('certificate.txt'):
             continue
         file_keys.append(obj.key)
@@ -172,7 +172,7 @@ def delete_jsons_from_bucket(iam, bucket_name, prefix):
         aws_access_key_id=iam.aws_access_key,
         aws_secret_access_key=iam.aws_secret_access_key)
     bucket = s3.Bucket(bucket_name)
-
+    print(prefix)
     for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
         if obj.key.endswith('.json'):
             obj.delete()
@@ -191,6 +191,7 @@ def delete_file_from_bucket(iam, bucket_name, key):
 
 
 def create_submit_json(iam, work_bucket, key, json_data):
+    print(key)
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
