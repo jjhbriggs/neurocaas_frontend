@@ -118,11 +118,8 @@
 
     <script>
         var id1, id2;
-        var upload_dir = "{{upload_dir}}";
         var id1 = "{{id1}}";
         var id2 = "{{id2}}";
-        var bucket = "{{bucket}}";
-        var dataset_dir = "{{dataset_dir}}";
         var processing_status = true;
         var data_dataset_dir = "{{data_dataset_dir}}";
         var data_config_dir = "{{data_config_dir}}";
@@ -198,10 +195,10 @@
             })
         }
 
-        var trigger_function = function(){
+        var trigger_function = function(timestamp){
             $('.spinner').css('display', 'block');
             setTimeout(function(){
-                timestamp = Math.floor(Date.now()/1000);
+                // timestamp = Math.floor(Date.now()/1000);
                 get_status(timestamp);
                 get_results(timestamp);
             }, 1000);
