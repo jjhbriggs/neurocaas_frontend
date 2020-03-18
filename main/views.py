@@ -75,6 +75,9 @@ class DemoView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
+        # remove last process files
+        # remove_files(request)
+
         iam = IAM.objects.filter(user=request.user).first()
         dataset_files = request.POST.getlist('dataset_files[]')
         config_file = request.POST['config_file']
@@ -108,6 +111,10 @@ class DemoView(LoginRequiredMixin, View):
 
         submit_key = "%s/%s" % (upload_dir, submit_file_name)
         create_submit_json(iam=iam, work_bucket=work_bucket, key=submit_key, json_data=submit_data)
+
+        # store timestamp in session
+        request.session['last_timestamp'] = cur_timestamp
+
         return JsonResponse({"status": True, "timestamp": cur_timestamp})
 
 
@@ -146,18 +153,15 @@ class DemoResultView(LoginRequiredMixin, View):
         csv_link = None
 
         dtset_logs = []
-        if mp4_timestamp == 0:
-            # remove last process files
-            remove_files()
-        else:
-            video_link = get_download_file(iam, work_bucket, mp4_file)
-            csv_link = get_download_file(iam, work_bucket, csv_file)
+        if mp4_timestamp > 0:
+            video_link = get_download_file(iam, work_bucket, mp4_file, timestamp)
+            csv_link = get_download_file(iam, work_bucket, csv_file, timestamp)
 
             log_dir = "%s/job__%s_%s/logs/" % (result_dir, work_bucket, timestamp)
             dtset_logs_keys = get_dataset_logs(iam=iam, bucket=work_bucket, log_dir=log_dir)
             dtset_logs = []
             for key in dtset_logs_keys:
-                dtset_logs.append(get_download_file(iam, work_bucket, key))
+                dtset_logs.append(get_download_file(iam, work_bucket, key, timestamp))
 
             # remove used dataset and config files
             """ Code here """
