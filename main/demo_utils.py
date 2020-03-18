@@ -9,7 +9,7 @@ from .models import *
 search_outputdir = "hp_optimum"
 
 
-def get_download_file(iam, bucket, key):
+def get_download_file(iam, bucket, key, timestamp):
     """
         Download file from s3 and return link of it
         """
@@ -20,7 +20,7 @@ def get_download_file(iam, bucket, key):
         aws_secret_access_key=iam.aws_secret_access_key
     )
 
-    folder = "static/downloads"
+    folder = "static/downloads/%s" % timestamp
     if not os.path.exists(folder):
         os.mkdir(folder)
 
@@ -59,20 +59,22 @@ def get_last_modified_timestamp(iam, bucket, key):
     return 0
 
 
-def remove_files():
+def remove_files(request):
     """
         Remove last process files on server
         """
-    folder = 'static/downloads'
-    for filename in os.listdir(folder):
-        file_path = os.path.join(folder, filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+    if request.session.get('last_timestamp', False):
+        last_timestamp = request.session.get('last_timestamp')
+        folder = 'static/downloads/%s' % last_timestamp
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
 def get_file_content(iam, bucket, key):
