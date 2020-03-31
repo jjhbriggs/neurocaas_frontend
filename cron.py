@@ -1,9 +1,11 @@
 import os
 import shutil
 import time
+import datetime
 
+print("Cron started at %s" % datetime.datetime.now())
+dir = "%s/static/downloads" % os.path.dirname(os.path.abspath(__file__))
 
-dir = "static/downloads"
 bef_timestamp = str(int(time.time()) - 86400)
 
 for folder in os.listdir(dir):
@@ -15,3 +17,4 @@ for folder in os.listdir(dir):
             print("Error: %s : %s" % (dir_path, e.strerror))
 
         print(dir_path)
+print("------------------------------------------")
