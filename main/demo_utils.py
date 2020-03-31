@@ -9,7 +9,7 @@ from .models import *
 search_outputdir = "hp_optimum"
 
 
-def get_download_file(iam, bucket, key):
+def get_download_file(iam, bucket, key, timestamp):
     """
         Download file from s3 and return link of it
         """
@@ -20,13 +20,17 @@ def get_download_file(iam, bucket, key):
         aws_secret_access_key=iam.aws_secret_access_key
     )
 
-    folder = "static/downloads"
+    folder = "static/downloads/%s" % timestamp
     if not os.path.exists(folder):
         os.mkdir(folder)
 
     output = "%s/%s" % (folder, key.split("/")[-1])
     print(key)
-    s3.Bucket(bucket).download_file(key, output)
+    try:
+        s3.Bucket(bucket).download_file(key, output)
+    except Exception as e:
+        print(e)
+        return None
 
     return output
     # except Exception as e:
@@ -59,20 +63,22 @@ def get_last_modified_timestamp(iam, bucket, key):
     return 0
 
 
-def remove_files():
+def remove_files(request):
     """
         Remove last process files on server
         """
-    folder = 'static/downloads'
-    for filename in os.listdir(folder):
-        file_path = os.path.join(folder, filename)
-        try:
-            if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+    if request.session.get('last_timestamp', False):
+        last_timestamp = request.session.get('last_timestamp')
+        folder = 'static/downloads/%s' % last_timestamp
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
 def get_file_content(iam, bucket, key):
@@ -96,7 +102,7 @@ def get_file_content(iam, bucket, key):
         return None
 
 
-def get_dataset_logs(iam, bucket):
+def get_dataset_logs(iam, bucket, log_dir):
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
@@ -109,10 +115,13 @@ def get_dataset_logs(iam, bucket):
     # log files
     file_keys = []
     # List objects within a given prefix
-    for obj in bucket.objects.filter(Delimiter='/', Prefix='cunninghamlabEPI/results/jobepi_demo/logs/'):
-        if obj.key.endswith('certificate.txt'):
-            continue
-        file_keys.append(obj.key)
+    try:
+        for obj in bucket.objects.filter(Delimiter='/', Prefix=log_dir):
+            if obj.key.endswith('certificate.txt'):
+                continue
+            file_keys.append(obj.key)
+    except Exception as e:
+        print(e)
 
     return file_keys
 
@@ -131,12 +140,13 @@ def get_file_list(iam, folder):
     prefix = "%s/" % folder
 
     # Retrieve keys from s3 bucket
-    # try:
-    for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
-        if obj.key.endswith('.json'):
-            file_keys.append(obj.key)
-    # except Exception as e:
-    #     print(e)
+    try:
+        for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
+            if obj.key.endswith('.json'):
+                file_keys.append(obj.key)
+    except Exception as e:
+        print(e)
+
     return file_keys
 
 
@@ -172,7 +182,7 @@ def delete_jsons_from_bucket(iam, bucket_name, prefix):
         aws_access_key_id=iam.aws_access_key,
         aws_secret_access_key=iam.aws_secret_access_key)
     bucket = s3.Bucket(bucket_name)
-
+    print(prefix)
     for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
         if obj.key.endswith('.json'):
             obj.delete()
@@ -191,6 +201,7 @@ def delete_file_from_bucket(iam, bucket_name, key):
 
 
 def create_submit_json(iam, work_bucket, key, json_data):
+    print(key)
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
