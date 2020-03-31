@@ -9,6 +9,7 @@ from .demo_utils import *
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from account.forms import UserLoginForm, UserCreationForm
+import time
 
 # Create your views here.
 
@@ -17,13 +18,15 @@ from account.forms import UserLoginForm, UserCreationForm
     Views for Demo page 
 """
 
-mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
-csv_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/opt_data.csv"
-cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
-log_dir = "cunninghamlabEPI/results/jobepi_demo/logs"
-dataset_dir = "cunninghamlabEPI/inputs/epidata"
+result_dir = "cunninghamlabEPI/results"
+# mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
+# csv_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/opt_data.csv"
+# cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
+# log_dir = "cunninghamlabEPI/results/jobepi_demo/logs"
+# dataset_dir = "cunninghamlabEPI/inputs/epidata"
 work_bucket = "epi-ncap"
 upload_dir = "cunninghamlabEPI/inputs"
+submit_file_name = "episubmit.json"
 
 
 class HomeView(View):
@@ -66,24 +69,26 @@ class DemoView(LoginRequiredMixin, View):
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
-            "bucket": work_bucket,
-            "upload_dir": upload_dir,
-            'dataset_dir': dataset_dir,
             'data_bucket': iam.data_bucket,
             "data_dataset_dir": "dataset",
             "data_config_dir": "config",
         })
 
     def post(self, request):
+        # remove last process files
+        # remove_files(request)
+
         iam = IAM.objects.filter(user=request.user).first()
         dataset_files = request.POST.getlist('dataset_files[]')
         config_file = request.POST['config_file']
 
         # remove existing dataset files from epi bucket
-        delete_jsons_from_bucket(iam=iam, bucket_name=work_bucket, prefix="%s/" % dataset_dir)
+        cur_timestamp = int(time.time())
+        dataset_dir = "%s/epidata-%s" % (upload_dir, cur_timestamp)
 
+        # delete_jsons_from_bucket(iam=iam, bucket_name=work_bucket, prefix="%s/" % dataset_dir)
         # remove config file from epi bucket
-        delete_file_from_bucket(iam=iam, bucket_name=work_bucket, key="%s/config.json" % upload_dir)
+        # delete_file_from_bucket(iam=iam, bucket_name=work_bucket, key="%s/config.json" % upload_dir)
 
         # copy dataset files to work_bucket
         for file in dataset_files:
@@ -93,18 +98,24 @@ class DemoView(LoginRequiredMixin, View):
                                 to_key=to_key)
 
         # copy config file to work_bucket
-        config_to_key = "%s/config.json" % upload_dir
+        config_to_key = "%s/config_%s.json" % (upload_dir, cur_timestamp)
         from_key = "config/%s" % config_file
         copy_file_to_bucket(iam=iam, from_bucket=iam.data_bucket.name, from_key=from_key, to_bucket=work_bucket,
                             to_key=config_to_key)
 
         submit_data = {
-            "dataname": "cunninghamlabEPI/inputs/epidata/",
-            "configname": config_to_key
+            "dataname": dataset_dir + "/",
+            "configname": config_to_key,
+            "timestamp": str(cur_timestamp)
         }
-        submit_key = "%s/submit.json" % upload_dir
+
+        submit_key = "%s/%s" % (upload_dir, submit_file_name)
         create_submit_json(iam=iam, work_bucket=work_bucket, key=submit_key, json_data=submit_data)
-        return JsonResponse({"status": True})
+
+        # store timestamp in session
+        request.session['last_timestamp'] = cur_timestamp
+
+        return JsonResponse({"status": True, "timestamp": cur_timestamp})
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -116,38 +127,57 @@ class DemoResultView(LoginRequiredMixin, View):
 
     def get(self, request):
         iam = get_iam(request)
-        from_timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
-        timestamp = get_last_modified_timestamp(iam=iam, bucket=work_bucket, key=cert_file)
-        if from_timestamp > timestamp:
+        timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
+        cert_file = "%s/job__%s_%s/logs/certificate.txt" % (result_dir, work_bucket, timestamp)
+        cert_timestamp = get_last_modified_timestamp(iam=iam, bucket=work_bucket, key=cert_file)
+
+        if cert_timestamp == 0:
             cert_content = ""
         else:
             cert_content = get_file_content(iam=iam, bucket=work_bucket, key=cert_file)
+
+        dtset_logs = []
+        log_dir = "%s/job__%s_%s/logs/" % (result_dir, work_bucket, timestamp)
+        dtset_logs_keys = get_dataset_logs(iam=iam, bucket=work_bucket, log_dir=log_dir)
+        for key in dtset_logs_keys:
+            dtset_logs.append(get_download_file(iam, work_bucket, key, timestamp))
+
         return JsonResponse({
             "status": True,
-            "cert_file": cert_content
+            "cert_file": cert_content,
+            "dtset_logs": dtset_logs
         })
 
     def post(self, request):
         iam = IAM.objects.filter(user=request.user).first()
-        from_timestamp = int(request.POST['timestamp'])
+        timestamp = int(request.POST['timestamp'])
 
-        timestamp = get_last_modified_timestamp(iam=iam, bucket=work_bucket, key=mp4_file)
+        mp4_file = "%s/job__%s_%s/hp_optimum/epi_opt.mp4" % (result_dir, work_bucket, timestamp)
+        csv_file = "%s/job__%s_%s/hp_optimum/opt_data.csv" % (result_dir, work_bucket, timestamp)
+        mp4_timestamp = get_last_modified_timestamp(iam=iam, bucket=work_bucket, key=mp4_file)
 
         # video & dataset files logs
         video_link = None
         csv_link = None
 
         dtset_logs = []
-        if from_timestamp > timestamp:
-            # remove last process files
-            remove_files()
-        else:
-            video_link = get_download_file(iam, work_bucket, mp4_file)
-            csv_link = get_download_file(iam, work_bucket, csv_file)
-            dtset_logs_keys = get_dataset_logs(iam=iam, bucket=work_bucket)
+        if mp4_timestamp > 0:
+            video_link = get_download_file(iam, work_bucket, mp4_file, timestamp)
+            csv_link = get_download_file(iam, work_bucket, csv_file, timestamp)
+
+            log_dir = "%s/job__%s_%s/logs/" % (result_dir, work_bucket, timestamp)
+            dtset_logs_keys = get_dataset_logs(iam=iam, bucket=work_bucket, log_dir=log_dir)
             dtset_logs = []
             for key in dtset_logs_keys:
-                dtset_logs.append(get_download_file(iam, work_bucket, key))
+                dtset_logs.append(get_download_file(iam, work_bucket, key, timestamp))
+
+            # remove used dataset and config files
+            """ Code here """
+            dataset_dir = "%s/epidata-%s" % (upload_dir, timestamp)
+            delete_jsons_from_bucket(iam=iam, bucket_name=work_bucket, prefix="%s/" % dataset_dir)
+            # remove config file from epi bucket
+            config_to_key = "%s/config_%s.json" % (upload_dir, timestamp)
+            delete_file_from_bucket(iam=iam, bucket_name=work_bucket, key=config_to_key)
 
         return JsonResponse({
             "status": 200,
