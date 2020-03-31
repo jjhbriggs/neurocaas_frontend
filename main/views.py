@@ -135,9 +135,17 @@ class DemoResultView(LoginRequiredMixin, View):
             cert_content = ""
         else:
             cert_content = get_file_content(iam=iam, bucket=work_bucket, key=cert_file)
+
+        dtset_logs = []
+        log_dir = "%s/job__%s_%s/logs/" % (result_dir, work_bucket, timestamp)
+        dtset_logs_keys = get_dataset_logs(iam=iam, bucket=work_bucket, log_dir=log_dir)
+        for key in dtset_logs_keys:
+            dtset_logs.append(get_download_file(iam, work_bucket, key, timestamp))
+
         return JsonResponse({
             "status": True,
-            "cert_file": cert_content
+            "cert_file": cert_content,
+            "dtset_logs": dtset_logs
         })
 
     def post(self, request):

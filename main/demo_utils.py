@@ -26,7 +26,11 @@ def get_download_file(iam, bucket, key, timestamp):
 
     output = "%s/%s" % (folder, key.split("/")[-1])
     print(key)
-    s3.Bucket(bucket).download_file(key, output)
+    try:
+        s3.Bucket(bucket).download_file(key, output)
+    except Exception as e:
+        print(e)
+        return None
 
     return output
     # except Exception as e:
@@ -111,10 +115,13 @@ def get_dataset_logs(iam, bucket, log_dir):
     # log files
     file_keys = []
     # List objects within a given prefix
-    for obj in bucket.objects.filter(Delimiter='/', Prefix=log_dir):
-        if obj.key.endswith('certificate.txt'):
-            continue
-        file_keys.append(obj.key)
+    try:
+        for obj in bucket.objects.filter(Delimiter='/', Prefix=log_dir):
+            if obj.key.endswith('certificate.txt'):
+                continue
+            file_keys.append(obj.key)
+    except Exception as e:
+        print(e)
 
     return file_keys
 
@@ -133,12 +140,13 @@ def get_file_list(iam, folder):
     prefix = "%s/" % folder
 
     # Retrieve keys from s3 bucket
-    # try:
-    for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
-        if obj.key.endswith('.json'):
-            file_keys.append(obj.key)
-    # except Exception as e:
-    #     print(e)
+    try:
+        for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
+            if obj.key.endswith('.json'):
+                file_keys.append(obj.key)
+    except Exception as e:
+        print(e)
+
     return file_keys
 
 
