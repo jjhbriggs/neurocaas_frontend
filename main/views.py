@@ -104,7 +104,7 @@ class DemoView(LoginRequiredMixin, View):
                             to_key=config_to_key)
 
         submit_data = {
-            "dataname": dataset_dir,
+            "dataname": dataset_dir + "/",
             "configname": config_to_key,
             "timestamp": str(cur_timestamp)
         }
