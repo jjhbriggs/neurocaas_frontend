@@ -88,7 +88,7 @@ function submit(){
     	},
     	success: function(res){
     		console.log(res)
-    		trigger_function();
+    		trigger_function(res.timestamp);
     	},
     	error: function(err){
     		console.log(err);
