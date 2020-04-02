@@ -127,13 +127,13 @@ def get_dataset_logs(iam, bucket, log_dir):
 
 
 # function to get all files of folder in bucket
-def get_file_list(iam, folder):
+def get_file_list(iam, bucket, folder):
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
         aws_secret_access_key=iam.aws_secret_access_key)
 
-    bucket = s3.Bucket(iam.data_bucket.name)
+    bucket = s3.Bucket(bucket)
 
     file_keys = []
 
