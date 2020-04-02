@@ -33,10 +33,6 @@ def get_download_file(iam, bucket, key, timestamp):
         return None
 
     return output
-    # except Exception as e:
-    #     print(key)
-    #     print(e)
-    #     return None
 
 
 def get_last_modified_timestamp(iam, bucket, key):
@@ -90,8 +86,6 @@ def get_file_content(iam, bucket, key):
         aws_access_key_id=iam.aws_access_key,
         aws_secret_access_key=iam.aws_secret_access_key
     )
-
-    # obj = s3.Object("epi-ncap", "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4")
     obj = s3.Object(bucket, key)
 
     try:
