@@ -19,11 +19,6 @@ import time
 """
 
 result_dir = "cunninghamlabEPI/results"
-# mp4_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/epi_opt.mp4"
-# csv_file = "cunninghamlabEPI/results/jobepi_demo/hp_optimum/opt_data.csv"
-# cert_file = "cunninghamlabEPI/results/jobepi_demo/logs/certificate.txt"
-# log_dir = "cunninghamlabEPI/results/jobepi_demo/logs"
-# dataset_dir = "cunninghamlabEPI/inputs/epidata"
 work_bucket = "epi-ncap"
 upload_dir = "cunninghamlabEPI/inputs"
 submit_file_name = "episubmit.json"
@@ -65,13 +60,13 @@ class DemoView(LoginRequiredMixin, View):
         iam = IAM.objects.filter(user=request.user).first()
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-
+        root_folder = "data/%s" % iam.aws_user
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
-            'data_bucket': iam.data_bucket,
-            "data_dataset_dir": "dataset",
-            "data_config_dir": "config",
+            'data_bucket': work_bucket,
+            "data_dataset_dir": "%s/dataset" % root_folder,
+            "data_config_dir": "%s/config" % root_folder,
         })
 
     def post(self, request):
@@ -208,14 +203,15 @@ class DemoDataBucketView(LoginRequiredMixin, View):
         iam = IAM.objects.filter(user=request.user).first()
 
         # dataset files list
-        folder = 'dataset'
-        dataset_keys = get_file_list(iam=iam, folder=folder)
+        root_folder = "data/%s" % iam.aws_user
+        folder = '%s/dataset' % root_folder
+        dataset_keys = get_file_list(iam=iam, bucket=work_bucket, folder=folder)
         dataset_names = []
         [dataset_names.append(get_name_only(key=key)) for key in dataset_keys]
 
         # config files list
-        folder = 'config'
-        config_keys = get_file_list(iam=iam, folder=folder)
+        folder = '%s/config' % root_folder
+        config_keys = get_file_list(iam=iam, bucket=work_bucket, folder=folder)
         config_names = []
         [config_names.append(get_name_only(key=key)) for key in config_keys]
 
@@ -226,7 +222,7 @@ class DemoDataBucketView(LoginRequiredMixin, View):
         })
 
     def delete(self, request):
-        file_name = request.GET['file_name'];
+        file_name = request.GET['file_name']
         return JsonResponse({
             "status": 200,
             "message": file_name
