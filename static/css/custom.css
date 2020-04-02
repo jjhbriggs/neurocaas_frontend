@@ -227,6 +227,7 @@ button[disabled] {
 {
     font-family: FontAwesome;
     width: 300px;
+    text-align: left;
 }
 .foldercontainer, .file, .noitems
 {
@@ -252,7 +253,7 @@ button[disabled] {
 }
 .folder:hover,.file:hover
 {
-    background: yellow;
+    background: #21252942;
 }
 .folder:before, .file:before
 {
