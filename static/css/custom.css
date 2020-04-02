@@ -221,3 +221,41 @@ button[disabled] {
     background: #bb9595;
     cursor: not-allowed;
 }
+
+
+#hierarchy
+{
+    font-family: FontAwesome;
+    width: 300px;
+    text-align: left;
+}
+.foldercontainer, .file, .noitems
+{
+    display: block;
+    padding: 5px 5px 5px 50px;
+}
+.folder
+{
+    color: red;
+}
+.file
+{
+    color: green;
+}
+.folder, .file
+{
+    cursor: pointer;
+}
+.noitems
+{
+    display: none;
+    pointer-events: none;
+}
+.folder:hover,.file:hover
+{
+    background: #21252942;
+}
+.folder:before, .file:before
+{
+    padding-right: 10px;
+}

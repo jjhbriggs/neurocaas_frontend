@@ -97,6 +97,70 @@
             <!-- # END Result video -->
         </div>
 
+        <!--  Hierarchy View  -->
+        <div id="hierarchy" style="display: none;">
+            <div class="foldercontainer">
+                <span class="folder fa-folder-o" data-isexpanded="true">Folder 1</span>
+                <span class="file fa-file-excel-o">File 11</span>
+                <span class="file fa-file-code-o">File 12</span>
+                <span class="file fa-file-pdf-o">File 13</span>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder-o" data-isexpanded="true">Folder 1-1</span>
+                    <span class="file fa-file-excel-o">File 1-11</span>
+                    <span class="file fa-file-code-o">File 1-12</span>
+                    <span class="file fa-file-pdf-o">File 1-13</span>
+                </div>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder">Folder 1-2</span>
+                    <span class='noitems'>No Items</span>
+                </div>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder">Folder 1-3</span>
+                    <span class='noitems'>No Items</span>
+                </div>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder">Folder 1-4</span>
+                    <span class='noitems'>No Items</span>
+                </div>
+            </div>
+
+            <div class="foldercontainer">
+                <span class="folder fa-folder-o" data-isexpanded="false">Folder 2</span>
+                <span class="file fa-file-excel-o">File 21</span>
+                <span class="file fa-file-code-o">File 22</span>
+                <span class="file fa-file-pdf-o">File 23</span>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder-o" data-isexpanded="true">Folder 2-1</span>
+                    <span class="file fa-file-excel-o">File 2-11</span>
+                    <span class="file fa-file-code-o">File 2-12</span>
+                    <span class="file fa-file-pdf-o">File 2-13</span>
+
+                    <div class="foldercontainer">
+                        <span class="folder fa-folder">Folder 2-1-1</span>
+                        <span class='noitems'>No Items</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="foldercontainer">
+                <span class="folder fa-folder-o" data-isexpanded="true">Folder 3</span>
+                <span class="file fa-file-excel-o">File 31</span>
+                <span class="file fa-file-code-o">File 32</span>
+                <span class="file fa-file-pdf-o">File 33</span>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder">Folder 3-1</span>
+                    <span class='noitems'>No Items</span>
+                </div>
+            </div>
+        </div>
+        <!--  # END Hierarchy View  -->
+
         <!-- Spinner -->
         <div class="spinner mt-5" style="display:block;">
             <div class="text-center pt-5">
@@ -108,7 +172,6 @@
             <h3 class="mt-5">Processing...</h3>
         </div>
         <!-- #END Spinner -->
-
     </div>
     <!--# END Processing Result  -->
 </div>
@@ -117,7 +180,7 @@
 
 {% block js_content %}
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.617.0.min.js"></script>
-    <script src="{% static 'js/file_upload.js' %}"></script>
+    <script src="{% static 'js/file_upload.js' %}"></script>    
 
     <script>
         var id1, id2;
@@ -131,102 +194,10 @@
 
         var dataset_area = new FileUpload();
         var config_area = new FileUpload();
-        /* get file name from url */
-        function get_file_name(url){
-            return url === null ? "" : url.split("/").slice(-1)[0]
-        }
-
-        /* function to show processing status from certificate.txt */
-        function get_status(timestamp){
-            url = "/demo_result/?timestamp=" + timestamp;
-            $.ajax({
-                url: url,
-                success: function(res){
-                    console.log(res);
-                    $('#status-text').html(res.cert_file);
-                    if (res.dtset_logs.length > 0 ){
-                        var html = "";
-                        for ( i = 0; i < res.dtset_logs.length; i++){
-                            html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
-                            html += '<a href="../' + res.dtset_logs[i] + '" class="text-warning" target="_blank">';
-                            html += get_file_name(res.dtset_logs[i]) + '</a></p></div>';
-                        }
-                        $('#dtset-result-view').html(html);
-                        $('.result-dataset').css('display', 'block');
-                    }
-
-                    if (processing_status)
-                        setTimeout(function(){
-                            get_status(timestamp)
-                        }, 30000);
-                }
-            })
-        }
-
-        /* function to show processing results from log and hp_optimum folder */
-        function get_results(timestamp){
-            url = "/demo_result/";
-            $.ajax({
-                url: url,
-                method: "POST",
-                data: {
-                    timestamp: timestamp
-                },
-                success: function(res){
-                    console.log(res);
-                    if(res.dtset_logs.length > 0) {
-                        // append the log result to log table
-                        var html = "";
-                        for ( i = 0; i < res.dtset_logs.length; i++){
-                            html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
-                            html += '<a href="../' + res.dtset_logs[i] + '" class="text-warning" target="_blank">';
-                            html += get_file_name(res.dtset_logs[i]) + '</a></p></div>';
-                        }
-                        $('#dtset-result-view').html(html);
-                    }
-
-                    if(res.video_link) {
-                        processing_status = false;
-                        $('.spinner').css('display', 'none');
-                        $('.result-video').css('display', 'block');
-
-                        // show video result
-                        html = '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
-                        html += '<a href="../' + res.video_link + '" class="text-warning" target="_blank">';
-                        html += get_file_name(res.video_link) + '</a></p></div>';
-
-                        html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
-                        html += '<a href="../' + res.csv_link + '" class="text-warning" target="_blank">';
-                        html += get_file_name(res.csv_link) + '</a></p></div>';
-
-                        $('#video-result-view').html(html);
-                    }
-
-                    if (processing_status)
-                        setTimeout(function(){
-                            get_results(timestamp)
-                        }, 30000);
-                }
-            })
-        }
-
-        var trigger_function = function(timestamp){
-            $('.spinner').css('display', 'block');
-            setTimeout(function(){
-                // timestamp = Math.floor(Date.now()/1000);
-                get_status(timestamp);
-                get_results(timestamp);
-            }, 1000);
-        }
-
-        var submit_trigger = function(){
-            setTimeout(function(){
-                refresh_databucket_list();
-                dataset_area.clear_status();
-                config_area.clear_status();
-            }, 700);
-        }
-
+    </script>
+    <script src="{% static 'js/demo.js' %}"></script>
+    
+    <script type="text/javascript">
         
         dataset_area.init("dataset-area", id1, id2, data_bucket, data_dataset_dir, "", submit_trigger, true);
 
@@ -238,5 +209,41 @@
             refresh_databucket_list();
         })
 
+
+        var hierarchy = document.getElementById("hierarchy");
+        hierarchy.addEventListener("click", function(event){
+            var elem = event.target;
+            if(elem.tagName.toLowerCase() == "span" && elem !== event.currentTarget)
+            {
+                var type = elem.classList.contains("folder") ? "folder" : "file";
+                if(type=="file")
+                {
+                    alert("File accessed");
+                }
+                if(type=="folder")
+                {
+                    var isexpanded = elem.dataset.isexpanded=="true";
+                    if(isexpanded)
+                    {
+                        elem.classList.remove("fa-folder-o");
+                        elem.classList.add("fa-folder");
+                    }
+                    else
+                    {
+                        elem.classList.remove("fa-folder");
+                        elem.classList.add("fa-folder-o");
+                    }
+                    elem.dataset.isexpanded = !isexpanded;
+
+                    var toggleelems = [].slice.call(elem.parentElement.children);
+                    var classnames = "file,foldercontainer,noitems".split(",");
+
+                    toggleelems.forEach(function(element){
+                        if(classnames.some(function(val){return element.classList.contains(val);}))
+                        element.style.display = isexpanded ? "none":"block";
+                    });
+                }
+            }
+        });
     </script>
 {% endblock %}
