@@ -22,7 +22,8 @@ result_dir = "cunninghamlabEPI/results"
 work_bucket = "epi-ncap"
 upload_dir = "cunninghamlabEPI/inputs"
 submit_file_name = "episubmit.json"
-config_name = 'Epi-ncap-stable'
+# config_name = 'Epi-ncap-stable'
+config_name = 'Epi-ncap'
 
 
 class HomeView(View):
@@ -98,7 +99,7 @@ class MainView(LoginRequiredMixin, View):
             "dataname": dataset_dir + "/",
             "configname": config_to_key,
             "timestamp": str(cur_timestamp),
-            "instance_type": "t2.micro",
+            # "instance_type": "t2.micro",
         }
 
         create_submit_json(iam=iam, work_bucket=config.bucket_name, key=config.submit_path, json_data=submit_data)
