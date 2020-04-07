@@ -62,3 +62,10 @@ class Process(Base):
     def __str__(self):
         return self.name
 
+
+class Config(Base):
+    process_name = models.CharField(max_length=100, help_text='Name of Process', unique=True)
+    input_folder = models.CharField(max_length=100, help_text='Folder of dataset and config items')
+    result_prefix = models.CharField(max_length=100, help_text='Prefix of result folder name')
+    result_items = models.TextField(help_text='Json of result files')
+    bucket_name = models.CharField(max_length=50, help_text='Bucket Name')

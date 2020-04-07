@@ -1,0 +1,249 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block title_content %}
+    <h2 class="clickable text-white mt-4">CaImAn PMD LocaNMF DeepLabCut EPI</h2>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-4 offset-md-4 mt-5">
+                <h2>EPI</h2>
+                <hr style="top:0px;"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!--    DataSet Uploading Area    -->
+        <h3>Select or upload dataset(s)</h3>
+        <div class="table-div">
+            <table class="mt-3" id="dataset_table">
+                <tbody>
+                    <tr>
+                        <td>loading ...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="upload-div" id="dataset-area">
+            <form class="drop-area">
+                <p>Drag & Drop or Click!</p>
+                <input type="file" class="fileElem" accept=".json" multiple>
+                <progress class="progress-bar" max=100 value=0></progress>
+            </form>
+            <div class="gallery"></div>
+        </div>
+        <hr>
+
+        <!-- Json file Uploading Area    -->
+        <div class="mt-2">
+            <h3>Select or upload config</h3>
+            <div class="table-div">
+                <table class="mt-3" id="config_table">
+                    <tbody>
+                        <tr>
+                            <td>loading ...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="upload-div" id="config-area">
+                <form class="drop-area">
+                    <p>Drag & Drop or Click!</p>
+                    <input type="file" class="fileElem" accept=".json" multiple>
+                    <progress class="progress-bar" max=100 value=0></progress>
+                </form>
+                <div class="gallery"></div>
+            </div>
+        </div>
+        <div class="mt-2">
+            <button onclick="submit();" id="submit_button" class="disabled">Submit</button>
+        </div>
+    </div>
+    <!--# END Uploading Area    -->
+
+    <!--  Processing Status    -->
+    <div class="col-md-4 status-div">
+        <h3>Status</h3>
+        <div class="status mt-4">
+            <textarea class="form-control status-text" id="status-text" disabled>...</textarea>
+        </div>
+    </div>
+    <!--# END Processing Status  -->
+
+    <!--# Processing Result -->
+    <div class="col-md-4 result-div">
+        <h3>Results</h3>
+
+        <!-- Result View -->
+        <div class="result-dataset mt-2" style="display: none;">
+
+            <!-- Result per Dataset -->
+            <h6 class="border-bottom pb-2 mb-0 text-white">Per DataSet</h6>
+            <div class="p-3 bg-transparent rounded box-shadow" id="dtset-result-view">
+            </div>
+            <!-- #END Result per Dataset -->
+        </div>
+
+        <div class="result-video mt-2" style="display: none;">
+            <!-- Result Video -->
+            <h6 class="border-bottom pb-2 mb-0 text-white mt-4">Final</h6>
+            <div class="p-3 bg-transparent rounded box-shadow" id="video-result-view">
+            </div>
+            <!-- # END Result video -->
+        </div>
+
+        <!--  Hierarchy View  -->
+        <div id="hierarchy" style="display: none;">
+            <div class="foldercontainer">
+                <span class="folder fa-folder-o" data-isexpanded="true">Folder 1</span>
+                <span class="file fa-file-excel-o">File 11</span>
+                <span class="file fa-file-code-o">File 12</span>
+                <span class="file fa-file-pdf-o">File 13</span>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder-o" data-isexpanded="true">Folder 1-1</span>
+                    <span class="file fa-file-excel-o">File 1-11</span>
+                    <span class="file fa-file-code-o">File 1-12</span>
+                    <span class="file fa-file-pdf-o">File 1-13</span>
+                </div>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder">Folder 1-2</span>
+                    <span class='noitems'>No Items</span>
+                </div>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder">Folder 1-3</span>
+                    <span class='noitems'>No Items</span>
+                </div>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder">Folder 1-4</span>
+                    <span class='noitems'>No Items</span>
+                </div>
+            </div>
+
+            <div class="foldercontainer">
+                <span class="folder fa-folder-o" data-isexpanded="false">Folder 2</span>
+                <span class="file fa-file-excel-o">File 21</span>
+                <span class="file fa-file-code-o">File 22</span>
+                <span class="file fa-file-pdf-o">File 23</span>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder-o" data-isexpanded="true">Folder 2-1</span>
+                    <span class="file fa-file-excel-o">File 2-11</span>
+                    <span class="file fa-file-code-o">File 2-12</span>
+                    <span class="file fa-file-pdf-o">File 2-13</span>
+
+                    <div class="foldercontainer">
+                        <span class="folder fa-folder">Folder 2-1-1</span>
+                        <span class='noitems'>No Items</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="foldercontainer">
+                <span class="folder fa-folder-o" data-isexpanded="true">Folder 3</span>
+                <span class="file fa-file-excel-o">File 31</span>
+                <span class="file fa-file-code-o">File 32</span>
+                <span class="file fa-file-pdf-o">File 33</span>
+
+                <div class="foldercontainer">
+                    <span class="folder fa-folder">Folder 3-1</span>
+                    <span class='noitems'>No Items</span>
+                </div>
+            </div>
+        </div>
+        <!--  # END Hierarchy View  -->
+
+        <!-- Spinner -->
+        <div class="spinner mt-5" style="display:block;">
+            <div class="text-center pt-5">
+                <h6 class="mb-lg"><sup><em class="fa fa-cog fa-2x text-muted fa-spin text-info"></em></sup>
+                   <em class="fa fa-cog fa-5x text-muted fa-spin text-purple"></em>
+                   <em class="fa fa-cog fa-lg text-muted fa-spin text-success"></em>
+                </h6>
+            </div>
+            <h3 class="mt-5">Processing...</h3>
+        </div>
+        <!-- #END Spinner -->
+    </div>
+    <!--# END Processing Result  -->
+</div>
+
+{% endblock %}
+
+{% block js_content %}
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.617.0.min.js"></script>
+    <script src="{% static 'js/file_upload.js' %}"></script>    
+
+    <script>
+        var id1, id2;
+        var id1 = "{{id1}}";
+        var id2 = "{{id2}}";
+        var processing_status = true;
+        var data_dataset_dir = "{{data_dataset_dir}}";
+        var data_config_dir = "{{data_config_dir}}";
+        var data_bucket = "{{data_bucket}}";
+
+
+        var dataset_area = new FileUpload();
+        var config_area = new FileUpload();
+    </script>
+    <script src="{% static 'js/demo.js' %}"></script>
+    
+    <script type="text/javascript">
+        
+        dataset_area.init("dataset-area", id1, id2, data_bucket, data_dataset_dir, "", submit_trigger, true);
+
+        
+        config_area.init("config-area", id1, id2, data_bucket, data_config_dir, "", submit_trigger, true)
+
+        $(document).ready(function(){
+            $('.spinner').css('display', 'none');
+            refresh_databucket_list();
+        })
+
+
+        var hierarchy = document.getElementById("hierarchy");
+        hierarchy.addEventListener("click", function(event){
+            var elem = event.target;
+            if(elem.tagName.toLowerCase() == "span" && elem !== event.currentTarget)
+            {
+                var type = elem.classList.contains("folder") ? "folder" : "file";
+                if(type=="file")
+                {
+                    alert("File accessed");
+                }
+                if(type=="folder")
+                {
+                    var isexpanded = elem.dataset.isexpanded=="true";
+                    if(isexpanded)
+                    {
+                        elem.classList.remove("fa-folder-o");
+                        elem.classList.add("fa-folder");
+                    }
+                    else
+                    {
+                        elem.classList.remove("fa-folder");
+                        elem.classList.add("fa-folder-o");
+                    }
+                    elem.dataset.isexpanded = !isexpanded;
+
+                    var toggleelems = [].slice.call(elem.parentElement.children);
+                    var classnames = "file,foldercontainer,noitems".split(",");
+
+                    toggleelems.forEach(function(element){
+                        if(classnames.some(function(val){return element.classList.contains(val);}))
+                        element.style.display = isexpanded ? "none":"block";
+                    });
+                }
+            }
+        });
+    </script>
+{% endblock %}
