@@ -26,4 +26,4 @@ class SubFolderAdmin(admin.ModelAdmin):
 
 @admin.register(Config)
 class SubFolderAdmin(admin.ModelAdmin):
-    list_display = ('process_name', 'input_folder', 'result_prefix', 'bucket_name')
+    list_display = ('process_name', 'upload_folder', 'result_prefix', 'bucket_name')
