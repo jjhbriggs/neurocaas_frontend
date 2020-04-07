@@ -178,8 +178,8 @@ def delete_jsons_from_bucket(iam, bucket_name, prefix):
     bucket = s3.Bucket(bucket_name)
     print(prefix)
     for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
-        if obj.key.endswith('.json'):
-            obj.delete()
+        # if obj.key.endswith('.json'):
+        obj.delete()
 
 
 def delete_file_from_bucket(iam, bucket_name, key):

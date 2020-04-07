@@ -182,39 +182,29 @@ class ResultView(LoginRequiredMixin, View):
         iam = IAM.objects.filter(user=request.user).first()
         timestamp = int(request.POST['timestamp'])
         result_items = json.loads(config.result_items)
-        
-        mp4_file = "%s/job__%s_%s/hp_optimum/epi_opt.mp4" % (result_dir, work_bucket, timestamp)
-        csv_file = "%s/job__%s_%s/hp_optimum/opt_data.csv" % (result_dir, work_bucket, timestamp)
-        mp4_timestamp = get_last_modified_timestamp(iam=iam, bucket=work_bucket, key=mp4_file)
+        result_keys = []
+        for item in result_items:
+            file_key = "%s/job__%s_%s/%s" % (config.result_path, config.bucket_name, timestamp, item['path'])
+            result_keys.append(file_key)
 
-        # video & dataset files logs
-        video_link = None
-        csv_link = None
+        file_timestamp = get_last_modified_timestamp(iam=iam, bucket=config.bucket_name, key=result_keys[0])
 
-        dtset_logs = []
-        if mp4_timestamp > 0:
-            video_link = get_download_file(iam, work_bucket, mp4_file, timestamp)
-            csv_link = get_download_file(iam, work_bucket, csv_file, timestamp)
-
-            log_dir = "%s/job__%s_%s/logs/" % (result_dir, work_bucket, timestamp)
-            dtset_logs_keys = get_dataset_logs(iam=iam, bucket=work_bucket, log_dir=log_dir)
-            dtset_logs = []
-            for key in dtset_logs_keys:
-                dtset_logs.append(get_download_file(iam, work_bucket, key, timestamp))
+        result_links = []
+        if file_timestamp > 0:
+            for key in result_keys:
+                link = get_download_file(iam=iam, bucket=config.bucket_name, key=key, timestamp=timestamp)
+                result_links.append(link)
 
             # remove used dataset and config files
-            """ Code here """
-            dataset_dir = "%s/epidata-%s" % (upload_dir, timestamp)
-            delete_jsons_from_bucket(iam=iam, bucket_name=work_bucket, prefix="%s/" % dataset_dir)
+            dataset_dir = "%s/%s" % (config.dataset_path, timestamp)
+            delete_jsons_from_bucket(iam=iam, bucket_name=config.bucket_name, prefix="%s/" % dataset_dir)
             # remove config file from epi bucket
-            config_to_key = "%s/config_%s.json" % (upload_dir, timestamp)
-            delete_file_from_bucket(iam=iam, bucket_name=work_bucket, key=config_to_key)
+            config_to_key = "%s/config_%s.json" % (config.config_path, timestamp)
+            delete_file_from_bucket(iam=iam, bucket_name=config.bucket_name, key=config_to_key)
 
         return JsonResponse({
             "status": 200,
-            "video_link": video_link,
-            "csv_link": csv_link,
-            "dtset_logs": dtset_logs
+            'result_links': result_links
         })
 
 
