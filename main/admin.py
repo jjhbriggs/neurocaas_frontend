@@ -22,3 +22,8 @@ class ProcessAdmin(admin.ModelAdmin):
 @admin.register(SubFolder)
 class SubFolderAdmin(admin.ModelAdmin):
     list_display = ('name', 'bucket', 'created_on', )
+
+
+@admin.register(Config)
+class SubFolderAdmin(admin.ModelAdmin):
+    list_display = ('process_name', 'upload_folder', 'result_prefix', 'bucket_name')
