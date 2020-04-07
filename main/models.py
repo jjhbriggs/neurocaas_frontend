@@ -62,3 +62,18 @@ class Process(Base):
     def __str__(self):
         return self.name
 
+
+class Config(Base):
+    process_name = models.CharField(max_length=100, help_text='Name of Process', unique=True)
+    upload_folder = models.CharField(max_length=100, help_text='Folder to upload dataset and config items',
+                                     null=True, blank=True)
+    result_prefix = models.CharField(max_length=100, help_text='Prefix of result folder name')
+    result_items = models.TextField(help_text='Json of result files')
+    bucket_name = models.CharField(max_length=100, help_text='Bucket Name')
+    result_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of results')
+    config_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of config file')
+    dataset_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of dataset files')
+    submit_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of submit file')
+
+    def __str__(self):
+        return self.process_name

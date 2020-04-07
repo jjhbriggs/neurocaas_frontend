@@ -6,7 +6,7 @@ function get_file_name(url){
 
 /* function to show processing status from certificate.txt */
 function get_status(timestamp){
-    url = "/demo_result/?timestamp=" + timestamp;
+    url = "/get_results/?timestamp=" + timestamp;
     $.ajax({
         url: url,
         success: function(res){
