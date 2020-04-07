@@ -118,7 +118,7 @@ class DemoResultView(LoginRequiredMixin, View):
     """
     Demo Result View
         """
-    template_name = "main/demo_result.html"
+    # template_name = "main/demo_result.html"
 
     def get(self, request):
         iam = get_iam(request)
