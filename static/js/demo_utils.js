@@ -11,7 +11,7 @@ function refresh_databucket_list(){
     $('#config_table tbody').html(loading_template);
 
 	$.ajax({
-		url: '/demo_bucket/',
+		url: '/get_user_files/',
 		success: function(res){
 			console.log(res);
 			if (res.status == 200){
@@ -80,7 +80,7 @@ function submit(){
     config_file = radiobox[0].textContent;
 
     $.ajax({
-    	url: '/demo/',
+    	url: window.location.pathname,
     	method: 'POST',
     	data: {
     		dataset_files: dataset_files,
