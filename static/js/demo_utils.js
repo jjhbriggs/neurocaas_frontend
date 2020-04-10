@@ -79,6 +79,7 @@ function submit(){
     }
     config_file = radiobox[0].textContent;
 
+    $('#btn-spinner').css('display', 'inline-block');
     $.ajax({
     	url: window.location.pathname,
     	method: 'POST',
@@ -87,10 +88,12 @@ function submit(){
     		config_file: config_file
     	},
     	success: function(res){
+    	    $('#btn-spinner').css('display', 'none');
     		console.log(res)
     		trigger_function(res.timestamp);
     	},
     	error: function(err){
+    	    $('#btn-spinner').css('display', 'none');
     		console.log(err);
     		$('#submit_button').attr('disabled', false);		
     	}
