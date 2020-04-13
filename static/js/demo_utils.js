@@ -15,15 +15,18 @@ function refresh_databucket_list(){
 		success: function(res){
 			console.log(res);
 			if (res.status == 200){
+			    configs = res.configs;
+			    datasets = res.datasets;
+
 				var dataset_html = '';
-				for ( var i = 0 ; i < res.datasets.length ; i++)
-					dataset_html += get_tr_template(res.datasets[i], "checkbox", "dataset_file")
+				for ( var i = 0 ; i < datasets.length ; i++)
+					dataset_html += get_tr_template(datasets[i].name, "checkbox", "dataset_file")
 
 				dataset_html === '' ? $('#dataset_table tbody').html(empty_template) : $('#dataset_table tbody').html(dataset_html);
 
 				var config_html = '';
-				for ( var i = 0 ; i < res.configs.length ; i++)
-					config_html += get_tr_template(res.configs[i], "radio", "config_file")
+				for ( var i = 0 ; i < configs.length ; i++)
+					config_html += get_tr_template(configs[i].name, "radio", "config_file")
 
                 config_html === '' ? $('#config_table tbody').html(empty_template) : $('#config_table tbody').html(config_html);
 
