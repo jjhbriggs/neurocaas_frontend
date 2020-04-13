@@ -1,7 +1,22 @@
 // show dataset and config file list
 
-function get_tr_template(file, type, name){
-	return '<tr><td class="value">' + file + '</td><td><input type="' + type + '" name="' + name + '"></td>';
+function get_tr_template(file, type, name, ind, flag=0){
+	return '<tr onclick="show_detail(' + ind + ', ' + flag + ')"><td class="value">' + file + '</td><td><input type="' + type + '" name="' + name + '"></td>';
+}
+
+function show_detail(ind, type){
+    if (!detail_flag) return;
+    var content = "";
+    if (type === 0){
+        content += 'Name: ' + datasets[ind].name + '\n\n';
+        content += 'Size: ' + datasets[ind].size + '\n\n';
+        content += 'Date modified: ' + datasets[ind].date_modified + '\n';
+    } else {
+        content += 'Name: ' + configs[ind].name + '\n\n';
+        content += 'Date modified: ' + configs[ind].date_modified + '\n\n';
+        content += configs[ind].content + '\n';
+    }
+    $('#status-text').html(content)
 }
 
 function refresh_databucket_list(){
@@ -15,15 +30,18 @@ function refresh_databucket_list(){
 		success: function(res){
 			console.log(res);
 			if (res.status == 200){
+			    configs = res.configs;
+			    datasets = res.datasets;
+
 				var dataset_html = '';
-				for ( var i = 0 ; i < res.datasets.length ; i++)
-					dataset_html += get_tr_template(res.datasets[i], "checkbox", "dataset_file")
+				for ( var i = 0 ; i < datasets.length ; i++)
+					dataset_html += get_tr_template(datasets[i].name, "checkbox", "dataset_file", i, 0)
 
 				dataset_html === '' ? $('#dataset_table tbody').html(empty_template) : $('#dataset_table tbody').html(dataset_html);
 
 				var config_html = '';
-				for ( var i = 0 ; i < res.configs.length ; i++)
-					config_html += get_tr_template(res.configs[i], "radio", "config_file")
+				for ( var i = 0 ; i < configs.length ; i++)
+					config_html += get_tr_template(configs[i].name, "radio", "config_file", i, 1)
 
                 config_html === '' ? $('#config_table tbody').html(empty_template) : $('#config_table tbody').html(config_html);
 
@@ -37,8 +55,9 @@ function refresh_databucket_list(){
                         $(':radio', this).trigger('click');                        
                     }                    
 
-                    if ($(this).find('input').is(":checked") === true)
+                    if ($(this).find('input').is(":checked") === true){
                     	$(this).addClass('active');
+                    }
                     else
                     	$(this).removeClass('active');
 
@@ -79,6 +98,14 @@ function submit(){
     }
     config_file = radiobox[0].textContent;
 
+    $('#btn-spinner').css('display', 'inline-block');
+
+    // set the processing status to TRUE
+    processing_status = true;
+
+    // disabled showing detail of dataset and config files
+    detail_flag = false;
+
     $.ajax({
     	url: window.location.pathname,
     	method: 'POST',
@@ -87,10 +114,12 @@ function submit(){
     		config_file: config_file
     	},
     	success: function(res){
+    	    $('#btn-spinner').css('display', 'none');
     		console.log(res)
     		trigger_function(res.timestamp);
     	},
     	error: function(err){
+    	    $('#btn-spinner').css('display', 'none');
     		console.log(err);
     		$('#submit_button').attr('disabled', false);		
     	}

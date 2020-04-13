@@ -44,6 +44,8 @@ function get_results(timestamp){
             console.log(res);
 
             if(res.result_links.length > 0) {
+
+                // set the processing status to FALSE
                 processing_status = false;
                 $('.spinner').css('display', 'none');
 
