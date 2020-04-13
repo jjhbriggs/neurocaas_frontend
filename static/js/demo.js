@@ -1,4 +1,3 @@
-
 /* get file name from url */
 function get_file_name(url){
     return url === null ? "" : url.split("/").slice(-1)[0]
@@ -54,9 +53,10 @@ function get_results(timestamp){
                 // show video result
                 html = "";
                 for (var i = 0 ; i < res.result_links.length ; i++){
+                    console.log(res.result_links[i].path)
                     html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
-                    html += '<a href="../' + res.result_links[i] + '" class="text-warning" target="_blank">';
-                    html += get_file_name(res.result_links[i]) + '</a></p></div>';
+                    html += '<a href="../' + res.result_links[i].link + '" class="text-warning" target="_blank">';
+                    html += get_file_name(res.result_links[i].link) + '</a></p></div>';
                 }
 
                 $('#video-result-view').html(html);
