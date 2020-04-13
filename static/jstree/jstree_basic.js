@@ -28,7 +28,6 @@ function get_item(path){
 
 function create_jstree(paths){
     $('#hierarchy').remove();
-    console.log('removed');
     $("#hierarchy_div").append('<div id="hierarchy"></div>');
     $('#hierarchy')
         .on("changed.jstree", function (e, data) {
