@@ -127,19 +127,30 @@ class UserFilesView(LoginRequiredMixin, View):
         root_folder = "%s/%s" % (config.upload_folder, iam.aws_user)
         folder = '%s/dataset' % root_folder
         dataset_keys = get_file_list(iam=iam, bucket=config.bucket_name, folder=folder)
-        dataset_names = []
-        [dataset_names.append(get_name_only(key=key)) for key in dataset_keys]
+        datasets = []
+        for key in dataset_keys:
+            row = key.copy()
+            row.update({'name': get_name_only(key=key['key'])})
+            datasets.append(row)
+        # [datasets.append(key.update({'name': get_name_only(key=key['key'])})) for key in dataset_keys]
 
         # config files list
         folder = '%s/config' % root_folder
         config_keys = get_file_list(iam=iam, bucket=config.bucket_name, folder=folder)
-        config_names = []
-        [config_names.append(get_name_only(key=key)) for key in config_keys]
+        configs = []
+        for key in config_keys:
+            row = key.copy()
+            row.update({'name': get_name_only(key=key['key'])})
+            content = get_file_content(iam=iam, bucket=config.bucket_name, key=key['key'])
+            row.update({'content': content})
+            configs.append(row)
+
+        # [config_names.append(get_name_only(key=key)) for key in config_keys]
 
         return JsonResponse({
             "status": 200,
-            "datasets": dataset_names,
-            "configs": config_names
+            "datasets": datasets,
+            "configs": configs
         })
 
     def delete(self, request):
