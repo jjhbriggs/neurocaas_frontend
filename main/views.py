@@ -182,7 +182,8 @@ class ResultView(LoginRequiredMixin, View):
         log_dir = "%s/job__%s_%s/logs/" % (config.result_path, config.bucket_name, timestamp)
         dtset_logs_keys = get_dataset_logs(iam=iam, bucket=config.bucket_name, log_dir=log_dir)
         for key in dtset_logs_keys:
-            dtset_logs.append(get_download_file(iam, config.bucket_name, key, timestamp))
+            path = key.replace("%s/job__%s_%s/" % (config.result_path, config.bucket_name, timestamp), "")
+            dtset_logs.append({'link': get_download_file(iam, config.bucket_name, key, timestamp), 'path': path})
 
         return JsonResponse({
             "status": True,
