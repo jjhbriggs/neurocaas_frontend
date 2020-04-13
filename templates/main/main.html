@@ -103,53 +103,7 @@
         <!--  Hierarchy View  -->
         <!--  https://www.w3schools.com/icons/fontawesome_icons_filetype.asp   -->
         <div id="hierarchy" style="display: block;">
-            <div class="foldercontainer">
-                <span class="folder fa-folder-o" data-isexpanded="true">Folder 1</span>
-                <span class="file fa-file-movie-o">File 11</span>
-                <span class="file fa-file-code-o">File 12</span>
-                <span class="file fa-file-pdf-o">File 13</span>
 
-                <div class="foldercontainer">
-                    <span class="folder fa-folder-o" data-isexpanded="true">Folder 1-1</span>
-                    <span class="file fa-file-excel-o">File 1-11</span>
-                    <span class="file fa-file-code-o">File 1-12</span>
-                    <span class="file fa-file-pdf-o">File 1-13</span>
-                </div>
-
-                <div class="foldercontainer">
-                    <span class="folder fa-folder">Folder 1-2</span>
-                    <span class='noitems'>No Items</span>
-                </div>
-
-                <div class="foldercontainer">
-                    <span class="folder fa-folder">Folder 1-3</span>
-                    <span class='noitems'>No Items</span>
-                </div>
-
-                <div class="foldercontainer">
-                    <span class="folder fa-folder">Folder 1-4</span>
-                    <span class='noitems'>No Items</span>
-                </div>
-            </div>
-
-            <div class="foldercontainer">
-                <span class="folder fa-folder-o" data-isexpanded="false">Folder 2</span>
-                <span class="file fa-file-excel-o">File 21</span>
-                <span class="file fa-file-code-o">File 22</span>
-                <span class="file fa-file-pdf-o">File 23</span>
-
-                <div class="foldercontainer">
-                    <span class="folder fa-folder-o" data-isexpanded="true">Folder 2-1</span>
-                    <span class="file fa-file-excel-o">File 2-11</span>
-                    <span class="file fa-file-code-o">File 2-12</span>
-                    <span class="file fa-file-pdf-o">File 2-13</span>
-
-                    <div class="foldercontainer">
-                        <span class="folder fa-folder">Folder 2-1-1</span>
-                        <span class='noitems'>No Items</span>
-                    </div>
-                </div>
-            </div>
         </div>
         <!--  # END Hierarchy View  -->
 
@@ -203,42 +157,5 @@
             $('.spinner').css('display', 'none');
             refresh_databucket_list();
         })
-
-
-        var hierarchy = document.getElementById("hierarchy");
-        hierarchy.addEventListener("click", function(event){
-            var elem = event.target;
-            if(elem.tagName.toLowerCase() == "span" && elem !== event.currentTarget)
-            {
-                var type = elem.classList.contains("folder") ? "folder" : "file";
-                if(type=="file")
-                {
-                    alert("File accessed");
-                }
-                if(type=="folder")
-                {
-                    var isexpanded = elem.dataset.isexpanded=="true";
-                    if(isexpanded)
-                    {
-                        elem.classList.remove("fa-folder-o");
-                        elem.classList.add("fa-folder");
-                    }
-                    else
-                    {
-                        elem.classList.remove("fa-folder");
-                        elem.classList.add("fa-folder-o");
-                    }
-                    elem.dataset.isexpanded = !isexpanded;
-
-                    var toggleelems = [].slice.call(elem.parentElement.children);
-                    var classnames = "file,foldercontainer,noitems".split(",");
-
-                    toggleelems.forEach(function(element){
-                        if(classnames.some(function(val){return element.classList.contains(val);}))
-                        element.style.display = isexpanded ? "none":"block";
-                    });
-                }
-            }
-        });
     </script>
 {% endblock %}
