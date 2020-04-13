@@ -97,6 +97,9 @@ def get_file_content(iam, bucket, key):
 
 
 def get_dataset_logs(iam, bucket, log_dir):
+    """
+        Retrieve logs for each dataset
+    """
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
@@ -120,6 +123,18 @@ def get_dataset_logs(iam, bucket, log_dir):
     return file_keys
 
 
+def convert_size(size):
+    """
+        Return size converted to appropriate format from Byte
+    """
+    if size > 1024:
+        return str(round(float(size/1024), 2)) + " KB"
+    elif size > 1024*1024:
+        return str(round(float(size / (1024*1024)), 2)) + " MB"
+    else:
+        return str(size) + " B"
+
+
 # function to get all files of folder in bucket
 def get_file_list(iam, bucket, folder):
     s3 = boto3.resource(
@@ -139,8 +154,8 @@ def get_file_list(iam, bucket, folder):
             # if obj.key.endswith('.json'):
             file_keys.append({
                 'key': obj.key,
-                'date_modified': obj.last_modified,
-                'size': obj.size
+                'date_modified': obj.last_modified.strftime('%Y-%m-%d'),
+                'size': convert_size(obj.size)
             })
     except Exception as e:
         print(e)

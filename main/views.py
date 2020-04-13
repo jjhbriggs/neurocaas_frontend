@@ -127,6 +127,7 @@ class UserFilesView(LoginRequiredMixin, View):
         root_folder = "%s/%s" % (config.upload_folder, iam.aws_user)
         folder = '%s/dataset' % root_folder
         dataset_keys = get_file_list(iam=iam, bucket=config.bucket_name, folder=folder)
+
         datasets = []
         for key in dataset_keys:
             row = key.copy()
