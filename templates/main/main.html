@@ -102,8 +102,8 @@
 
         <!--  Hierarchy View  -->
         <!--  https://www.w3schools.com/icons/fontawesome_icons_filetype.asp   -->
-        <div id="hierarchy" style="display: block;">
-
+        <div id="hierarchy_div" style="display: block;">
+            <div id="hierarchy"></div>
         </div>
         <!--  # END Hierarchy View  -->
 
@@ -131,6 +131,11 @@
     <script>
         var configs = [];
         var datasets = [];
+
+        // variables to show jstree
+        var results_links = [];
+        var dtset_logs = [];
+
         var detail_flag = true;  // flag to show detail of dataset and config.
 
         var id1, id2;
