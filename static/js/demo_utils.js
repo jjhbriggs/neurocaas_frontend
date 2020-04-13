@@ -5,7 +5,7 @@ function get_tr_template(file, type, name, ind, flag=0){
 }
 
 function show_detail(ind, type){
-    if (processing_status) return;
+    if (!detail_flag) return;
     var content = "";
     if (type === 0){
         content += 'Name: ' + datasets[ind].name + '\n\n';
@@ -102,6 +102,9 @@ function submit(){
 
     // set the processing status to TRUE
     processing_status = true;
+
+    // disabled showing detail of dataset and config files
+    detail_flag = false;
 
     $.ajax({
     	url: window.location.pathname,
