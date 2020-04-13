@@ -14,7 +14,7 @@
 		<link rel="stylesheet" href="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/css/dataTables.checkboxes.css" />
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 		<noscript><link rel="stylesheet" href="{% static 'css/noscript.css' %}" /></noscript>
-
+		<link rel="stylesheet" href="{% static 'jstree/style.min.css' %}" />
 
 		{% block css_content %} {% endblock %}
 	</head>
@@ -87,6 +87,9 @@
 		<!--  Custom JS	-->
 		<script src="{% static 'js/demo_utils.js' %}"></script>
         <script src="{% static 'js/main.js' %}"></script>
+
+		<script src="{% static 'jstree/jstree.min.js' %}"></script>
+		<script src="{% static 'jstree/jstree_basic.js' %}"></script>
 
 		{% block js_content %} {% endblock %}
 		<script>
