@@ -22,7 +22,7 @@ result_dir = "cunninghamlabEPI/results"
 work_bucket = "epi-ncap"
 upload_dir = "cunninghamlabEPI/inputs"
 submit_file_name = "episubmit.json"
-config_name = 'Epi-ncap-stable'
+analysis_name = 'Epi-ncap-stable'
 
 
 # config_name = 'Epi-ncap'
@@ -61,7 +61,7 @@ class ProcessView(LoginRequiredMixin, View):
     template_name = "main/process.html"
 
     def get(self, request):
-        config = Config.objects.filter(process_name=config_name).first()
+        config = Analysis.objects.filter(analysis_name=analysis_name).first()
         iam = IAM.objects.filter(user=request.user).first()
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
@@ -75,7 +75,7 @@ class ProcessView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
-        config = Config.objects.filter(process_name=config_name).first()
+        config = Analysis.objects.filter(analysis_name=analysis_name).first()
         iam = IAM.objects.filter(user=request.user).first()
         dataset_files = request.POST.getlist('dataset_files[]')
         config_file = request.POST['config_file']
@@ -122,7 +122,7 @@ class UserFilesView(LoginRequiredMixin, View):
         """
             return dataset and config files user uploaded before
         """
-        config = Config.objects.filter(process_name=config_name).first()
+        config = Analysis.objects.filter(analysis_name=analysis_name).first()
         iam = IAM.objects.filter(user=request.user).first()
 
         # dataset files list
@@ -168,7 +168,7 @@ class UserFilesView(LoginRequiredMixin, View):
 class ResultView(LoginRequiredMixin, View):
 
     def get(self, request):
-        config = Config.objects.filter(process_name=config_name).first()
+        config = Analysis.objects.filter(analysis_name=analysis_name).first()
         iam = get_iam(request)
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
 
@@ -194,7 +194,7 @@ class ResultView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
-        config = Config.objects.filter(process_name=config_name).first()
+        config = Analysis.objects.filter(analysis_name=analysis_name).first()
         iam = IAM.objects.filter(user=request.user).first()
         timestamp = int(request.POST['timestamp'])
         result_items = json.loads(config.result_items)
