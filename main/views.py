@@ -23,6 +23,8 @@ work_bucket = "epi-ncap"
 upload_dir = "cunninghamlabEPI/inputs"
 submit_file_name = "episubmit.json"
 config_name = 'Epi-ncap-stable'
+
+
 # config_name = 'Epi-ncap'
 
 
@@ -52,11 +54,11 @@ def get_iam(request):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class MainView(LoginRequiredMixin, View):
+class ProcessView(LoginRequiredMixin, View):
     """
         Main View
     """
-    template_name = "main/main.html"
+    template_name = "main/process.html"
 
     def get(self, request):
         config = Config.objects.filter(process_name=config_name).first()
@@ -220,3 +222,13 @@ class ResultView(LoginRequiredMixin, View):
             "status": 200,
             'result_links': result_links
         })
+
+
+""" Intro & Analysis Intro pages """
+
+
+class IntroView(LoginRequiredMixin, View):
+    template_name = "main/intro.html"
+
+    def get(self, request):
+        return render(request=request, template_name=self.template_name)
