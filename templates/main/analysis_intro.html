@@ -15,7 +15,7 @@
         </div>
         <div class="col-md-6 offset-md-3 mt-3 text-left">
             <div class="description">
-                <p class="text-center">
+                <p class="text-left">
                     {{ analysis.long_description }}
                 </p>
             </div>
@@ -52,7 +52,7 @@
 {% block js_content %}
     <script>
         function start_process(id){
-            window.location.href = '/process/?id=' + id;
+            window.location.href = '/process/' + id;
         }
     </script>
 {% endblock %}
