@@ -21,7 +21,7 @@ class LoginView(View):
         if request.user.is_anonymous:
             form = UserLoginForm()
             return render(request, template_name=self.template_name, context={'form': form, "next": next_url})
-        return redirect("profile")
+        return redirect(next_url)
 
     def post(self, request):
         form = UserLoginForm(request.POST)
