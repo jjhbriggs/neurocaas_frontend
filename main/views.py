@@ -22,7 +22,7 @@ result_dir = "cunninghamlabEPI/results"
 work_bucket = "epi-ncap"
 upload_dir = "cunninghamlabEPI/inputs"
 submit_file_name = "episubmit.json"
-config_name = 'Epi-ncap-stable'
+analysis_name = 'Epi-ncap-stable'
 
 
 # config_name = 'Epi-ncap'
@@ -37,10 +37,12 @@ class HomeView(View):
     def get(self, request):
 
         if request.user.is_anonymous:
+            next_url = request.GET.get('next') if 'next' in request.GET else '/home/'
             context = {
                 "logged_in": False,
                 "login_form": UserLoginForm(),
-                "reg_form": UserCreationForm()
+                "reg_form": UserCreationForm(),
+                "next": next_url
             }
         else:
             context = {
@@ -61,7 +63,10 @@ class ProcessView(LoginRequiredMixin, View):
     template_name = "main/process.html"
 
     def get(self, request):
-        config = Config.objects.filter(process_name=config_name).first()
+        ana_id = request.GET.get('id') if 'id' in request.GET else 1
+        request.session['ana_id'] = ana_id
+        config = Analysis.objects.get(pk=ana_id)
+
         iam = IAM.objects.filter(user=request.user).first()
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
@@ -75,7 +80,10 @@ class ProcessView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
-        config = Config.objects.filter(process_name=config_name).first()
+        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
+        ana_id = request.session.get('ana_id', 1)
+        config = Analysis.objects.get(pk=ana_id)
+
         iam = IAM.objects.filter(user=request.user).first()
         dataset_files = request.POST.getlist('dataset_files[]')
         config_file = request.POST['config_file']
@@ -122,7 +130,10 @@ class UserFilesView(LoginRequiredMixin, View):
         """
             return dataset and config files user uploaded before
         """
-        config = Config.objects.filter(process_name=config_name).first()
+        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
+        ana_id = request.session.get('ana_id', 1)
+        config = Analysis.objects.get(pk=ana_id)
+
         iam = IAM.objects.filter(user=request.user).first()
 
         # dataset files list
@@ -168,7 +179,9 @@ class UserFilesView(LoginRequiredMixin, View):
 class ResultView(LoginRequiredMixin, View):
 
     def get(self, request):
-        config = Config.objects.filter(process_name=config_name).first()
+        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
+        ana_id = request.session.get('ana_id', 1)
+        config = Analysis.objects.get(pk=ana_id)
         iam = get_iam(request)
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
 
@@ -194,7 +207,9 @@ class ResultView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
-        config = Config.objects.filter(process_name=config_name).first()
+        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
+        ana_id = request.session.get('ana_id', 1)
+        config = Analysis.objects.get(pk=ana_id)
         iam = IAM.objects.filter(user=request.user).first()
         timestamp = int(request.POST['timestamp'])
         result_items = json.loads(config.result_items)
@@ -227,8 +242,22 @@ class ResultView(LoginRequiredMixin, View):
 """ Intro & Analysis Intro pages """
 
 
-class IntroView(LoginRequiredMixin, View):
+class IntroView(View):
     template_name = "main/intro.html"
 
     def get(self, request):
-        return render(request=request, template_name=self.template_name)
+        analyses = Analysis.objects.all()
+        return render(request=request, template_name=self.template_name, context={
+            'analyses': analyses
+        })
+
+
+class AnalysisIntroView(LoginRequiredMixin, View):
+    template_name = "main/analysis_intro.html"
+
+    def get(self, request):
+        ind = request.GET.get('id') if 'id' in request.GET else 1
+        analysis = Analysis.objects.get(pk=ind)
+        return render(request=request, template_name=self.template_name, context={
+            "analysis": analysis
+        })

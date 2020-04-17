@@ -1,0 +1,58 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Analysis Intro{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1 mt-3">
+            <div class="row">
+                <div class="col-sm-4 offset-sm-4 col-md-4 offset-md-4">
+                    <h2 style="letter-spacing: 5px;" class="clickable">{{ analysis.analysis_name }}</h2>
+                    <hr>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 offset-md-3 mt-3 text-left">
+            <div class="description">
+                <p class="text-center">
+                    {{ analysis.long_description }}
+                </p>
+            </div>
+
+            <div class="paper-link mt-2">
+                <a href="#" class="botton-line">{{ analysis.analysis_name }} Paper Link</a>
+            </div>
+
+
+            <div class="repo-link mt-2">
+                <a href="#" class="botton-line">{{ analysis.analysis_name }} Github Repo Link</a>
+            </div>
+
+            <div class="repo-link mt-2">
+                <a href="#" class="botton-line">{{ analysis.analysis_name }} Bash Script Link</a>
+            </div>
+
+            <div class="repo-link mt-4">
+                <p>
+                    {{ analysis.signature }}
+                </p>
+            </div>
+
+            <div class="text-center mt-4">
+                <button onclick="start_process({{analysis.id}})">
+                    Start analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js_content %}
+    <script>
+        function start_process(id){
+            window.location.href = '/process/?id=' + id;
+        }
+    </script>
+{% endblock %}
