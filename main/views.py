@@ -62,10 +62,9 @@ class ProcessView(LoginRequiredMixin, View):
     """
     template_name = "main/process.html"
 
-    def get(self, request):
-        ana_id = request.GET.get('id') if 'id' in request.GET else 1
-        request.session['ana_id'] = ana_id
-        config = Analysis.objects.get(pk=ana_id)
+    def get(self, request, id):
+        request.session['ana_id'] = id
+        config = Analysis.objects.get(pk=id)
 
         iam = IAM.objects.filter(user=request.user).first()
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
@@ -255,9 +254,8 @@ class IntroView(View):
 class AnalysisIntroView(LoginRequiredMixin, View):
     template_name = "main/analysis_intro.html"
 
-    def get(self, request):
-        ind = request.GET.get('id') if 'id' in request.GET else 1
-        analysis = Analysis.objects.get(pk=ind)
+    def get(self, request, id):
+        analysis = Analysis.objects.get(pk=id)
         return render(request=request, template_name=self.template_name, context={
             "analysis": analysis
         })
