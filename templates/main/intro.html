@@ -1,23 +1,25 @@
 {% extends "layout.html" %}
 {% load static %}
 
-{% block title %}Step1{% endblock %}
+{% block title %}Intro{% endblock %}
 
 {% block content %}
     <div class="row">
         <div class="col-md-10 offset-md-1">
             <div class="row">
                 <div class="col-sm-4 offset-sm-4 col-md-4 offset-md-4">
-                    <h2>Neuro  CAAS</h2>
+                    <h2 style="letter-spacing: 5px;">Neuro  CAAS</h2>
                     <hr>
                 </div>
             </div>
         </div>
         <div class="col-md-6 offset-md-3 mt-3 text-left">
             <div class="description">
-                <p>NCAP (Neuroscience Cloud Analysis Platform) Web Interface (Minimum Viable Product)
-                NCAP (Neuroscience Cloud Analysis Platform) Web Interface (Minimum Viable Product)
-                NCAP (Neuroscience Cloud Analysis Platform) Web Interface (Minimum Viable Product)</p>
+                <p class="text-left">
+                    NCAP (Neuroscience Cloud Analysis Platform) Web Interface (Minimum Viable Product)
+                    NCAP (Neuroscience Cloud Analysis Platform) Web Interface (Minimum Viable Product)
+                    NCAP (Neuroscience Cloud Analysis Platform) Web Interface (Minimum Viable Product)
+                </p>
             </div>
 
             <div class="repo-link mt-2">
@@ -31,24 +33,14 @@
             <div class="analysis-div mt-4">
                 <span class="botton-line title">Analyses</span>
                 <ul class="analysis-list mt-4">
+                    {% for item in analyses %}
                     <li>
-                        <h3><a href="#">EPI-NCAP</a></h3>
+                        <h3><a href="/intro/?id={{item.id}}">{{item.analysis_name}}</a></h3>
                         <p>
-                            Epi-ncap is the first anlysis I did used.
+                            {{item.short_description}}
                         </p>
                     </li>
-                    <li>
-                        <h3><a href="#">EPI-NCAP-STABLE</a></h3>
-                        <p>
-                            Epi-ncap-stable is the second anlysis I did used.
-                        </p>
-                    </li>
-                    <li>
-                        <h3><a href="#">EPI-NCAP-STABLE-COPY</a></h3>
-                        <p>
-                            Epi-ncap-stable-copy is the third anlysis I did used.
-                        </p>
-                    </li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>
