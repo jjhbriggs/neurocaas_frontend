@@ -63,8 +63,8 @@ class Process(Base):
         return self.name
 
 
-class Config(Base):
-    process_name = models.CharField(max_length=100, help_text='Name of Process', unique=True)
+class Analysis(Base):
+    analysis_name = models.CharField(max_length=100, help_text='Name of Process', unique=True)
     upload_folder = models.CharField(max_length=100, help_text='Folder to upload dataset and config items',
                                      null=True, blank=True)
     result_prefix = models.CharField(max_length=100, help_text='Prefix of result folder name')
@@ -75,5 +75,14 @@ class Config(Base):
     dataset_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of dataset files')
     submit_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of submit file')
 
+    # detail fields of analysis
+    short_description = models.TextField(help_text='Short description of analysis', blank=True, null=True)
+    long_description = models.TextField(help_text='Long description of analysis', blank=True, null=True)
+
+    paper_link = models.CharField(max_length=100, help_text='Link of Analysis Paper', blank=True, null=True)
+    git_link = models.CharField(max_length=100, help_text='Github link of Analysis', blank=True, null=True)
+    bash_link = models.CharField(max_length=100, help_text='Bash script link of Analysis', blank=True, null=True)
+    signature = models.TextField(help_text='Signature of analysis', blank=True, null=True)
+
     def __str__(self):
-        return self.process_name
+        return self.analysis_name
