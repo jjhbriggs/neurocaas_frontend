@@ -37,10 +37,12 @@ class HomeView(View):
     def get(self, request):
 
         if request.user.is_anonymous:
+            next_url = request.GET.get('next') if 'next' in request.GET else '/home/'
             context = {
                 "logged_in": False,
                 "login_form": UserLoginForm(),
-                "reg_form": UserCreationForm()
+                "reg_form": UserCreationForm(),
+                "next": next_url
             }
         else:
             context = {
@@ -227,7 +229,7 @@ class ResultView(LoginRequiredMixin, View):
 """ Intro & Analysis Intro pages """
 
 
-class IntroView(LoginRequiredMixin, View):
+class IntroView(View):
     template_name = "main/intro.html"
 
     def get(self, request):
