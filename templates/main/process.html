@@ -61,7 +61,7 @@
             </div>
             <div class="mt-2 table-div">
                 <button onclick="submit();" id="submit_button" class="disabled">
-                    <span id="btn-spinner" style="display: none;"><i class="fas fa-sync-alt fa-spin"></i></span>
+                    <span id="btn-spinner" style="display: block;"><i class="fas fa-sync-alt fa-spin"></i></span>
                     Submit
                 </button>
             </div>
@@ -161,6 +161,7 @@
 
         $(document).ready(function(){
             $('.spinner').css('display', 'none');
+            $('#btn-spinner').css('display', 'none');
             refresh_databucket_list();
         })
     </script>
