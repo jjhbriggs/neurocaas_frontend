@@ -76,9 +76,10 @@ class ProcessView(LoginRequiredMixin, View):
             'bucket': config.bucket_name,
             "data_dataset_dir": "%s/dataset" % root_folder,
             "data_config_dir": "%s/config" % root_folder,
+            "title": config.analysis_name
         })
 
-    def post(self, request):
+    def post(self, request, id):
         # config = Analysis.objects.filter(analysis_name=analysis_name).first()
         ana_id = request.session.get('ana_id', 1)
         config = Analysis.objects.get(pk=ana_id)
