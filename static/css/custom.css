@@ -240,3 +240,13 @@ span.title{
     font-weight: 600;
     padding: 5px;
 }
+
+/* Header */
+.top-header{
+    border-bottom: solid 1px rgba(192, 192, 192, 0.35);
+    text-align: right;
+}
+
+.letter-spacing{
+    letter-spacing: 2px;
+}
