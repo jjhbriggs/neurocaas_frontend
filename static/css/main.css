@@ -185,9 +185,9 @@ input, select, textarea {
 		margin-bottom: 1em;
 	}
 
-	p {
+/*	p {
 		text-align: justify;
-	}
+	}*/
 
 	br.clear {
 		clear: both;
