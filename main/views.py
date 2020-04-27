@@ -248,7 +248,8 @@ class IntroView(View):
     def get(self, request):
         analyses = Analysis.objects.all()
         return render(request=request, template_name=self.template_name, context={
-            'analyses': analyses
+            'analyses': analyses,
+            'iam': IAM.objects.filter(user=request.user).first()
         })
 
 
