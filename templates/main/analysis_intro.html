@@ -16,27 +16,25 @@
         <div class="col-md-6 offset-md-3 mt-3 text-left">
             <div class="description">
                 <p class="text-left">
-                    {{ analysis.long_description }}
+                    {{ analysis.long_description  | safe }}
                 </p>
             </div>
 
             <div class="paper-link mt-2">
-                <a href="#" class="botton-line">{{ analysis.analysis_name }} Paper Link</a>
+                <a href="{{ analysis.paper_link }}" class="botton-line" target="_blank">{{ analysis.analysis_name }} Paper Link</a>
             </div>
 
 
             <div class="repo-link mt-2">
-                <a href="#" class="botton-line">{{ analysis.analysis_name }} Github Repo Link</a>
+                <a href="{{ analysis.git_link }}" class="botton-line"  target="_blank">{{ analysis.analysis_name }} Github Repo Link</a>
             </div>
 
             <div class="repo-link mt-2">
-                <a href="#" class="botton-line">{{ analysis.analysis_name }} Bash Script Link</a>
+                <a href="{{ analysis.bash_link }}" class="botton-line" target="_blank">{{ analysis.analysis_name }} Bash Script Link</a>
             </div>
 
             <div class="repo-link mt-4">
-                <p>
-                    {{ analysis.signature }}
-                </p>
+                <p>{{ analysis.signature | safe }}</p>
             </div>
 
             <div class="text-center mt-4">
