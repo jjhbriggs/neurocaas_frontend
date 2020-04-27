@@ -249,7 +249,7 @@ class IntroView(View):
         analyses = Analysis.objects.all()
         return render(request=request, template_name=self.template_name, context={
             'analyses': analyses,
-            'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated() else None
+            'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
         })
 
 
