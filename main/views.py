@@ -35,7 +35,7 @@ class HomeView(View):
     template_name = "main/home.html"
 
     def get(self, request):
-
+        next_url = request.GET.get('next') if 'next' in request.GET else '/'
         if request.user.is_anonymous:
             next_url = request.GET.get('next') if 'next' in request.GET else '/home/'
             context = {
@@ -45,9 +45,10 @@ class HomeView(View):
                 "next": next_url
             }
         else:
-            context = {
-                "logged_in": True
-            }
+            # context = {
+            #     "logged_in": True
+            # }
+            return redirect(next_url)
         return render(request=request, template_name=self.template_name, context=context)
 
 
