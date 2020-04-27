@@ -250,3 +250,8 @@ span.title{
 .letter-spacing{
     letter-spacing: 2px;
 }
+
+
+nav.bg-dark{
+    background: rgba(128, 128, 128, 0.2)!important;
+}
