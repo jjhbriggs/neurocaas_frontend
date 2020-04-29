@@ -69,10 +69,7 @@ function create_jstree(id, parent_id, paths){
         if(data.selected.length) {
             var full_path = data.instance.get_path(data.selected[0]).join('/').replace('results/', '');
             if (!full_path.includes('.')) return;
-            var item = get_item(full_path);
-            if (item !== null){
-                window.open( '../' + item.link, "_blank");
-            }
+            console.log(full_path);
         }
     })
     .jstree({
