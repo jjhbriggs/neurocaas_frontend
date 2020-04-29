@@ -26,7 +26,7 @@ function get_item(path){
     return _item;
 }
 
-function create_jstree(paths){
+function create_jstree_for_results(paths){
     $('#hierarchy').remove();
     $("#hierarchy_div").append('<div id="hierarchy"></div>');
     $('#hierarchy')
@@ -41,6 +41,7 @@ function create_jstree(paths){
             }
         })
         .jstree({
+//            'plugins':["wholerow","checkbox"],
             'core' : {
                 'data' : get_json_from_array(paths)
             }
@@ -54,5 +55,30 @@ function update_jstree(){
     [...dtset_logs, ...results_links].forEach(function(item){
         paths.push('/results/' + item.path);
     })
-    create_jstree(paths);
+    create_jstree_for_results(paths);
+}
+
+// create dataset and config jstrees
+function create_jstree(id, parent_id, paths){
+    $('#' + id).remove();
+    $("#" + parent_id).append('<div id="' + id + '"></div>');
+
+    $('#' + id)
+    .on("changed.jstree", function (e, data) {
+        console.log(data);
+        if(data.selected.length) {
+            var full_path = data.instance.get_path(data.selected[0]).join('/').replace('results/', '');
+            if (!full_path.includes('.')) return;
+            var item = get_item(full_path);
+            if (item !== null){
+                window.open( '../' + item.link, "_blank");
+            }
+        }
+    })
+    .jstree({
+        'plugins':["wholerow","checkbox"],
+        'core' : {
+            'data' : get_json_from_array(paths)
+        }
+    });
 }
