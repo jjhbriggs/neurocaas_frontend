@@ -73,8 +73,8 @@ class IAM(Base):
     aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id", unique=True)
     aws_secret_access_key = models.CharField(max_length=255, help_text="AWS Secret key")
     # bucket_list = models.ManyToManyField("main.Bucket", help_text="Buckets list assigned to user")
-    data_bucket = models.ForeignKey("main.Bucket", on_delete=models.CASCADE, help_text='Bucket for dataset and config',
-                                    null=True, blank=True)
+    # data_bucket = models.ForeignKey("main.Bucket", on_delete=models.CASCADE, help_text='Bucket for dataset and config',
+    #                                 null=True, blank=True)
 
     def __str__(self):
         return self.aws_user
