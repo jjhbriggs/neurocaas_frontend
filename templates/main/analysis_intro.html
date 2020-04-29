@@ -3,9 +3,21 @@
 
 {% block title %}Analysis Intro{% endblock %}
 
+{% block title_content %}
+<nav class="navbar navbar-dark bg-dark">
+    <div class="col-md-12 text-right">
+        {% if iam %}
+            <a class="text-warning no-border" href="javascript:void(0)">{{ iam.aws_user }}</a>
+        {% else %}
+            <a class="text-warning no-border" href="javascript:void(0)">Anonymous User</a>
+        {% endif %}
+    </div>
+</nav>
+{% endblock %}
+
 {% block content %}
     <div class="row">
-        <div class="col-md-10 offset-md-1 mt-3">
+        <div class="col-md-10 offset-md-1 mt-5">
             <div class="row">
                 <div class="col-sm-8 offset-sm-2 col-md-8 offset-md-2">
                     <h2 style="letter-spacing: 5px;" class="clickable">{{ analysis.analysis_name }}</h2>
