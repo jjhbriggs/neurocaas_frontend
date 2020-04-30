@@ -260,5 +260,6 @@ class AnalysisIntroView(LoginRequiredMixin, View):
     def get(self, request, id):
         analysis = Analysis.objects.get(pk=id)
         return render(request=request, template_name=self.template_name, context={
-            "analysis": analysis
+            "analysis": analysis,
+            'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
         })
