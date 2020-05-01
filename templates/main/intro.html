@@ -20,50 +20,28 @@
         <div class="col-md-10 offset-md-1 mt-4">
             <div class="row">
                 <div class="col-sm-6 offset-sm-3 col-md-6 offset-md-3 mt-3">
-                    <h2><span class="text-danger">Neuro</span>  Science</h2>
+                    <h2><span class="text-danger">Neuro</span>science</h2>
                 </div>
                 <div class="col-sm-8 offset-sm-2 mt-2">
-                    <h2 class="letter-spacing text-center"><span class="text-danger">C</span>loud <span class="text-danger">A</span>nalysis <span class="text-danger">A</span>s <span class="text-danger">a</span> <span class="text-danger">S</span>ervice</h2>
+                    <h2 class="letter-spacing text-center"><span class="text-danger">C</span>loud <span class="text-danger">A</span>nalysis <span class="text-danger">A</span>s a <span class="text-danger">S</span>ervice</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-8 offset-md-2 mt-3 text-left">
+            <span class="botton-line title">What is NeuroCAAS?</span>
             <div class="description">
                 <p class="text-justify">
-                    Neuroscience Computational Analysis As a Service (NeuroCAAS) is a new platform that addresses computational infrastructure as an issue independent of scientific data analysis. We provide all of the tools necessary for a library of modern data analysis to function without ANY configuration on the part of the end user. See our open source project and paper below, or dive in to one of the analyses that we have made available.
-                </p>
-            </div>
-
-            <div class="repo-link mt-2">
-                <a href="https://github.com/cunningham-lab/ctn_lambda/tree/reorganize/ncap_iac" class="botton-line" target="_blank">Github Repo Link</a>
-            </div>
-
-            <div class="paper-link mt-2">
-                <a href="#" class="botton-line">Paper Link</a>
-            </div>
-
-            <div class="paper-link mt-2">
-                <a href="https://github.com/cunningham-lab/ctn_lambda/issues" class="botton-line" target="_blank">Issues</a>
-            </div>
-
-
-
-            <div class="paper-link mt-4 text-center">
-                <img src="{% static 'img/descript.png' %}" style="max-height:800px;">
-            </div>
-
-            <div class="paper-link mt-2">
-                <p class="">
-                    All analyses on NeuroCAAS share the same structure. Users chose one or more primary datasets to analyze, and then select a configuration file that will be used to analyze that data. Configuration files can specify individual parameters or paths to other parameter storage objects for efficiency. Every NeuroCAAS analysis has two optional parameters you can specify in a configuration file. If you know you have especially large data, specify the size of your dataset in gigabytes under with a '__dataset_size__' parameter. If you know how long your analysis should take, specify that time in minutes with a '__duration__' parameter. This will also keep your costs down. Processing information will appear in the status box as analyses are initialized, and more detailed information from the command line can be read out later on. At the end of processing, results can be downloaded back to your local machine. All users have the same starting budget of $300. If you are told that you are over budget, contact <a class="text-warning" href="javascript:void(0)">neurocaas@gmail.com</a> to request an increase.
+                    Neuroscience Cloud Analysis As a Service (NeuroCAAS) is a drag-and-drop data analysis platform for neuroscience. To get started, select one of our Available Analyses below, and analyze some demo data or bring your own. NeuroCAAS is committed to an open source model; contact us at <a class="text-warning" href="javascript:void(0)">neurocaas@gmail.com</a> if you are interested in helping to develop or fund NeuroCAAS.  
                 </p>
             </div>
 
             <div class="analysis-div mt-5">
-                <span class="botton-line title">Analyses</span>
+                <a name= "analyses"></a>
+                <span class="botton-line title">Available Analyses</span>
                 <ul class="analysis-list mt-4">
                     {% for item in analyses %}
                     <li>
-                        <h3><a href="/intro/{{item.id}}">{{item.analysis_name}}</a></h3>
+                        <h3>{{item.analysis_name}} <a href="/intro/{{item.id}}"><span class="text-danger">Start Analysis</span></a></h3>
                         <p>
                             {{item.short_description}}
                         </p>
@@ -71,6 +49,70 @@
                     {% endfor %}
                 </ul>
             </div>
+
+            <div class="paper-link mt-2">
+                <span class="botton-line title">How does NeuroCAAS work?</span>
+                <p class="">
+                NeuroCAAS is an open-source scientific resource that uses cloud resources to run powerful modern data analyses. NeuroCAAS packages these analyses into fully portable descriptions called blueprints, which can then be deployed to analyze data on demand and automatically. Analyzing data with NeuroCAAS does not require any hardware purchases, installation, or dependency management. As a scientific user, you are responsible for only two things: 1) your data, and 2) a configuration file containing analysis parameters. You can find working demo datasets and configuration files in each of our <a href="#analyses">available analyses</a>. To learn more, check out our github repo and paper below. 
+                </p>
+            </div>
+
+            <div class="repo-link mt-2">
+                <a href="https://github.com/cunningham-lab/ctn_lambda" class="botton-line" target="_blank">Github Repo Link</a>
+            </div>
+
+            <div class="paper-link mt-2">
+                <a name= "paper"></a>
+                <a href="#" class="botton-line">Paper Link</a>
+            </div>
+
+            <div class="paper-link mt-2">
+                <a href="https://github.com/cunningham-lab/ctn_lambda/issues" class="botton-line" target="_blank">Issues</a>
+            </div>
+
+            <div class="paper-link mt-4 text-center">
+                <img src="{% static 'img/descript.png' %}" style="max-height:800px;">
+            </div>
+
+            <div class "paper-link mt-2">
+                <span class = "bottom-line title">Frequently Asked Questions</span>
+                <ul>
+                    <li>
+                        <h3>
+                            How expensive is NeuroCAAS?
+                        </h3>
+                        <p class="">
+                        Although NeuroCAAS runs on the public cloud (AWS), we found that across a wide variety of datasets and algorithms analysis could be run quickly at low cost (see <a href="#paper">see our paper</a>. This low cost lets us subsidize all of user-run analyses up to a pre-set cap ($300) that can be adjusted with an appropriate request. To request a cap increase, please contact us at <a class="text-warning" href="javascript:void(0)">neurocaas@gmail.com</a>.) If you know how long your analysis will take to run, you can further reduce the cost of analysis (see individual analysis pages).                            
+                        </p>
+                    </li>
+                    <li>
+                        <h3>
+                            Isn't it slow to transfer big data to and from the cloud? 
+                        </h3>
+                        <p class="">
+                        For the range of datasets we tested (into ~100s of gigabytes), we found that running data on the cloud was faster than existing options, even accounting for upload and download time <a href="#paper">see our paper</a>. Try it out for yourself!                              
+                        </p>
+                    </li>
+                    <li>
+                        <h3>
+                            How do you make sure people are using analyses responsibly?
+                        </h3>
+                        <p class="">
+                        The purpose of NeuroCAAS is to separate the scientific work of selecting the right analysis and interpreting data from the engineering work of installation and infrastructure maintenance. The responsibility to understand the algorithm being used, and to format data and parameters accordingly rests with the user.                               
+                        </p>
+                    </li>
+                    <li>
+                        <h3>
+                            How can I get my own analysis on NeuroCAAS?
+                        </h3>
+                        <p class="">
+                        Please contact us at <a class="text-warning" href="javascript:void(0)">neurocaas@gmail.com</a>. You can find documentation to prepare your analysis for launch on the platform in the docs of our github repo <a href="https://github.com/cunningham-lab/ctn_lambda/blob/master/docs/" class="botton-line" target="_blank">here</a>
+                        </p>
+                    </li>
+                </ul>
+            </div>
+
+
         </div>
     </div>
 {% endblock %}
