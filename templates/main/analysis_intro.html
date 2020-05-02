@@ -26,11 +26,14 @@
             </div>
         </div>
         <div class="col-md-8 offset-md-2 mt-3 text-left">
+            <span class="">Analysis description</span>
             <div class="description">
                 <p class="text-left">
                     {{ analysis.long_description  | safe }}
                 </p>
             </div>
+
+            <span class="">Useful links</span>
 
             <div class="paper-link mt-2">
                 <a href="{{ analysis.paper_link }}" class="botton-line" target="_blank">{{ analysis.analysis_name }} Paper Link</a>
@@ -46,6 +49,7 @@
             </div>
 
             <div class="repo-link mt-4">
+            <span class="">How to use this analysis</span>
                 <p>{{ analysis.signature | safe }}</p>
             </div>
 
