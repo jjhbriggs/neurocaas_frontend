@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash, login
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.generic import View
@@ -11,7 +12,6 @@ from ncap.backends import authenticate
 
 
 # Create your views here.
-
 
 class LoginView(View):
     template_name = "account/login.html"
@@ -115,3 +115,19 @@ class ChangePWDView(LoginRequiredMixin, View):
         else:
             messages.error(request, 'An Error was occurred, Please try again!')
             return redirect('user_password_change')
+
+
+class AdminMixin(UserPassesTestMixin):
+    login_url = '/'
+
+    def test_func(self):
+        if self.request.user.is_anonymous:
+            return False
+        return self.request.user.is_admin
+
+
+class IamCreateView(AdminMixin, View):
+    login_url = '/'
+
+    def get(self, request):
+        return render(request=request, template_name="main/intro.html")
