@@ -130,4 +130,7 @@ class IamCreateView(AdminMixin, View):
     login_url = '/'
 
     def get(self, request):
-        return render(request=request, template_name="main/intro.html")
+        return render(request=request, template_name="main/iam_create.html")
+
+    def post(self, request):
+        pass
