@@ -11,12 +11,13 @@ class UserCreationForm(forms.ModelForm):
     # password2 = forms.CharField(label='Password confirmation',
     #                             widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     email = forms.CharField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    #first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    #last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     class Meta:
         model = User
-        fields = ('email', 'first_name', 'last_name')
+        #fields = ('email', 'first_name', 'last_name')
+        fields = ('email',)
 
     def clean_password2(self):
         # Check that the two password entries match

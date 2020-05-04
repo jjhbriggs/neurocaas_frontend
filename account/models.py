@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from datetime import datetime
 from .managers import UserManager
 
+
 # Create your models here.
 
 
@@ -71,7 +72,7 @@ class IAM(Base):
     aws_user = models.CharField(max_length=155, help_text="AWS account username")
     aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id", unique=True)
     aws_secret_access_key = models.CharField(max_length=255, help_text="AWS Secret key")
-    bucket_list = models.ManyToManyField("main.Bucket", help_text="Buckets list assigned to user")
+    group = models.CharField(max_length=255, help_text='Group Name', default='bendeskylab')
 
     def __str__(self):
         return self.aws_user
