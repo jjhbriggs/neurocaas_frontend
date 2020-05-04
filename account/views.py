@@ -163,6 +163,7 @@ class IamCreateView(AdminMixin, View):
                                   aws_secret_access_key=secret_access_key, group=group_name)
                     new_iam.save()
                     messages.success(request, f"New IAM was successfully created: {username}")
+                    return redirect('/admin/account/iam/')
             except Exception as e:
                 messages.error(request, f"Issue: {e}")
         else:
