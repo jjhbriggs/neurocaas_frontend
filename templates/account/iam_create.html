@@ -3,18 +3,6 @@
 
 {% block title %}Create IAM{% endblock %}
 
-{% block title_content %}
-<nav class="navbar navbar-dark bg-dark">
-    <div class="col-md-12 text-right">
-        {% if iam %}
-            <a class="text-warning no-border" href="javascript:void(0)">{{ iam.aws_user }}</a>
-        {% else %}
-            <a class="text-warning no-border" href="javascript:void(0)">Anonymous User</a>
-        {% endif %}
-    </div>
-</nav>
-{% endblock %}
-
 {% block content %}
     <div class="container">
         <form method="post" enctype="multipart/form-data">

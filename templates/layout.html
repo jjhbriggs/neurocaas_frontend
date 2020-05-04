@@ -23,7 +23,15 @@
             <!-- Header -->
 				<div id="header">
 						<!--<div class="container">-->
-						{% block title_content %}{% endblock %}
+						<nav class="navbar navbar-dark bg-dark">
+							<div class="col-md-12 text-right">
+								{% if iam %}
+									<a class="text-warning no-border" href="javascript:void(0)">{{ iam.aws_user }}</a>
+								{% else %}
+									<a class="text-warning no-border" href="javascript:void(0)">Anonymous User</a>
+								{% endif %}
+							</div>
+						</nav>
 						<!--</div>-->
 						<div class="inner mt-4" style="width: 98%;">
 							{% block content %}{% endblock %}
