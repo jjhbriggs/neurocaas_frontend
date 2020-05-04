@@ -96,7 +96,7 @@
 			$(document).ready(function(){
 				{% if messages %}
 					{% for message in messages %}
-						$.notify("{{message}}", {globalPosition: "right top", className: "{{message.tags}}", autoHideDelay: 2000} )
+						$.notify("{{message|safe}}", {globalPosition: "right top", className: "{{message.tags}}", autoHideDelay: 4000} )
 					{% endfor %}
 				{% endif %}
 			});
