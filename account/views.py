@@ -158,11 +158,16 @@ class IamCreateView(AdminMixin, View):
                         new_user = User(email=email)
                         new_user.save()
 
+                    if AWSRequest.objects.filter(user=new_user).count() == 0:
+                        aws_req = AWSRequest(user=new_user)
+                        aws_req.save()
+                    
                     # create new iam with aws credentials
                     new_iam = IAM(user=new_user, aws_user=username, aws_access_key=access_key,
                                   aws_secret_access_key=secret_access_key, group=group_name)
                     new_iam.save()
                     messages.success(request, f"New IAM was successfully created: {username}")
+                    return redirect('/admin/account/iam/')
             except Exception as e:
                 messages.error(request, f"Issue: {e}")
         else:
