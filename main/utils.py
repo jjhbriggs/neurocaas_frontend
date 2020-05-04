@@ -5,8 +5,7 @@ import shutil
 import boto3
 
 from .models import *
-
-search_outputdir = "hp_optimum"
+from account.models import *
 
 
 def get_download_file(iam, bucket, key, timestamp):
@@ -128,9 +127,9 @@ def convert_size(size):
         Return size converted to appropriate format from Byte
     """
     if size > 1024:
-        return str(round(float(size/1024), 2)) + " KB"
-    elif size > 1024*1024:
-        return str(round(float(size / (1024*1024)), 2)) + " MB"
+        return str(round(float(size / 1024), 2)) + " KB"
+    elif size > 1024 * 1024:
+        return str(round(float(size / (1024 * 1024)), 2)) + " MB"
     else:
         return str(size) + " B"
 
@@ -225,3 +224,7 @@ def create_submit_json(iam, work_bucket, key, json_data):
         Body=(bytes(json.dumps(json_data).encode('UTF-8')))
     )
     print("successfully created submit.json")
+
+
+def get_current_iam(request):
+    return IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
