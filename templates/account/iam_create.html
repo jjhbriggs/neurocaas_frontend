@@ -25,10 +25,11 @@
                     <button type="submit">
                         Upload
                     </button>
-                    &nbsp;&nbsp;&nbsp;
-                    <a href="/admin/account/iam/">
-                        Back
-                    </a>
+                    <div>
+                        <a href="/admin/account/iam/">
+                            Back to admin
+                        </a>
+                    </div>
                 </div>
             </div>
         </form>
@@ -53,11 +54,7 @@
         dropContainer.ondrop = function(evt) {
             // pretty simple -- but not for IE :(
             fileInput.files = evt.dataTransfer.files;
-
-            // If you want to use some of the dropped files
-            /*const dT = new DataTransfer();
-            dT.items.add(evt.dataTransfer.files[0]);
-            fileInput.files = dT.files;*/
+            $('#file-name').html(fileInput.files[0].name);
             evt.preventDefault();
         };
     });
