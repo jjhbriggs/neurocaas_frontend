@@ -18,15 +18,6 @@ import time, json
     Views for Demo page 
 """
 
-result_dir = "cunninghamlabEPI/results"
-work_bucket = "epi-ncap"
-upload_dir = "cunninghamlabEPI/inputs"
-submit_file_name = "episubmit.json"
-analysis_name = 'Epi-ncap-stable'
-
-
-# config_name = 'Epi-ncap'
-
 
 class HomeView(View):
     """
