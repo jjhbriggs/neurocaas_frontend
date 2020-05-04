@@ -13,3 +13,4 @@ urlpatterns = [
     path('instruction/', TemplateView.as_view(template_name="account/instruction.html"), name='instruction'),
     path('iamcreate/', IamCreateView.as_view(), name='iam_create_view'),
 ]
+
