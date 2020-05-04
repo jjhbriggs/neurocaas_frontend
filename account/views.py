@@ -130,7 +130,9 @@ class IamCreateView(AdminMixin, View):
     login_url = '/'
 
     def get(self, request):
-        return render(request=request, template_name="main/iam_create.html")
+        return render(request=request, template_name="account/iam_create.html", context={
+            'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
+        })
 
     def post(self, request):
         pass
