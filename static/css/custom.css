@@ -258,3 +258,8 @@ nav.bg-dark{
 .no-border {
     border: none!important;
 }
+
+.underline {
+    border-bottom: 1px dotted #ffffff59;
+    margin-bottom: 0px;
+}
