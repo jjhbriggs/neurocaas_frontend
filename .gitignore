@@ -5,3 +5,6 @@ static/admin
 static/cms/
 static/rest_framework/
 static/suit/
+/test.py
+*.sqlite3
+static/downloads

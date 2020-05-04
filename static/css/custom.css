@@ -49,10 +49,10 @@ button{
 
 /* Custom css for file uploading form */
 
-#video-area, #param-area, #config-area{
+.upload-div{
     border: 2px dashed #ccc;
     border-radius: 20px;
-    width: 480px;
+    max-width: 480px;
     font-family: sans-serif;
     margin: 30px auto;
     padding: 20px;
@@ -85,6 +85,10 @@ button{
     vertical-align: middle;
 }
 
+.gallery label{
+    padding: 5px;
+}
+
 .fileElem {
     display: none;
 }
@@ -111,4 +115,151 @@ button{
 }
 .mb-lg{
     font-size: 36px!important;
+}
+
+
+/* Status text */
+.status-text{
+    background-color: black!important;
+    color: white;
+    border: none;
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0, 0, 0, 0.5);
+    height: 450px!important;
+    resize: none;
+}
+
+@media screen and (max-width: 736px){
+    .status-div{
+        margin-top: 15px;
+    }
+}
+
+/* Home Page */
+.gap{
+    border-right: 1px solid rgba(192, 192, 192, 0.35);
+}
+
+.subtitle{
+    font-size: 1.3rem;
+    font-weight:lighter;
+}
+
+@media screen and (max-width: 1024px) {
+    em.fa.fa-cog.fa-5x.text-muted.fa-spin.text-purple{
+        font-size: 130px;
+    }
+
+    .gap{
+        border-right: none;
+    }
+}
+
+#navButton{
+    display:none;
+}
+
+.clickable:hover, .clickable:active{
+    color: #ef8376!important;
+    cursor: pointer;
+}
+
+.clickable {
+    font-size: 19px;
+    font-weight: 300;
+    word-spacing: 2px;
+}
+
+.text-white{
+    color: white;
+}
+
+@media screen and (max-width: 767px){
+    .result-div{
+        margin-top: 20px;
+    }
+}
+
+#header .inner{
+    padding-left: 2em;
+    padding-right: 2em;
+}
+
+
+table {
+    border: 1px solid rgba(192, 192, 192, 0.35);
+}
+
+table tr {
+    border-bottom: 1px solid rgba(192, 192, 192, 0.25);
+    cursor: pointer;
+}
+
+input[type="checkbox" i], input[type="radio" i] {
+    background-color: initial;
+    cursor: pointer;
+    -webkit-appearance: checkbox;
+    box-sizing: border-box;
+    margin: 10px 3px 3px 4px;
+    padding: initial;
+    border: initial;
+    height: 16px;
+    width: 16px;
+}
+
+tr.active{
+    background: #21252942;
+}
+
+.table-div {
+    max-width: 480px;
+    font-family: sans-serif;
+    margin: 30px auto;
+}
+
+button:disabled,
+button[disabled] {
+    background: #bb9595;
+    cursor: not-allowed;
+}
+
+#hierarchy
+{
+    font-family: FontAwesome;
+    width: 300px;
+    text-align: left;
+}
+
+.botton-line{
+    border-bottom: 2px solid;
+    padding-bottom: 3px;
+    width: 100%;
+}
+
+span.title{
+    font-size: 30px;
+    font-weight: 600;
+    padding: 5px;
+}
+
+/* Header */
+.top-header{
+    border-bottom: solid 1px rgba(192, 192, 192, 0.35);
+    text-align: right;
+}
+
+.letter-spacing{
+    letter-spacing: 2px;
+}
+
+
+nav.bg-dark{
+    background: rgba(128, 128, 128, 0.2)!important;
+}
+.no-border {
+    border: none!important;
+}
+
+.underline {
+    border-bottom: 1px dotted #ffffff59;
+    margin-bottom: 0px;
 }
