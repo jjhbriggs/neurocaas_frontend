@@ -1,15 +1,17 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from django.views.generic import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+import json
+import time
 from base64 import b64encode
-from .models import *
-from account.models import *
-from .demo_utils import *
-from django.views.decorators.csrf import csrf_exempt
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import View
+
 from account.forms import UserLoginForm, UserCreationForm
-import time, json
+from account.models import *
+from .utils import *
 
 # Create your views here.
 
@@ -43,10 +45,6 @@ class HomeView(View):
         return render(request=request, template_name=self.template_name, context=context)
 
 
-def get_iam(request):
-    return IAM.objects.filter(user=request.user).first()
-
-
 @method_decorator(csrf_exempt, name='dispatch')
 class ProcessView(LoginRequiredMixin, View):
     """
@@ -58,7 +56,7 @@ class ProcessView(LoginRequiredMixin, View):
         request.session['ana_id'] = id
         config = Analysis.objects.get(pk=id)
 
-        iam = IAM.objects.filter(user=request.user).first()
+        iam = get_current_iam(request)
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
         root_folder = "%s/%s" % (config.upload_folder, iam.aws_user)
@@ -68,7 +66,8 @@ class ProcessView(LoginRequiredMixin, View):
             'bucket': config.bucket_name,
             "data_dataset_dir": "%s/dataset" % root_folder,
             "data_config_dir": "%s/config" % root_folder,
-            "title": config.analysis_name
+            "title": config.analysis_name,
+            'iam': iam
         })
 
     def post(self, request, id):
@@ -76,7 +75,7 @@ class ProcessView(LoginRequiredMixin, View):
         ana_id = request.session.get('ana_id', 1)
         config = Analysis.objects.get(pk=ana_id)
 
-        iam = IAM.objects.filter(user=request.user).first()
+        iam = get_current_iam(request)
         dataset_files = request.POST.getlist('dataset_files[]')
         config_file = request.POST['config_file']
 
@@ -126,7 +125,7 @@ class UserFilesView(LoginRequiredMixin, View):
         ana_id = request.session.get('ana_id', 1)
         config = Analysis.objects.get(pk=ana_id)
 
-        iam = IAM.objects.filter(user=request.user).first()
+        iam = get_current_iam(request)
 
         # dataset files list
         root_folder = "%s/%s" % (config.upload_folder, iam.aws_user)
@@ -174,7 +173,7 @@ class ResultView(LoginRequiredMixin, View):
         # config = Analysis.objects.filter(analysis_name=analysis_name).first()
         ana_id = request.session.get('ana_id', 1)
         config = Analysis.objects.get(pk=ana_id)
-        iam = get_iam(request)
+        iam = get_current_iam(request)
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
 
         cert_file = "%s/job__%s_%s/logs/certificate.txt" % (config.result_path, config.bucket_name, timestamp)
@@ -202,7 +201,7 @@ class ResultView(LoginRequiredMixin, View):
         # config = Analysis.objects.filter(analysis_name=analysis_name).first()
         ana_id = request.session.get('ana_id', 1)
         config = Analysis.objects.get(pk=ana_id)
-        iam = IAM.objects.filter(user=request.user).first()
+        iam = get_current_iam(request)
         timestamp = int(request.POST['timestamp'])
         result_items = json.loads(config.result_items)
         result_keys = []
@@ -241,7 +240,7 @@ class IntroView(View):
         analyses = Analysis.objects.all()
         return render(request=request, template_name=self.template_name, context={
             'analyses': analyses,
-            'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
+            'iam': get_current_iam(request)
         })
 
 
@@ -252,5 +251,5 @@ class AnalysisIntroView(LoginRequiredMixin, View):
         analysis = Analysis.objects.get(pk=id)
         return render(request=request, template_name=self.template_name, context={
             "analysis": analysis,
-            'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
+            'iam': get_current_iam(request)
         })
