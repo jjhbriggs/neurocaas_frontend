@@ -1,170 +1,255 @@
-from django.shortcuts import render, redirect
-from django.http import JsonResponse
-from django.views.generic import TemplateView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
+import json
+import time
 from base64 import b64encode
-from .models import *
+
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import View
+
+from account.forms import UserLoginForm, UserCreationForm
 from account.models import *
-from .demo_utils import check_process
+from .utils import *
+
 # Create your views here.
 
 
-class SelectBucketView(LoginRequiredMixin, View):
-    """
-        S3 Bucket Permission for CORS
+"""
+    Views for Demo page 
+"""
 
-            <?xml version="1.0" encoding="UTF-8"?>
-            <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-            <CORSRule>
-                <AllowedOrigin>*</AllowedOrigin>
-                <AllowedMethod>GET</AllowedMethod>
-                <AllowedMethod>PUT</AllowedMethod>
-                <AllowedMethod>POST</AllowedMethod>
-                <AllowedMethod>DELETE</AllowedMethod>
-                <MaxAgeSeconds>3000</MaxAgeSeconds>
-                <ExposeHeader>ETag</ExposeHeader>
-                <AllowedHeader>*</AllowedHeader>
-            </CORSRule>
-            </CORSConfiguration>
 
-        Step 1 View
+class HomeView(View):
     """
-    template_name = "main/step1.html"
+        Home Page View
+        """
+    template_name = "main/home.html"
 
     def get(self, request):
-        buckets = Bucket.objects.all().order_by('name')
-        return render(request=request, template_name=self.template_name, context={
-            "buckets": buckets,
-        })
+        next_url = request.GET.get('next') if 'next' in request.GET else '/'
+        if request.user.is_anonymous:
+            next_url = request.GET.get('next') if 'next' in request.GET else '/home/'
+            context = {
+                "logged_in": False,
+                "login_form": UserLoginForm(),
+                "reg_form": UserCreationForm(),
+                "next": next_url
+            }
+        else:
+            # context = {
+            #     "logged_in": True
+            # }
+            return redirect(next_url)
+        return render(request=request, template_name=self.template_name, context=context)
 
 
-class FileUploadView(LoginRequiredMixin, View):
-    """
-        Step 2 View for uploading files for analysis
-    """
-    template_name = "main/step2.html"
-
-    def post(self, request):
-        # create new subfolder with bucket
-        bucket_name = request.POST['bucket']
-        bucket = Bucket.objects.get(name=bucket_name)
-        subfolder = SubFolder(bucket=bucket)
-
-        # get aws credentials from iam
-        iam = IAM.objects.filter(user=request.user).first()
-        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
-        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-
-        return render(request=request, template_name=self.template_name, context={
-            "subfolder": subfolder,
-            "bucket": bucket_name,
-            "id1": access_id,
-            "id2": secret_key,
-        })
-
-
+@method_decorator(csrf_exempt, name='dispatch')
 class ProcessView(LoginRequiredMixin, View):
     """
-        Step 3 View for processing files
+        Main View
     """
-    template_name = "main/result.html"
+    template_name = "main/process.html"
 
-    def get(self, request):
-        return render(request=request, template_name=self.template_name)
+    def get(self, request, id):
+        request.session['ana_id'] = id
+        config = Analysis.objects.get(pk=id)
 
-    def post(self, request):
-
-        iam = IAM.objects.filter(user=request.user).first()
+        iam = get_current_iam(request)
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-        buckets = Bucket.objects.all().order_by('name')
-
+        root_folder = "%s/%s" % (config.upload_folder, iam.aws_user)
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
-            "buckets": buckets,
+            'bucket': config.bucket_name,
+            "data_dataset_dir": "%s/dataset" % root_folder,
+            "data_config_dir": "%s/config" % root_folder,
+            "title": config.analysis_name,
+            'iam': iam
         })
 
+    def post(self, request, id):
+        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
+        ana_id = request.session.get('ana_id', 1)
+        config = Analysis.objects.get(pk=ana_id)
 
-class ResultView(LoginRequiredMixin, View):
+        iam = get_current_iam(request)
+        dataset_files = request.POST.getlist('dataset_files[]')
+        config_file = request.POST['config_file']
+
+        # remove existing dataset files from epi bucket
+        cur_timestamp = int(time.time())
+        dataset_dir = "%s/%s" % (config.dataset_path, cur_timestamp)
+
+        # copy dataset files to work_bucket
+        for file in dataset_files:
+            from_key = "%s/%s/dataset/%s" % (config.upload_folder, iam.aws_user, file)
+            to_key = "%s/%s" % (dataset_dir, file)
+            copy_file_to_bucket(iam=iam, from_bucket=config.bucket_name, from_key=from_key,
+                                to_bucket=config.bucket_name, to_key=to_key)
+
+        # copy config file to work_bucket
+        config_to_key = "%s/config_%s.json" % (config.config_path, cur_timestamp)
+        from_key = "%s/%s/config/%s" % (config.upload_folder, iam.aws_user, config_file)
+        copy_file_to_bucket(iam=iam, from_bucket=config.bucket_name, from_key=from_key, to_bucket=config.bucket_name,
+                            to_key=config_to_key)
+
+        submit_data = {
+            "dataname": dataset_dir + "/",
+            "configname": config_to_key,
+            "timestamp": str(cur_timestamp),
+            # "instance_type": "t2.micro",
+        }
+
+        create_submit_json(iam=iam, work_bucket=config.bucket_name, key=config.submit_path, json_data=submit_data)
+
+        # store timestamp in session
+        request.session['last_timestamp'] = cur_timestamp
+
+        return JsonResponse({"status": True, "timestamp": cur_timestamp})
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class UserFilesView(LoginRequiredMixin, View):
     """
-        View for showing processing results
-    """
-    template_name = "main/result.html"
-
-    def get(self, request):
-
-        return render(request=request, template_name=self.template_name)
-
-
-class CheckProcessView(View):
-    """
-    View for checking processing progress
-    """
-
-    def get(self, request):
-        iam = IAM.objects.filter(user=request.user).first()
-        process_name = request.GET['process']
-        proc = Process.objects.get(name=process_name)
-        res = check_process(iam=iam, process=proc)
-        return JsonResponse({"status": True})
-        # return JsonResponse({"status": res})
-
-
-class DemoView(LoginRequiredMixin, View):
-    """
-        View for demo in Feb
-    """
-    template_name = "main/demo.html"
-
-    def get(self, request):
-        bucket = Bucket.objects.get(name='epi-ncap')
-        iam = IAM.objects.filter(user=request.user).first()
-        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
-        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-        prefix = "cunninghamlabEPI/inputs"
-        return render(request=request, template_name=self.template_name, context={
-            "id1": access_id,
-            "id2": secret_key,
-            "bucket": bucket,
-            "prefix": prefix
-        })
-
-
-class DemoResultView(LoginRequiredMixin, View):
-    """
-    Demo Result View
+        View to manage files for each user
         """
-    template_name = "main/demo_result.html"
 
     def get(self, request):
-        proc = Process.objects.get(name=request.GET['process'])
-        return render(request=request, template_name=self.template_name, context={
-            "process": proc
+        """
+            return dataset and config files user uploaded before
+        """
+        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
+        ana_id = request.session.get('ana_id', 1)
+        config = Analysis.objects.get(pk=ana_id)
+
+        iam = get_current_iam(request)
+
+        # dataset files list
+        root_folder = "%s/%s" % (config.upload_folder, iam.aws_user)
+        folder = '%s/dataset' % root_folder
+        dataset_keys = get_file_list(iam=iam, bucket=config.bucket_name, folder=folder)
+
+        datasets = []
+        for key in dataset_keys:
+            row = key.copy()
+            row.update({'name': get_name_only(key=key['key'])})
+            datasets.append(row)
+        # [datasets.append(key.update({'name': get_name_only(key=key['key'])})) for key in dataset_keys]
+
+        # config files list
+        folder = '%s/config' % root_folder
+        config_keys = get_file_list(iam=iam, bucket=config.bucket_name, folder=folder)
+        configs = []
+        for key in config_keys:
+            row = key.copy()
+            row.update({'name': get_name_only(key=key['key'])})
+            content = get_file_content(iam=iam, bucket=config.bucket_name, key=key['key'])
+            row.update({'content': content})
+            configs.append(row)
+
+        # [config_names.append(get_name_only(key=key)) for key in config_keys]
+
+        return JsonResponse({
+            "status": 200,
+            "datasets": datasets,
+            "configs": configs
         })
 
-    def post(self, request):
-        bucket_name = request.POST['bucket']
-        bucket = Bucket.objects.get(name=bucket_name)
-        iam = IAM.objects.filter(user=request.user).first()
-
-        file_name = request.POST['file']
-        file = FileItem(name=file_name, bucket=bucket, uploaded=True)
-        file.save()
-
-        proc = Process(iam=iam, uploaded_file=file)
-        proc.save()
-        url = '/demo_result?process=%s' % proc.name
-        return redirect(url)
+    def delete(self, request):
+        file_name = request.GET['file_name']
+        return JsonResponse({
+            "status": 200,
+            "message": file_name
+        })
 
 
-class DemoCheckView(LoginRequiredMixin, View):
+@method_decorator(csrf_exempt, name='dispatch')
+class ResultView(LoginRequiredMixin, View):
 
     def get(self, request):
-        iam = IAM.objects.filter(user=request.user).first()
-        proc = Process.objects.get(name=request.GET['process'])
-        link = check_process(process=proc, iam=iam)
+        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
+        ana_id = request.session.get('ana_id', 1)
+        config = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+        timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
+
+        cert_file = "%s/job__%s_%s/logs/certificate.txt" % (config.result_path, config.bucket_name, timestamp)
+        cert_timestamp = get_last_modified_timestamp(iam=iam, bucket=config.bucket_name, key=cert_file)
+
+        if cert_timestamp == 0:
+            cert_content = ""
+        else:
+            cert_content = get_file_content(iam=iam, bucket=config.bucket_name, key=cert_file)
+
+        dtset_logs = []
+        log_dir = "%s/job__%s_%s/logs/" % (config.result_path, config.bucket_name, timestamp)
+        dtset_logs_keys = get_dataset_logs(iam=iam, bucket=config.bucket_name, log_dir=log_dir)
+        for key in dtset_logs_keys:
+            path = key.replace("%s/job__%s_%s/" % (config.result_path, config.bucket_name, timestamp), "")
+            dtset_logs.append({'link': get_download_file(iam, config.bucket_name, key, timestamp), 'path': path})
+
         return JsonResponse({
             "status": True,
-            "link": link
+            "cert_file": cert_content,
+            "dtset_logs": dtset_logs
+        })
+
+    def post(self, request):
+        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
+        ana_id = request.session.get('ana_id', 1)
+        config = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+        timestamp = int(request.POST['timestamp'])
+        result_items = json.loads(config.result_items)
+        result_keys = []
+        for item in result_items:
+            file_key = "%s/job__%s_%s/%s" % (config.result_path, config.bucket_name, timestamp, item['path'])
+            result_keys.append({'key': file_key, 'path': item['path']})
+
+        file_timestamp = get_last_modified_timestamp(iam=iam, bucket=config.bucket_name, key=result_keys[0]['key'])
+
+        result_links = []
+        if file_timestamp > 0:
+            for key in result_keys:
+                link = get_download_file(iam=iam, bucket=config.bucket_name, key=key['key'], timestamp=timestamp)
+                result_links.append({'link': link, 'path': key['path']})
+
+            # remove used dataset and config files
+            dataset_dir = "%s/%s" % (config.dataset_path, timestamp)
+            delete_jsons_from_bucket(iam=iam, bucket_name=config.bucket_name, prefix="%s/" % dataset_dir)
+            # remove config file from epi bucket
+            config_to_key = "%s/config_%s.json" % (config.config_path, timestamp)
+            delete_file_from_bucket(iam=iam, bucket_name=config.bucket_name, key=config_to_key)
+
+        return JsonResponse({
+            "status": 200,
+            'result_links': result_links
+        })
+
+
+""" Intro & Analysis Intro pages """
+
+
+class IntroView(View):
+    template_name = "main/intro.html"
+
+    def get(self, request):
+        analyses = Analysis.objects.all()
+        return render(request=request, template_name=self.template_name, context={
+            'analyses': analyses,
+            'iam': get_current_iam(request)
+        })
+
+
+class AnalysisIntroView(LoginRequiredMixin, View):
+    template_name = "main/analysis_intro.html"
+
+    def get(self, request, id):
+        analysis = Analysis.objects.get(pk=id)
+        return render(request=request, template_name=self.template_name, context={
+            "analysis": analysis,
+            'iam': get_current_iam(request)
         })

@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Analysis Intro{% endblock %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-10 offset-md-1 mt-5">
+            <div class="row">
+                <div class="col-sm-8 offset-sm-2 col-md-8 offset-md-2">
+                    <h2 style="letter-spacing: 5px;" class="clickable">{{ analysis.analysis_name }}</h2>
+                    <hr style="top:0px;">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 offset-md-2 mt-3 text-left">
+            <span class="">Analysis description</span>
+            <div class="description">
+                <p class="text-left">
+                    {{ analysis.long_description  | safe }}
+                </p>
+            </div>
+
+            <span class="">Useful links</span>
+
+            <div class="paper-link mt-2">
+                <a href="{{ analysis.paper_link }}" class="botton-line" target="_blank">{{ analysis.analysis_name }} Paper Link</a>
+            </div>
+
+
+            <div class="repo-link mt-2">
+                <a href="{{ analysis.git_link }}" class="botton-line"  target="_blank">{{ analysis.analysis_name }} Github Repo Link</a>
+            </div>
+
+            <div class="repo-link mt-2">
+                <a href="{{ analysis.bash_link }}" class="botton-line" target="_blank">{{ analysis.analysis_name }} Bash Script Link</a>
+            </div>
+
+            <div class="repo-link mt-4">
+            <span class="">How to use this analysis</span>
+                <p>{{ analysis.signature | safe }}</p>
+            </div>
+
+            <div class="text-center mt-4">
+                <button onclick="start_process({{analysis.id}})">
+                    Start analysis
+                </button>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js_content %}
+    <script>
+        function start_process(id){
+            window.location.href = '/process/' + id;
+        }
+    </script>
+{% endblock %}

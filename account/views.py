@@ -2,16 +2,18 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash, login
 from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.views.generic import View
 from .models import *
 from .forms import *
 from ncap.backends import authenticate
+import json
+from django.contrib import messages
 
 
 # Create your views here.
-
 
 class LoginView(View):
     template_name = "account/login.html"
@@ -21,7 +23,7 @@ class LoginView(View):
         if request.user.is_anonymous:
             form = UserLoginForm()
             return render(request, template_name=self.template_name, context={'form': form, "next": next_url})
-        return redirect("profile")
+        return redirect(next_url)
 
     def post(self, request):
         form = UserLoginForm(request.POST)
@@ -34,7 +36,7 @@ class LoginView(View):
             return redirect(next_url)
 
         messages.error(request=request, message="Invalid Credentials, Try again!")
-        return redirect('login')
+        return redirect('/')
 
 
 class SignUpView(View):
@@ -55,7 +57,10 @@ class SignUpView(View):
             aws_req.save()
 
             messages.success(request, 'Successfully Registered, Please wait for email from us!')
-            return redirect('profile')
+            next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
+            return redirect(next_url)
+            # return redirect('profile')
+
         return render(request, template_name=self.template_name, context={"form": form})
 
 
@@ -112,3 +117,60 @@ class ChangePWDView(LoginRequiredMixin, View):
         else:
             messages.error(request, 'An Error was occurred, Please try again!')
             return redirect('user_password_change')
+
+
+class AdminMixin(UserPassesTestMixin):
+    login_url = '/'
+
+    def test_func(self):
+        if self.request.user.is_anonymous:
+            return False
+        return self.request.user.is_admin
+
+
+class IamCreateView(AdminMixin, View):
+    login_url = '/'
+
+    def get(self, request):
+        return render(request=request, template_name="account/iam_create.html", context={
+            'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
+        })
+
+    def post(self, request):
+        if 'file' in request.FILES:
+            file_content = request.FILES['file'].read().decode('utf-8')
+            try:
+                data = json.loads(file_content)
+                email = data['email']
+                username = data['username']
+                access_key = data['accesskey']
+                secret_access_key = data['secretaccesskey']
+                group_name = data['groupname']
+
+                # check if IAM is already existed or not
+                if IAM.objects.filter(aws_user=username).count() > 0:
+                    messages.error(request, f"IAM ( {username} ) is already existed.")
+                else:
+                    # create new user with email
+                    if User.objects.filter(email=email).count() > 0:
+                        new_user = User.objects.filter(email=email).first()
+                    else:
+                        new_user = User(email=email)
+                        new_user.save()
+
+                    if AWSRequest.objects.filter(user=new_user).count() == 0:
+                        aws_req = AWSRequest(user=new_user)
+                        aws_req.save()
+
+                    # create new iam with aws credentials
+                    new_iam = IAM(user=new_user, aws_user=username, aws_access_key=access_key,
+                                  aws_secret_access_key=secret_access_key, group=group_name)
+                    new_iam.save()
+                    messages.success(request, f"New IAM was successfully created: {username}")
+                    return redirect('/admin/account/iam/')
+            except Exception as e:
+                messages.error(request, f"Issue: {e}")
+        else:
+            messages.error(request, "File is empty. please upload json file")
+
+        return redirect('/iamcreate/')
