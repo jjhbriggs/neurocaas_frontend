@@ -3,41 +3,59 @@
 
 {% block title %}Create IAM{% endblock %}
 
-{% block title_content %}
-<nav class="navbar navbar-dark bg-dark">
-    <div class="col-md-12 text-right">
-        {% if iam %}
-            <a class="text-warning no-border" href="javascript:void(0)">{{ iam.aws_user }}</a>
-        {% else %}
-            <a class="text-warning no-border" href="javascript:void(0)">Anonymous User</a>
-        {% endif %}
-    </div>
-</nav>
-{% endblock %}
-
 {% block content %}
     <div class="container">
-        <div class="col-md-10 offset-md-1 mt-5">
-            <div class="row">
-                <div class="col-sm-8 offset-sm-2 col-md-8 offset-md-2">
-                    <h2 class="clickable"> Create IAM From JSON</h2>
-                    <hr style="top:0px;">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="col-md-10 offset-md-1 mt-5">
+                <div class="row">
+                    <div class="col-sm-8 offset-sm-2 col-md-8 offset-md-2">
+                        <h2 class="clickable"> Create IAM From JSON</h2>
+                        <hr style="top:0px;">
+                    </div>
+                </div>
+                <div class="upload-div" id="dropContainer">
+                    <div class="drop-area">
+                        <span id="file-name" class="underline">Drag & Drop or Click!</span>
+                        <input type="file" class="fileElem" accept=".json" id="fileInput" name="file">
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit">
+                        Upload
+                    </button>
                 </div>
             </div>
-            <div class="upload-div" id="config-area">
-                <form class="drop-area">
-                    <p>Drag & Drop or Click!</p>
-                    <input type="file" class="fileElem" accept=".json" multiple>
-                    <progress class="progress-bar" max=100 value=0></progress>
-                </form>
-                <div class="gallery"></div>
-            </div>
-
-            <div class="text-center mt-4">
-                <button onclick="start_process(2)">
-                    Upload
-                </button>
-            </div>
-        </div>
+        </form>
     </div>
+{% endblock %}
+
+
+{% block js_content %}
+<script>
+    $(document).ready(function(){
+        var dropContainer = document.getElementById("dropContainer");
+        var fileInput = document.getElementById("fileInput");
+
+        dropContainer.ondragover = dropContainer.ondragenter = function(evt) {
+            evt.preventDefault();
+        };
+
+        $('#file-name').click(function(evt){
+            $( '#fileInput' ).trigger('click');
+        })
+
+        dropContainer.ondrop = function(evt) {
+            // pretty simple -- but not for IE :(
+            fileInput.files = evt.dataTransfer.files;
+
+            // If you want to use some of the dropped files
+            /*const dT = new DataTransfer();
+            dT.items.add(evt.dataTransfer.files[0]);
+            fileInput.files = dT.files;*/
+            evt.preventDefault();
+        };
+    });
+</script>
 {% endblock %}
