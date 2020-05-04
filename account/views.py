@@ -9,6 +9,8 @@ from django.views.generic import View
 from .models import *
 from .forms import *
 from ncap.backends import authenticate
+import json
+from django.contrib import messages
 
 
 # Create your views here.
@@ -135,4 +137,35 @@ class IamCreateView(AdminMixin, View):
         })
 
     def post(self, request):
-        pass
+        if 'file' in request.FILES:
+            file_content = request.FILES['file'].read().decode('utf-8')
+            try:
+                data = json.loads(file_content)
+                email = data['email']
+                username = data['username']
+                access_key = data['accesskey']
+                secret_access_key = data['secretaccesskey']
+                group_name = data['groupname']
+
+                # check if IAM is already existed or not
+                if IAM.objects.filter(aws_user=username).count() > 0:
+                    messages.error(request, f"IAM ( {username} ) is already existed.")
+                else:
+                    # create new user with email
+                    if User.objects.filter(email=email).count() > 0:
+                        new_user = User.objects.filter(email=email).first()
+                    else:
+                        new_user = User(email=email)
+                        new_user.save()
+
+                    # create new iam with aws credentials
+                    new_iam = IAM(user=new_user, aws_user=username, aws_access_key=access_key,
+                                  aws_secret_access_key=secret_access_key, group=group_name)
+                    new_iam.save()
+                    messages.success(request, f"New IAM was successfully created: {username}")
+            except Exception as e:
+                messages.error(request, f"Issue: {e}")
+        else:
+            messages.error(request, "File is empty. please upload json file")
+
+        return redirect('/iamcreate/')

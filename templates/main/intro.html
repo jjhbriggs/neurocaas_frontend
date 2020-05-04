@@ -3,18 +3,6 @@
 
 {% block title %}Intro{% endblock %}
 
-{% block title_content %}
-<nav class="navbar navbar-dark bg-dark">
-    <div class="col-md-12 text-right">
-        {% if iam %}
-            <a class="text-warning no-border" href="javascript:void(0)">{{ iam.aws_user }}</a>
-        {% else %}
-            <a class="text-warning no-border" href="javascript:void(0)">Anonymous User</a>
-        {% endif %}
-    </div>
-</nav>
-{% endblock %}
-
 {% block content %}
     <div class="row">
         <div class="col-md-10 offset-md-1 mt-4">
@@ -67,7 +55,7 @@
             </div>
 
             <div class="paper-link mt-2">
-                <a href="https://github.com/cunningham-lab/ctn_lambda/issues" class="botton-line" target="_blank">Issues</a>
+                <a href="https://github.com/cunningham-lab/neurocaas/issues" class="botton-line" target="_blank">Issues</a>
             </div>
 
             <div class="paper-link mt-4 text-center">
@@ -106,7 +94,9 @@
                             How can I get my own analysis on NeuroCAAS?
                         </h3>
                         <p class="">
-                        Please contact us at <a class="text-warning" href="javascript:void(0)">neurocaas@gmail.com</a>. You can find documentation to prepare your analysis for launch on the platform in the docs of our github repo <a href="https://github.com/cunningham-lab/ctn_lambda/blob/master/docs/" class="" target="_blank">here</a>.
+
+                        Please contact us at <a class="text-warning" href="javascript:void(0)">neurocaas@gmail.com</a>. You can find documentation to prepare your analysis for launch on the platform in the docs of our github repo <a href="https://github.com/cunningham-lab/neurocaas/blob/master/docs/" class="botton-line" target="_blank">here</a>
+
                         </p>
                     </li>
                 </ul>
