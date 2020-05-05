@@ -64,8 +64,8 @@ class ProcessView(LoginRequiredMixin, View):
             "id1": access_id,
             "id2": secret_key,
             'bucket': config.bucket_name,
-            "data_dataset_dir": "%s/%s_dataset" % (root_folder, iam.group),
-            "data_config_dir": "%s/%s_config" % (root_folder, iam.group),
+            "data_dataset_dir": "%s/dataset/%s" % (root_folder, iam.group),
+            "data_config_dir": "%s/config/%s" % (root_folder, iam.group),
             "title": config.analysis_name,
             'iam': iam
         })
@@ -84,14 +84,14 @@ class ProcessView(LoginRequiredMixin, View):
 
         # copy dataset files to work_bucket
         for file in dataset_files:
-            from_key = "%s/%s/%s_dataset/%s" % (config.upload_folder, iam.aws_user, iam.group, file)
+            from_key = "%s/%s/dataset/%s/%s" % (config.upload_folder, iam.aws_user, iam.group, file)
             to_key = "%s/%s" % (dataset_dir, file)
             copy_file_to_bucket(iam=iam, from_bucket=config.bucket_name, from_key=from_key,
                                 to_bucket=config.bucket_name, to_key=to_key)
 
         # copy config file to work_bucket
         config_to_key = "%s/%s/config_%s.json" % (iam.group, config.config_path, cur_timestamp)
-        from_key = "%s/%s/%s_config/%s" % (config.upload_folder, iam.aws_user, iam.group, config_file)
+        from_key = "%s/%s/config/%s/%s" % (config.upload_folder, iam.aws_user, iam.group, config_file)
         copy_file_to_bucket(iam=iam, from_bucket=config.bucket_name, from_key=from_key, to_bucket=config.bucket_name,
                             to_key=config_to_key)
 
@@ -128,7 +128,7 @@ class UserFilesView(LoginRequiredMixin, View):
 
         # dataset files list
         root_folder = "%s/%s" % (config.upload_folder, iam.aws_user)
-        folder = '%s/%s_dataset' % (root_folder, iam.group)
+        folder = '%s/dataset/%s' % (root_folder, iam.group)
         dataset_keys = get_file_list(iam=iam, bucket=config.bucket_name, folder=folder)
 
         datasets = []
@@ -139,7 +139,7 @@ class UserFilesView(LoginRequiredMixin, View):
         # [datasets.append(key.update({'name': get_name_only(key=key['key'])})) for key in dataset_keys]
 
         # config files list
-        folder = '%s/%s_config' % (root_folder, iam.group)
+        folder = '%s/config/%s' % (root_folder, iam.group)
         config_keys = get_file_list(iam=iam, bucket=config.bucket_name, folder=folder)
         configs = []
         for key in config_keys:
