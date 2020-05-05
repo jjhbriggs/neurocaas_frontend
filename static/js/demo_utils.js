@@ -66,6 +66,8 @@ function refresh_databucket_list(){
                         $(this).addClass('active');
                     }
 				})
+
+				refresh_data_jstrees();
 			}
 		}
 	})
