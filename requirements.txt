@@ -2,3 +2,4 @@ Django==2.2.3
 boto3==1.9.168
 mysqlclient
 django-suit==0.2.28
+djangorestframework==3.11.0
