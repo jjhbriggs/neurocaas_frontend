@@ -58,7 +58,7 @@ function update_jstree(){
     create_jstree_for_results(paths);
 }
 
-// create dataset and config jstrees
+// create jstrees by data
 function create_jstree(id, parent_id, paths){
     $('#' + id).remove();
     $("#" + parent_id).append('<div id="' + id + '"></div>');
@@ -78,4 +78,17 @@ function create_jstree(id, parent_id, paths){
             'data' : get_json_from_array(paths)
         }
     });
+}
+
+// create dataset and config jstrees
+function refresh_data_jstrees(){
+    console.log(datasets);
+    console.log(configs);
+
+    // create dataset jstree
+    data = [];
+    for ( var i = 0; i < datasets.length; i++){
+        data.push("/dataset/" + datasets[i].name);
+    }
+    create_jstree('dataset_folder', 'dataset_div', data);
 }
