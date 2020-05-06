@@ -64,20 +64,20 @@ function create_dataset_jstree(paths){
     $("#dataset_div").append('<div id="dataset_folder"></div>');
 
     $('#dataset_folder')
-    .on("changed.jstree", function (e, data) {
-        console.log(data);
-        if(data.selected.length) {
-            var full_path = data.instance.get_path(data.selected[0]).join('/').replace('results/', '');
-            if (!full_path.includes('.')) return;
-            console.log(full_path);
-        }
-    })
-    .jstree({
-        'plugins':["wholerow","checkbox"],
-        'core' : {
-            'data' : get_json_from_array(paths)
-        }
-    });
+        .on("changed.jstree", function (e, data) {
+            // console.log(data.node.text);
+            var filename = data.node.text;
+            if (!filename.includes('.')) return;
+            for ( var i=0; i< datasets.length; i++ ){
+                if (datasets[i].name === filename) show_detail(i, 0);
+            }
+        })
+        .jstree({
+            'plugins':["wholerow","checkbox"],
+            'core' : {
+                'data' : get_json_from_array(paths)
+            }
+        });
 }
 
 
@@ -87,20 +87,20 @@ function create_config_jstree(paths){
     $("#config_div").append('<div id="config_folder"></div>');
 
     $('#config_folder')
-    .on("changed.jstree", function (e, data) {
-        console.log(data);
-        if(data.selected.length) {
-            var full_path = data.instance.get_path(data.selected[0]).join('/').replace('results/', '');
-            if (!full_path.includes('.')) return;
-            console.log(full_path);
-        }
-    })
-    .jstree({
-        'plugins':["wholerow","conditionalselect"],
-        'core' : {
-            'data' : get_json_from_array(paths)
-        }
-    });
+        .on("changed.jstree", function (e, data) {
+            // console.log(data.node.text);
+            var filename = data.node.text;
+            if (!filename.includes('.')) return;
+            for ( var i=0; i< configs.length; i++ ){
+                if (configs[i].name === filename) show_detail(i, 1);
+            }
+        })
+        .jstree({
+            'plugins':["wholerow","conditionalselect"],
+            'core' : {
+                'data' : get_json_from_array(paths)
+            }
+        });
 }
 
 // create dataset and config jstrees
