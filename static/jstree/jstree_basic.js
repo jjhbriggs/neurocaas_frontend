@@ -115,5 +115,11 @@ function refresh_data_jstrees(){
     }
     create_dataset_jstree(data);
 
+    // create config jstree
+    data = [];
+    for ( var i = 0; i < configs.length; i++){
+        data.push("/config/" + configs[i].name);
+    }
     create_config_jstree(data);
+
 }
