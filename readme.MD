@@ -37,7 +37,7 @@ Run this script using python:
 CORS permission for ayanlysis bucket
 ------------------------------------
 
-- you need to add this permission in bucket permission tag
+- you need to add these permissions in bucket permission tag
 
     ![Screenshot](./s3bucket-permission.png)
     
