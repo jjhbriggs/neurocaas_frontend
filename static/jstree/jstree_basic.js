@@ -73,6 +73,7 @@ function create_jstree(id, parent_id, paths){
         }
     })
     .jstree({
+        //'plugins':["wholerow","checkbox"],
         'plugins':["wholerow","checkbox"],
         'core' : {
             'data' : get_json_from_array(paths)
