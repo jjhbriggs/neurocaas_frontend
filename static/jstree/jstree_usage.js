@@ -58,24 +58,68 @@ function update_jstree(){
     create_jstree_for_results(paths);
 }
 
-// create dataset and config jstrees
-function create_jstree(id, parent_id, paths){
-    $('#' + id).remove();
-    $("#" + parent_id).append('<div id="' + id + '"></div>');
+// create jstrees for datasets
+function create_dataset_jstree(paths){
+    $('#dataset_folder').remove();
+    $("#dataset_div").append('<div id="dataset_folder"></div>');
 
-    $('#' + id)
-    .on("changed.jstree", function (e, data) {
-        console.log(data);
-        if(data.selected.length) {
-            var full_path = data.instance.get_path(data.selected[0]).join('/').replace('results/', '');
-            if (!full_path.includes('.')) return;
-            console.log(full_path);
-        }
-    })
-    .jstree({
-        'plugins':["wholerow","checkbox"],
-        'core' : {
-            'data' : get_json_from_array(paths)
-        }
-    });
+    $('#dataset_folder')
+        .on("changed.jstree", function (e, data) {
+            // console.log(data.node.text);
+            var filename = data.node.text;
+            if (!filename.includes('.')) return;
+            for ( var i=0; i< datasets.length; i++ ){
+                if (datasets[i].name === filename) show_detail(i, 0);
+            }
+        })
+        .jstree({
+            'plugins':["wholerow","checkbox"],
+            'core' : {
+                'data' : get_json_from_array(paths)
+            }
+        });
+}
+
+
+// create jstree for configs
+function create_config_jstree(paths){
+    $('#config_folder').remove();
+    $("#config_div").append('<div id="config_folder"></div>');
+
+    $('#config_folder')
+        .on("changed.jstree", function (e, data) {
+            // console.log(data.node.text);
+            var filename = data.node.text;
+            if (!filename.includes('.')) return;
+            for ( var i=0; i< configs.length; i++ ){
+                if (configs[i].name === filename) show_detail(i, 1);
+            }
+        })
+        .jstree({
+            'plugins':["wholerow","conditionalselect"],
+            'core' : {
+                'data' : get_json_from_array(paths)
+            }
+        });
+}
+
+// create dataset and config jstrees
+function refresh_data_jstrees(){
+    console.log(datasets);
+    console.log(configs);
+
+    // create dataset jstree
+    data = [];
+    for ( var i = 0; i < datasets.length; i++){
+        data.push("/dataset/" + datasets[i].name);
+    }
+    create_dataset_jstree(data);
+
+    // create config jstree
+    data = [];
+    for ( var i = 0; i < configs.length; i++){
+        data.push("/config/" + configs[i].name);
+    }
+    create_config_jstree(data);
+
 }
