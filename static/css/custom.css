@@ -263,3 +263,7 @@ nav.bg-dark{
     border-bottom: 1px dotted #ffffff59;
     margin-bottom: 0px;
 }
+
+.hidden{
+    display: none;
+}
