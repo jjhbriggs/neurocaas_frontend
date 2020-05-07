@@ -22,8 +22,9 @@ function show_detail(ind, type){
 function refresh_databucket_list(){
     var loading_template = "<tr><td>loading ...</td></tr>";
     var empty_template = "<tr><td> There is not file. </td></tr>";
-    /*$('#dataset_table tbody').html(loading_template);
-    $('#config_table tbody').html(loading_template);*/
+
+    $('#dataset_folder').html(loading_template);
+    $('#config_folder').html(loading_template);
 
 	$.ajax({
 		url: '/get_user_files/',
@@ -33,11 +34,14 @@ function refresh_databucket_list(){
 			    configs = res.configs;
 			    datasets = res.datasets;
 
+                datasets.length < 0 ? $('#dataset_folder').html(empty_template): null;
+                configs.length < 0 ? $('#config_folder').html(empty_template): null;
+
 				var dataset_html = '';
 				for ( var i = 0 ; i < datasets.length ; i++)
 					dataset_html += get_tr_template(datasets[i].name, "checkbox", "dataset_file", i, 0)
 
-				 dataset_html === '' ? $('#dataset_table tbody').html(empty_template) : $('#dataset_table tbody').html(dataset_html);
+				dataset_html === '' ? $('#dataset_table tbody').html(empty_template) : $('#dataset_table tbody').html(dataset_html);
 
 				var config_html = '';
 				for ( var i = 0 ; i < configs.length ; i++)
