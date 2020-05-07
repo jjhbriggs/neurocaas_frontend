@@ -19,6 +19,10 @@ def get_download_file(iam, bucket, key, timestamp):
         aws_secret_access_key=iam.aws_secret_access_key
     )
 
+    parent_folder = "static/downloads"
+    if not os.path.exists(parent_folder):
+        os.mkdir(parent_folder)
+
     folder = "static/downloads/%s" % timestamp
     if not os.path.exists(folder):
         os.mkdir(folder)
