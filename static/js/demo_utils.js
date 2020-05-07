@@ -22,8 +22,8 @@ function show_detail(ind, type){
 function refresh_databucket_list(){
     var loading_template = "<tr><td>loading ...</td></tr>";
     var empty_template = "<tr><td> There is not file. </td></tr>";
-    $('#dataset_table tbody').html(loading_template);
-    $('#config_table tbody').html(loading_template);
+    /*$('#dataset_table tbody').html(loading_template);
+    $('#config_table tbody').html(loading_template);*/
 
 	$.ajax({
 		url: '/get_user_files/',
@@ -37,13 +37,13 @@ function refresh_databucket_list(){
 				for ( var i = 0 ; i < datasets.length ; i++)
 					dataset_html += get_tr_template(datasets[i].name, "checkbox", "dataset_file", i, 0)
 
-				dataset_html === '' ? $('#dataset_table tbody').html(empty_template) : $('#dataset_table tbody').html(dataset_html);
+				// dataset_html === '' ? $('#dataset_table tbody').html(empty_template) : $('#dataset_table tbody').html(dataset_html);
 
 				var config_html = '';
 				for ( var i = 0 ; i < configs.length ; i++)
 					config_html += get_tr_template(configs[i].name, "radio", "config_file", i, 1)
 
-                config_html === '' ? $('#config_table tbody').html(empty_template) : $('#config_table tbody').html(config_html);
+                // config_html === '' ? $('#config_table tbody').html(empty_template) : $('#config_table tbody').html(config_html);
 
 				// add eventlistener for each tr
 				$('tr').click(function(event){
@@ -79,6 +79,14 @@ function submit(){
 
     // get list of dataset files' names
     var checkboxes = $('input[name="dataset_file"]:checked').parent().parent().find('td:first');
+    var chkboxes = $('#dataset_folder a.jstree-anchor.jstree-clicked');
+
+    for ( var i = 0 ; i < chkboxes.length; i++ ){
+        if (chkboxes[i].text !== 'dataset')
+            dataset_files.push(chkboxes[i].text);
+    }
+    console.log(dataset_files);
+    return;
 
     for ( var i = 0 ; i < checkboxes.length; i++ ){
     	console.log(checkboxes[i].textContent)
