@@ -12,6 +12,7 @@ from django.views.generic import View
 from account.forms import UserLoginForm, UserCreationForm
 from account.models import *
 from .utils import *
+from django.contrib import messages
 
 # Create your views here.
 
@@ -51,6 +52,10 @@ class ProcessView(LoginRequiredMixin, View):
         request.session['ana_id'] = id
         analysis = Analysis.objects.get(pk=id)
         iam = get_current_iam(request)
+
+        if not analysis.check_iam(iam):
+            messages.error(request, "You don't have permission for this analysis.")
+            return redirect('/')
 
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
@@ -196,7 +201,7 @@ class ResultView(LoginRequiredMixin, View):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
         timestamp = int(request.POST['timestamp'])
-        result_items = json.loads(config.result_items)
+        result_items = json.loads(analysis.result_items)
         result_keys = []
         for item in result_items:
             file_key = "%s/%s/job__%s_%s/%s" % (iam.group, analysis.result_path, analysis.bucket_name, timestamp, item['path'])
@@ -244,6 +249,9 @@ class AnalysisIntroView(LoginRequiredMixin, View):
         analysis = Analysis.objects.get(pk=id)
         iam = get_current_iam(request)
 
+        if not analysis.check_iam(iam):
+            messages.error(request, "You don't have permission for this analysis.")
+            return redirect('/')
 
         return render(request=request, template_name=self.template_name, context={
             "analysis": analysis,
