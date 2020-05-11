@@ -86,3 +86,4 @@ class Analysis(Base):
 
     def __str__(self):
         return self.analysis_name
+
