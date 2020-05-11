@@ -1,7 +1,7 @@
 from django.db import models
 # Create your models here.
 from datetime import datetime
-from account.models import Base
+from account.models import Base, AnaGroup
 import uuid
 
 
@@ -67,6 +67,7 @@ class Analysis(Base):
     analysis_name = models.CharField(max_length=100, help_text='Name of Process', unique=True)
     result_prefix = models.CharField(max_length=100, help_text='Prefix of result folder name')
     bucket_name = models.CharField(max_length=100, help_text='Bucket Name')
+    groups = models.ManyToManyField(AnaGroup)
 
     # detail fields of analysis
     short_description = models.TextField(help_text='Short description of analysis', blank=True, null=True)

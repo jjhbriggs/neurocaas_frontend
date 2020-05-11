@@ -49,18 +49,18 @@ class ProcessView(LoginRequiredMixin, View):
 
     def get(self, request, id):
         request.session['ana_id'] = id
-        config = Analysis.objects.get(pk=id)
-
+        analysis = Analysis.objects.get(pk=id)
         iam = get_current_iam(request)
+
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
-            'bucket': config.bucket_name,
+            'bucket': analysis.bucket_name,
             "data_dataset_dir": "%s/inputs" % iam.group,
             "data_config_dir": "%s/configs" % iam.group,
-            "title": config.analysis_name,
+            "title": analysis.analysis_name,
             'iam': iam
         })
 
@@ -242,7 +242,10 @@ class AnalysisIntroView(LoginRequiredMixin, View):
 
     def get(self, request, id):
         analysis = Analysis.objects.get(pk=id)
+        iam = get_current_iam(request)
+
+
         return render(request=request, template_name=self.template_name, context={
             "analysis": analysis,
-            'iam': get_current_iam(request)
+            'iam': iam
         })
