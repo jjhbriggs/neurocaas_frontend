@@ -154,7 +154,8 @@ def get_file_list(iam, bucket, folder):
     # Retrieve keys from s3 bucket
     try:
         for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
-            # if obj.key.endswith('.json'):
+            if obj.key == prefix:
+                continue
             file_keys.append({
                 'key': obj.key,
                 'date_modified': obj.last_modified.strftime('%Y-%m-%d'),
