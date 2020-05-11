@@ -41,6 +41,11 @@ class AWSAdmin(admin.ModelAdmin):
     list_display = ('user', 'status', 'created_on')
 
 
+@admin.register(AnaGroup)
+class AWSAdmin(admin.ModelAdmin):
+    list_display = ('name', 'created_on')
+
+
 admin.site.register(User, UserAdministrator)
 admin.site.unregister(Group)
 # admin.site.register(IAM)
