@@ -17,7 +17,7 @@ function get_status(timestamp){
                 var html = "";
                 for ( i = 0; i < res.dtset_logs.length; i++){
                     html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
-                    html += '<a href="../' + res.dtset_logs[i].link + '" class="text-warning" target="_blank">';
+                    html += '<a href="../' + res.dtset_logs[i].link + '" class="text-warning no-border" target="_blank">';
                     html += get_file_name(res.dtset_logs[i].link) + '</a></p></div>';
                 }
                 $('#dtset-result-view').html(html);
@@ -59,7 +59,7 @@ function get_results(timestamp){
                 for (var i = 0 ; i < res.result_links.length ; i++){
                     console.log(res.result_links[i].path)
                     html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
-                    html += '<a href="../' + res.result_links[i].link + '" class="text-warning" target="_blank">';
+                    html += '<a href="../' + res.result_links[i].link + '" class="text-warning no-border" target="_blank">';
                     html += get_file_name(res.result_links[i].link) + '</a></p></div>';
                 }
 
