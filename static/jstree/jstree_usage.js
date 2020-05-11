@@ -64,7 +64,18 @@ function customMenu(node) {
     var items = {
         deleteItem: { // The "delete" menu item
             label: "Delete",
-            action: function () {}
+            action: function () {
+                if (confirm("Are you sure to delete item?")){
+                    console.log(node.text)
+                    // delete item and refresh table
+                }
+            }
+        },
+        downItem: { // The "delete" menu item
+            label: "Donwload",
+            action: function () {
+
+            }
         }
     };
 
