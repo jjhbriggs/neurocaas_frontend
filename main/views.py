@@ -16,11 +16,6 @@ from .utils import *
 # Create your views here.
 
 
-"""
-    Views for Demo page 
-"""
-
-
 class HomeView(View):
     """
         Home Page View
@@ -59,20 +54,19 @@ class ProcessView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-        root_folder = "%s/%s" % (config.upload_folder, iam.aws_user)
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
             'bucket': config.bucket_name,
-            "data_dataset_dir": "%s/dataset/%s" % (root_folder, iam.group),
-            "data_config_dir": "%s/config/%s" % (root_folder, iam.group),
+            "data_dataset_dir": "%s/inputs" % iam.group,
+            "data_config_dir": "%s/configs" % iam.group,
             "title": config.analysis_name,
             'iam': iam
         })
 
     def post(self, request, id):
         ana_id = request.session.get('ana_id', 1)
-        config = Analysis.objects.get(pk=ana_id)
+        analysis = Analysis.objects.get(pk=ana_id)
 
         iam = get_current_iam(request)
         dataset_files = request.POST.getlist('dataset_files[]')
@@ -80,19 +74,19 @@ class ProcessView(LoginRequiredMixin, View):
 
         # remove existing dataset files from epi bucket
         cur_timestamp = int(time.time())
-        dataset_dir = "%s/%s/%s" % (iam.group, config.dataset_path, cur_timestamp)
+        dataset_dir = "%s/%s/%s" % (iam.group, analysis.dataset_path, cur_timestamp)
 
         # copy dataset files to work_bucket
         for file in dataset_files:
-            from_key = "%s/%s/dataset/%s/%s" % (config.upload_folder, iam.aws_user, iam.group, file)
+            from_key = "%s/%s/dataset/%s/%s" % (analysis.upload_folder, iam.aws_user, iam.group, file)
             to_key = "%s/%s" % (dataset_dir, file)
-            copy_file_to_bucket(iam=iam, from_bucket=config.bucket_name, from_key=from_key,
-                                to_bucket=config.bucket_name, to_key=to_key)
+            copy_file_to_bucket(iam=iam, from_bucket=analysis.bucket_name, from_key=from_key,
+                                to_bucket=analysis.bucket_name, to_key=to_key)
 
         # copy config file to work_bucket
-        config_to_key = "%s/%s/config_%s.json" % (iam.group, config.config_path, cur_timestamp)
-        from_key = "%s/%s/config/%s/%s" % (config.upload_folder, iam.aws_user, iam.group, config_file)
-        copy_file_to_bucket(iam=iam, from_bucket=config.bucket_name, from_key=from_key, to_bucket=config.bucket_name,
+        config_to_key = "%s/%s/config_%s.json" % (iam.group, analysis.config_path, cur_timestamp)
+        from_key = "%s/%s/config/%s/%s" % (analysis.upload_folder, iam.aws_user, iam.group, config_file)
+        copy_file_to_bucket(iam=iam, from_bucket=analysis.bucket_name, from_key=from_key, to_bucket=analysis.bucket_name,
                             to_key=config_to_key)
 
         submit_data = {
@@ -102,8 +96,8 @@ class ProcessView(LoginRequiredMixin, View):
             # "instance_type": "t2.micro",
         }
 
-        submit_key = "%s/%s" % (iam.group, config.submit_path)
-        create_submit_json(iam=iam, work_bucket=config.bucket_name, key=submit_key, json_data=submit_data)
+        submit_key = "%s/%s" % (iam.group, analysis.submit_path)
+        create_submit_json(iam=iam, work_bucket=analysis.bucket_name, key=submit_key, json_data=submit_data)
 
         # store timestamp in session
         request.session['last_timestamp'] = cur_timestamp
@@ -123,14 +117,13 @@ class UserFilesView(LoginRequiredMixin, View):
         """
         # config = Analysis.objects.filter(analysis_name=analysis_name).first()
         ana_id = request.session.get('ana_id', 1)
-        config = Analysis.objects.get(pk=ana_id)
+        analysis = Analysis.objects.get(pk=ana_id)
 
         iam = get_current_iam(request)
 
         # dataset files list
-        root_folder = "%s/%s" % (config.upload_folder, iam.aws_user)
-        folder = '%s/dataset/%s' % (root_folder, iam.group)
-        dataset_keys = get_file_list(iam=iam, bucket=config.bucket_name, folder=folder)
+        folder = '%s/inputs' % iam.group
+        dataset_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=folder)
 
         datasets = []
         for key in dataset_keys:
@@ -140,13 +133,13 @@ class UserFilesView(LoginRequiredMixin, View):
         # [datasets.append(key.update({'name': get_name_only(key=key['key'])})) for key in dataset_keys]
 
         # config files list
-        folder = '%s/config/%s' % (root_folder, iam.group)
-        config_keys = get_file_list(iam=iam, bucket=config.bucket_name, folder=folder)
+        folder = '%s/configs' % iam.group
+        config_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=folder)
         configs = []
         for key in config_keys:
             row = key.copy()
             row.update({'name': get_name_only(key=key['key'])})
-            content = get_file_content(iam=iam, bucket=config.bucket_name, key=key['key'])
+            content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=key['key'])
             row.update({'content': content})
             configs.append(row)
 
@@ -172,24 +165,24 @@ class ResultView(LoginRequiredMixin, View):
     def get(self, request):
         # config = Analysis.objects.filter(analysis_name=analysis_name).first()
         ana_id = request.session.get('ana_id', 1)
-        config = Analysis.objects.get(pk=ana_id)
+        analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
 
-        cert_file = "%s/%s/job__%s_%s/logs/certificate.txt" % (iam.group, config.result_path, config.bucket_name, timestamp)
-        cert_timestamp = get_last_modified_timestamp(iam=iam, bucket=config.bucket_name, key=cert_file)
+        cert_file = "%s/%s/job__%s_%s/logs/certificate.txt" % (iam.group, analysis.result_path, analysis.bucket_name, timestamp)
+        cert_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=cert_file)
 
         if cert_timestamp == 0:
             cert_content = ""
         else:
-            cert_content = get_file_content(iam=iam, bucket=config.bucket_name, key=cert_file)
+            cert_content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=cert_file)
 
         dtset_logs = []
-        log_dir = "%s/%s/job__%s_%s/logs/" % (iam.group, config.result_path, config.bucket_name, timestamp)
-        dtset_logs_keys = get_dataset_logs(iam=iam, bucket=config.bucket_name, log_dir=log_dir)
+        log_dir = "%s/%s/job__%s_%s/logs/" % (iam.group, analysis.result_path, analysis.bucket_name, timestamp)
+        dtset_logs_keys = get_dataset_logs(iam=iam, bucket=analysis.bucket_name, log_dir=log_dir)
         for key in dtset_logs_keys:
-            path = key.replace("%s/%s/job__%s_%s/" % (iam.group, config.result_path, config.bucket_name, timestamp), "")
-            dtset_logs.append({'link': get_download_file(iam, config.bucket_name, key, timestamp), 'path': path})
+            path = key.replace("%s/%s/job__%s_%s/" % (iam.group, analysis.result_path, analysis.bucket_name, timestamp), "")
+            dtset_logs.append({'link': get_download_file(iam, analysis.bucket_name, key, timestamp), 'path': path})
 
         return JsonResponse({
             "status": True,
@@ -200,29 +193,29 @@ class ResultView(LoginRequiredMixin, View):
     def post(self, request):
         # config = Analysis.objects.filter(analysis_name=analysis_name).first()
         ana_id = request.session.get('ana_id', 1)
-        config = Analysis.objects.get(pk=ana_id)
+        analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
         timestamp = int(request.POST['timestamp'])
         result_items = json.loads(config.result_items)
         result_keys = []
         for item in result_items:
-            file_key = "%s/%s/job__%s_%s/%s" % (iam.group, config.result_path, config.bucket_name, timestamp, item['path'])
+            file_key = "%s/%s/job__%s_%s/%s" % (iam.group, analysis.result_path, analysis.bucket_name, timestamp, item['path'])
             result_keys.append({'key': file_key, 'path': item['path']})
 
-        file_timestamp = get_last_modified_timestamp(iam=iam, bucket=config.bucket_name, key=result_keys[0]['key'])
+        file_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=result_keys[0]['key'])
 
         result_links = []
         if file_timestamp > 0:
             for key in result_keys:
-                link = get_download_file(iam=iam, bucket=config.bucket_name, key=key['key'], timestamp=timestamp)
+                link = get_download_file(iam=iam, bucket=analysis.bucket_name, key=key['key'], timestamp=timestamp)
                 result_links.append({'link': link, 'path': key['path']})
 
             # remove used dataset and config files
-            dataset_dir = "%s/%s/%s" % (iam.group, config.dataset_path, timestamp)
-            delete_jsons_from_bucket(iam=iam, bucket_name=config.bucket_name, prefix="%s/" % dataset_dir)
+            dataset_dir = "%s/%s/%s" % (iam.group, analysis.dataset_path, timestamp)
+            delete_jsons_from_bucket(iam=iam, bucket_name=analysis.bucket_name, prefix="%s/" % dataset_dir)
             # remove config file from epi bucket
-            config_to_key = "%s/%s/config_%s.json" % (iam.group, config.config_path, timestamp)
-            delete_file_from_bucket(iam=iam, bucket_name=config.bucket_name, key=config_to_key)
+            config_to_key = "%s/%s/config_%s.json" % (iam.group, analysis.config_path, timestamp)
+            delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=config_to_key)
 
         return JsonResponse({
             "status": 200,
