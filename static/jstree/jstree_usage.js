@@ -58,6 +58,25 @@ function update_jstree(){
     create_jstree_for_results(paths);
 }
 
+
+function customMenu(node) {
+    // The default set of all items
+    var items = {
+        deleteItem: { // The "delete" menu item
+            label: "Delete",
+            action: function () {}
+        }
+    };
+
+    if (!node.text.includes(".")) {
+        // Delete the "delete" menu item
+        delete items.deleteItem;
+    }
+
+    return items;
+}
+
+
 // create jstrees for datasets
 function create_dataset_jstree(paths){
     $('#dataset_folder').remove();
@@ -65,7 +84,8 @@ function create_dataset_jstree(paths){
 
     $('#dataset_folder')
         .on("changed.jstree", function (e, data) {
-            // console.log(data.node.text);
+            console.log(data);
+            if (data.action === "delete_node" && !data.node.text.includes('.')) return;
             var filename = data.node.text;
             if (!filename.includes('.')) return;
             for ( var i=0; i< datasets.length; i++ ){
@@ -73,9 +93,11 @@ function create_dataset_jstree(paths){
             }
         })
         .jstree({
-            'plugins':["wholerow","checkbox"],
+            'plugins':["wholerow","checkbox", "contextmenu"],
+            contextmenu: {items: customMenu},
             'core' : {
-                'data' : get_json_from_array(paths)
+                'data' : get_json_from_array(paths),
+                "check_callback" : true
             }
         });
 }
