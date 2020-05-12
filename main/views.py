@@ -91,7 +91,7 @@ class ProcessView(LoginRequiredMixin, View):
             uploaded_dataset.append(to_key)
 
         # copy config file to work_bucket
-        config_to_key = "%s/config.json" % (upload_dir, cur_timestamp)
+        config_to_key = "%s/config.json" % upload_dir
         from_key = "%s/configs/%s" % (iam.group.name, config_file)
         copy_file_to_bucket(iam=iam, from_bucket=analysis.bucket_name, from_key=from_key,
                             to_bucket=analysis.bucket_name, to_key=config_to_key)
@@ -103,7 +103,7 @@ class ProcessView(LoginRequiredMixin, View):
             # "instance_type": "t2.micro",
         }
 
-        submit_key = "%s/submissions/%s_submit.json" % (iam.group.name, cur_timestamp)
+        submit_key = "%s/submissions/submit.json" % iam.group.name
         create_submit_json(iam=iam, work_bucket=analysis.bucket_name, key=submit_key, json_data=submit_data)
 
         # store timestamp in session
@@ -211,22 +211,17 @@ class ResultView(LoginRequiredMixin, View):
         if file_timestamp > 0:
 
             result_items = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=result_folder)
-
             for item in result_items:
                 file_key = "%s/%s" % (result_folder, item['key'])
                 result_keys.append({'key': file_key, 'path': item['key']})
-
 
             for key in result_keys:
                 link = get_download_file(iam=iam, bucket=analysis.bucket_name, key=key['key'], timestamp=timestamp)
                 result_links.append({'link': link, 'path': key['path']})
 
             # remove used dataset and config files
-            dataset_dir = "%s/%s/%s" % (iam.group, analysis.dataset_path, timestamp)
-            delete_jsons_from_bucket(iam=iam, bucket_name=analysis.bucket_name, prefix="%s/" % dataset_dir)
-            # remove config file from epi bucket
-            config_to_key = "%s/%s/config_%s.json" % (iam.group, analysis.config_path, timestamp)
-            delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=config_to_key)
+            process_dir = "%s/process_items/%s" % (iam.group.name, timestamp)
+            delete_folder_from_bucket(iam=iam, bucket_name=analysis.bucket_name, prefix="%s/" % process_dir)
 
         return JsonResponse({
             "status": 200,
