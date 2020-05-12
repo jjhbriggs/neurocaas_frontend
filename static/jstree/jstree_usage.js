@@ -60,12 +60,12 @@ function update_jstree(){
 
 
 // delete Action
-function delete_action(file_name, type, tree){
+function delete_action(node, type, tree){
     $.ajax({
         url: '/get_user_files/',
         method: 'DELETE',
         data: {
-            file_name: file_name,
+            file_name: node.text,
             type: type
         },
         success: function(res){
@@ -128,7 +128,7 @@ function create_dataset_jstree(paths){
                             label: "Delete",
                             action: function () {
                                 var tree = $('#dataset_folder').jstree(true);
-                                if (confirm("Are you sure to delete item?")) delete_action(node.text, 'inputs', tree);
+                                if (confirm("Are you sure to delete item?")) delete_action(node, 'inputs', tree);
                             }
                         },
                         downItem: { // The "delete" menu item
@@ -179,7 +179,7 @@ function create_config_jstree(paths){
                             label: "Delete",
                             action: function () {
                                 var tree = $('#config_folder').jstree(true);
-                                if (confirm("Are you sure to delete item?")) delete_action(node.text, 'configs', tree);
+                                if (confirm("Are you sure to delete item?")) delete_action(node, 'configs', tree);
                             }
                         },
                         downItem: { // The "delete" menu item
@@ -203,6 +203,7 @@ function create_config_jstree(paths){
             }
         });
 }
+
 
 // create dataset and config jstrees
 function refresh_data_jstrees(){
