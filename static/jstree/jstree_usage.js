@@ -59,35 +59,6 @@ function update_jstree(){
 }
 
 
-function customMenu(node) {
-    // The default set of all items
-    var items = {
-        deleteItem: { // The "delete" menu item
-            label: "Delete",
-            action: function () {
-                if (confirm("Are you sure to delete item?")){
-                    console.log(node.text)
-                    // delete item and refresh table
-                }
-            }
-        },
-        downItem: { // The "delete" menu item
-            label: "Donwload",
-            action: function () {
-
-            }
-        }
-    };
-
-    if (!node.text.includes(".")) {
-        // Delete the "delete" menu item
-        delete items.deleteItem;
-    }
-
-    return items;
-}
-
-
 // create jstrees for datasets
 function create_dataset_jstree(paths){
     $('#dataset_folder').remove();
@@ -105,7 +76,68 @@ function create_dataset_jstree(paths){
         })
         .jstree({
             'plugins':["wholerow","checkbox", "contextmenu"],
-            contextmenu: {items: customMenu},
+            contextmenu: {
+                items: function(node){
+                    // The default set of all items
+                    var items = {
+                        deleteItem: { // The "delete" menu item
+                            label: "Delete",
+                            action: function () {
+                                var tree = $('#dataset_folder').jstree(true);
+                                if (confirm("Are you sure to delete item?")){
+
+                                    $.ajax({
+                                        url: '/get_user_files/',
+                                        method: 'DELETE',
+                                        data: {
+                                            file_name: node.text,
+                                            type: 'inputs'
+                                        },
+                                        success: function(res){
+                                            tree.delete_node(node);
+                                            // refresh_databucket_list();
+                                        },
+                                        error: function(err){
+                                            console.log(err);
+                                        }
+                                    })
+                                }
+                            }
+                        },
+                        downItem: { // The "delete" menu item
+                            label: "Donwload",
+                            action: function () {
+                                $.ajax({
+                                    url: '/get_user_files/',
+                                    method: 'PUT',
+                                    data: {
+                                        file_name: node.text,
+                                        type: 'inputs'
+                                    },
+                                    success: function(res){
+                                        if (res.message !== null){
+                                            document.getElementById('_iframe').href = "/" + res.message;
+                                            document.getElementById('_iframe').click();
+                                        } else {
+                                            window.location.reload();
+                                        }
+                                    },
+                                    error: function(err){
+                                        console.log(err);
+                                    }
+                                })
+                            }
+                        }
+                    };
+
+                    // Delete the "delete" menu item if selected node is folder
+                    if (!node.text.includes(".")) {
+                        delete items.deleteItem;
+                    }
+
+                    return items;
+                }
+            },
             'core' : {
                 'data' : get_json_from_array(paths),
                 "check_callback" : true
@@ -154,5 +186,4 @@ function refresh_data_jstrees(){
         data.push("/config/" + configs[i].name);
     }
     create_config_jstree(data);
-
 }
