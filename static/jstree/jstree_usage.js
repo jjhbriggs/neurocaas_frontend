@@ -85,7 +85,6 @@ function create_dataset_jstree(paths){
                             action: function () {
                                 var tree = $('#dataset_folder').jstree(true);
                                 if (confirm("Are you sure to delete item?")){
-                                    console.log(node.text)
 
                                     $.ajax({
                                         url: '/get_user_files/',
@@ -96,26 +95,43 @@ function create_dataset_jstree(paths){
                                         },
                                         success: function(res){
                                             tree.delete_node(node);
-                                            //refresh_databucket_list();
+                                            // refresh_databucket_list();
                                         },
                                         error: function(err){
                                             console.log(err);
                                         }
                                     })
-                                    // delete item and refresh table
                                 }
                             }
                         },
                         downItem: { // The "delete" menu item
                             label: "Donwload",
                             action: function () {
-
+                                $.ajax({
+                                    url: '/get_user_files/',
+                                    method: 'PUT',
+                                    data: {
+                                        file_name: node.text,
+                                        type: 'inputs'
+                                    },
+                                    success: function(res){
+                                        if (res.message !== null){
+                                            document.getElementById('_iframe').href = "/" + res.message;
+                                            document.getElementById('_iframe').click();
+                                        } else {
+                                            window.location.reload();
+                                        }
+                                    },
+                                    error: function(err){
+                                        console.log(err);
+                                    }
+                                })
                             }
                         }
                     };
 
+                    // Delete the "delete" menu item if selected node is folder
                     if (!node.text.includes(".")) {
-                        // Delete the "delete" menu item
                         delete items.deleteItem;
                     }
 
