@@ -168,8 +168,7 @@ class UserFilesView(LoginRequiredMixin, View):
         file_name = put.get('file_name')
         type = put.get('type')
 
-        root_path = "%s/%s" % (iam.group.name, type)
-        file_key = "%s/%s" % (root_path, file_name)
+        file_key = "%s/%s/%s" % (iam.group.name, type, file_name)
 
         delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=file_key)
 
@@ -177,6 +176,25 @@ class UserFilesView(LoginRequiredMixin, View):
             "status": 200,
             "message": file_name
         })
+
+    def put(self, request):
+        ana_id = request.session.get('ana_id', 1)
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+        put = QueryDict(request.body)
+
+        file_name = put.get('file_name')
+        type = put.get('type')
+
+        file_key = "%s/%s/%s" % (iam.group.name, type, file_name)
+
+        file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=type)
+
+        return JsonResponse({
+            "status": 200,
+            "message": file
+        })
+
 
 
 @method_decorator(csrf_exempt, name='dispatch')
