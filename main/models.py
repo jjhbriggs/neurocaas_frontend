@@ -80,3 +80,9 @@ class Analysis(Base):
 
     def __str__(self):
         return self.analysis_name
+
+    def check_iam(self, iam):
+        for group in self.groups.all():
+            if iam.group == group:
+                return True
+        return False
