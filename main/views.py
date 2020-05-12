@@ -3,7 +3,7 @@ import time
 from base64 import b64encode
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -158,12 +158,43 @@ class UserFilesView(LoginRequiredMixin, View):
             "configs": configs
         })
 
-    def delete(self, request):
-        file_name = request.GET['file_name']
+    def delete(self, request, *args, **kwargs):
+        ana_id = request.session.get('ana_id', 1)
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+
+        put = QueryDict(request.body)
+
+        file_name = put.get('file_name')
+        type = put.get('type')
+
+        file_key = "%s/%s/%s" % (iam.group.name, type, file_name)
+
+        delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=file_key)
+
         return JsonResponse({
             "status": 200,
             "message": file_name
         })
+
+    def put(self, request):
+        ana_id = request.session.get('ana_id', 1)
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+        put = QueryDict(request.body)
+
+        file_name = put.get('file_name')
+        type = put.get('type')
+
+        file_key = "%s/%s/%s" % (iam.group.name, type, file_name)
+
+        file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=type)
+
+        return JsonResponse({
+            "status": 200,
+            "message": file
+        })
+
 
 
 @method_decorator(csrf_exempt, name='dispatch')
