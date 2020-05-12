@@ -59,6 +59,50 @@ function update_jstree(){
 }
 
 
+// delete Action
+function delete_action(node, type, tree){
+    $.ajax({
+        url: '/get_user_files/',
+        method: 'DELETE',
+        data: {
+            file_name: node.text,
+            type: type
+        },
+        success: function(res){
+            tree.delete_node(node);
+            // refresh_databucket_list();
+        },
+        error: function(err){
+            console.log(err);
+        }
+    })
+}
+
+
+// download Action
+function down_action(file_name, type){
+    $.ajax({
+        url: '/get_user_files/',
+        method: 'PUT',
+        data: {
+            file_name: file_name,
+            type: type
+        },
+        success: function(res){
+            if (res.message !== null){
+                document.getElementById('_iframe').href = "/" + res.message;
+                document.getElementById('_iframe').click();
+            } else {
+                window.location.reload();
+            }
+        },
+        error: function(err){
+            console.log(err);
+        }
+    })
+}
+
+
 // create jstrees for datasets
 function create_dataset_jstree(paths){
     $('#dataset_folder').remove();
@@ -84,48 +128,13 @@ function create_dataset_jstree(paths){
                             label: "Delete",
                             action: function () {
                                 var tree = $('#dataset_folder').jstree(true);
-                                if (confirm("Are you sure to delete item?")){
-
-                                    $.ajax({
-                                        url: '/get_user_files/',
-                                        method: 'DELETE',
-                                        data: {
-                                            file_name: node.text,
-                                            type: 'inputs'
-                                        },
-                                        success: function(res){
-                                            tree.delete_node(node);
-                                            // refresh_databucket_list();
-                                        },
-                                        error: function(err){
-                                            console.log(err);
-                                        }
-                                    })
-                                }
+                                if (confirm("Are you sure to delete item?")) delete_action(node, 'inputs', tree);
                             }
                         },
                         downItem: { // The "delete" menu item
                             label: "Donwload",
                             action: function () {
-                                $.ajax({
-                                    url: '/get_user_files/',
-                                    method: 'PUT',
-                                    data: {
-                                        file_name: node.text,
-                                        type: 'inputs'
-                                    },
-                                    success: function(res){
-                                        if (res.message !== null){
-                                            document.getElementById('_iframe').href = "/" + res.message;
-                                            document.getElementById('_iframe').click();
-                                        } else {
-                                            window.location.reload();
-                                        }
-                                    },
-                                    error: function(err){
-                                        console.log(err);
-                                    }
-                                })
+                                down_action(node.text, 'inputs');
                             }
                         }
                     };
@@ -161,12 +170,40 @@ function create_config_jstree(paths){
             }
         })
         .jstree({
-            'plugins':["wholerow","conditionalselect"],
+            'plugins':["wholerow","conditionalselect", "contextmenu"],
+            contextmenu: {
+                items: function(node){
+                    // The default set of all items
+                    var items = {
+                        deleteItem: { // The "delete" menu item
+                            label: "Delete",
+                            action: function () {
+                                var tree = $('#config_folder').jstree(true);
+                                if (confirm("Are you sure to delete item?")) delete_action(node, 'configs', tree);
+                            }
+                        },
+                        downItem: { // The "delete" menu item
+                            label: "Donwload",
+                            action: function () {
+                                down_action(node.text, 'configs');
+                            }
+                        }
+                    };
+
+                    // Delete the "delete" menu item if selected node is folder
+                    if (!node.text.includes(".")) {
+                        delete items.deleteItem;
+                    }
+
+                    return items;
+                }
+            },
             'core' : {
                 'data' : get_json_from_array(paths)
             }
         });
 }
+
 
 // create dataset and config jstrees
 function refresh_data_jstrees(){

@@ -5,6 +5,10 @@ from account.models import Base, AnaGroup
 import uuid
 
 
+def rand_id():
+    return str(uuid.uuid1())
+
+"""
 class Bucket(Base):
     name = models.CharField(max_length=100, null=False, blank=False, help_text='Bucket name')
     description = models.TextField(blank=True, null=True, help_text="Description of bucket")
@@ -19,8 +23,7 @@ STATUS_COMPLETED = 'C'
 STATUS_FAILED = 'F'
 
 
-def rand_id():
-    return str(uuid.uuid1())
+
 
 
 class SubFolder(Base):
@@ -61,6 +64,7 @@ class Process(Base):
 
     def __str__(self):
         return self.name
+"""
 
 
 class Analysis(Base):
