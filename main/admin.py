@@ -3,7 +3,7 @@ from .models import *
 
 # Register your models here.
 
-
+"""
 @admin.register(Bucket)
 class BucketAdmin(admin.ModelAdmin):
     list_display = ('name', 'algorithrm', 'description', 'created_on',)
@@ -22,8 +22,9 @@ class ProcessAdmin(admin.ModelAdmin):
 @admin.register(SubFolder)
 class SubFolderAdmin(admin.ModelAdmin):
     list_display = ('name', 'bucket', 'created_on', )
+"""
 
 
 @admin.register(Analysis)
 class SubFolderAdmin(admin.ModelAdmin):
-    list_display = ('analysis_name', 'upload_folder', 'result_prefix', 'bucket_name')
+    list_display = ('analysis_name', 'bucket_name', 'short_description')

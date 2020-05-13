@@ -34,9 +34,6 @@ function refresh_databucket_list(){
 			    configs = res.configs;
 			    datasets = res.datasets;
 
-                datasets.length < 0 ? $('#dataset_folder').html(empty_template): null;
-                configs.length < 0 ? $('#config_folder').html(empty_template): null;
-
 				var dataset_html = '';
 				for ( var i = 0 ; i < datasets.length ; i++)
 					dataset_html += get_tr_template(datasets[i].name, "checkbox", "dataset_file", i, 0)
@@ -72,6 +69,9 @@ function refresh_databucket_list(){
 				})
 
 				refresh_data_jstrees();
+
+				datasets.length == 0 ? $('#dataset_folder').html(empty_template): null;
+                configs.length == 0 ? $('#config_folder').html(empty_template): null;
 			}
 		}
 	})
