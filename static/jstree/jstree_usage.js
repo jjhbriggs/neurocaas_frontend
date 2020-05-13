@@ -142,10 +142,12 @@ function create_dataset_jstree(paths){
                     // Delete the "delete" menu item if selected node is folder
                     if (!node.text.includes(".")) {
                         delete items.deleteItem;
+                        delete items.downItem;
                     }
 
                     return items;
-                }
+                },
+                select_node: false
             },
             'core' : {
                 'data' : get_json_from_array(paths),
@@ -193,6 +195,7 @@ function create_config_jstree(paths){
                     // Delete the "delete" menu item if selected node is folder
                     if (!node.text.includes(".")) {
                         delete items.deleteItem;
+                        delete items.downItem;
                     }
 
                     return items;
