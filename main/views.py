@@ -82,25 +82,25 @@ class ProcessView(LoginRequiredMixin, View):
         upload_dir = "%s/process_files/%s" % (iam.group.name, cur_timestamp)
 
         # copy dataset files to work_bucket
-        uploaded_dataset = []
+        process_dataset = []
         for file in dataset_files:
             from_key = "%s/inputs/%s" % (iam.group.name, file)
-            to_key = "%s/%s" % (upload_dir, file)
-            copy_file_to_bucket(iam=iam, from_bucket=analysis.bucket_name, from_key=from_key,
-                                to_bucket=analysis.bucket_name, to_key=to_key)
-            uploaded_dataset.append(to_key)
+            # to_key = "%s/%s" % (upload_dir, file)
+            # copy_file_to_bucket(iam=iam, from_bucket=analysis.bucket_name, from_key=from_key,
+            #                     to_bucket=analysis.bucket_name, to_key=to_key)
+            process_dataset.append(from_key)
 
         # copy config file to work_bucket
-        config_to_key = "%s/config.json" % upload_dir
+        # config_to_key = "%s/config.json" % upload_dir
         from_key = "%s/configs/%s" % (iam.group.name, config_file)
-        copy_file_to_bucket(iam=iam, from_bucket=analysis.bucket_name, from_key=from_key,
-                            to_bucket=analysis.bucket_name, to_key=config_to_key)
+        # copy_file_to_bucket(iam=iam, from_bucket=analysis.bucket_name, from_key=from_key,
+        #                     to_bucket=analysis.bucket_name, to_key=config_to_key)
 
         submit_data = {
-            "dataname": uploaded_dataset,
-            "configname": config_to_key,
+            "dataname": process_dataset,
+            "configname": from_key,
             "timestamp": str(cur_timestamp),
-            # "instance_type": "t2.micro",
+            "instance_type": "t2.micro",
         }
 
         submit_key = "%s/submissions/submit.json" % iam.group.name
@@ -196,7 +196,6 @@ class UserFilesView(LoginRequiredMixin, View):
         })
 
 
-
 @method_decorator(csrf_exempt, name='dispatch')
 class ResultView(LoginRequiredMixin, View):
 
@@ -228,7 +227,6 @@ class ResultView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
-        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
         ana_id = request.session.get('ana_id', 1)
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
@@ -237,22 +235,15 @@ class ResultView(LoginRequiredMixin, View):
         end_file = "%s/end.txt" % result_folder
         file_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=end_file)
 
-        result_keys = []
         result_links = []
         if file_timestamp > 0:
 
-            result_items = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=result_folder)
-            for item in result_items:
-                file_key = "%s/%s" % (result_folder, item['key'])
-                result_keys.append({'key': file_key, 'path': item['key']})
-
+            result_keys = get_list_keys(iam=iam, bucket=analysis.bucket_name, folder=result_folder)
+            print(result_keys)
             for key in result_keys:
-                link = get_download_file(iam=iam, bucket=analysis.bucket_name, key=key['key'], timestamp=timestamp)
-                result_links.append({'link': link, 'path': key['path']})
-
-            # remove used dataset and config files
-            process_dir = "%s/process_items/%s" % (iam.group.name, timestamp)
-            delete_folder_from_bucket(iam=iam, bucket_name=analysis.bucket_name, prefix="%s/" % process_dir)
+                link = get_download_file(iam=iam, bucket=analysis.bucket_name, key=key, timestamp=timestamp)
+                path = key.replace('%s/results/job__%s_%s/' % (iam.group.name, analysis.bucket_name, timestamp), '')
+                result_links.append({'link': link, 'path': path})
 
         return JsonResponse({
             "status": 200,
