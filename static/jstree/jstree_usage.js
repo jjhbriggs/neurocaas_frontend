@@ -146,7 +146,8 @@ function create_dataset_jstree(paths){
                     }
 
                     return items;
-                }
+                },
+                select_node: false
             },
             'core' : {
                 'data' : get_json_from_array(paths),
