@@ -167,6 +167,25 @@ def get_file_list(iam, bucket, folder):
     return file_keys
 
 
+def get_list_keys(iam, bucket, folder):
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id=iam.aws_access_key,
+        aws_secret_access_key=iam.aws_secret_access_key)
+
+    bucket = s3.Bucket(bucket)
+    prefix = "%s/" % folder
+
+    file_keys = []
+
+    for obj in bucket.objects.filter(Prefix=prefix):
+        if obj.key == prefix or obj.key.endswith('end.txt'):
+            continue
+        file_keys.append(obj.key)
+
+    return file_keys
+
+
 def get_name_only(key):
     """
         Function to get only file name from link or full path
