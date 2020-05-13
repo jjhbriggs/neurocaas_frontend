@@ -128,7 +128,7 @@ function create_dataset_jstree(paths){
                             label: "Delete",
                             action: function () {
                                 var tree = $('#dataset_folder').jstree(true);
-                                if (confirm("Are you sure to delete item?")) delete_action(node, 'inputs', tree);
+                                if (confirm("Are you sure to delete item, " + node.text + "?")) delete_action(node, 'inputs', tree);
                             }
                         },
                         downItem: { // The "delete" menu item
@@ -147,11 +147,16 @@ function create_dataset_jstree(paths){
 
                     return items;
                 },
-                select_node: false
+                select_node: false,
+                icon: true,
             },
             'core' : {
                 'data' : get_json_from_array(paths),
-                "check_callback" : true
+                "check_callback" : true,
+                'themes': {
+                    'responsive': false,
+                    'variant': 'medium',
+                }
             }
         });
 }
@@ -181,7 +186,7 @@ function create_config_jstree(paths){
                             label: "Delete",
                             action: function () {
                                 var tree = $('#config_folder').jstree(true);
-                                if (confirm("Are you sure to delete item?")) delete_action(node, 'configs', tree);
+                                if (confirm("Are you sure to delete item, " + node.text + "?")) delete_action(node, 'configs', tree);
                             }
                         },
                         downItem: { // The "delete" menu item
