@@ -67,12 +67,20 @@ class User(AbstractBaseUser):
         return True
 
 
+class AnaGroup(Base):
+    name = models.CharField(max_length=50, help_text='Group Name')
+
+    def __str__(self):
+        return self.name
+
+
 class IAM(Base):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     aws_user = models.CharField(max_length=155, help_text="AWS account username")
     aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id", unique=True)
     aws_secret_access_key = models.CharField(max_length=255, help_text="AWS Secret key")
-    group = models.CharField(max_length=255, help_text='Group Name', default='bendeskylab')
+    group = models.ForeignKey(AnaGroup, on_delete=models.CASCADE)
+    # group = models.CharField(max_length=255, help_text='Group Name', default='bendeskylab')
 
     def __str__(self):
         return self.aws_user
@@ -98,3 +106,4 @@ class AWSRequest(Base):
 
     def __str__(self):
         return self.user.email
+

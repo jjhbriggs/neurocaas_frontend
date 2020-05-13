@@ -154,7 +154,8 @@ def get_file_list(iam, bucket, folder):
     # Retrieve keys from s3 bucket
     try:
         for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
-            # if obj.key.endswith('.json'):
+            if obj.key == prefix:
+                continue
             file_keys.append({
                 'key': obj.key,
                 'date_modified': obj.last_modified.strftime('%Y-%m-%d'),
@@ -189,7 +190,7 @@ def copy_file_to_bucket(iam, from_bucket, from_key, to_bucket, to_key):
     bucket.copy(copy_source, to_key)
 
 
-def delete_jsons_from_bucket(iam, bucket_name, prefix):
+def delete_folder_from_bucket(iam, bucket_name, prefix):
     """
         Delete existing json files from s3 before start new job
         """

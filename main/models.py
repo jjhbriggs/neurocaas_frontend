@@ -1,10 +1,14 @@
 from django.db import models
 # Create your models here.
 from datetime import datetime
-from account.models import Base
+from account.models import Base, AnaGroup
 import uuid
 
 
+def rand_id():
+    return str(uuid.uuid1())
+
+"""
 class Bucket(Base):
     name = models.CharField(max_length=100, null=False, blank=False, help_text='Bucket name')
     description = models.TextField(blank=True, null=True, help_text="Description of bucket")
@@ -19,8 +23,7 @@ STATUS_COMPLETED = 'C'
 STATUS_FAILED = 'F'
 
 
-def rand_id():
-    return str(uuid.uuid1())
+
 
 
 class SubFolder(Base):
@@ -61,19 +64,14 @@ class Process(Base):
 
     def __str__(self):
         return self.name
+"""
 
 
 class Analysis(Base):
     analysis_name = models.CharField(max_length=100, help_text='Name of Process', unique=True)
-    upload_folder = models.CharField(max_length=100, help_text='Folder to upload dataset and config items',
-                                     null=True, blank=True)
     result_prefix = models.CharField(max_length=100, help_text='Prefix of result folder name')
-    result_items = models.TextField(help_text='Json of result files')
     bucket_name = models.CharField(max_length=100, help_text='Bucket Name')
-    result_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of results')
-    config_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of config file')
-    dataset_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of dataset files')
-    submit_path = models.CharField(max_length=100, blank=True, null=True, help_text='Path of submit file')
+    groups = models.ManyToManyField(AnaGroup)
 
     # detail fields of analysis
     short_description = models.TextField(help_text='Short description of analysis', blank=True, null=True)
@@ -86,3 +84,9 @@ class Analysis(Base):
 
     def __str__(self):
         return self.analysis_name
+
+    def check_iam(self, iam):
+        for group in self.groups.all():
+            if iam.group == group:
+                return True
+        return False

@@ -162,9 +162,16 @@ class IamCreateView(AdminMixin, View):
                         aws_req = AWSRequest(user=new_user)
                         aws_req.save()
 
+                    if AnaGroup.objects.filter(name=group_name).count() > 0:
+                        new_group = AnaGroup.objects.filter(name=group_name).first()
+                    else:
+                        new_group = AnaGroup(name=group_name)
+                        new_group.save()
+
                     # create new iam with aws credentials
                     new_iam = IAM(user=new_user, aws_user=username, aws_access_key=access_key,
-                                  aws_secret_access_key=secret_access_key, group=group_name)
+                                  aws_secret_access_key=secret_access_key, group=new_group)
+
                     new_iam.save()
                     messages.success(request, f"New IAM was successfully created: {username}")
                     return redirect('/admin/account/iam/')
