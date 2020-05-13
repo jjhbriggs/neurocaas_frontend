@@ -58,6 +58,51 @@ function update_jstree(){
     create_jstree_for_results(paths);
 }
 
+
+// delete Action
+function delete_action(node, type, tree){
+    $.ajax({
+        url: '/get_user_files/',
+        method: 'DELETE',
+        data: {
+            file_name: node.text,
+            type: type
+        },
+        success: function(res){
+            tree.delete_node(node);
+            // refresh_databucket_list();
+        },
+        error: function(err){
+            console.log(err);
+        }
+    })
+}
+
+
+// download Action
+function down_action(file_name, type){
+    $.ajax({
+        url: '/get_user_files/',
+        method: 'PUT',
+        data: {
+            file_name: file_name,
+            type: type
+        },
+        success: function(res){
+            if (res.message !== null){
+                document.getElementById('_iframe').href = "/" + res.message;
+                document.getElementById('_iframe').click();
+            } else {
+                window.location.reload();
+            }
+        },
+        error: function(err){
+            console.log(err);
+        }
+    })
+}
+
+
 // create jstrees for datasets
 function create_dataset_jstree(paths){
     $('#dataset_folder').remove();
@@ -65,7 +110,8 @@ function create_dataset_jstree(paths){
 
     $('#dataset_folder')
         .on("changed.jstree", function (e, data) {
-            // console.log(data.node.text);
+            console.log(data);
+            if (data.action === "delete_node" && !data.node.text.includes('.')) return;
             var filename = data.node.text;
             if (!filename.includes('.')) return;
             for ( var i=0; i< datasets.length; i++ ){
@@ -73,9 +119,44 @@ function create_dataset_jstree(paths){
             }
         })
         .jstree({
-            'plugins':["wholerow","checkbox"],
+            'plugins':["wholerow","checkbox", "contextmenu"],
+            contextmenu: {
+                items: function(node){
+                    // The default set of all items
+                    var items = {
+                        deleteItem: { // The "delete" menu item
+                            label: "Delete",
+                            action: function () {
+                                var tree = $('#dataset_folder').jstree(true);
+                                if (confirm("Are you sure to delete item, " + node.text + "?")) delete_action(node, 'inputs', tree);
+                            }
+                        },
+                        downItem: { // The "delete" menu item
+                            label: "Donwload",
+                            action: function () {
+                                down_action(node.text, 'inputs');
+                            }
+                        }
+                    };
+
+                    // Delete the "delete" menu item if selected node is folder
+                    if (!node.text.includes(".")) {
+                        delete items.deleteItem;
+                        delete items.downItem;
+                    }
+
+                    return items;
+                },
+                select_node: false,
+                icon: true,
+            },
             'core' : {
-                'data' : get_json_from_array(paths)
+                'data' : get_json_from_array(paths),
+                "check_callback" : true,
+                'themes': {
+                    'responsive': false,
+                    'variant': 'medium',
+                }
             }
         });
 }
@@ -96,12 +177,41 @@ function create_config_jstree(paths){
             }
         })
         .jstree({
-            'plugins':["wholerow","conditionalselect"],
+            'plugins':["wholerow","conditionalselect", "contextmenu"],
+            contextmenu: {
+                items: function(node){
+                    // The default set of all items
+                    var items = {
+                        deleteItem: { // The "delete" menu item
+                            label: "Delete",
+                            action: function () {
+                                var tree = $('#config_folder').jstree(true);
+                                if (confirm("Are you sure to delete item, " + node.text + "?")) delete_action(node, 'configs', tree);
+                            }
+                        },
+                        downItem: { // The "delete" menu item
+                            label: "Donwload",
+                            action: function () {
+                                down_action(node.text, 'configs');
+                            }
+                        }
+                    };
+
+                    // Delete the "delete" menu item if selected node is folder
+                    if (!node.text.includes(".")) {
+                        delete items.deleteItem;
+                        delete items.downItem;
+                    }
+
+                    return items;
+                }
+            },
             'core' : {
                 'data' : get_json_from_array(paths)
             }
         });
 }
+
 
 // create dataset and config jstrees
 function refresh_data_jstrees(){
@@ -121,5 +231,4 @@ function refresh_data_jstrees(){
         data.push("/config/" + configs[i].name);
     }
     create_config_jstree(data);
-
 }
