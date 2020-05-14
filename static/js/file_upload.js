@@ -111,7 +111,8 @@ FileUpload.prototype ={
                     updateProgress(_this);
                     _this.status = true;
                     $('#' + _this.form_id + ' p').html("Uploading was finished!");
-                    $('#' + _this.file_tag_id).val(_this.fileKey);
+                    if (_this.trigger) _this.trigger();
+                    // $('#' + _this.file_tag_id).val(_this.fileKey);
                 });
             }
 
@@ -182,11 +183,13 @@ FileUpload.prototype ={
                 Body: file
             };
 
+            /* Disabled the upload once for demo */
+            /*
             sender.s3.upload(params, function(err, data) {
                 if (err) {
                     console.log(err, err.stack);
                 } else {
-                    console.log(data.key + ' successfully uploaded to' + data.Location);
+                    console.log(data.Key + ' successfully uploaded to' + data.Location);
                     var percent = ++sender.uploaded_count/sender.file_count * 100;
                     sender.progressBar.value = percent;
                     if (percent >= 100) {
@@ -195,10 +198,9 @@ FileUpload.prototype ={
                         if (sender.trigger) sender.trigger();
                     }
                 }
-            });
+            });*/
 
             /* Disabled the multipart upload for demo */
-            /*
             reader.onloadend = function onloadend(){
                 console.log('on_loaded');
                 sender.buffer = reader.result;
@@ -241,7 +243,6 @@ FileUpload.prototype ={
                     }
                 });
             }
-            */
         }
 
         // Handle files of file tag
