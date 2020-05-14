@@ -21,7 +21,7 @@ function show_detail(ind, type){
 
 function refresh_databucket_list(){
     var loading_template = "<tr><td>loading ...</td></tr>";
-    var empty_template = "<tr><td> There is not file. </td></tr>";
+    var empty_template = "<tr><td> No files found. </td></tr>";
 
     $('#dataset_folder').html(loading_template);
     $('#config_folder').html(loading_template);
