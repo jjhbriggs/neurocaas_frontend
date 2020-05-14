@@ -100,7 +100,7 @@ class ProcessView(LoginRequiredMixin, View):
             "dataname": process_dataset,
             "configname": from_key,
             "timestamp": str(cur_timestamp),
-            "instance_type": "t2.micro",
+            # "instance_type": "t2.micro",
         }
 
         submit_key = "%s/submissions/submit.json" % iam.group.name
