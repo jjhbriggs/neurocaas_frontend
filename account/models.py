@@ -68,7 +68,7 @@ class User(AbstractBaseUser):
 
 
 class AnaGroup(Base):
-    name = models.CharField(max_length=50, help_text='Group Name')
+    name = models.CharField(max_length=50, help_text='Group Name', unique=True)
 
     def __str__(self):
         return self.name
