@@ -130,13 +130,13 @@ function create_dataset_jstree(paths){
                                 var tree = $('#dataset_folder').jstree(true);
                                 if (confirm("Are you sure to delete item, " + node.text + "?")) delete_action(node, 'inputs', tree);
                             }
-                        },
-                        downItem: { // The "delete" menu item
+                        }
+                        /*,downItem: { // The "delete" menu item
                             label: "Donwload",
                             action: function () {
                                 down_action(node.text, 'inputs');
                             }
-                        }
+                        }*/
                     };
 
                     // Delete the "delete" menu item if selected node is folder
