@@ -213,17 +213,9 @@ class ResultView(LoginRequiredMixin, View):
         else:
             cert_content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=cert_file)
 
-        dtset_logs = []
-        log_dir = "%s/results/job__%s_%s/logs/" % (iam.group.name, analysis.bucket_name, timestamp)
-        dtset_logs_keys = get_dataset_logs(iam=iam, bucket=analysis.bucket_name, log_dir=log_dir)
-        for key in dtset_logs_keys:
-            path = key.replace("%s/results/job__%s_%s/" % (iam.group.name, analysis.bucket_name, timestamp), "")
-            dtset_logs.append({'link': get_download_file(iam, analysis.bucket_name, key, timestamp), 'path': path})
-
         return JsonResponse({
             "status": True,
-            "cert_file": cert_content,
-            "dtset_logs": dtset_logs
+            "cert_file": cert_content
         })
 
     def post(self, request):
@@ -245,9 +237,17 @@ class ResultView(LoginRequiredMixin, View):
                 path = key.replace('%s/results/job__%s_%s/' % (iam.group.name, analysis.bucket_name, timestamp), '')
                 result_links.append({'link': link, 'path': path})
 
+        dtset_logs = []
+        log_dir = "%s/results/job__%s_%s/logs/" % (iam.group.name, analysis.bucket_name, timestamp)
+        dtset_logs_keys = get_dataset_logs(iam=iam, bucket=analysis.bucket_name, log_dir=log_dir)
+        for key in dtset_logs_keys:
+            path = key.replace("%s/results/job__%s_%s/" % (iam.group.name, analysis.bucket_name, timestamp), "")
+            dtset_logs.append({'link': get_download_file(iam, analysis.bucket_name, key, timestamp), 'path': path})
+
         return JsonResponse({
             "status": 200,
-            'result_links': result_links
+            'result_links': result_links,
+            "dtset_logs": dtset_logs
         })
 
 
