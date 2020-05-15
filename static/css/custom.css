@@ -124,7 +124,7 @@ button{
     color: white;
     border: none;
     box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0, 0, 0, 0.5);
-    height: 450px!important;
+    height: 600px!important;
     resize: none;
 }
 
@@ -266,4 +266,8 @@ nav.bg-dark{
 
 .hidden{
     display: none;
+}
+
+.refresh_link {
+    color: #ef8376;
 }

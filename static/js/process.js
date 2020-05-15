@@ -11,24 +11,11 @@ function get_status(timestamp){
         success: function(res){
             console.log(res);
             $('#status-text').html(res.cert_file);
-            if (res.dtset_logs.length > 0 ){
-                dtset_logs = res.dtset_logs;
-
-                var html = "";
-                for ( i = 0; i < res.dtset_logs.length; i++){
-                    html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
-                    html += '<a href="../' + res.dtset_logs[i].link + '" class="text-warning no-border" target="_blank">';
-                    html += get_file_name(res.dtset_logs[i].link) + '</a></p></div>';
-                }
-                $('#dtset-result-view').html(html);
-                $('.result-dataset').css('display', 'block');
-                update_jstree();
-            }
 
             if (processing_status)
                 setTimeout(function(){
                     get_status(timestamp)
-                }, 30000);
+                }, 10000);
         }
     })
 }
@@ -44,6 +31,20 @@ function get_results(timestamp){
         },
         success: function(res){
             console.log(res);
+
+            if (res.dtset_logs.length > 0 ){
+                dtset_logs = res.dtset_logs;
+
+                var html = "";
+                for ( i = 0; i < res.dtset_logs.length; i++){
+                    html += '<div class="media"><p class="media-body mb-0 small lh-125 border-bottom border-gray">';
+                    html += '<a href="../' + res.dtset_logs[i].link + '" class="text-warning no-border" target="_blank">';
+                    html += get_file_name(res.dtset_logs[i].link) + '</a></p></div>';
+                }
+                $('#dtset-result-view').html(html);
+                $('.result-dataset').css('display', 'block');
+                update_jstree();
+            }
 
             if(res.result_links.length > 0) {
                 results_links = res.result_links;
