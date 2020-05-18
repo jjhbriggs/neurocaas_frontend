@@ -215,6 +215,20 @@ class ResultView(LoginRequiredMixin, View):
         else:
             cert_content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=cert_file)
 
+        # store cert content to server
+        parent_folder = "static/downloads"
+        if not os.path.exists(parent_folder):
+            os.mkdir(parent_folder)
+
+        folder = "static/downloads/%s" % timestamp
+        if not os.path.exists(folder):
+            os.mkdir(folder)
+
+        cert_path = "static/downloads/%s/certificate.txt" % timestamp
+        file = open(cert_path, 'w')
+        file.write(cert_content)
+        file.close()
+
         return JsonResponse({
             "status": True,
             "cert_file": cert_content
