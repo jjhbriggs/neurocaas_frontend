@@ -85,7 +85,7 @@ function update_jstree(){
 
     [...dtset_logs, ...results_links].forEach(function(item){
         paths.push('/results/' + item.path);
-    })
+    });
     create_jstree_for_results(paths);
 }
 
@@ -143,7 +143,8 @@ function create_dataset_jstree(paths){
         .on("changed.jstree", function (e, data) {
             console.log(data);
             if (data.action === "delete_node" && !data.node.text.includes('.')) return;
-            var filename = data.node.text;
+            var filename = data.instance.get_path(data.node,'/').replace("inputs/", '');
+
             if (!filename.includes('.')) return;
             for ( var i=0; i< datasets.length; i++ ){
                 if (datasets[i].name === filename) show_detail(i, 0);
