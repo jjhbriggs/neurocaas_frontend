@@ -41,7 +41,38 @@ function create_jstree_for_results(paths){
             }
         })
         .jstree({
-//            'plugins':["wholerow","checkbox"],
+            'plugins':["wholerow", "contextmenu"],
+            contextmenu: {
+                items: function(node){
+                    // The default set of all items
+                    var items = {
+                        downItem: { // The "delete" menu item
+                            label: "Donwload",
+                            action: function () {
+                                console.log(node);
+                                var path = "/static/downloads/" + timestamp + "/" + node.text;
+                                console.log(path);
+                                /*var full_path = data.instance.get_path(data.selected[0]).join('/').replace('results/', '');
+                                if (!full_path.includes('.')) return;
+                                var item = get_item(full_path);
+                                */
+
+                                document.getElementById('_iframe').href = path;
+                                document.getElementById('_iframe').click();
+                            }
+                        }
+                    };
+
+                    // Delete the "delete" menu item if selected node is folder
+                    if (!node.text.includes(".")) {
+                        delete items.downItem;
+                    }
+
+                    return items;
+                },
+                select_node: false,
+                icon: true,
+            },
             'core' : {
                 'data' : get_json_from_array(paths)
             }
@@ -204,10 +235,17 @@ function create_config_jstree(paths){
                     }
 
                     return items;
-                }
+                },
+                select_node: false,
+                icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths)
+                'data' : get_json_from_array(paths),
+                "check_callback" : true,
+                'themes': {
+                    'responsive': false,
+                    'variant': 'medium',
+                }
             }
         });
 }
