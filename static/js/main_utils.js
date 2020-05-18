@@ -126,6 +126,7 @@ function submit(){
     	success: function(res){
     	    $('#btn-spinner').css('display', 'none');
     		console.log(res)
+    		timestamp = res.timestamp;
     		trigger_function(res.timestamp);
     	},
     	error: function(err){
