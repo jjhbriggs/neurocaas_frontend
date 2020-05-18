@@ -135,7 +135,8 @@ class UserFilesView(LoginRequiredMixin, View):
         datasets = []
         for key in dataset_keys:
             row = key.copy()
-            row.update({'name': get_name_only(key=key['key'])})
+            path = key['key'].replace("%s/" % folder, "")
+            row.update({'name': path})
             datasets.append(row)
         # [datasets.append(key.update({'name': get_name_only(key=key['key'])})) for key in dataset_keys]
 
@@ -145,7 +146,8 @@ class UserFilesView(LoginRequiredMixin, View):
         configs = []
         for key in config_keys:
             row = key.copy()
-            row.update({'name': get_name_only(key=key['key'])})
+            path = key['key'].replace("%s/" % folder, "")
+            row.update({'name': path})
             content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=key['key'])
             row.update({'content': content})
             configs.append(row)
