@@ -130,15 +130,17 @@ def convert_size(size):
     """
         Return size converted to appropriate format from Byte
     """
-    if size > 1024:
-        return str(round(float(size / 1024), 2)) + " KB"
+    if size > 1024*1024*1024:
+        return str(round(float(size / (1024 * 1024 * 1024)), 2)) + " GB"
     elif size > 1024 * 1024:
         return str(round(float(size / (1024 * 1024)), 2)) + " MB"
+    elif size > 1024:
+        return str(round(float(size / 1024), 2)) + " KB"
     else:
         return str(size) + " B"
 
 
-# function to get all files of folder in bucket
+# function to get all files only of folder in bucket
 def get_file_list(iam, bucket, folder):
     s3 = boto3.resource(
         's3',
@@ -153,8 +155,8 @@ def get_file_list(iam, bucket, folder):
 
     # Retrieve keys from s3 bucket
     try:
-        for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
-            if obj.key == prefix:
+        for obj in bucket.objects.filter(Prefix=prefix):
+            if obj.key == prefix or obj.key.endswith('/'):
                 continue
             file_keys.append({
                 'key': obj.key,

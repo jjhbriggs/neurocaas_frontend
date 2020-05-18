@@ -77,17 +77,35 @@ function refresh_databucket_list(){
 	})
 }
 
+function get_selected_nodes(tree_id, prefix){
+    var files = [];
+    var selectedNodes = $('#' + tree_id).jstree(true).get_selected();
+    console.log(selectedNodes);
+    for(var i = 0; i < selectedNodes.length; i++) {
+        var full_node = $('#' + tree_id).jstree(true).get_node(selectedNodes[i]);
+        var path = $('#' + tree_id).jstree(true).get_path(full_node,"/");
+        var ext = (/[.]/.exec(path)) ? /[^.]+$/.exec(path) : undefined;
+        if (ext) {
+            path = path.replace(prefix, '');
+            console.log(path);
+            files.push(path);
+        }
+    }
+    return files;
+}
+
 function submit(){
     var dataset_files = [];
     var config_file = null;
 
     // get list of dataset files' names
-    var chkboxes = $('#dataset_folder a.jstree-anchor.jstree-clicked');
-
+    /*var chkboxes = $('#dataset_folder a.jstree-anchor.jstree-clicked');
     for ( var i = 0 ; i < chkboxes.length; i++ ){
         if (chkboxes[i].text !== 'inputs')
             dataset_files.push(chkboxes[i].text);
-    }
+    }*/
+
+    dataset_files = get_selected_nodes('dataset_folder', 'inputs/');
 
     if (dataset_files.length < 1) {
     	alert('Select dataset files');
