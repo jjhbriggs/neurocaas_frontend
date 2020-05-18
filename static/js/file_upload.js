@@ -35,6 +35,8 @@ FileUpload.prototype ={
     uploaded_count: 0,
     trigger: null,
     contentious: false,
+    current_file_id: 0,
+    files: [],
     init: function(form_id, id1, id2, bucket, subfolder, file_tag_id, trigger=null, contentious=false){
         this.form_id = form_id;
         this.id1 = id1;
@@ -62,16 +64,22 @@ FileUpload.prototype ={
             });
 
             // function completeMultipartUpload
-            completeMultipartUpload = function(s3, doneParams) {
+            completeMultipartUpload = function(_this, s3, doneParams) {
                 s3.completeMultipartUpload(doneParams, function(err, data) {
                     if (err) {
                       console.log("An error occurred while completing the multipart upload");
                       console.log(err);
                     } else {
-                      var delta = (new Date() - sender.startTime) / 1000;
-                      //alert("Finished loading!");
-                      console.log('Completed upload in', delta, 'seconds');
-                      console.log('Final upload data:', data);
+                        var delta = (new Date() - sender.startTime) / 1000;
+                        //alert("Finished loading!");
+                        console.log('Completed upload in', delta, 'seconds');
+                        console.log('Final upload data:', data);
+                        _this.current_file_id++;
+                        if (_this.current_file_id < _this.files.length)
+                            uploadFile(_this, _this.files[_this.current_file_id]);
+                        else{
+                            if (_this.trigger) _this.trigger();
+                        }
                     }
                 });
             }
@@ -107,11 +115,10 @@ FileUpload.prototype ={
                     };
 
                     console.log("Completing upload...");
-                    completeMultipartUpload(s3, doneParams);
+                    completeMultipartUpload(_this, s3, doneParams);
                     updateProgress(_this);
-                    _this.status = true;
+                    //_this.status = true;
                     $('#' + _this.form_id + ' p').html("Uploading was finished!");
-                    if (_this.trigger) _this.trigger();
                     // $('#' + _this.file_tag_id).val(_this.fileKey);
                 });
             }
@@ -173,7 +180,7 @@ FileUpload.prototype ={
 
         // upload file to s3
 
-        var uploadFile = function(file, i) {
+        var uploadFile = function(_this, file) {
             const reader = new FileReader();
             reader.readAsArrayBuffer(file)
 
@@ -203,58 +210,59 @@ FileUpload.prototype ={
             /* Disabled the multipart upload for demo */
             reader.onloadend = function onloadend(){
                 console.log('on_loaded');
-                sender.buffer = reader.result;
-                sender.startTime = new Date();
-                sender.partNum = 0;
-                sender.fileKey = file.name
-                sender.partSize = file.size / 20 > sender.defaultSize ? file.size / 20 : sender.defaultSize;
-                sender.numPartsLeft = Math.ceil(file.size / sender.partSize);
-                sender.maxUploadTries = 3;
-                sender.multiPartParams = {
-                    Bucket: sender.bucket,
-                    Key: sender.subfolder + "/" + sender.fileKey,
+                _this.buffer = reader.result;
+                _this.startTime = new Date();
+                _this.partNum = 0;
+                _this.fileKey = file.name
+                _this.partSize = file.size / 20 > _this.defaultSize ? file.size / 20 : _this.defaultSize;
+                _this.numPartsLeft = Math.ceil(file.size / _this.partSize);
+                _this.maxUploadTries = 3;
+                _this.multiPartParams = {
+                    Bucket: _this.bucket,
+                    Key: _this.subfolder + "/" + _this.fileKey,
                     ContentType: file.type
                 };
                 var multipartMap = {
                     Parts: []
                 };
 
-                console.log("Creating multipart upload for:", sender.fileKey);
-                sender.s3.createMultipartUpload(sender.multiPartParams, function(mpErr, multipart){
+                console.log("Creating multipart upload for:", _this.fileKey);
+                _this.s3.createMultipartUpload(_this.multiPartParams, function(mpErr, multipart){
                     if (mpErr) { console.log('Error!', mpErr); return; }
                     console.log("Got upload ID", multipart.UploadId);
 
                     // Grab each partSize chunk and upload it as a part
-                    for (var rangeStart = 0; rangeStart < sender.buffer.byteLength; rangeStart += sender.partSize) {
-                        sender.partNum++;
-                        var end = Math.min(rangeStart + sender.partSize, sender.buffer.byteLength),
+                    for (var rangeStart = 0; rangeStart < _this.buffer.byteLength; rangeStart += _this.partSize) {
+                        _this.partNum++;
+                        var end = Math.min(rangeStart + _this.partSize, _this.buffer.byteLength),
                             partParams = {
-                              Body: sender.buffer.slice(rangeStart, end),
-                              Bucket: sender.bucket,
-                              Key: sender.subfolder + "/" + sender.fileKey,
-                              PartNumber: String(sender.partNum),
+                              Body: _this.buffer.slice(rangeStart, end),
+                              Bucket: _this.bucket,
+                              Key: _this.subfolder + "/" + _this.fileKey,
+                              PartNumber: String(_this.partNum),
                               UploadId: multipart.UploadId
                             };
 
                         // Send a single part
                         console.log('Uploading part: #', partParams.PartNumber, ', Range start:', rangeStart);
                         //updateProgress(sender);
-                        uploadPart(sender, sender.s3, multipart, partParams);
+                        uploadPart(_this, _this.s3, multipart, partParams);
                     }
                 });
             }
         }
 
         // Handle files of file tag
-        var handleFiles = function(files) {
-            if (!sender.bucket){
+        var handleFiles = function(_this, files) {
+            if (!_this.bucket){
                 alert("Select a bucket for uploading");
                 return;
             }
-            files = [...files]
+            files = [...files];
+            _this.files = files;
             initializeProgress(files.length)
-            sender.file_count = files.length
-            files.forEach(uploadFile)
+            _this.current_file_id = 0;
+            uploadFile(_this, files[_this.current_file_id]);
             files.forEach(previewFile)
         }
 
@@ -263,13 +271,13 @@ FileUpload.prototype ={
             if (!sender.contentious && sender.status) return;
             var dt = e.dataTransfer
             var files = dt.files
-            handleFiles(files)
+            handleFiles(sender, files)
         }, false);
 
         // add eventlistener when the file tag is changed
         document.querySelector('#' + this.form_id + ' .fileElem').addEventListener('change', function(e){
             var files = e.target.files;
-            handleFiles(files)
+            handleFiles(sender, files);
         }, false);
     },
 
