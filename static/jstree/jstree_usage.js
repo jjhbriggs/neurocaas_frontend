@@ -221,14 +221,14 @@ function refresh_data_jstrees(){
     // create dataset jstree
     data = [];
     for ( var i = 0; i < datasets.length; i++){
-        data.push("/dataset/" + datasets[i].name);
+        data.push("/inputs/" + datasets[i].name);
     }
-    create_dataset_jstree(data);
+    if (data.length > 0) create_dataset_jstree(data);
 
     // create config jstree
     data = [];
     for ( var i = 0; i < configs.length; i++){
         data.push("/config/" + configs[i].name);
     }
-    create_config_jstree(data);
+    if (data.length > 0) create_config_jstree(data);
 }
