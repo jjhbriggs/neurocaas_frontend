@@ -85,7 +85,7 @@ function submit(){
     var chkboxes = $('#dataset_folder a.jstree-anchor.jstree-clicked');
 
     for ( var i = 0 ; i < chkboxes.length; i++ ){
-        if (chkboxes[i].text !== 'dataset')
+        if (chkboxes[i].text !== 'inputs')
             dataset_files.push(chkboxes[i].text);
     }
 
