@@ -85,7 +85,7 @@ function update_jstree(){
 
     [...dtset_logs, ...results_links].forEach(function(item){
         paths.push('/results/' + item.path);
-    })
+    });
     create_jstree_for_results(paths);
 }
 
