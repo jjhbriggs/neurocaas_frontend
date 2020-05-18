@@ -11,7 +11,8 @@ function get_status(timestamp){
         success: function(res){
             console.log(res);
             $('#status-text').html(res.cert_file);
-
+            if (res.cert_file !== '')
+                $('#down_cert').removeClass('hidden');
             if (processing_status)
                 setTimeout(function(){
                     get_status(timestamp)
@@ -91,4 +92,10 @@ var submit_trigger = function(){
         dataset_area.clear_status();
         config_area.clear_status();
     }, 700);
+}
+
+function download_cert(){
+    var path = '/static/downloads/' + timestamp + "/certificate.txt";
+    document.getElementById('_iframe').href = path;
+    document.getElementById('_iframe').click();
 }
