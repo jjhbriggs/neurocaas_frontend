@@ -85,7 +85,7 @@ function submit(){
     var chkboxes = $('#dataset_folder a.jstree-anchor.jstree-clicked');
 
     for ( var i = 0 ; i < chkboxes.length; i++ ){
-        if (chkboxes[i].text !== 'dataset')
+        if (chkboxes[i].text !== 'inputs')
             dataset_files.push(chkboxes[i].text);
     }
 
@@ -126,6 +126,7 @@ function submit(){
     	success: function(res){
     	    $('#btn-spinner').css('display', 'none');
     		console.log(res)
+    		timestamp = res.timestamp;
     		trigger_function(res.timestamp);
     	},
     	error: function(err){
