@@ -271,3 +271,7 @@ nav.bg-dark{
 .refresh_link {
     color: #ef8376;
 }
+
+a {
+    cursor: pointer;
+}
