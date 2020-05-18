@@ -140,7 +140,7 @@ def convert_size(size):
         return str(size) + " B"
 
 
-# function to get all files of folder in bucket
+# function to get all files only of folder in bucket
 def get_file_list(iam, bucket, folder):
     s3 = boto3.resource(
         's3',
@@ -155,8 +155,8 @@ def get_file_list(iam, bucket, folder):
 
     # Retrieve keys from s3 bucket
     try:
-        for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
-            if obj.key == prefix:
+        for obj in bucket.objects.filter(Prefix=prefix):
+            if obj.key == prefix or obj.key.endswith('/'):
                 continue
             file_keys.append({
                 'key': obj.key,
