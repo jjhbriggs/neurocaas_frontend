@@ -54,7 +54,7 @@ MIDDLEWARE = [
 AUTH_USER_MODEL = 'account.User'  # new user model
 LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/home/'
-
+LOGOUT_REDIRECT_URL = '/'
 
 ROOT_URLCONF = 'ncap.urls'
 
