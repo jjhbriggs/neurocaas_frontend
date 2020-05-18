@@ -130,10 +130,12 @@ def convert_size(size):
     """
         Return size converted to appropriate format from Byte
     """
-    if size > 1024:
-        return str(round(float(size / 1024), 2)) + " KB"
+    if size > 1024*1024*1024:
+        return str(round(float(size / (1024 * 1024 * 1024)), 2)) + " GB"
     elif size > 1024 * 1024:
         return str(round(float(size / (1024 * 1024)), 2)) + " MB"
+    elif size > 1024:
+        return str(round(float(size / 1024), 2)) + " KB"
     else:
         return str(size) + " B"
 
