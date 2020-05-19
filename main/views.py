@@ -74,30 +74,20 @@ class ProcessView(LoginRequiredMixin, View):
         analysis = Analysis.objects.get(pk=ana_id)
 
         iam = get_current_iam(request)
-        dataset_files = request.POST.getlist('dataset_files[]')
+        data_set_files = request.POST.getlist('dataset_files[]')
         config_file = request.POST['config_file']
-
-        # remove existing dataset files from epi bucket
         cur_timestamp = int(time.time())
-        upload_dir = "%s/process_files/%s" % (iam.group.name, cur_timestamp)
 
-        # copy dataset files to work_bucket
-        process_dataset = []
-        for file in dataset_files:
+        process_data_set = []
+        for file in data_set_files:
             from_key = "%s/inputs/%s" % (iam.group.name, file)
-            # to_key = "%s/%s" % (upload_dir, file)
-            # copy_file_to_bucket(iam=iam, from_bucket=analysis.bucket_name, from_key=from_key,
-            #                     to_bucket=analysis.bucket_name, to_key=to_key)
-            process_dataset.append(from_key)
+            process_data_set.append(from_key)
 
-        # copy config file to work_bucket
-        # config_to_key = "%s/config.json" % upload_dir
         from_key = "%s/configs/%s" % (iam.group.name, config_file)
-        # copy_file_to_bucket(iam=iam, from_bucket=analysis.bucket_name, from_key=from_key,
-        #                     to_bucket=analysis.bucket_name, to_key=config_to_key)
+
 
         submit_data = {
-            "dataname": process_dataset,
+            "dataname": process_data_set,
             "configname": from_key,
             "timestamp": str(cur_timestamp),
             # "instance_type": "t2.micro",
@@ -128,16 +118,16 @@ class UserFilesView(LoginRequiredMixin, View):
 
         iam = get_current_iam(request)
 
-        # dataset files list
+        # data_set files list
         folder = '%s/inputs' % iam.group
-        dataset_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=folder)
+        data_set_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=folder)
 
-        datasets = []
-        for key in dataset_keys:
+        data_sets = []
+        for key in data_set_keys:
             row = key.copy()
             path = key['key'].replace("%s/" % folder, "")
             row.update({'name': path})
-            datasets.append(row)
+            data_sets.append(row)
 
         # config files list
         folder = '%s/configs' % iam.group
@@ -153,7 +143,7 @@ class UserFilesView(LoginRequiredMixin, View):
 
         return JsonResponse({
             "status": 200,
-            "datasets": datasets,
+            "data_sets": data_sets,
             "configs": configs
         })
 
@@ -165,9 +155,9 @@ class UserFilesView(LoginRequiredMixin, View):
         put = QueryDict(request.body)
 
         file_name = put.get('file_name')
-        type = put.get('type')
+        _type = put.get('type')
 
-        file_key = "%s/%s/%s" % (iam.group.name, type, file_name)
+        file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
 
         delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=file_key)
 
@@ -183,11 +173,11 @@ class UserFilesView(LoginRequiredMixin, View):
         put = QueryDict(request.body)
 
         file_name = put.get('file_name')
-        type = put.get('type')
+        _type = put.get('type')
 
-        file_key = "%s/%s/%s" % (iam.group.name, type, file_name)
+        file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
 
-        file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=type)
+        file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=_type)
 
         return JsonResponse({
             "status": 200,
@@ -266,17 +256,17 @@ class ResultView(LoginRequiredMixin, View):
             del request.session['results_%s' % timestamp]
             end_flag = True
 
-        dtset_logs = []
+        data_set_logs = []
         log_dir = "%s/results/job__%s_%s/logs/" % (iam.group.name, analysis.bucket_name, timestamp)
-        dtset_logs_keys = get_dataset_logs(iam=iam, bucket=analysis.bucket_name, log_dir=log_dir)
-        for key in dtset_logs_keys:
+        data_set_logs_keys = get_dataset_logs(iam=iam, bucket=analysis.bucket_name, log_dir=log_dir)
+        for key in data_set_logs_keys:
             path = key.replace("%s/results/job__%s_%s/" % (iam.group.name, analysis.bucket_name, timestamp), "")
-            dtset_logs.append({'link': get_download_file(iam, analysis.bucket_name, key, timestamp), 'path': path})
+            data_set_logs.append({'link': get_download_file(iam, analysis.bucket_name, key, timestamp), 'path': path})
 
         return JsonResponse({
             "status": 200,
             "result_links": result_links,
-            "dtset_logs": dtset_logs,
+            "data_set_logs": data_set_logs,
             "end": end_flag
         })
 

@@ -33,8 +33,8 @@ function get_results(timestamp){
         success: function(res){
             console.log(res);
 
-            if (res.dtset_logs.length > 0 ){
-                dtset_logs = res.dtset_logs;
+            if (res.data_set_logs.length > 0 ){
+                dtset_logs = res.data_set_logs;
                 $('.result-dataset').css('display', 'block');
                 update_jstree();
             }
