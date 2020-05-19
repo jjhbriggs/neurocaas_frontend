@@ -77,33 +77,9 @@ function refresh_databucket_list(){
 	})
 }
 
-function get_selected_nodes(tree_id, prefix){
-    var files = [];
-    var selectedNodes = $('#' + tree_id).jstree(true).get_selected();
-    console.log(selectedNodes);
-    for(var i = 0; i < selectedNodes.length; i++) {
-        var full_node = $('#' + tree_id).jstree(true).get_node(selectedNodes[i]);
-        var path = $('#' + tree_id).jstree(true).get_path(full_node,"/");
-        var ext = (/[.]/.exec(path)) ? /[^.]+$/.exec(path) : undefined;
-        if (ext) {
-            path = path.replace(prefix, '');
-            console.log(path);
-            files.push(path);
-        }
-    }
-    return files;
-}
-
 function submit(){
     var dataset_files = [];
     var config_file = null;
-
-    // get list of dataset files' names
-    /*var chkboxes = $('#dataset_folder a.jstree-anchor.jstree-clicked');
-    for ( var i = 0 ; i < chkboxes.length; i++ ){
-        if (chkboxes[i].text !== 'inputs')
-            dataset_files.push(chkboxes[i].text);
-    }*/
 
     dataset_files = get_selected_nodes('dataset_folder', 'inputs/');
 
@@ -113,18 +89,13 @@ function submit(){
     }
 
     // get config file name
-    var radioboxes = $('#config_folder a.jstree-anchor.jstree-clicked');
+    config_files = get_selected_nodes('config_folder', 'configs/');
 
-    for ( var i = 0 ; i < radioboxes.length; i++ ){
-        if (radioboxes[i].text !== 'config')
-            config_file = radioboxes[i].text;
-    }
-
-    if (config_file === null) {
+    if (config_files.length === 0) {
     	alert('Select config file');
     	return;
     }
-    console.log(dataset_files, config_file);
+    console.log(dataset_files, config_files[0]);
 
     $('#btn-spinner').css('display', 'inline-block');
 
@@ -139,7 +110,7 @@ function submit(){
     	method: 'POST',
     	data: {
     		dataset_files: dataset_files,
-    		config_file: config_file
+    		config_file: config_files[0]
     	},
     	success: function(res){
     	    $('#btn-spinner').css('display', 'none');
