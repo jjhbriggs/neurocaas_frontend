@@ -32,7 +32,7 @@ function refresh_databucket_list(){
 			console.log(res);
 			if (res.status == 200){
 			    configs = res.configs;
-			    datasets = res.datasets;
+			    datasets = res.data_sets;
 
 				var dataset_html = '';
 				for ( var i = 0 ; i < datasets.length ; i++)
