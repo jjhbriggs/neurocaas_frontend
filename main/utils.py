@@ -181,7 +181,7 @@ def get_list_keys(iam, bucket, folder):
     file_keys = []
 
     for obj in bucket.objects.filter(Prefix=prefix):
-        if obj.key == prefix or obj.key.endswith('end.txt'):
+        if obj.key == prefix or obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
             continue
         file_keys.append(obj.key)
 
