@@ -238,8 +238,10 @@ class ResultView(LoginRequiredMixin, View):
         ana_id = request.session.get('ana_id', 1)
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
+
         timestamp = int(request.POST['timestamp'])
         result_folder = "%s/results/job__%s_%s/process_results" % (iam.group.name, analysis.bucket_name, timestamp)
+        update_file = "%s/update.txt" % result_folder
         end_file = "%s/end.txt" % result_folder
         file_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=end_file)
 
