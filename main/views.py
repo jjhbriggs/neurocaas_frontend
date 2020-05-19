@@ -138,7 +138,6 @@ class UserFilesView(LoginRequiredMixin, View):
             path = key['key'].replace("%s/" % folder, "")
             row.update({'name': path})
             datasets.append(row)
-        # [datasets.append(key.update({'name': get_name_only(key=key['key'])})) for key in dataset_keys]
 
         # config files list
         folder = '%s/configs' % iam.group
@@ -151,8 +150,6 @@ class UserFilesView(LoginRequiredMixin, View):
             content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=key['key'])
             row.update({'content': content})
             configs.append(row)
-
-        # [config_names.append(get_name_only(key=key)) for key in config_keys]
 
         return JsonResponse({
             "status": 200,
@@ -243,17 +240,31 @@ class ResultView(LoginRequiredMixin, View):
         result_folder = "%s/results/job__%s_%s/process_results" % (iam.group.name, analysis.bucket_name, timestamp)
         update_file = "%s/update.txt" % result_folder
         end_file = "%s/end.txt" % result_folder
-        file_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=end_file)
+        end_flag = False
 
         result_links = []
-        if file_timestamp > 0:
-
+        update_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=update_file)
+        if update_timestamp > 0:
+            previous_keys = json.loads(request.session.get('keys_%s' % timestamp, '[]'))
+            result_links = json.loads(request.session.get('results_%s' % timestamp, '[]'))
             result_keys = get_list_keys(iam=iam, bucket=analysis.bucket_name, folder=result_folder)
             print(result_keys)
+
             for key in result_keys:
+                if key in previous_keys:
+                    continue
                 link = get_download_file(iam=iam, bucket=analysis.bucket_name, key=key, timestamp=timestamp)
                 path = key.replace('%s/results/job__%s_%s/' % (iam.group.name, analysis.bucket_name, timestamp), '')
                 result_links.append({'link': link, 'path': path})
+                previous_keys.append(key)
+            request.session['keys_%s' % timestamp] = json.dumps(previous_keys)
+            request.session['results_%s' % timestamp] = json.dumps(result_links)
+
+        end_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=end_file)
+        if end_timestamp > 0:
+            del request.session['keys_%s' % timestamp]
+            del request.session['results_%s' % timestamp]
+            end_flag = True
 
         dtset_logs = []
         log_dir = "%s/results/job__%s_%s/logs/" % (iam.group.name, analysis.bucket_name, timestamp)
@@ -264,8 +275,9 @@ class ResultView(LoginRequiredMixin, View):
 
         return JsonResponse({
             "status": 200,
-            'result_links': result_links,
-            "dtset_logs": dtset_logs
+            "result_links": result_links,
+            "dtset_logs": dtset_logs,
+            "end": end_flag
         })
 
 
