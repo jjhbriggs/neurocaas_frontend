@@ -5,9 +5,9 @@ function truncate(n, len) {
     }
 
     var ext = n.substring(n.length - 8, n.length).toLowerCase();
-    var filename = n.replace('.' + ext,'');
+    var filename = n.replace(ext,'');
     filename = filename.substr(0, len) + (n.length > len ? '...' : '');
-    return filename + '.' + ext;
+    return filename + ext;
 };
 
 // Insert path into directory tree structure:
