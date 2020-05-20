@@ -234,7 +234,8 @@ class ResultView(LoginRequiredMixin, View):
 
         result_links = []
         update_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=update_file)
-        if update_timestamp > 0:
+        end_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=end_file)
+        if update_timestamp > 0 or end_timestamp > 0:
             previous_keys = json.loads(request.session.get('keys_%s' % timestamp, '[]'))
             result_links = json.loads(request.session.get('results_%s' % timestamp, '[]'))
             result_keys = get_list_keys(iam=iam, bucket=analysis.bucket_name, folder=result_folder)
@@ -250,11 +251,10 @@ class ResultView(LoginRequiredMixin, View):
             request.session['keys_%s' % timestamp] = json.dumps(previous_keys)
             request.session['results_%s' % timestamp] = json.dumps(result_links)
 
-        end_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=end_file)
-        if end_timestamp > 0:
-            del request.session['keys_%s' % timestamp]
-            del request.session['results_%s' % timestamp]
-            end_flag = True
+            if end_timestamp > 0:
+                del request.session['keys_%s' % timestamp]
+                del request.session['results_%s' % timestamp]
+                end_flag = True
 
         data_set_logs = []
         log_dir = "%s/results/job__%s_%s/logs/" % (iam.group.name, analysis.bucket_name, timestamp)
