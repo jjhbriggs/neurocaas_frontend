@@ -1,14 +1,17 @@
 // truncate text
 function truncate(n, len) {
-    if(n.length <= len) {
+
+    if(n.length <= len+3) {
         return n;
     }
 
-    var ext = n.substring(n.length - 8, n.length).toLowerCase();
+    var ext = n.substring(n.length - 8, n.length);
     var filename = n.replace(ext,'');
     filename = filename.substr(0, len) + (n.length > len ? '...' : '');
     return filename + ext;
 };
+
+console.log(truncate('DATASET_NAME:snapshot-5000.index_STATUSindex_STATUS.txt', 37))
 
 // Insert path into directory tree structure:
 function insert(children = [], [head, ...tail]) {
