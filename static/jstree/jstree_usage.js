@@ -1,12 +1,14 @@
 // truncate text
 function truncate(n, len) {
+
     if(n.length <= len) {
         return n;
     }
 
-    var ext = n.substring(n.length - 8, n.length).toLowerCase();
+    var ext = n.substring(n.length - 8, n.length);
     var filename = n.replace(ext,'');
-    filename = filename.substr(0, len) + (n.length > len ? '...' : '');
+
+    filename = filename.substr(0, len-8) + (n.length > len ? '...' : '');
     return filename + ext;
 };
 
@@ -14,7 +16,7 @@ function truncate(n, len) {
 function insert(children = [], [head, ...tail]) {
     let child = children.find(child => child.text === head);
     if (!child) {
-        var text = truncate(head, 37);
+        var text = truncate(head, 34);
         head.includes('.') ?
             children.push(child = {
                 text: text, children: [],
