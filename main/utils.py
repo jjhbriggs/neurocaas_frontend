@@ -266,6 +266,9 @@ def download_directory_from_s3(iam, bucket, folder):
         os.makedirs(root)
 
     for object in bucket.objects.filter(Prefix=folder):
+        if object.key.count('internal_ec2_logs') or object.key.endswith('certificate.txt') or \
+                object.key.endswith('end.txt') or object.key.endswith('update.txt'):
+            continue
         path = "%s/%s" % (root, object.key.replace(folder, ''))
         if not os.path.exists(os.path.dirname(path)):
             os.makedirs(os.path.dirname(path))
@@ -273,4 +276,3 @@ def download_directory_from_s3(iam, bucket, folder):
             continue
         bucket.download_file(object.key, path)
     return root
-
