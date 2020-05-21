@@ -10,9 +10,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from account.forms import UserLoginForm, UserCreationForm
-from account.models import *
+from .models import *
 from .utils import *
 from django.contrib import messages
+
+import shutil
 
 # Create your views here.
 
@@ -174,11 +176,22 @@ class UserFilesView(LoginRequiredMixin, View):
 
         file_name = put.get('file_name')
         _type = put.get('type')
+        choice = put.get('choice', 'file')
 
-        file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
+        file = ""
+        if choice == 'file':
+            file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
+            file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=_type)
+        else:
+            """ Folder downloading here """
+            root_folder = "%s/%s/" % (iam.group.name, _type)
+            folder = "%s%s" % (root_folder, file_name)
+            root_path = download_directory_from_s3(iam=iam, bucket=analysis.bucket_name, folder=folder)
 
-        file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=_type)
+            zip_name = file_name.split('/')[-2] if file_name else _type
 
+            zip_file = "static/downloads/%s/%s" % (root_path, zip_name)
+            shutil.make_archive(zip_file, 'zip', root_path)
         return JsonResponse({
             "status": 200,
             "message": file
