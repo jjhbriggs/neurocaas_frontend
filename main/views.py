@@ -177,6 +177,7 @@ class UserFilesView(LoginRequiredMixin, View):
         file_name = put.get('file_name')
         _type = put.get('type')
         choice = put.get('choice', 'file')
+        timestamp = put.get('timestamp', 0)
 
         file = ""
         if choice == 'file':
@@ -185,7 +186,10 @@ class UserFilesView(LoginRequiredMixin, View):
         else:
             """ Folder downloading here """
             root_folder = "%s/%s/" % (iam.group.name, _type)
-            folder = "%s%s" % (root_folder, file_name)
+            if _type == 'results':
+                folder = "%s%s%s/%s" % (root_folder, analysis.result_prefix, timestamp, file_name)
+            else:
+                folder = "%s%s" % (root_folder, file_name)
             folder_path = download_directory_from_s3(iam=iam, bucket=analysis.bucket_name, folder=folder)
 
             zip_name = file_name.split('/')[-2] if file_name else _type
