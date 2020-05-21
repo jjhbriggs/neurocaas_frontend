@@ -186,12 +186,15 @@ class UserFilesView(LoginRequiredMixin, View):
             """ Folder downloading here """
             root_folder = "%s/%s/" % (iam.group.name, _type)
             folder = "%s%s" % (root_folder, file_name)
-            root_path = download_directory_from_s3(iam=iam, bucket=analysis.bucket_name, folder=folder)
+            folder_path = download_directory_from_s3(iam=iam, bucket=analysis.bucket_name, folder=folder)
 
             zip_name = file_name.split('/')[-2] if file_name else _type
+            zip_file = "static/downloads/%s/%s" % (time.time(), zip_name)
+            if not os.path.exists(os.path.dirname(zip_file)):
+                os.makedirs(os.path.dirname(zip_file))
+            shutil.make_archive(zip_file, 'zip', folder_path)
+            file = "%s.zip" % zip_file
 
-            zip_file = "static/downloads/%s/%s" % (root_path, zip_name)
-            shutil.make_archive(zip_file, 'zip', root_path)
         return JsonResponse({
             "status": 200,
             "message": file

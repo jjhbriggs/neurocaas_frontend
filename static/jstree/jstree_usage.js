@@ -81,16 +81,21 @@ function create_jstree_for_results(paths){
                         downItem: { // The "delete" menu item
                             label: "Donwload",
                             action: function () {
-                                var path = "/static/downloads/" + timestamp + "/" + node.li_attr.title;
-                                document.getElementById('_iframe').href = path;
-                                document.getElementById('_iframe').click();
+                                if (node.li_attr.type === 'folder'){
+                                    var tree = $('#hierarchy').jstree(true);
+                                    down_action(node, 'results', tree);
+                                } else{
+                                    var path = "/static/downloads/" + timestamp + "/" + node.li_attr.title;
+                                    document.getElementById('_iframe').href = path;
+                                    document.getElementById('_iframe').click();
+                                }
                             }
                         }
                     };
 
                     // Delete the "delete" menu item if selected node is folder
                     if (node.li_attr.type === 'folder') {
-                        delete items.downItem;
+                        // delete items.downItem;
                     }
 
                     return items;
@@ -281,7 +286,7 @@ function create_config_jstree(paths){
                     // Delete the "delete" menu item if selected node is folder
                     if (node.li_attr.type === 'folder') {
                         delete items.deleteItem;
-                        // delete items.downItem;
+                        //delete items.downItem;
                     }
 
                     return items;
