@@ -10,9 +10,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from account.forms import UserLoginForm, UserCreationForm
-from account.models import *
+from .models import *
 from .utils import *
 from django.contrib import messages
+
+import shutil
 
 # Create your views here.
 
@@ -174,10 +176,28 @@ class UserFilesView(LoginRequiredMixin, View):
 
         file_name = put.get('file_name')
         _type = put.get('type')
+        choice = put.get('choice', 'file')
+        timestamp = put.get('timestamp', 0)
 
-        file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
+        file = ""
+        if choice == 'file':
+            file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
+            file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=_type)
+        else:
+            """ Folder downloading here """
+            root_folder = "%s/%s/" % (iam.group.name, _type)
+            if _type == 'results':
+                folder = "%s%s%s/%s" % (root_folder, analysis.result_prefix, timestamp, file_name)
+            else:
+                folder = "%s%s" % (root_folder, file_name)
+            folder_path = download_directory_from_s3(iam=iam, bucket=analysis.bucket_name, folder=folder)
 
-        file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=_type)
+            zip_name = file_name.split('/')[-2] if file_name else _type
+            zip_file = "static/downloads/%s/%s" % (time.time(), zip_name)
+            if not os.path.exists(os.path.dirname(zip_file)):
+                os.makedirs(os.path.dirname(zip_file))
+            shutil.make_archive(zip_file, 'zip', folder_path)
+            file = "%s.zip" % zip_file
 
         return JsonResponse({
             "status": 200,

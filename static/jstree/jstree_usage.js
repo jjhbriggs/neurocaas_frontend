@@ -81,16 +81,21 @@ function create_jstree_for_results(paths){
                         downItem: { // The "delete" menu item
                             label: "Donwload",
                             action: function () {
-                                var path = "/static/downloads/" + timestamp + "/" + node.li_attr.title;
-                                document.getElementById('_iframe').href = path;
-                                document.getElementById('_iframe').click();
+                                if (node.li_attr.type === 'folder'){
+                                    var tree = $('#hierarchy').jstree(true);
+                                    down_action(node, 'results', tree);
+                                } else{
+                                    var path = "/static/downloads/" + timestamp + "/" + node.li_attr.title;
+                                    document.getElementById('_iframe').href = path;
+                                    document.getElementById('_iframe').click();
+                                }
                             }
                         }
                     };
 
                     // Delete the "delete" menu item if selected node is folder
                     if (node.li_attr.type === 'folder') {
-                        delete items.downItem;
+                        // delete items.downItem;
                     }
 
                     return items;
@@ -160,20 +165,26 @@ function delete_action(node, type, tree){
 
 // download Action
 function down_action(node, type, tree){
-    var path = tree.get_path(node,"/").replace(node.text, node.li_attr.title).replace(type + "/", '');
+
+    var path = tree.get_path(node,"/").replace(node.text, node.li_attr.title)
+    path =  node.li_attr.type === 'folder' ?  path + "/" : path;
+    path = path.replace(type + "/", '');
+    console.log(path);
     $.ajax({
         url: '/get_user_files/',
         method: 'PUT',
         data: {
             file_name: path,
-            type: type
+            type: type,
+            choice: node.li_attr.type,
+            timestamp: timestamp
         },
         success: function(res){
             if (res.message !== null){
                 document.getElementById('_iframe').href = "/" + res.message;
                 document.getElementById('_iframe').click();
             } else {
-                window.location.reload();
+                // window.location.reload();
             }
         },
         error: function(err){
@@ -276,7 +287,7 @@ function create_config_jstree(paths){
                     // Delete the "delete" menu item if selected node is folder
                     if (node.li_attr.type === 'folder') {
                         delete items.deleteItem;
-                        delete items.downItem;
+                        //delete items.downItem;
                     }
 
                     return items;
