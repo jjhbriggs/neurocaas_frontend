@@ -176,7 +176,8 @@ function down_action(node, type, tree){
         data: {
             file_name: path,
             type: type,
-            choice: node.li_attr.type
+            choice: node.li_attr.type,
+            timestamp: timestamp
         },
         success: function(res){
             if (res.message !== null){
