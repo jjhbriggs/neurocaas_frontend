@@ -1,10 +1,9 @@
 import json
 import os
 import shutil
-
+import time
 import boto3
 
-from .models import *
 from account.models import *
 
 
@@ -130,7 +129,7 @@ def convert_size(size):
     """
         Return size converted to appropriate format from Byte
     """
-    if size > 1024*1024*1024:
+    if size > 1024 * 1024 * 1024:
         return str(round(float(size / (1024 * 1024 * 1024)), 2)) + " GB"
     elif size > 1024 * 1024:
         return str(round(float(size / (1024 * 1024)), 2)) + " MB"
@@ -254,3 +253,26 @@ def create_submit_json(iam, work_bucket, key, json_data):
 
 def get_current_iam(request):
     return IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
+
+
+def download_directory_from_s3(iam, bucket, folder):
+    s3_resource = boto3.resource('s3',
+                                 aws_access_key_id=iam.aws_access_key,
+                                 aws_secret_access_key=iam.aws_secret_access_key)
+    bucket = s3_resource.Bucket(bucket)
+    timestamp = time.time()
+    root = "static/downloads/%s" % timestamp
+    if not os.path.exists(root):
+        os.makedirs(root)
+
+    for object in bucket.objects.filter(Prefix=folder):
+        if object.key.count('internal_ec2_logs') or object.key.endswith('certificate.txt') or \
+                object.key.endswith('end.txt') or object.key.endswith('update.txt'):
+            continue
+        path = "%s/%s" % (root, object.key.replace(folder, ''))
+        if not os.path.exists(os.path.dirname(path)):
+            os.makedirs(os.path.dirname(path))
+        if object.key.endswith('/'):
+            continue
+        bucket.download_file(object.key, path)
+    return root
