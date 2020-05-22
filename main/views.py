@@ -16,6 +16,7 @@ from django.contrib import messages
 
 import shutil
 
+
 # Create your views here.
 
 
@@ -87,7 +88,6 @@ class ProcessView(LoginRequiredMixin, View):
 
         from_key = "%s/configs/%s" % (iam.group.name, config_file)
 
-
         submit_data = {
             "dataname": process_data_set,
             "configname": from_key,
@@ -138,9 +138,8 @@ class UserFilesView(LoginRequiredMixin, View):
         for key in config_keys:
             row = key.copy()
             path = key['key'].replace("%s/" % folder, "")
-            row.update({'name': path})
             content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=key['key'])
-            row.update({'content': content})
+            row.update({'content': content, 'name': path})
             configs.append(row)
 
         return JsonResponse({
