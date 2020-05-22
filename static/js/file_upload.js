@@ -12,6 +12,7 @@ FileUpload.prototype ={
     form_id: null,
     dropArea: null,
     uploadProgress: [],
+    uploadFileSize: [],
     progressBar: null,
     id1: null,
     id2: null,
@@ -161,20 +162,35 @@ FileUpload.prototype ={
         }
 
         // init uploading progress bar
-        var initializeProgress = function(numFiles) {
+        var initializeProgress = function(Files) {
             sender.progressBar.value = 0
-            sender.uploadProgress = []
+            sender.uploadProgress = [];
+            sender.uploadFileSize = [];
 
-            for(let i = numFiles; i > 0; i--) {
+            for(let i = 0; i < Files.length; i++) {
                 sender.uploadProgress.push(0)
+                sender.uploadFileSize.push(Files[i].size);
             }
+
             $('#' + sender.form_id + " .gallery").html("");
         }
 
         // update uploading status in progress bar
         var updateProgress = function(_this) {
             var percent = (_this.partNum - _this.numPartsLeft)/_this.partNum * 100;
-            console.log('update', _this.partNum, _this.numPartsLeft, percent)
+            _this.uploadProgress[_this.current_file_id] = percent;
+
+            // calculate total percentage
+            var percent = 0, total_size = 0, current_size = 0;
+            for ( var i = 0 ; i < _this.uploadFileSize.length; i++ ){
+                total_size += _this.uploadFileSize[i];
+                current_size += _this.uploadFileSize[i] * _this.uploadProgress[i];
+            }
+
+            percent = current_size/total_size;
+
+            console.log('update', _this.partNum, _this.numPartsLeft, percent);
+
             _this.progressBar.value = percent;
         };
 
@@ -215,14 +231,16 @@ FileUpload.prototype ={
                 _this.partNum = 0;
                 _this.fileKey = file.name
                 _this.partSize = file.size / 20 > _this.defaultSize ? file.size / 20 : _this.defaultSize;
-                _this.numPartsLeft = Math.ceil(file.size / _this.partSize);
+                _this.numPartsLeft = Math.floor(file.size / _this.partSize);
+                file.size - _this.partSize * _this.numPartsLeft > _this.defaultSize ? _this.numPartsLeft++ : null;
+
                 _this.maxUploadTries = 3;
                 _this.multiPartParams = {
                     Bucket: _this.bucket,
                     Key: _this.subfolder + "/" + _this.fileKey,
                     ContentType: file.type
                 };
-                var multipartMap = {
+                _this.multipartMap = {
                     Parts: []
                 };
 
@@ -234,8 +252,12 @@ FileUpload.prototype ={
                     // Grab each partSize chunk and upload it as a part
                     for (var rangeStart = 0; rangeStart < _this.buffer.byteLength; rangeStart += _this.partSize) {
                         _this.partNum++;
-                        var end = Math.min(rangeStart + _this.partSize, _this.buffer.byteLength),
-                            partParams = {
+                        var end = Math.min(rangeStart + _this.partSize, _this.buffer.byteLength);
+                        if ( _this.buffer.byteLength - end < _this.partSize ) end = _this.buffer.byteLength;
+
+                        console.log(end - rangeStart, _this.partSize)
+
+                        var partParams = {
                               Body: _this.buffer.slice(rangeStart, end),
                               Bucket: _this.bucket,
                               Key: _this.subfolder + "/" + _this.fileKey,
@@ -247,6 +269,7 @@ FileUpload.prototype ={
                         console.log('Uploading part: #', partParams.PartNumber, ', Range start:', rangeStart);
                         //updateProgress(sender);
                         uploadPart(_this, _this.s3, multipart, partParams);
+                        if (end == _this.buffer.byteLength) break;
                     }
                 });
             }
@@ -260,7 +283,7 @@ FileUpload.prototype ={
             }
             files = [...files];
             _this.files = files;
-            initializeProgress(files.length)
+            initializeProgress(files)
             _this.current_file_id = 0;
             uploadFile(_this, files[_this.current_file_id]);
             files.forEach(previewFile)
