@@ -12,6 +12,7 @@ FileUpload.prototype ={
     form_id: null,
     dropArea: null,
     uploadProgress: [],
+    uploadFileSize: [],
     progressBar: null,
     id1: null,
     id2: null,
@@ -161,20 +162,35 @@ FileUpload.prototype ={
         }
 
         // init uploading progress bar
-        var initializeProgress = function(numFiles) {
+        var initializeProgress = function(Files) {
             sender.progressBar.value = 0
-            sender.uploadProgress = []
+            sender.uploadProgress = [];
+            sender.uploadFileSize = [];
 
-            for(let i = numFiles; i > 0; i--) {
+            for(let i = 0; i < Files.length; i++) {
                 sender.uploadProgress.push(0)
+                sender.uploadFileSize.push(Files[i].size);
             }
+
             $('#' + sender.form_id + " .gallery").html("");
         }
 
         // update uploading status in progress bar
         var updateProgress = function(_this) {
             var percent = (_this.partNum - _this.numPartsLeft)/_this.partNum * 100;
-            console.log('update', _this.partNum, _this.numPartsLeft, percent)
+            _this.uploadProgress[_this.current_file_id] = percent;
+
+            // calculate total percentage
+            var percent = 0, total_size = 0, current_size = 0;
+            for ( var i = 0 ; i < _this.uploadFileSize.length; i++ ){
+                total_size += _this.uploadFileSize[i];
+                current_size += _this.uploadFileSize[i] * _this.uploadProgress;
+            }
+
+            percent = current_size/total_size;
+
+            console.log('update', _this.partNum, _this.numPartsLeft, percent);
+
             _this.progressBar.value = percent;
         };
 
@@ -260,7 +276,7 @@ FileUpload.prototype ={
             }
             files = [...files];
             _this.files = files;
-            initializeProgress(files.length)
+            initializeProgress(files)
             _this.current_file_id = 0;
             uploadFile(_this, files[_this.current_file_id]);
             files.forEach(previewFile)
