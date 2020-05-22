@@ -184,7 +184,7 @@ FileUpload.prototype ={
             var percent = 0, total_size = 0, current_size = 0;
             for ( var i = 0 ; i < _this.uploadFileSize.length; i++ ){
                 total_size += _this.uploadFileSize[i];
-                current_size += _this.uploadFileSize[i] * _this.uploadProgress;
+                current_size += _this.uploadFileSize[i] * _this.uploadProgress[i];
             }
 
             percent = current_size/total_size;
@@ -250,8 +250,10 @@ FileUpload.prototype ={
                     // Grab each partSize chunk and upload it as a part
                     for (var rangeStart = 0; rangeStart < _this.buffer.byteLength; rangeStart += _this.partSize) {
                         _this.partNum++;
-                        var end = Math.min(rangeStart + _this.partSize, _this.buffer.byteLength),
-                            partParams = {
+                        var end = Math.min(rangeStart + _this.partSize, _this.buffer.byteLength);
+                        if ( _this.buffer.byteLength - end < _this.partSize ) end = _this.buffer.byteLength;
+                        console.log(_this.buffer.byteLength - end, _this.partSize)
+                        var partParams = {
                               Body: _this.buffer.slice(rangeStart, end),
                               Bucket: _this.bucket,
                               Key: _this.subfolder + "/" + _this.fileKey,
