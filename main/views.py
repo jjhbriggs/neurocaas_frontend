@@ -16,6 +16,7 @@ from django.contrib import messages
 
 import shutil
 
+
 # Create your views here.
 
 
@@ -86,7 +87,6 @@ class ProcessView(LoginRequiredMixin, View):
             process_data_set.append(from_key)
 
         from_key = "%s/configs/%s" % (iam.group.name, config_file)
-
 
         submit_data = {
             "dataname": process_data_set,
