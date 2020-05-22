@@ -231,14 +231,16 @@ FileUpload.prototype ={
                 _this.partNum = 0;
                 _this.fileKey = file.name
                 _this.partSize = file.size / 20 > _this.defaultSize ? file.size / 20 : _this.defaultSize;
-                _this.numPartsLeft = Math.ceil(file.size / _this.partSize);
+                _this.numPartsLeft = Math.floor(file.size / _this.partSize);
+                file.size - _this.partSize * _this.numPartsLeft > _this.defaultSize ? _this.numPartsLeft++ : null;
+
                 _this.maxUploadTries = 3;
                 _this.multiPartParams = {
                     Bucket: _this.bucket,
                     Key: _this.subfolder + "/" + _this.fileKey,
                     ContentType: file.type
                 };
-                var multipartMap = {
+                _this.multipartMap = {
                     Parts: []
                 };
 
@@ -252,7 +254,9 @@ FileUpload.prototype ={
                         _this.partNum++;
                         var end = Math.min(rangeStart + _this.partSize, _this.buffer.byteLength);
                         if ( _this.buffer.byteLength - end < _this.partSize ) end = _this.buffer.byteLength;
-                        console.log(_this.buffer.byteLength - end, _this.partSize)
+
+                        console.log(end - rangeStart, _this.partSize)
+
                         var partParams = {
                               Body: _this.buffer.slice(rangeStart, end),
                               Bucket: _this.bucket,
@@ -265,6 +269,7 @@ FileUpload.prototype ={
                         console.log('Uploading part: #', partParams.PartNumber, ', Range start:', rangeStart);
                         //updateProgress(sender);
                         uploadPart(_this, _this.s3, multipart, partParams);
+                        if (end == _this.buffer.byteLength) break;
                     }
                 });
             }
