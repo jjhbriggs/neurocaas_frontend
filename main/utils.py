@@ -5,6 +5,7 @@ import time
 import boto3
 
 from account.models import *
+from .models import Analysis
 
 
 def get_download_file(iam, bucket, key, timestamp):
@@ -253,6 +254,19 @@ def create_submit_json(iam, work_bucket, key, json_data):
 
 def get_current_iam(request):
     return IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
+
+
+# get current analysis from analysis id stored in session
+def get_current_analysis(request):
+    ana_id = request.session.get('ana_id', 1)
+    analysis = Analysis.objects.get(pk=ana_id)
+    return analysis
+
+
+# create new folder by path
+def mkdir(path):
+    if not os.path.exists(path):
+        os.mkdir(path)
 
 
 def download_directory_from_s3(iam, bucket, folder):

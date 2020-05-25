@@ -45,8 +45,7 @@ class ProcessView(LoginRequiredMixin, View):
     template_name = "main/process.html"
 
     def get(self, request, id):
-        request.session['ana_id'] = id
-        analysis = Analysis.objects.get(pk=id)
+        analysis = get_current_analysis(request)
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
@@ -68,10 +67,9 @@ class ProcessView(LoginRequiredMixin, View):
         })
 
     def post(self, request, id):
-        ana_id = request.session.get('ana_id', 1)
-        analysis = Analysis.objects.get(pk=ana_id)
-
+        analysis = get_current_analysis(request)
         iam = get_current_iam(request)
+
         data_set_files = request.POST.getlist('dataset_files[]')
         config_file = request.POST['config_file']
         cur_timestamp = int(time.time())
@@ -109,8 +107,7 @@ class UserFilesView(LoginRequiredMixin, View):
         """
             return inputs and config files users uploaded so far
         """
-        ana_id = request.session.get('ana_id', 1)
-        analysis = Analysis.objects.get(pk=ana_id)
+        analysis = get_current_analysis(request)
         iam = get_current_iam(request)
 
         # data_set files list
@@ -142,13 +139,12 @@ class UserFilesView(LoginRequiredMixin, View):
         })
 
     def delete(self, request):
-        ana_id = request.session.get('ana_id', 1)
-        analysis = Analysis.objects.get(pk=ana_id)
+        analysis = get_current_analysis(request)
         iam = get_current_iam(request)
 
-        dict = QueryDict(request.body)
-        file_name = dict.get('file_name')
-        _type = dict.get('type')
+        dicts = QueryDict(request.body)
+        file_name = dicts.get('file_name')
+        _type = dicts.get('type')
 
         file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
 
@@ -158,35 +154,35 @@ class UserFilesView(LoginRequiredMixin, View):
         })
 
     def put(self, request):
-        ana_id = request.session.get('ana_id', 1)
-        analysis = Analysis.objects.get(pk=ana_id)
+        analysis = get_current_analysis(request)
         iam = get_current_iam(request)
-        put = QueryDict(request.body)
+        dicts = QueryDict(request.body)
 
-        file_name = put.get('file_name')
-        _type = put.get('type')
-        choice = put.get('choice', 'file')
-        timestamp = put.get('timestamp', 0)
+        file_name = dicts.get('file_name')
+        _type = dicts.get('type')
+        choice = dicts.get('choice', 'file')
+        timestamp = dicts.get('timestamp', 0)
 
         file = ""
         if choice == 'file':
             file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
             file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=_type)
         else:
-            """ Folder downloading here """
+            """ 
+                Folder downloading here 
+                """
             root_folder = "%s/%s/" % (iam.group.name, _type)
             if _type == 'results':
                 folder = "%s%s%s/%s" % (root_folder, analysis.result_prefix, timestamp, file_name)
             else:
                 folder = "%s%s" % (root_folder, file_name)
-            folder_path = download_directory_from_s3(iam=iam, bucket=analysis.bucket_name, folder=folder)
+            downloaded_path = download_directory_from_s3(iam=iam, bucket=analysis.bucket_name, folder=folder)
 
             zip_name = file_name.split('/')[-2] if file_name else _type
-            zip_file = "static/downloads/%s/%s" % (time.time(), zip_name)
-            if not os.path.exists(os.path.dirname(zip_file)):
-                os.makedirs(os.path.dirname(zip_file))
-            shutil.make_archive(zip_file, 'zip', folder_path)
-            file = "%s.zip" % zip_file
+            zip_path = "static/downloads/%s/%s" % (time.time(), zip_name)
+            mkdir(os.path.dirname(zip_path))
+            shutil.make_archive(zip_path, 'zip', downloaded_path)
+            file = "%s.zip" % zip_path
 
         return JsonResponse({
             "status": 200,
@@ -198,8 +194,7 @@ class UserFilesView(LoginRequiredMixin, View):
 class ResultView(LoginRequiredMixin, View):
 
     def get(self, request):
-        ana_id = request.session.get('ana_id', 1)
-        analysis = Analysis.objects.get(pk=ana_id)
+        analysis = get_current_analysis(request)
         iam = get_current_iam(request)
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
 
@@ -212,13 +207,8 @@ class ResultView(LoginRequiredMixin, View):
             cert_content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=cert_file)
 
         # store cert content to server
-        parent_folder = "static/downloads"
-        if not os.path.exists(parent_folder):
-            os.mkdir(parent_folder)
-
-        folder = "static/downloads/%s" % timestamp
-        if not os.path.exists(folder):
-            os.mkdir(folder)
+        mkdir("static/downloads")
+        mkdir("static/downloads/%s" % timestamp)
 
         cert_path = "static/downloads/%s/certificate.txt" % timestamp
         file = open(cert_path, 'w')
