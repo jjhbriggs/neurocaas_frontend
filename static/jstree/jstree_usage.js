@@ -8,7 +8,7 @@ function truncate(n, len) {
     var ext = n.substring(n.length - 8, n.length);
     var filename = n.replace(ext,'');
 
-    filename = filename.substr(0, len-8) + (n.length > len ? '...' : '');
+    filename = filename.substr(0, len-11) + (n.length > len ? '...' : '');
     return filename + ext;
 };
 
