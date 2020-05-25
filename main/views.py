@@ -196,6 +196,7 @@ class UserFilesView(LoginRequiredMixin, View):
                 folder = "%s%s%s/%s" % (root_folder, analysis.result_prefix, timestamp, file_name)
             else:
                 folder = "%s%s" % (root_folder, file_name)
+
             downloaded_path = download_directory_from_s3(
                 iam=iam,
                 bucket=analysis.bucket_name,
@@ -299,9 +300,9 @@ class ResultView(LoginRequiredMixin, View):
 
         data_set_logs = []
         log_dir = "%s/results/job__%s_%s/logs/" % (iam.group.name, analysis.bucket_name, timestamp)
-        data_set_logs_keys = get_dataset_logs(iam=iam,
-                                              bucket=analysis.bucket_name,
-                                              log_dir=log_dir)
+        data_set_logs_keys = get_data_set_logs(iam=iam,
+                                               bucket=analysis.bucket_name,
+                                               log_dir=log_dir)
         for key in data_set_logs_keys:
             path = key.replace("%s/results/job__%s_%s/" % (iam.group.name, analysis.bucket_name, timestamp), "")
             data_set_logs.append({
