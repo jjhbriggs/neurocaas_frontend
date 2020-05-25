@@ -1,7 +1,4 @@
-import json
-import time
 from base64 import b64encode
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
@@ -18,7 +15,6 @@ import shutil
 
 
 # Create your views here.
-
 
 class HomeView(View):
     """
@@ -37,9 +33,6 @@ class HomeView(View):
                 "next": next_url
             }
         else:
-            # context = {
-            #     "logged_in": True
-            # }
             return redirect(next_url)
         return render(request=request, template_name=self.template_name, context=context)
 
@@ -60,8 +53,10 @@ class ProcessView(LoginRequiredMixin, View):
             messages.error(request, "You don't have permission for this analysis.")
             return redirect('/')
 
+        # convert aws keys to base64 string
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
@@ -83,20 +78,20 @@ class ProcessView(LoginRequiredMixin, View):
 
         process_data_set = []
         for file in data_set_files:
-            from_key = "%s/inputs/%s" % (iam.group.name, file)
-            process_data_set.append(from_key)
-
-        from_key = "%s/configs/%s" % (iam.group.name, config_file)
+            process_data_set.append("%s/inputs/%s" % (iam.group.name, file))
 
         submit_data = {
             "dataname": process_data_set,
-            "configname": from_key,
+            "configname": "%s/configs/%s" % (iam.group.name, config_file),
             "timestamp": str(cur_timestamp),
             # "instance_type": "t2.micro",
         }
 
         submit_key = "%s/submissions/submit.json" % iam.group.name
-        create_submit_json(iam=iam, work_bucket=analysis.bucket_name, key=submit_key, json_data=submit_data)
+        create_submit_json(iam=iam,
+                           work_bucket=analysis.bucket_name,
+                           key=submit_key,
+                           json_data=submit_data)
 
         # store timestamp in session
         request.session['last_timestamp'] = cur_timestamp
@@ -107,37 +102,35 @@ class ProcessView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class UserFilesView(LoginRequiredMixin, View):
     """
-        View to manage files for each user
+        View to manage files for each analysis
         """
 
     def get(self, request):
         """
-            return dataset and config files user uploaded before
+            return inputs and config files users uploaded so far
         """
-        # config = Analysis.objects.filter(analysis_name=analysis_name).first()
         ana_id = request.session.get('ana_id', 1)
         analysis = Analysis.objects.get(pk=ana_id)
-
         iam = get_current_iam(request)
 
         # data_set files list
-        folder = '%s/inputs' % iam.group
-        data_set_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=folder)
+        dt_folder = '%s/inputs' % iam.group
+        data_set_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=dt_folder)
 
         data_sets = []
         for key in data_set_keys:
             row = key.copy()
-            path = key['key'].replace("%s/" % folder, "")
+            path = key['key'].replace("%s/" % dt_folder, "")
             row.update({'name': path})
             data_sets.append(row)
 
         # config files list
-        folder = '%s/configs' % iam.group
-        config_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=folder)
+        cf_folder = '%s/configs' % iam.group
+        config_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=cf_folder)
         configs = []
         for key in config_keys:
             row = key.copy()
-            path = key['key'].replace("%s/" % folder, "")
+            path = key['key'].replace("%s/" % cf_folder, "")
             content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=key['key'])
             row.update({'content': content, 'name': path})
             configs.append(row)
@@ -148,23 +141,20 @@ class UserFilesView(LoginRequiredMixin, View):
             "configs": configs
         })
 
-    def delete(self, request, *args, **kwargs):
+    def delete(self, request):
         ana_id = request.session.get('ana_id', 1)
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
 
-        put = QueryDict(request.body)
-
-        file_name = put.get('file_name')
-        _type = put.get('type')
+        dict = QueryDict(request.body)
+        file_name = dict.get('file_name')
+        _type = dict.get('type')
 
         file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
 
-        delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=file_key)
-
         return JsonResponse({
             "status": 200,
-            "message": file_name
+            "message": delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=file_key)
         })
 
     def put(self, request):
