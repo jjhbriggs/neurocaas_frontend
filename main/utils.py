@@ -9,21 +9,28 @@ from .models import Analysis
 
 
 def get_current_iam(request):
+    """
+        return current iam object from request
+        """
     return IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
 
 
-# get current analysis from analysis id stored in session
 def get_current_analysis(request):
+    """
+        get current analysis from analysis id stored in session
+        """
     ana_id = request.session.get('ana_id', 1)
     analysis = Analysis.objects.get(pk=ana_id)
     return analysis
 
 
-# create new folder by path
 def mkdir(path):
+    """
+        create new folder by path
+        """
     if not os.path.exists(path):
         os.mkdir(path)
-        
+
 
 def get_download_file(iam, bucket, key, timestamp):
     """
@@ -53,7 +60,7 @@ def get_download_file(iam, bucket, key, timestamp):
 def get_last_modified_timestamp(iam, bucket, key):
     """
         Return last process files' timestamp
-    """
+        """
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
@@ -92,7 +99,7 @@ def get_file_content(iam, bucket, key):
 def get_data_set_logs(iam, bucket, log_dir):
     """
         Retrieve logs for each dataset
-    """
+        """
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
@@ -194,9 +201,7 @@ def delete_folder_from_bucket(iam, bucket_name, prefix):
         aws_access_key_id=iam.aws_access_key,
         aws_secret_access_key=iam.aws_secret_access_key)
     bucket = s3.Bucket(bucket_name)
-    print(prefix)
     for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
-        # if obj.key.endswith('.json'):
         obj.delete()
 
 
@@ -213,7 +218,6 @@ def delete_file_from_bucket(iam, bucket_name, key):
 
 
 def create_submit_json(iam, work_bucket, key, json_data):
-    print(key)
     s3 = boto3.resource(
         's3',
         aws_access_key_id=iam.aws_access_key,
@@ -235,13 +239,13 @@ def download_directory_from_s3(iam, bucket, folder):
     root = "static/downloads/%s" % timestamp
     mkdir(root)
 
-    for object in bucket.objects.filter(Prefix=folder):
-        if object.key.count('internal_ec2_logs') or object.key.endswith('certificate.txt') or \
-                object.key.endswith('end.txt') or object.key.endswith('update.txt'):
+    for obj in bucket.objects.filter(Prefix=folder):
+        if obj.key.count('internal_ec2_logs') or obj.key.endswith('certificate.txt') or \
+                obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
             continue
-        path = "%s/%s" % (root, object.key.replace(folder, ''))
+        path = "%s/%s" % (root, obj.key.replace(folder, ''))
         mkdir(os.path.dirname(path))
-        if object.key.endswith('/'):
+        if obj.key.endswith('/'):
             continue
-        bucket.download_file(object.key, path)
+        bucket.download_file(obj.key, path)
     return root
