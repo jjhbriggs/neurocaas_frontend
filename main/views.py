@@ -34,7 +34,12 @@ class HomeView(View):
             }
         else:
             return redirect(next_url)
-        return render(request=request, template_name=self.template_name, context=context)
+
+        return render(
+            request=request,
+            template_name=self.template_name,
+            context=context
+        )
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -94,7 +99,10 @@ class ProcessView(LoginRequiredMixin, View):
         # store timestamp in session
         request.session['last_timestamp'] = cur_timestamp
 
-        return JsonResponse({"status": True, "timestamp": cur_timestamp})
+        return JsonResponse({
+            "status": True,
+            "timestamp": cur_timestamp
+        })
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -166,7 +174,10 @@ class UserFilesView(LoginRequiredMixin, View):
         file = ""
         if choice == 'file':
             file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
-            file = get_download_file(iam=iam, bucket=analysis.bucket_name, key=file_key, timestamp=_type)
+            file = get_download_file(iam=iam,
+                                     bucket=analysis.bucket_name,
+                                     key=file_key,
+                                     timestamp=_type)
         else:
             """ 
                 Folder downloading here 
@@ -176,7 +187,10 @@ class UserFilesView(LoginRequiredMixin, View):
                 folder = "%s%s%s/%s" % (root_folder, analysis.result_prefix, timestamp, file_name)
             else:
                 folder = "%s%s" % (root_folder, file_name)
-            downloaded_path = download_directory_from_s3(iam=iam, bucket=analysis.bucket_name, folder=folder)
+            downloaded_path = download_directory_from_s3(
+                iam=iam,
+                bucket=analysis.bucket_name,
+                folder=folder)
 
             zip_name = file_name.split('/')[-2] if file_name else _type
             zip_path = "static/downloads/%s/%s" % (time.time(), zip_name)
@@ -199,12 +213,17 @@ class ResultView(LoginRequiredMixin, View):
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
 
         cert_file = "%s/results/job__%s_%s/logs/certificate.txt" % (iam.group.name, analysis.bucket_name, timestamp)
-        cert_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=cert_file)
+        cert_timestamp = get_last_modified_timestamp(
+            iam=iam,
+            bucket=analysis.bucket_name,
+            key=cert_file)
 
         if cert_timestamp == 0:
             cert_content = ""
         else:
-            cert_content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=cert_file)
+            cert_content = get_file_content(iam=iam,
+                                            bucket=analysis.bucket_name,
+                                            key=cert_file)
 
         # store cert content to server
         mkdir("static/downloads")
@@ -221,29 +240,36 @@ class ResultView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
-        ana_id = request.session.get('ana_id', 1)
-        analysis = Analysis.objects.get(pk=ana_id)
+        analysis = get_current_analysis(request)
         iam = get_current_iam(request)
-
         timestamp = int(request.POST['timestamp'])
+
         result_folder = "%s/results/job__%s_%s/process_results" % (iam.group.name, analysis.bucket_name, timestamp)
         update_file = "%s/update.txt" % result_folder
         end_file = "%s/end.txt" % result_folder
         end_flag = False
 
         result_links = []
-        update_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=update_file)
-        end_timestamp = get_last_modified_timestamp(iam=iam, bucket=analysis.bucket_name, key=end_file)
+        update_timestamp = get_last_modified_timestamp(iam=iam,
+                                                       bucket=analysis.bucket_name,
+                                                       key=update_file)
+        end_timestamp = get_last_modified_timestamp(iam=iam,
+                                                    bucket=analysis.bucket_name,
+                                                    key=end_file)
         if update_timestamp > 0 or end_timestamp > 0:
             previous_keys = json.loads(request.session.get('keys_%s' % timestamp, '[]'))
             result_links = json.loads(request.session.get('results_%s' % timestamp, '[]'))
-            result_keys = get_list_keys(iam=iam, bucket=analysis.bucket_name, folder=result_folder)
-            print(result_keys)
+            result_keys = get_list_keys(iam=iam,
+                                        bucket=analysis.bucket_name,
+                                        folder=result_folder)
 
             for key in result_keys:
                 if key in previous_keys:
                     continue
-                link = get_download_file(iam=iam, bucket=analysis.bucket_name, key=key, timestamp=timestamp)
+                link = get_download_file(iam=iam,
+                                         bucket=analysis.bucket_name,
+                                         key=key,
+                                         timestamp=timestamp)
                 path = key.replace('%s/results/job__%s_%s/' % (iam.group.name, analysis.bucket_name, timestamp), '')
                 result_links.append({'link': link, 'path': path})
                 previous_keys.append(key)
@@ -257,10 +283,15 @@ class ResultView(LoginRequiredMixin, View):
 
         data_set_logs = []
         log_dir = "%s/results/job__%s_%s/logs/" % (iam.group.name, analysis.bucket_name, timestamp)
-        data_set_logs_keys = get_dataset_logs(iam=iam, bucket=analysis.bucket_name, log_dir=log_dir)
+        data_set_logs_keys = get_dataset_logs(iam=iam,
+                                              bucket=analysis.bucket_name,
+                                              log_dir=log_dir)
         for key in data_set_logs_keys:
             path = key.replace("%s/results/job__%s_%s/" % (iam.group.name, analysis.bucket_name, timestamp), "")
-            data_set_logs.append({'link': get_download_file(iam, analysis.bucket_name, key, timestamp), 'path': path})
+            data_set_logs.append({
+                'link': get_download_file(iam, analysis.bucket_name, key, timestamp),
+                'path': path
+            })
 
         return JsonResponse({
             "status": 200,
@@ -270,28 +301,36 @@ class ResultView(LoginRequiredMixin, View):
         })
 
 
-""" Intro & Analysis Intro pages """
-
-
 class IntroView(View):
+    """
+        Intro View
+        """
     template_name = "main/intro.html"
 
     def get(self, request):
         analyses = Analysis.objects.all()
-        return render(request=request, template_name=self.template_name, context={
-            'analyses': analyses,
-            'iam': get_current_iam(request)
-        })
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={
+                          'analyses': analyses,
+                          'iam': get_current_iam(request)
+                      })
 
 
 class AnalysisIntroView(View):
+    """
+        Analysis Intro View
+        """
     template_name = "main/analysis_intro.html"
 
     def get(self, request, id):
         analysis = Analysis.objects.get(pk=id)
         iam = get_current_iam(request)
 
-        return render(request=request, template_name=self.template_name, context={
-            "analysis": analysis,
-            'iam': iam
-        })
+        return render(
+            request=request,
+            template_name=self.template_name,
+            context={
+                "analysis": analysis,
+                'iam': iam
+            })
