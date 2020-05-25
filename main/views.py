@@ -45,8 +45,8 @@ class HomeView(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ProcessView(LoginRequiredMixin, View):
     """
-        Main View
-    """
+        Processing View
+        """
     template_name = "main/process.html"
 
     def get(self, request, id):
@@ -72,6 +72,9 @@ class ProcessView(LoginRequiredMixin, View):
         })
 
     def post(self, request, id):
+        """
+            Start new processing with analysis ID, inputs and config files
+            """
         analysis = get_current_analysis(request)
         iam = get_current_iam(request)
 
@@ -114,7 +117,7 @@ class UserFilesView(LoginRequiredMixin, View):
     def get(self, request):
         """
             return inputs and config files users uploaded so far
-        """
+            """
         analysis = get_current_analysis(request)
         iam = get_current_iam(request)
 
@@ -147,6 +150,9 @@ class UserFilesView(LoginRequiredMixin, View):
         })
 
     def delete(self, request):
+        """
+            Delete a file from inputs or config folder on s3 by filename
+            """
         analysis = get_current_analysis(request)
         iam = get_current_iam(request)
 
@@ -162,6 +168,9 @@ class UserFilesView(LoginRequiredMixin, View):
         })
 
     def put(self, request):
+        """
+            Download a file or folder from inputs or config folder on s3 by filename
+            """
         analysis = get_current_analysis(request)
         iam = get_current_iam(request)
         dicts = QueryDict(request.body)
@@ -208,6 +217,9 @@ class UserFilesView(LoginRequiredMixin, View):
 class ResultView(LoginRequiredMixin, View):
 
     def get(self, request):
+        """
+            Retrieve Certificate.txt content from s3 and return it
+            """
         analysis = get_current_analysis(request)
         iam = get_current_iam(request)
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
@@ -240,6 +252,10 @@ class ResultView(LoginRequiredMixin, View):
         })
 
     def post(self, request):
+        """
+            Retrieve files from results and logs folder on s3 and return them.
+            Checking update.txt and end.txt so that determine analysis was finished or not.
+            """
         analysis = get_current_analysis(request)
         iam = get_current_iam(request)
         timestamp = int(request.POST['timestamp'])
