@@ -62,46 +62,11 @@
                 <img src="{% static 'img/descript.png' %}" style="max-height:800px;">
             </div>
 
-            <div class "paper-link mt-2">
-                <span class = "bottom-line title">Frequently Asked Questions</span>
-                <ul>
-                    <li>
-                        <h3>
-                            How expensive is NeuroCAAS?
-                        </h3>
-                        <p class="">
-                        Although NeuroCAAS runs on the public cloud (AWS), we found that across a wide variety of datasets and algorithms analysis could be run quickly at low cost (<a href="#paper">see our paper</a>). This low cost lets us subsidize all of user-run analyses up to a pre-set cap ($300) that can be adjusted with an appropriate request. To request a cap increase, please contact us at <a class="text-warning" href="javascript:void(0)">neurocaas@gmail.com</a>.) If you know how long your analysis will take to run, you can further reduce the cost of analysis (see individual analysis pages).                            
-                        </p>
-                    </li>
-                    <li>
-                        <h3>
-                            Isn't it slow to transfer big data to and from the cloud? 
-                        </h3>
-                        <p class="">
-                        For the range of datasets we tested (into ~100s of gigabytes), we found that running data on the cloud was faster than existing options, even accounting for upload and download time (<a href="#paper">see our paper</a>). Try it out for yourself!                              
-                        </p>
-                    </li>
-                    <li>
-                        <h3>
-                            How do you make sure people are using analyses responsibly?
-                        </h3>
-                        <p class="">
-                        The purpose of NeuroCAAS is to separate the scientific work of selecting the right analysis and interpreting data from the engineering work of installation and infrastructure maintenance. The responsibility to understand the algorithm being used, and to format data and parameters accordingly rests with the user.                               
-                        </p>
-                    </li>
-                    <li>
-                        <h3>
-                            How can I get my own analysis on NeuroCAAS?
-                        </h3>
-                        <p class="">
-
-                        Please contact us at <a class="text-warning" href="javascript:void(0)">neurocaas@gmail.com</a>. You can find documentation to prepare your analysis for launch on the platform in the docs of our github repo <a href="https://github.com/cunningham-lab/neurocaas/blob/master/docs/" class="botton-line" target="_blank">here</a>
-
-                        </p>
-                    </li>
-                </ul>
+            <div class = "paper-link mt-2">
+                <a href="/analysis_qa/">
+                    <span class="title">Frequently Asked Questions</span>
+                </a>
             </div>
-
 
         </div>
     </div>
