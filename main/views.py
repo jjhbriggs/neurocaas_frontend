@@ -50,7 +50,8 @@ class ProcessView(LoginRequiredMixin, View):
     template_name = "main/process.html"
 
     def get(self, request, id):
-        analysis = get_current_analysis(request)
+        ana_id = request.session['ana_id'] = id
+        analysis = Analysis.objects.get(pk=id)
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
