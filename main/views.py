@@ -335,6 +335,21 @@ class IntroView(View):
                       })
 
 
+class QAView(View):
+    """
+        Q/A Page View
+        """
+
+    template_name = "main/qa_page.html"
+
+    def get(self, request):
+        return render(
+            request=request,
+            template_name=self.template_name,
+            context={'iam': get_current_iam(request)}
+        )
+
+
 class AnalysisIntroView(View):
     """
         Analysis Intro View

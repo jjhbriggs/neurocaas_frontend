@@ -13,6 +13,7 @@ class Analysis(Base):
     analysis_name = models.CharField(max_length=100, help_text='Name of Process', unique=True)
     result_prefix = models.CharField(max_length=100, help_text='Prefix of result folder name')
     bucket_name = models.CharField(max_length=100, help_text='Bucket Name')
+    custom = models.BooleanField(help_text='Custom Analysis option', default=False)
     groups = models.ManyToManyField(AnaGroup)
 
     # detail fields of analysis
@@ -22,7 +23,7 @@ class Analysis(Base):
     paper_link = models.CharField(max_length=100, help_text='Link of Analysis Paper', blank=True, null=True)
     git_link = models.CharField(max_length=100, help_text='Github link of Analysis', blank=True, null=True)
     bash_link = models.CharField(max_length=100, help_text='Bash script link of Analysis', blank=True, null=True)
-    demo_link = models.TextField(help_text='Link of Demo page', blank=True, null=True)
+    demo_link = models.CharField(max_length=100, help_text='Link of Demo page', blank=True, null=True)
     signature = models.TextField(help_text='Signature of analysis', blank=True, null=True)
 
     def __str__(self):
@@ -33,3 +34,6 @@ class Analysis(Base):
             if iam.group == group:
                 return True
         return False
+
+    class Meta:
+        verbose_name_plural = "Analyses"
