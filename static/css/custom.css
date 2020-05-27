@@ -279,3 +279,7 @@ a {
 .table-div.no-left-margin{
     margin: 30px 0px 30px 0px;
 }
+
+.display-inline-table{
+    display: inline-table;
+}
