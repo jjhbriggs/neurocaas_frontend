@@ -79,7 +79,7 @@ function create_jstree_for_results(paths){
                     // The default set of all items
                     var items = {
                         downItem: { // The "delete" menu item
-                            label: "Donwload",
+                            label: "Download",
                             action: function () {
                                 if (node.li_attr.type === 'folder'){
                                     var tree = $('#hierarchy').jstree(true);
@@ -276,7 +276,7 @@ function create_config_jstree(paths){
                             }
                         },
                         downItem: { // The "delete" menu item
-                            label: "Donwload",
+                            label: "Download",
                             action: function () {
                                 var tree = $('#config_folder').jstree(true);
                                 down_action(node, 'configs', tree);
