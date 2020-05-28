@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-8 offset-md-2 mt-3 text-left">
+            <div class="col-md-8 offset-md-2 mt-3 text-left">
             <span class="">What is NeuroCAAS?</span>
             <div class="description">
                 <p class="text-justify">
@@ -27,7 +27,7 @@
                 <a name= "analyses"></a>
                 <span class="botton-line title">Available Analyses</span>
                 <ul class="analysis-list mt-4">
-                    {% for item in analyses %}
+                    {% for item in main_analyses %}
                     <li>
                         <h3>{{item.analysis_name}} <a href="/intro/{{item.id}}"><span class="text-danger">Start Analysis</span></a></h3>
                         <p>
@@ -36,6 +36,8 @@
                     </li>
                     {% endfor %}
                 </ul>
+                <a href="analyses/" class="botton-line">See all analyses</a>
+                <br><br>
             </div>
 
             <div class="paper-link mt-2">
@@ -63,7 +65,7 @@
             </div>
 
             <div class = "paper-link mt-2">
-                <a href="/analysis_qa/">
+                <a href="/analysis_qa/" target="_blank">
                     <span class="title">Frequently Asked Questions</span>
                 </a>
             </div>
