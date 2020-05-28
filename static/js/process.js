@@ -1,8 +1,3 @@
-/* get file name from url */
-function get_file_name(url){
-    return url === null ? "" : url.split("/").slice(-1)[0]
-}
-
 /* function to show processing status from certificate.txt */
 function get_status(timestamp){
     url = "/get_results/?timestamp=" + timestamp;
@@ -60,6 +55,58 @@ function get_results(timestamp){
     })
 }
 
+
+function submit(){
+    var dataset_files = [];
+    var config_file = null;
+
+    dataset_files = get_selected_nodes('dataset_folder', 'inputs/');
+
+    if (dataset_files.length < 1) {
+    	alert('Select dataset files');
+    	return;
+    }
+
+    // get config file name
+    config_files = get_selected_nodes('config_folder', 'configs/');
+
+    if (config_files.length === 0) {
+    	alert('Select config file');
+    	return;
+    }
+    console.log(dataset_files, config_files[0]);
+
+    $('#btn-spinner').css('display', 'inline-block');
+
+    // set the processing status to TRUE
+    processing_status = true;
+
+    // disabled showing detail of dataset and config files
+    detail_flag = false;
+
+    $.ajax({
+    	url: window.location.pathname,
+    	method: 'POST',
+    	data: {
+    		dataset_files: dataset_files,
+    		config_file: config_files[0]
+    	},
+    	success: function(res){
+    	    $('#btn-spinner').css('display', 'none');
+    		console.log(res)
+    		timestamp = res.timestamp;
+    		trigger_function(res.timestamp);
+    	},
+    	error: function(err){
+    	    $('#btn-spinner').css('display', 'none');
+    		console.log(err);
+    		$('#submit_button').attr('disabled', false);
+    	}
+    })
+    $('#submit_button').attr('disabled', true);
+}
+
+
 var trigger_function = function(timestamp){
     $('.spinner').css('display', 'block');
     setTimeout(function(){
@@ -75,10 +122,4 @@ var submit_trigger = function(){
         dataset_area.clear_status();
         config_area.clear_status();
     }, 700);
-}
-
-function download_cert(){
-    var path = '/static/downloads/' + timestamp + "/certificate.txt";
-    document.getElementById('_iframe').href = path;
-    document.getElementById('_iframe').click();
 }
