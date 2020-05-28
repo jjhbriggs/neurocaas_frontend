@@ -4,6 +4,17 @@ function get_tr_template(file, type, name, ind, flag=0){
 	return '<tr onclick="show_detail(' + ind + ', ' + flag + ')"><td class="value">' + file + '</td><td><input type="' + type + '" name="' + name + '"></td>';
 }
 
+/* get file name from url */
+function get_file_name(url){
+    return url === null ? "" : url.split("/").slice(-1)[0]
+}
+
+function download_cert(){
+    var path = '/static/downloads/' + timestamp + "/certificate.txt";
+    document.getElementById('_iframe').href = path;
+    document.getElementById('_iframe').click();
+}
+
 function show_detail(ind, type){
     if (!detail_flag) return;
     var content = "";
@@ -77,52 +88,3 @@ function refresh_databucket_list(){
 	})
 }
 
-function submit(){
-    var dataset_files = [];
-    var config_file = null;
-
-    dataset_files = get_selected_nodes('dataset_folder', 'inputs/');
-
-    if (dataset_files.length < 1) {
-    	alert('Select dataset files');
-    	return;
-    }
-
-    // get config file name
-    config_files = get_selected_nodes('config_folder', 'configs/');
-
-    if (config_files.length === 0) {
-    	alert('Select config file');
-    	return;
-    }
-    console.log(dataset_files, config_files[0]);
-
-    $('#btn-spinner').css('display', 'inline-block');
-
-    // set the processing status to TRUE
-    processing_status = true;
-
-    // disabled showing detail of dataset and config files
-    detail_flag = false;
-
-    $.ajax({
-    	url: window.location.pathname,
-    	method: 'POST',
-    	data: {
-    		dataset_files: dataset_files,
-    		config_file: config_files[0]
-    	},
-    	success: function(res){
-    	    $('#btn-spinner').css('display', 'none');
-    		console.log(res)
-    		timestamp = res.timestamp;
-    		trigger_function(res.timestamp);
-    	},
-    	error: function(err){
-    	    $('#btn-spinner').css('display', 'none');
-    		console.log(err);
-    		$('#submit_button').attr('disabled', false);		
-    	}
-    })
-    $('#submit_button').attr('disabled', true);
-}
