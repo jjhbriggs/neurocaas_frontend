@@ -27,7 +27,7 @@
                 <a name= "analyses"></a>
                 <span class="botton-line title">Available Analyses</span>
                 <ul class="analysis-list mt-4">
-                    {% for item in analyses %}
+                    {% for item in main_analyses %}
                     <li>
                         <h3>{{item.analysis_name}} <a href="/intro/{{item.id}}"><span class="text-danger">Start Analysis</span></a></h3>
                         <p>
@@ -36,7 +36,7 @@
                     </li>
                     {% endfor %}
                 </ul>
-                <a href="#" class="botton-line">See all analyses</a>
+                <a href="analyses/" class="botton-line">See all analyses</a>
                 <br><br>
             </div>
 
