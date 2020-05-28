@@ -326,11 +326,30 @@ class IntroView(View):
     template_name = "main/intro.html"
 
     def get(self, request):
-        analyses = Analysis.objects.all()
+        main_analyses = Analysis.objects.filter(custom=False).all()
         return render(request=request,
                       template_name=self.template_name,
                       context={
-                          'analyses': analyses,
+                          'main_analyses': main_analyses,
+                          'iam': get_current_iam(request)
+                      })
+
+
+class AnalysisListView(View):
+    """
+        Show all analyses
+        """
+    template_name = "main/analysis_list.html"
+
+    def get(self, request):
+        main_analyses = Analysis.objects.filter(custom=False).all()
+        custom_analyses = Analysis.objects.filter(custom=True).all()
+
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={
+                          'main_analyses': main_analyses,
+                          'custom_analyses': custom_analyses,
                           'iam': get_current_iam(request)
                       })
 
