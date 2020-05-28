@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Analysis list{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 offset-md-2 mt-3 text-left">
+            <div class="analysis-div mt-5">
+                <a name= "analyses"></a>
+                <span class="botton-line title">Available Analyses</span>
+                <ul class="analysis-list mt-4">
+                    {% for item in analyses %}
+                    <li>
+                        <h3>{{item.analysis_name}} <a href="/intro/{{item.id}}"><span class="text-danger">Start Analysis</span></a></h3>
+                        <p>
+                            {{item.short_description}}
+                        </p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
