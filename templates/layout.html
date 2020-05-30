@@ -1,10 +1,12 @@
 {% load static %}
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 	<head>
 		<title>NeuroCaaS | {% block title %}{% endblock %}</title>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content="Neuroscience Cloud Analysis As a Service">
+
 		<link rel="shortcut icon" href="http://stat.columbia.edu/~cunningham/images/favicon-crown.png" type="image/x-icon">
 
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -80,12 +82,12 @@
 										</header>
 										<ul class="icons">
 											<li>
-												<a href="https://twitter.com/neurocaas" class="icon brands fa-twitter" target="_blank">
+												<a href="https://twitter.com/neurocaas" class="icon brands fa-twitter" target="_blank" rel="noopener">
 													<span class="label">Twitter</span>
 												</a>
 											</li>
 											<li>
-												<a href="http://stat.columbia.edu/~cunningham/" class="icon brands fa-dribbble" target="_blank" >
+												<a href="http://stat.columbia.edu/~cunningham/" class="icon brands fa-dribbble" target="_blank" rel="noopener">
 													<span class="label">Dribbble</span>
 												</a>
 											</li>
@@ -109,25 +111,25 @@
         </div>
 		<a id="_iframe" download></a>
     </body>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.dropotron/1.4.3/jquery.dropotron.min.js"></script>
-        <script src="{% static 'js/theme/jquery.scrolly.min.js' %}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.scrollex/0.2.1/jquery.scrollex.min.js"></script>
-        <script src="{% static 'js/theme/browser.min.js' %}"></script>
-        <script src="{% static 'js/theme/breakpoints.min.js' %}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" async></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.dropotron/1.4.3/jquery.dropotron.min.js" async></script>
+        <script src="{% static 'js/theme/jquery.scrolly.min.js' %}" async></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.scrollex/0.2.1/jquery.scrollex.min.js" async></script>
+        <script src="{% static 'js/theme/browser.min.js' %}" async></script>
+        <script src="{% static 'js/theme/breakpoints.min.js' %}" async> </script>
 
 		<!--  Notify Plugin	-->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js"></script>
-        <script src="{% static 'js/theme/util.js' %}"></script>
-		<script src="https://cdn.datatables.net/v/dt/dt-1.10.16/sl-1.2.5/datatables.min.js"></script>
-		<script src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/notify/0.4.2/notify.min.js" async></script>
+        <script src="{% static 'js/theme/util.js' %}" async></script>
+		<script src="https://cdn.datatables.net/v/dt/dt-1.10.16/sl-1.2.5/datatables.min.js" async></script>
+		<script src="https://gyrocode.github.io/jquery-datatables-checkboxes/1.2.11/js/dataTables.checkboxes.min.js" async></script>
 
 		<!--  Custom JS	-->
-		<script src="{% static 'js/main_utils.js' %}"></script>
-        <script src="{% static 'js/theme/main.js' %}"></script>
+		<script src="{% static 'js/main_utils.js' %}" async></script>
+        <script src="{% static 'js/theme/main.js' %}" async></script>
 
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.9/jstree.min.js"></script>
-		<script src="{% static 'jstree/jstree_usage.js' %}"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.9/jstree.min.js" async></script>
+		<script src="{% static 'jstree/jstree_usage.js' %}" async></script>
 
 		{% block js_content %} {% endblock %}
 		<script>
