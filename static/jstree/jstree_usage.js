@@ -12,12 +12,13 @@ function truncate(n, len) {
     return filename + ext;
 };
 
+
 // Insert path into directory tree structure:
 function insert(children = [], [head, ...tail]) {
     let child = children.find(child => child.text === head);
     if (!child) {
         var text = truncate(head, 34);
-        head.includes('.') ?
+        head.includes('.') || tail.length === 0 ?
             children.push(child = {
                 text: text, children: [],
                 icon: 'jstree-file',
@@ -40,6 +41,7 @@ function insert(children = [], [head, ...tail]) {
     return children;
 }
 
+
 // get JSON from files path array
 function get_json_from_array(arr){
     let objectArray = arr
@@ -47,6 +49,7 @@ function get_json_from_array(arr){
         .reduce((children, path) => insert(children, path), []);
     return objectArray;
 }
+
 
 // Get appropriate item by path
 function get_item(path){
@@ -57,6 +60,7 @@ function get_item(path){
     })
     return _item;
 }
+
 
 function create_jstree_for_results(paths){
     $('#hierarchy').remove();
@@ -114,7 +118,6 @@ function create_jstree_for_results(paths){
 function get_selected_nodes(tree_id, prefix){
     var files = [];
     var selectedNodes = $('#' + tree_id).jstree(true).get_selected();
-    console.log(selectedNodes);
     for(var i = 0; i < selectedNodes.length; i++) {
         var full_node = $('#' + tree_id).jstree(true).get_node(selectedNodes[i]);
 
@@ -122,7 +125,6 @@ function get_selected_nodes(tree_id, prefix){
         var ext = (/[.]/.exec(path)) ? /[^.]+$/.exec(path) : undefined;
         if (ext) {
             path = path.replace(prefix, '');
-            console.log(path);
             files.push(path);
         }
     }
@@ -169,7 +171,6 @@ function down_action(node, type, tree){
     var path = tree.get_path(node,"/").replace(node.text, node.li_attr.title)
     path =  node.li_attr.type === 'folder' ?  path + "/" : path;
     path = path.replace(type + "/", '');
-    console.log(path);
     $.ajax({
         url: '/get_user_files/',
         method: 'PUT',
@@ -198,7 +199,6 @@ function down_action(node, type, tree){
 function create_dataset_jstree(paths){
     $('#dataset_folder').remove();
     $("#dataset_div").append('<div id="dataset_folder"></div>');
-
     $('#dataset_folder')
         .on("changed.jstree", function (e, data) {
             if (data.node.li_attr.type === 'folder') return;
@@ -254,7 +254,6 @@ function create_config_jstree(paths){
     $('#config_folder')
         .on("changed.jstree", function (e, data) {
             var filename = data.node.li_attr.title;
-            console.log(filename);
             if (data.node.li_attr.type === 'folder') return;
 
             for ( var i=0; i< configs.length; i++ ){
