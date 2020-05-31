@@ -206,6 +206,7 @@ class UserFilesView(LoginRequiredMixin, View):
             zip_name = file_name.split('/')[-2] if file_name else _type
             zip_path = "static/downloads/%s/%s" % (time.time(), zip_name)
             mkdir(os.path.dirname(zip_path))
+
             shutil.make_archive(zip_path, 'zip', downloaded_path)
             file = "%s.zip" % zip_path
 
@@ -317,6 +318,11 @@ class ResultView(LoginRequiredMixin, View):
             "data_set_logs": data_set_logs,
             "end": end_flag
         })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class JobHistoryView(LoginRequiredMixin, View):
+    pass
 
 
 class IntroView(View):
