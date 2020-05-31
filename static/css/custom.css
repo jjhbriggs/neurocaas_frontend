@@ -229,7 +229,11 @@ button[disabled] {
     text-align: left;
 }
 
-.botton-line{
+#hierarchy_div{
+    overflow-x: auto;
+}
+
+.bottom-line{
     border-bottom: 2px solid;
     padding-bottom: 3px;
     width: 100%;
@@ -282,4 +286,8 @@ a {
 
 .display-inline-table{
     display: inline-table;
+}
+
+#dataset_div, #config_div{
+    overflow-x: auto;
 }
