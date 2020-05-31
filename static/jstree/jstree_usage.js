@@ -1,6 +1,5 @@
 // truncate text
 function truncate(n, len) {
-
     if(n.length <= len) {
         return n;
     }
@@ -18,25 +17,26 @@ function insert(children = [], [head, ...tail]) {
     let child = children.find(child => child.text === head);
     if (!child) {
         var text = truncate(head, 34);
-        head.includes('.') || tail.length === 0 ?
-            children.push(child = {
-                text: text, children: [],
-                icon: 'jstree-file',
-                li_attr: {
-                    title: head,
-                    type: 'file'
-                }
-            }) :
-            children.push(child = {
-                text: head,
-                children: [],
-                state : { 'opened' : true },
-                li_attr: {
-                    title: head,
-                    type: 'folder'
-                }
-            })
+        tail.length === 0 ?
+        children.push(child = {
+            text: text, children: [],
+            icon: 'jstree-file',
+            li_attr: {
+                title: head,
+                type: 'file'
+            }
+        }) :
+        children.push(child = {
+            text: head,
+            children: [],
+            state : { 'opened' : true },
+            li_attr: {
+                title: head,
+                type: 'folder'
+            }
+        })
     }
+
     if (tail.length > 0) insert(child.children, tail);
     return children;
 }
@@ -63,6 +63,7 @@ function get_item(path){
 
 
 function create_jstree_for_results(paths){
+    console.log(paths);
     $('#hierarchy').remove();
     $("#hierarchy_div").append('<div id="hierarchy"></div>');
     $('#hierarchy')
