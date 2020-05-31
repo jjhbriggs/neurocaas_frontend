@@ -63,7 +63,7 @@ function get_item(path){
 
 
 function create_jstree_for_results(paths){
-    console.log(paths);
+    // console.log(paths);
     $('#hierarchy').remove();
     $("#hierarchy_div").append('<div id="hierarchy"></div>');
     $('#hierarchy')
@@ -309,8 +309,8 @@ function create_config_jstree(paths){
 
 // create dataset and config jstrees
 function refresh_data_jstrees(){
-    console.log(datasets);
-    console.log(configs);
+    // console.log(datasets);
+    // console.log(configs);
 
     // create dataset jstree
     data = [];
@@ -324,5 +324,6 @@ function refresh_data_jstrees(){
     for ( var i = 0; i < configs.length; i++){
         data.push("/configs/" + configs[i].name);
     }
+
     if (data.length > 0) create_config_jstree(data);
 }
