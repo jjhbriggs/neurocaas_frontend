@@ -324,5 +324,6 @@ function refresh_data_jstrees(){
     for ( var i = 0; i < configs.length; i++){
         data.push("/configs/" + configs[i].name);
     }
+
     if (data.length > 0) create_config_jstree(data);
 }
