@@ -50,6 +50,9 @@
                 <button onclick="start_process({{analysis.id}})">
                     Start analysis
                 </button>
+                <button onclick="job_history({{analysis.id}})">
+                    Job History
+                </button>
             </div>
         </div>
     </div>
@@ -60,6 +63,10 @@
     <script>
         function start_process(id){
             window.location.href = '/process/' + id;
+        }
+
+        function job_history(id){
+            window.location.href = '/history/' + id;
         }
     </script>
 {% endblock %}
