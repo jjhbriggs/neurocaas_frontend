@@ -291,3 +291,7 @@ a {
 #dataset_div, #config_div{
     overflow-x: auto;
 }
+
+.pl-10per{
+    padding-left: 10%;
+}
