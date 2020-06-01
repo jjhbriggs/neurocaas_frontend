@@ -327,13 +327,19 @@ class JobHistoryListView(LoginRequiredMixin, View):
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
+        results_folder = '%s/results' % iam.group
+
+        job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
+
+        print(job_list)
 
         return render(
             request=request,
             template_name=self.template_name,
             context={
                 "analysis": analysis,
-                'iam': iam
+                'iam': iam,
+                'job_list': job_list
             })
 
 
@@ -344,13 +350,15 @@ class JobDetailView(LoginRequiredMixin, View):
     def get(self, request, ana_id, job_id):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
+        job = None
 
         return render(
             request=request,
             template_name=self.template_name,
             context={
                 "analysis": analysis,
-                'iam': iam
+                'iam': iam,
+                'job': job
             })
 
 
