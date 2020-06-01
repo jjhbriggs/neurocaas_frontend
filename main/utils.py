@@ -137,6 +137,32 @@ def convert_size(size):
         return str(size) + " B"
 
 
+def get_job_list(iam, bucket, folder):
+    """
+       return only job folder list
+        """
+    s3 = boto3.client('s3',
+                      aws_access_key_id=iam.aws_access_key,
+                      aws_secret_access_key=iam.aws_secret_access_key)
+    prefix = "%s/" % folder
+    job_key_list = []
+    try:
+        all_objects = s3.list_objects(Bucket=bucket, Delimiter='/', Prefix=prefix)
+        for obj in all_objects['CommonPrefixes']:
+            if obj['Prefix'].endswith(prefix):
+                continue
+            key = obj['Prefix'][:-1].replace(prefix, '')
+            job_key_list.append({
+                'name': key,
+                'timestamp': key.split('_')[-1]
+            })
+
+    except Exception as e:
+        print(e)
+
+    return job_key_list
+
+
 # function to get all files only of folder in bucket
 def get_file_list(iam, bucket, folder):
     s3 = boto3.resource(
@@ -152,7 +178,8 @@ def get_file_list(iam, bucket, folder):
 
     # Retrieve keys from s3 bucket
     try:
-        for obj in bucket.objects.filter(Prefix=prefix):
+        objects = bucket.objects.filter(Prefix=prefix)
+        for obj in objects:
             if obj.key == prefix or obj.key.endswith('/'):
                 continue
             file_keys.append({
@@ -160,6 +187,7 @@ def get_file_list(iam, bucket, folder):
                 'date_modified': obj.last_modified.strftime('%Y-%m-%d'),
                 'size': convert_size(obj.size)
             })
+
     except Exception as e:
         print(e)
 

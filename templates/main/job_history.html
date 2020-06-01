@@ -15,14 +15,11 @@
             <div class="col-md-8 offset-md-2 mt-3 text-left">
                 <span class="bottom-line title">Job History</span>
 
-                <div class="analysis-div mt-5">
+                <div class="analysis-div mt-5 pl-10per">
                     <ul class="analysis-list mt-4">
-                        {% for job in jobs %}
+                        {% for job in job_list %}
                             <li>
-                                <h3>{{job.analysis_name}} <a href="/intro/{{job.id}}"><span class="text-danger">Start Analysis</span></a></h3>
-                                <p>
-                                    {{item.short_description}}
-                                </p>
+                                <a href="/history/{{analysis.id}}/{{job.timestamp}}">{{job.name}}</a>
                             </li>
                         {% endfor %}
                     </ul>
