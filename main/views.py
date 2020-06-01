@@ -321,8 +321,37 @@ class ResultView(LoginRequiredMixin, View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class JobHistoryView(LoginRequiredMixin, View):
-    pass
+class JobHistoryListView(LoginRequiredMixin, View):
+    template_name = 'main/job_history.html'
+
+    def get(self, request, ana_id):
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+
+        return render(
+            request=request,
+            template_name=self.template_name,
+            context={
+                "analysis": analysis,
+                'iam': iam
+            })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class JobDetailView(LoginRequiredMixin, View):
+    template_name = 'main/job_detail.html'
+
+    def get(self, request, ana_id, job_id):
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+
+        return render(
+            request=request,
+            template_name=self.template_name,
+            context={
+                "analysis": analysis,
+                'iam': iam
+            })
 
 
 class IntroView(View):
