@@ -242,6 +242,7 @@ class ResultView(LoginRequiredMixin, View):
                                             key=cert_file)
 
         # store cert content to server
+        mkdir("static/downloads")
         mkdir("static/downloads/%s" % timestamp)
 
         cert_path = "static/downloads/%s/certificate.txt" % timestamp
@@ -318,8 +319,6 @@ class ResultView(LoginRequiredMixin, View):
             "data_set_logs": data_set_logs,
             "end": end_flag
         })
-
-
 
 
 @method_decorator(csrf_exempt, name='dispatch')
