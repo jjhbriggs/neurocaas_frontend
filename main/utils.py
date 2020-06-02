@@ -15,6 +15,13 @@ def get_current_iam(request):
     return IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
 
 
+def s3_resource(iam):
+    return boto3.resource(
+            's3',
+            aws_access_key_id=iam.aws_access_key,
+            aws_secret_access_key=iam.aws_secret_access_key)
+
+
 def get_current_analysis(ana_id):
     """
         get current analysis from analysis id stored in session
@@ -64,10 +71,7 @@ def get_list_keys(iam, bucket, folder, un_cert=True):
         @return:
                 list of files and folders
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
+    s3 = s3_resource(iam=iam)
 
     bucket = s3.Bucket(bucket)
     prefix = "%s/" % folder
@@ -92,11 +96,7 @@ def download_file_from_s3(iam, bucket, key, folder):
     """
         Download file from s3 and return link of it
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key
-    )
+    s3 = s3_resource(iam=iam)
 
     mkdir(folder)
     file_path = "%s/%s" % (folder, get_name_only(key))
@@ -122,11 +122,9 @@ def download_directory_from_s3(iam, bucket, folder, un_cert=True):
                 downloaded directory location
         """
 
-    s3_resource = boto3.resource('s3',
-                                 aws_access_key_id=iam.aws_access_key,
-                                 aws_secret_access_key=iam.aws_secret_access_key)
+    s3 = s3_resource(iam=iam)
 
-    bucket = s3_resource.Bucket(bucket)
+    bucket = s3.Bucket(bucket)
     timestamp = time.time()
     # create folders
     root = "static/downloads/%s" % timestamp
@@ -158,11 +156,7 @@ def get_last_modified_timestamp(iam, bucket, key):
         @return:
                 timestamp of file
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key
-    )
+    s3 = s3_resource(iam=iam)
     obj = s3.Object(bucket, key)
     try:
         body = obj.get()
@@ -186,11 +180,7 @@ def get_file_content(iam, bucket, key):
         @return:
                 content of file
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key
-    )
+    s3 = s3_resource(iam=iam)
     obj = s3.Object(bucket, key)
 
     try:
@@ -272,10 +262,7 @@ def get_files_detail_list(iam, bucket, folder):
         @return:
                 list of files with its detail (last_modified and size)
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
+    s3 = s3_resource(iam=iam)
 
     bucket = s3.Bucket(bucket)
 
@@ -311,10 +298,7 @@ def delete_folder_from_bucket(iam, bucket, prefix):
         @return:
                 delete folder from s3
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
+    s3 = s3_resource(iam=iam)
     bucket = s3.Bucket(bucket)
     for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
         obj.delete()
@@ -331,10 +315,7 @@ def delete_file_from_bucket(iam, bucket, key):
         @return:
                 delete a file from s3
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
+    s3 = s3_resource(iam=iam)
     obj = s3.Object(bucket, key)
     obj.delete()
 
@@ -351,10 +332,7 @@ def create_submit_json(iam, bucket, key, json_data):
         @return:
                 None
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
+    s3 = s3_resource(iam=iam)
     s3object = s3.Object(bucket, key)
 
     s3object.put(
