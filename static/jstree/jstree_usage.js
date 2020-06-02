@@ -13,10 +13,10 @@ function truncate(n, len) {
 
 
 // Insert path into directory tree structure:
-function insert(children = [], [head, ...tail]) {
+function insert(children = [], [head, ...tail], text_length) {
     let child = children.find(child => child.text === head);
     if (!child) {
-        var text = truncate(head, 34);
+        var text = truncate(head, text_length);
         tail.length === 0 ?
         children.push(child = {
             text: text, children: [],
@@ -37,16 +37,16 @@ function insert(children = [], [head, ...tail]) {
         })
     }
 
-    if (tail.length > 0) insert(child.children, tail);
+    if (tail.length > 0) insert(child.children, tail, text_length);
     return children;
 }
 
 
 // get JSON from files path array
-function get_json_from_array(arr){
+function get_json_from_array(arr, text_length=34){
     let objectArray = arr
         .map(path => path.split('/').slice(1))
-        .reduce((children, path) => insert(children, path), []);
+        .reduce((children, path) => insert(children, path, text_length), []);
     return objectArray;
 }
 
@@ -62,7 +62,7 @@ function get_item(path){
 }
 
 
-function create_jstree_for_results(paths){
+function create_jstree_for_results(paths, text_length=34){
     // console.log(paths);
     $('#hierarchy').remove();
     $("#hierarchy_div").append('<div id="hierarchy"></div>');
@@ -109,7 +109,7 @@ function create_jstree_for_results(paths){
                 icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths)
+                'data' : get_json_from_array(paths, text_length)
             }
         });
 }
@@ -179,7 +179,8 @@ function down_action(node, type, tree){
             file_name: path,
             type: type,
             choice: node.li_attr.type,
-            timestamp: timestamp
+            timestamp: timestamp,
+            ana_id: ana_id
         },
         success: function(res){
             if (res.message !== null){
