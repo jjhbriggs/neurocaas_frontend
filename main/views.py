@@ -320,8 +320,6 @@ class ResultView(LoginRequiredMixin, View):
         })
 
 
-
-
 @method_decorator(csrf_exempt, name='dispatch')
 class JobHistoryListView(LoginRequiredMixin, View):
     template_name = 'main/job_history.html'
