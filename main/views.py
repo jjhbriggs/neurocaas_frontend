@@ -50,7 +50,6 @@ class ProcessView(LoginRequiredMixin, View):
     template_name = "main/process.html"
 
     def get(self, request, id):
-        request.session['ana_id'] = id
         analysis = Analysis.objects.get(pk=id)
         iam = get_current_iam(request)
 
@@ -116,11 +115,11 @@ class UserFilesView(LoginRequiredMixin, View):
         View to manage files for each analysis
         """
 
-    def get(self, request):
+    def get(self, request, ana_id):
         """
             return inputs and config files users uploaded so far
             """
-        analysis = get_current_analysis(request)
+        analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
         # data_set files list
