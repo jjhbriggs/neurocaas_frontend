@@ -350,7 +350,11 @@ class JobDetailView(LoginRequiredMixin, View):
     def get(self, request, ana_id, job_id):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
-        job = None
+        result_folder = "%s/results/%s" % (iam.group.name, job_id)
+        result_keys = get_list_keys(iam=iam,
+                                    bucket=analysis.bucket_name,
+                                    folder=result_folder)
+        job_detail = [item.replace(result_folder, 'results') for item in result_keys]
 
         return render(
             request=request,
@@ -358,7 +362,7 @@ class JobDetailView(LoginRequiredMixin, View):
             context={
                 "analysis": analysis,
                 'iam': iam,
-                'job': job
+                'job_detail': json.dumps(job_detail)
             })
 
 
