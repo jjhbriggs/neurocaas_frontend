@@ -69,7 +69,8 @@ class ProcessView(LoginRequiredMixin, View):
             "data_dataset_dir": "%s/inputs" % iam.group.name,
             "data_config_dir": "%s/configs" % iam.group.name,
             "title": analysis.analysis_name,
-            'iam': iam
+            'iam': iam,
+            'ana_id': id
         })
 
     def post(self, request, id):
@@ -241,7 +242,6 @@ class ResultView(LoginRequiredMixin, View):
                                             key=cert_file)
 
         # store cert content to server
-        mkdir("static/downloads")
         mkdir("static/downloads/%s" % timestamp)
 
         cert_path = "static/downloads/%s/certificate.txt" % timestamp
@@ -320,6 +320,8 @@ class ResultView(LoginRequiredMixin, View):
         })
 
 
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class JobHistoryListView(LoginRequiredMixin, View):
     template_name = 'main/job_history.html'
@@ -350,7 +352,11 @@ class JobDetailView(LoginRequiredMixin, View):
     def get(self, request, ana_id, job_id):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
-        job = None
+        result_folder = "%s/results/%s" % (iam.group.name, job_id)
+        result_keys = get_list_keys(iam=iam,
+                                    bucket=analysis.bucket_name,
+                                    folder=result_folder)
+        job_detail = [item.replace(result_folder, '/results') for item in result_keys]
 
         return render(
             request=request,
@@ -358,7 +364,9 @@ class JobDetailView(LoginRequiredMixin, View):
             context={
                 "analysis": analysis,
                 'iam': iam,
-                'job': job
+                'job_id': job_id,
+                'job_detail': json.dumps(job_detail),
+                'timestamp': job_id.split('_')[-1]
             })
 
 
