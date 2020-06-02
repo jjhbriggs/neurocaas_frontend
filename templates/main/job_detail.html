@@ -28,6 +28,8 @@
         var job_detail = JSON.parse('{{job_detail|safe}}');
         var ana_id = {{analysis.id}};
         var timestamp = {{timestamp}};
+        var dtset_logs = [];
+        var results_links = job_detail;
         $(document).ready(function(){
             console.log(job_detail);
             create_jstree_for_results(job_detail, 50);
