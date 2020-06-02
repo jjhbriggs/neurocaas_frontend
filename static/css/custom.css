@@ -295,3 +295,7 @@ a {
 .pl-10per{
     padding-left: 10%;
 }
+
+.top-0 {
+    top:0px!important;
+}
