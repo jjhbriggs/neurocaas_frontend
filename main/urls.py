@@ -12,6 +12,6 @@ urlpatterns = [
     path('analyses/', AnalysisListView.as_view(), name='analyses'),
 
     path('process/<int:id>', ProcessView.as_view(), name='process'),
-    path('get_user_files/', UserFilesView.as_view(), name='get_user_files'),
+    path('get_user_files/<int:ana_id>', UserFilesView.as_view(), name='get_user_files'),
     path('get_results/', ResultView.as_view(), name='get_results')
 ]

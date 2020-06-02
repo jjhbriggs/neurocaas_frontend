@@ -38,7 +38,7 @@ function refresh_databucket_list(){
     $('#config_folder').html(loading_template);
 
 	$.ajax({
-		url: '/get_user_files/',
+		url: '/get_user_files/' + ana_id,
 		success: function(res){
 			console.log(res);
 			if (res.status == 200){
