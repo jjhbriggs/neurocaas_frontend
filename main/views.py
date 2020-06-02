@@ -16,6 +16,75 @@ import shutil
 
 # Create your views here.
 
+class IntroView(View):
+    """
+        Intro View
+        """
+    template_name = "main/intro.html"
+
+    def get(self, request):
+        main_analyses = Analysis.objects.filter(custom=False).all()
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={
+                          'main_analyses': main_analyses,
+                          'iam': get_current_iam(request)
+                      })
+
+
+class AnalysisListView(View):
+    """
+        Show all analyses
+        """
+    template_name = "main/analysis_list.html"
+
+    def get(self, request):
+        main_analyses = Analysis.objects.filter(custom=False).all()
+        custom_analyses = Analysis.objects.filter(custom=True).all()
+
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={
+                          'main_analyses': main_analyses,
+                          'custom_analyses': custom_analyses,
+                          'iam': get_current_iam(request)
+                      })
+
+
+class QAView(View):
+    """
+        Q/A Page View
+        """
+
+    template_name = "main/qa_page.html"
+
+    def get(self, request):
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={
+                          'iam': get_current_iam(request)
+                      })
+
+
+class AnalysisIntroView(View):
+    """
+        Analysis Intro View
+        """
+    template_name = "main/analysis_intro.html"
+
+    def get(self, request, ana_id):
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+
+        return render(
+            request=request,
+            template_name=self.template_name,
+            context={
+                "analysis": analysis,
+                'iam': iam
+            })
+
+
 class HomeView(View):
     """
         Home Page View
@@ -365,73 +434,4 @@ class JobDetailView(LoginRequiredMixin, View):
                 'job_id': job_id,
                 'job_detail': json.dumps(job_detail),
                 'timestamp': job_id.split('_')[-1]
-            })
-
-
-class IntroView(View):
-    """
-        Intro View
-        """
-    template_name = "main/intro.html"
-
-    def get(self, request):
-        main_analyses = Analysis.objects.filter(custom=False).all()
-        return render(request=request,
-                      template_name=self.template_name,
-                      context={
-                          'main_analyses': main_analyses,
-                          'iam': get_current_iam(request)
-                      })
-
-
-class AnalysisListView(View):
-    """
-        Show all analyses
-        """
-    template_name = "main/analysis_list.html"
-
-    def get(self, request):
-        main_analyses = Analysis.objects.filter(custom=False).all()
-        custom_analyses = Analysis.objects.filter(custom=True).all()
-
-        return render(request=request,
-                      template_name=self.template_name,
-                      context={
-                          'main_analyses': main_analyses,
-                          'custom_analyses': custom_analyses,
-                          'iam': get_current_iam(request)
-                      })
-
-
-class QAView(View):
-    """
-        Q/A Page View
-        """
-
-    template_name = "main/qa_page.html"
-
-    def get(self, request):
-        return render(
-            request=request,
-            template_name=self.template_name,
-            context={'iam': get_current_iam(request)}
-        )
-
-
-class AnalysisIntroView(View):
-    """
-        Analysis Intro View
-        """
-    template_name = "main/analysis_intro.html"
-
-    def get(self, request, id):
-        analysis = Analysis.objects.get(pk=id)
-        iam = get_current_iam(request)
-
-        return render(
-            request=request,
-            template_name=self.template_name,
-            context={
-                "analysis": analysis,
-                'iam': iam
             })
