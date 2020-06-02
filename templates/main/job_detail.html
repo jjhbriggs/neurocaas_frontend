@@ -5,7 +5,34 @@
 
 
 {% block content %}
+    <div class="col-md-10 offset-md-1 mt-5">
+        <div class="row">
+            <!-- Title -->
+            <div class="col-md-8 offset-md-2 text-center">
+                <span class="title clickable">{{job_id}}</span>
+                <hr class="top-0"/>
+            </div>
 
+            <!-- Tree Structure -->
+            <div class="col-md-8 offset-md-2 text-left mt-3">
+                <div id="hierarchy_div" style="display: block;">
+                    <div id="hierarchy"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
-
+{% block js_content %}
+    <script>
+        var job_detail = JSON.parse('{{job_detail|safe}}');
+        var ana_id = {{analysis.id}};
+        var timestamp = {{timestamp}};
+        var dtset_logs = [];
+        var results_links = job_detail;
+        $(document).ready(function(){
+            console.log(job_detail);
+            create_jstree_for_results(job_detail, 50);
+        });
+    </script>
 {% endblock %}

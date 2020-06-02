@@ -29,7 +29,7 @@ def mkdir(path):
         create new folder by path
         """
     if not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)
 
 
 def get_download_file(iam, bucket, key, timestamp):
@@ -42,8 +42,6 @@ def get_download_file(iam, bucket, key, timestamp):
         aws_secret_access_key=iam.aws_secret_access_key
     )
 
-    parent_folder = "static/downloads"
-    mkdir(parent_folder)
     folder = "static/downloads/%s" % timestamp
     mkdir(folder)
 
@@ -180,7 +178,7 @@ def get_file_list(iam, bucket, folder):
     try:
         objects = bucket.objects.filter(Prefix=prefix)
         for obj in objects:
-            if obj.key == prefix or obj.key.endswith('/'):
+            if obj.key.count('internal_ec2_logs') or obj.key == prefix or obj.key.endswith('/'):
                 continue
             file_keys.append({
                 'key': obj.key,
@@ -206,7 +204,7 @@ def get_list_keys(iam, bucket, folder):
     file_keys = []
 
     for obj in bucket.objects.filter(Prefix=prefix):
-        if obj.key == prefix or obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
+        if obj.key.count('internal_ec2_logs') or obj.key == prefix or obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
             continue
         file_keys.append(obj.key)
 
@@ -265,7 +263,6 @@ def download_directory_from_s3(iam, bucket, folder):
     bucket = s3_resource.Bucket(bucket)
     timestamp = time.time()
     root = "static/downloads/%s" % timestamp
-    mkdir(root)
 
     for obj in bucket.objects.filter(Prefix=folder):
         if obj.key.count('internal_ec2_logs') or obj.key.endswith('certificate.txt') or \
