@@ -263,7 +263,8 @@ def download_directory_from_s3(iam, bucket, folder):
     bucket = s3_resource.Bucket(bucket)
     timestamp = time.time()
     root = "static/downloads/%s" % timestamp
-
+    mkdir(root)
+    
     for obj in bucket.objects.filter(Prefix=folder):
         if obj.key.count('internal_ec2_logs') or obj.key.endswith('certificate.txt') or \
                 obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
