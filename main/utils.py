@@ -180,7 +180,7 @@ def get_file_list(iam, bucket, folder):
     try:
         objects = bucket.objects.filter(Prefix=prefix)
         for obj in objects:
-            if obj.key == prefix or obj.key.endswith('/'):
+            if obj.key.count('internal_ec2_logs') or obj.key == prefix or obj.key.endswith('/'):
                 continue
             file_keys.append({
                 'key': obj.key,
@@ -206,7 +206,7 @@ def get_list_keys(iam, bucket, folder):
     file_keys = []
 
     for obj in bucket.objects.filter(Prefix=prefix):
-        if obj.key == prefix or obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
+        if obj.key.count('internal_ec2_logs') or obj.key == prefix or obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
             continue
         file_keys.append(obj.key)
 
