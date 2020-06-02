@@ -62,7 +62,7 @@ function get_item(path){
 }
 
 
-function create_jstree_for_results(paths, text_length=34){
+function create_jstree_for_results(paths, text_length=34, job_history=false){
     // console.log(paths);
     $('#hierarchy').remove();
     $("#hierarchy_div").append('<div id="hierarchy"></div>');
@@ -167,7 +167,7 @@ function delete_action(node, type, tree){
 
 
 // download Action
-function down_action(node, type, tree){
+function down_action(node, type, tree, job_history=false){
 
     var path = tree.get_path(node,"/").replace(node.text, node.li_attr.title)
     path =  node.li_attr.type === 'folder' ?  path + "/" : path;
@@ -180,7 +180,8 @@ function down_action(node, type, tree){
             type: type,
             choice: node.li_attr.type,
             timestamp: timestamp,
-            ana_id: ana_id
+            ana_id: ana_id,
+            job_history: job_history
         },
         success: function(res){
             if (res.message !== null){
