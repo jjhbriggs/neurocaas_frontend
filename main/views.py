@@ -111,6 +111,53 @@ class HomeView(View):
         )
 
 
+class JobHistoryListView(LoginRequiredMixin, View):
+    template_name = 'main/job_history.html'
+
+    def get(self, request, ana_id):
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+        results_folder = '%s/results' % iam.group
+
+        job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
+
+        print(job_list)
+
+        return render(
+            request=request,
+            template_name=self.template_name,
+            context={
+                "analysis": analysis,
+                'iam': iam,
+                'job_list': job_list
+            })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class JobDetailView(LoginRequiredMixin, View):
+    template_name = 'main/job_detail.html'
+
+    def get(self, request, ana_id, job_id):
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+        result_folder = "%s/results/%s" % (iam.group.name, job_id)
+        result_keys = get_list_keys(iam=iam,
+                                    bucket=analysis.bucket_name,
+                                    folder=result_folder)
+        job_detail = [item.replace(result_folder, '/results') for item in result_keys]
+
+        return render(
+            request=request,
+            template_name=self.template_name,
+            context={
+                "analysis": analysis,
+                'iam': iam,
+                'job_id': job_id,
+                'job_detail': json.dumps(job_detail),
+                'timestamp': job_id.split('_')[-1]
+            })
+
+
 @method_decorator(csrf_exempt, name='dispatch')
 class ProcessView(LoginRequiredMixin, View):
     """
@@ -388,50 +435,3 @@ class ResultView(LoginRequiredMixin, View):
             "end": end_flag
         })
 
-
-@method_decorator(csrf_exempt, name='dispatch')
-class JobHistoryListView(LoginRequiredMixin, View):
-    template_name = 'main/job_history.html'
-
-    def get(self, request, ana_id):
-        analysis = Analysis.objects.get(pk=ana_id)
-        iam = get_current_iam(request)
-        results_folder = '%s/results' % iam.group
-
-        job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
-
-        print(job_list)
-
-        return render(
-            request=request,
-            template_name=self.template_name,
-            context={
-                "analysis": analysis,
-                'iam': iam,
-                'job_list': job_list
-            })
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-class JobDetailView(LoginRequiredMixin, View):
-    template_name = 'main/job_detail.html'
-
-    def get(self, request, ana_id, job_id):
-        analysis = Analysis.objects.get(pk=ana_id)
-        iam = get_current_iam(request)
-        result_folder = "%s/results/%s" % (iam.group.name, job_id)
-        result_keys = get_list_keys(iam=iam,
-                                    bucket=analysis.bucket_name,
-                                    folder=result_folder)
-        job_detail = [item.replace(result_folder, '/results') for item in result_keys]
-
-        return render(
-            request=request,
-            template_name=self.template_name,
-            context={
-                "analysis": analysis,
-                'iam': iam,
-                'job_id': job_id,
-                'job_detail': json.dumps(job_detail),
-                'timestamp': job_id.split('_')[-1]
-            })
