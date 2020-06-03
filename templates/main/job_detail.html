@@ -27,17 +27,17 @@
 
 {% block js_content %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.9/jstree.min.js"></script>
-    <script src="{% static 'jstree/jstree_usage.js' %}"></script>
+    <script src="{% static 'js/jstree_jobs.js' %}"></script>
 
     <script>
         var job_detail = JSON.parse('{{job_detail|safe}}');
         var ana_id = {{analysis.id}};
+        var ana_prefix = '{{analysis.result_prefix}}';
         var timestamp = {{timestamp}};
-        var dtset_logs = [];
         var results_links = job_detail;
         $(document).ready(function(){
             console.log(job_detail);
-            create_jstree_for_results(job_detail, 50);
+            create_job_tree(job_detail);
         });
     </script>
 {% endblock %}
