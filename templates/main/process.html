@@ -29,7 +29,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="upload-div" id="dataset-area">
+        <div class="upload-div" id="data_set-area">
             <form class="drop-area">
                 <p>Drag & Drop or Click!</p>
                 <input type="file" class="fileElem" accept="*/*" multiple>
@@ -146,41 +146,38 @@
 
     <script>
         var configs = [];
-        var datasets = [];
+        var data_sets = [];
 
         // variables to show jstree
         var results_links = [];
-        var dtset_logs = [];
+        var data_set_logs = [];
 
-        var detail_flag = true;  // flag to show detail of dataset and config.
+        var detail_flag = true;  // flag to show detail of data_set and config.
 
         var id1, id2;
         var id1 = "{{id1}}";
         var id2 = "{{id2}}";
         var processing_status = false;
-        var data_dataset_dir = "{{data_dataset_dir}}";
-        var data_config_dir = "{{data_config_dir}}";
-        var data_bucket = "{{bucket}}";
+        var data_set_dir = "{{data_set_dir}}";
+        var config_dir = "{{config_dir}}";
+        var bucket = "{{bucket}}";
         var ana_id = {{ana_id}};
-        var dataset_area = new FileUpload();
+        var data_set_area = new FileUpload();
         var config_area = new FileUpload();
-
-
         var timestamp = 0;
+
     </script>
     <script src="{% static 'js/process.js' %}"></script>
     
     <script type="text/javascript">
         
-        dataset_area.init("dataset-area", id1, id2, data_bucket, data_dataset_dir, "", submit_trigger, true);
-
-        
-        config_area.init("config-area", id1, id2, data_bucket, data_config_dir, "", submit_trigger, true)
+        data_set_area.init("data_set-area", id1, id2, bucket, data_set_dir "", submit_trigger, true);
+        config_area.init("config-area", id1, id2, bucket, config_dir, "", submit_trigger, true)
 
         $(document).ready(function(){
             $('.spinner').css('display', 'none');
             $('#btn-spinner').css('display', 'none');
-            refresh_databucket_list();
+            refresh_bucket_list();
         })
     </script>
 {% endblock %}

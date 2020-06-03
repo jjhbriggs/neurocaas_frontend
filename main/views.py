@@ -210,11 +210,11 @@ class FilesView(LoginRequiredMixin, View):
             "message": file
         })
 
-    def delete(self, request):
+    def delete(self, request, ana_id):
         """
             Delete a file from inputs or config folder on s3 by filename
             """
-        analysis = get_current_analysis(request)
+        analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
         dicts = QueryDict(request.body)
@@ -226,53 +226,6 @@ class FilesView(LoginRequiredMixin, View):
         return JsonResponse({
             "status": 200,
             "message": delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=file_key)
-        })
-
-    def put(self, request):
-        """
-            Download a file or folder from inputs or config folder on s3 by filename
-            """
-        analysis = get_current_analysis(request)
-        iam = get_current_iam(request)
-        dicts = QueryDict(request.body)
-
-        file_name = dicts.get('file_name')
-        _type = dicts.get('type')
-        choice = dicts.get('choice', 'file')
-        timestamp = dicts.get('timestamp', 0)
-
-        file = ""
-        if choice == 'file':
-            file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
-            file = get_download_file(iam=iam,
-                                     bucket=analysis.bucket_name,
-                                     key=file_key,
-                                     timestamp=_type)
-        else:
-            """ 
-                Folder downloading here 
-                """
-            root_folder = "%s/%s/" % (iam.group.name, _type)
-            if _type == 'results':
-                folder = "%s%s%s/%s" % (root_folder, analysis.result_prefix, timestamp, file_name)
-            else:
-                folder = "%s%s" % (root_folder, file_name)
-
-            downloaded_path = download_directory_from_s3(
-                iam=iam,
-                bucket=analysis.bucket_name,
-                folder=folder)
-
-            zip_name = file_name.split('/')[-2] if file_name else _type
-            zip_path = "static/downloads/%s/%s" % (time.time(), zip_name)
-            mkdir(os.path.dirname(zip_path))
-
-            shutil.make_archive(zip_path, 'zip', downloaded_path)
-            file = "%s.zip" % zip_path
-
-        return JsonResponse({
-            "status": 200,
-            "message": file
         })
 
 
@@ -299,8 +252,8 @@ class ProcessView(LoginRequiredMixin, View):
             "id1": access_id,
             "id2": secret_key,
             'bucket': analysis.bucket_name,
-            "data_dataset_dir": "%s/inputs" % iam.group.name,
-            "data_config_dir": "%s/configs" % iam.group.name,
+            "data_set_dir": "%s/inputs" % iam.group.name,
+            "config_dir": "%s/configs" % iam.group.name,
             "title": analysis.analysis_name,
             'iam': iam,
             'ana_id': id
