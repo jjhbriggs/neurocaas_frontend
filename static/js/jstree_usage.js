@@ -1,80 +1,18 @@
-// truncate text
-function truncate(n, len) {
-    if(n.length <= len) {
-        return n;
-    }
-
-    var ext = n.substring(n.length - 8, n.length);
-    var filename = n.replace(ext,'');
-
-    filename = filename.substr(0, len-11) + (n.length > len ? '...' : '');
-    return filename + ext;
-};
-
-
-// Insert path into directory tree structure:
-function insert(children = [], [head, ...tail], text_length) {
-    let child = children.find(child => child.text === head);
-    if (!child) {
-        var text = truncate(head, text_length);
-        tail.length === 0 ?
-        children.push(child = {
-            text: text, children: [],
-            icon: 'jstree-file',
-            li_attr: {
-                title: head,
-                type: 'file'
-            }
-        }) :
-        children.push(child = {
-            text: head,
-            children: [],
-            state : { 'opened' : true },
-            li_attr: {
-                title: head,
-                type: 'folder'
-            }
-        })
-    }
-
-    if (tail.length > 0) insert(child.children, tail, text_length);
-    return children;
-}
-
-
-// get JSON from files path array
-function get_json_from_array(arr, text_length=34){
-    let objectArray = arr
-        .map(path => path.split('/').slice(1))
-        .reduce((children, path) => insert(children, path, text_length), []);
-    return objectArray;
-}
-
-
-// Get appropriate item by path
-function get_item(path){
-    var _item = null;
-    [...dtset_logs, ...results_links].forEach(function(item){
-        if (item.path === path)
-            _item = item
-    })
-    return _item;
-}
-
-
-function create_jstree_for_results(paths, text_length=34, job_history=false){
+function create_results_tree(paths){
     // console.log(paths);
     $('#hierarchy').remove();
     $("#hierarchy_div").append('<div id="hierarchy"></div>');
     $('#hierarchy')
         .on("changed.jstree", function (e, data) {
             if(data.selected.length) {
+                
                 if (data.node.li_attr.type === 'folder') return;
+
                 var full_path = data.instance.get_path(data.node,'/').replace(data.node.text, data.node.li_attr.title).replace("results/", '');
-                var item = get_item(full_path);
-                if (item !== null){
-                    window.open( '../' + item.link, "_blank");
-                }
+
+                full_path = 'results/' + ana_prefix + timestamp + '/' + full_path;
+                console.log( "selected node path", full_path);
+                show_file_content(full_path, ana_id);
             }
         })
         .jstree({
@@ -86,22 +24,15 @@ function create_jstree_for_results(paths, text_length=34, job_history=false){
                         downItem: { // The "delete" menu item
                             label: "Download",
                             action: function () {
-                                if (node.li_attr.type === 'folder'){
-                                    var tree = $('#hierarchy').jstree(true);
-                                    down_action(node, 'results', tree);
-                                } else{
-                                    var path = "/static/downloads/" + timestamp + "/" + node.li_attr.title;
-                                    document.getElementById('_iframe').href = path;
-                                    document.getElementById('_iframe').click();
-                                }
+
+                                var tree = $('#hierarchy').jstree(true);
+                                var path = get_full_path_of_node(node, tree);
+                                path = path.replace("results/", '');
+                                var key =  'results/' + ana_prefix + timestamp + "/" + path;
+                                down_action(node, key.slice(0, -1));
                             }
                         }
                     };
-
-                    // Delete the "delete" menu item if selected node is folder
-                    if (node.li_attr.type === 'folder') {
-                        // delete items.downItem;
-                    }
 
                     return items;
                 },
@@ -109,7 +40,7 @@ function create_jstree_for_results(paths, text_length=34, job_history=false){
                 icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths, text_length)
+                'data' : get_json_from_array(paths)
             }
         });
 }
@@ -140,29 +71,7 @@ function update_jstree(){
     [...dtset_logs, ...results_links].forEach(function(item){
         paths.push('/results/' + item.path);
     });
-    create_jstree_for_results(paths);
-}
-
-
-// delete Action
-function delete_action(node, type, tree){
-    var path = tree.get_path(node,"/").replace(node.text, node.li_attr.title).replace(type + "/", '');
-
-    $.ajax({
-        url: '/get_user_files/',
-        method: 'DELETE',
-        data: {
-            file_name: path,
-            type: type
-        },
-        success: function(res){
-            tree.delete_node(node);
-            // refresh_databucket_list();
-        },
-        error: function(err){
-            console.log(err);
-        }
-    })
+    create_results_tree(paths);
 }
 
 
@@ -198,7 +107,7 @@ function down_action(node, type, tree, job_history=false){
 }
 
 
-// create jstrees for datasets
+// create jstrees for data_sets
 function create_dataset_jstree(paths){
     $('#dataset_folder').remove();
     $("#dataset_div").append('<div id="dataset_folder"></div>');
@@ -206,8 +115,8 @@ function create_dataset_jstree(paths){
         .on("changed.jstree", function (e, data) {
             if (data.node.li_attr.type === 'folder') return;
             var filename = data.instance.get_path(data.node,'/').replace(data.node.text, data.node.li_attr.title).replace("inputs/", '');
-            for ( var i=0; i< datasets.length; i++ ){
-                if (datasets[i].name === filename) show_detail(i, 0);
+            for ( var i=0; i< data_sets.length; i++ ){
+                if (data_sets[i].name === filename) show_detail(i, 0);
             }
         })
         .jstree({
@@ -220,8 +129,11 @@ function create_dataset_jstree(paths){
                             label: "Delete",
                             action: function () {
                                 var tree = $('#dataset_folder').jstree(true);
-                                if (confirm("Are you sure to delete item, " + node.li_attr.title + "?"))
-                                    delete_action(node, 'inputs', tree);
+
+                                if (confirm("Are you sure to delete item, " + node.li_attr.title + "?")){
+                                    var key = get_full_path_of_node(node, tree);
+                                    delete_action(node, key.slice(0, -1), tree);
+                                }
                             }
                         }
                     };
@@ -311,13 +223,11 @@ function create_config_jstree(paths){
 
 // create dataset and config jstrees
 function refresh_data_jstrees(){
-    // console.log(datasets);
-    // console.log(configs);
 
     // create dataset jstree
     data = [];
-    for ( var i = 0; i < datasets.length; i++){
-        data.push("/inputs/" + datasets[i].name);
+    for ( var i = 0; i < data_sets.length; i++){
+        data.push("/inputs/" + data_sets[i].name);
     }
     if (data.length > 0) create_dataset_jstree(data);
 

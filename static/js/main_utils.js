@@ -48,18 +48,23 @@ function AjaxRequest(url, method='GET', data=null){
 
 
 function download_cert(){
-    var path = '/static/downloads/' + timestamp + "/certificate.txt";
-    document.getElementById('_iframe').href = path;
-    document.getElementById('_iframe').click();
+    if (!processing_status){
+        alert('Please start process first.');
+        return;
+    }
+    
+    var path = 'results/' + ana_prefix + timestamp + "/logs/certificate.txt";
+    download_file(path, ana_id);
 }
+
 
 function show_detail(ind, type){
     if (!detail_flag) return;
     var content = "";
     if (type === 0){
-        content += 'Name: ' + datasets[ind].name + '\n\n';
-        content += 'Size: ' + datasets[ind].size + '\n\n';
-        content += 'Date modified: ' + datasets[ind].date_modified + '\n';
+        content += 'Name: ' + data_sets[ind].name + '\n\n';
+        content += 'Size: ' + data_sets[ind].size + '\n\n';
+        content += 'Date modified: ' + data_sets[ind].date_modified + '\n';
     } else {
         content += 'Name: ' + configs[ind].name + '\n\n';
         content += 'Date modified: ' + configs[ind].date_modified + '\n\n';
@@ -78,15 +83,16 @@ async function refresh_bucket(){
     var url = '/user_files/' + ana_id;
     var res = await AjaxRequest(url);
     console.log(res);
+
     if (res.status == 200){
         configs = res.configs;
-        datasets = res.data_sets;
+        data_sets = res.data_sets;
 
-        var dataset_html = '';
-        for ( var i = 0 ; i < datasets.length ; i++)
-            dataset_html += get_tr_template(datasets[i].name, "checkbox", "dataset_file", i, 0)
+        var data_set_html = '';
+        for ( var i = 0 ; i < data_sets.length ; i++)
+            data_set_html += get_tr_template(data_sets[i].name, "checkbox", "dataset_file", i, 0)
 
-        dataset_html === '' ? $('#dataset_table tbody').html(empty_template) : $('#dataset_table tbody').html(dataset_html);
+        data_set_html === '' ? $('#data_set_table tbody').html(empty_template) : $('#data_set_table tbody').html(data_set_html);
 
         var config_html = '';
         for ( var i = 0 ; i < configs.length ; i++)
@@ -118,7 +124,7 @@ async function refresh_bucket(){
 
         refresh_data_jstrees();
 
-        datasets.length == 0 ? $('#dataset_folder').html(empty_template): null;
+        data_sets.length == 0 ? $('#data_set_folder').html(empty_template): null;
         configs.length == 0 ? $('#config_folder').html(empty_template): null;
     }
 }

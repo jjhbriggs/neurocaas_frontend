@@ -218,14 +218,13 @@ class FilesView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         dicts = QueryDict(request.body)
-        file_name = dicts.get('file_name')
-        _type = dicts.get('type')
+        key = dicts.get('key')
 
-        file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
+        file_key = "%s/%s" % (iam.group.name, key)
 
         return JsonResponse({
             "status": 200,
-            "message": delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=file_key)
+            "message": delete_file_from_bucket(iam=iam, bucket=analysis.bucket_name, key=file_key)
         })
 
 
@@ -256,7 +255,7 @@ class ProcessView(LoginRequiredMixin, View):
             "config_dir": "%s/configs" % iam.group.name,
             "title": analysis.analysis_name,
             'iam': iam,
-            'ana_id': id
+            'analysis': analysis
         })
 
     def post(self, request, id):
