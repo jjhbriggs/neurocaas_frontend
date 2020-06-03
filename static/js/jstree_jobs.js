@@ -76,37 +76,6 @@ function get_json_from_array(arr, text_length=34){
 }
 
 
-// Async Ajax Request
-function AjaxRequest(url, method='GET', data=null){
-    /*
-        Async Ajax Module
-
-        @params:
-                url: endpoint,
-                data: array,
-                method: request method
-        @return:
-                array
-    */
-    show_spinner();
-    return new Promise((resolve, reject) => {
-       $.ajax({
-            url : url,
-            method : method,
-            data : data,
-            success :  function(res){
-                hide_spinner();
-                resolve(res);
-            },
-            error: function(err){
-                hide_spinner();
-                reject();
-            }
-       });
-    });
-}
-
-
 function get_full_path_of_node(node, tree){
     /*
         Get full path from jstree node.
