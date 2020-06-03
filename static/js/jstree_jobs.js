@@ -77,15 +77,18 @@ function get_json_from_array(arr, text_length=34){
 
 // Async Ajax Request
 function AjaxRequest(url, method='GET', data=null){
+    show_spinner();
     return new Promise((resolve, reject) => {
        $.ajax({
             url : url,
             method : method,
             data : data,
             success :  function(res){
+                hide_spinner();
                 resolve(res);
             },
             error: function(err){
+                hide_spinner();
                 reject();
             }
        });
@@ -99,14 +102,12 @@ function get_full_path_of_node(node, tree){
 
 
 // download Action
-async function down_action(node, key){
-
+function down_action(node, key){
     if (node.li_attr.type === 'folder')
         download_folder(key, ana_id);
     else
         download_file(key, ana_id);
 }
-
 
 async function download_file(file_key, ana_id){
     var url = '/files/' + ana_id + '/?key=' + encodeURIComponent(file_key);
