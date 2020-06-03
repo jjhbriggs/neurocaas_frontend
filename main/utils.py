@@ -92,6 +92,10 @@ def get_list_keys(iam, bucket, folder, un_cert=True):
     return file_keys
 
 
+def generate_folder():
+    return "%s/%s" % ("static/downloads", time.time())
+
+
 def download_file_from_s3(iam, bucket, key, folder):
     """
         Download file from s3 and return link of it
