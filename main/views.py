@@ -111,7 +111,7 @@ class HomeView(View):
         )
 
 
-class JobHistoryListView(LoginRequiredMixin, View):
+class JobListView(LoginRequiredMixin, View):
     template_name = 'main/job_history.html'
 
     def get(self, request, ana_id):
@@ -133,7 +133,6 @@ class JobHistoryListView(LoginRequiredMixin, View):
             })
 
 
-@method_decorator(csrf_exempt, name='dispatch')
 class JobDetailView(LoginRequiredMixin, View):
     template_name = 'main/job_detail.html'
 
@@ -143,9 +142,10 @@ class JobDetailView(LoginRequiredMixin, View):
         result_folder = "%s/results/%s" % (iam.group.name, job_id)
         result_keys = get_list_keys(iam=iam,
                                     bucket=analysis.bucket_name,
-                                    folder=result_folder)
+                                    folder=result_folder,
+                                    un_cert=False)
         job_detail = [item.replace(result_folder, '/results') for item in result_keys]
-
+        print(job_detail)
         return render(
             request=request,
             template_name=self.template_name,
@@ -156,6 +156,96 @@ class JobDetailView(LoginRequiredMixin, View):
                 'job_detail': json.dumps(job_detail),
                 'timestamp': job_id.split('_')[-1]
             })
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class FilesView(LoginRequiredMixin, View):
+    """
+        View to manage files for each analysis
+        """
+
+    def get(self, request, ana_id):
+        """
+            return inputs and config files users uploaded so far
+            """
+        analysis = get_current_analysis(ana_id)
+        iam = get_current_iam(request)
+
+        key = request.GET.get('key', None)
+        file_key = "%s/%s" % (iam.group.name, key)
+        folder = generate_folder()
+
+        downloaded_path = download_file_from_s3(iam=iam, bucket=analysis.bucket_name, key=file_key, folder=folder)
+
+        return JsonResponse({
+            "status": 200,
+            "message": downloaded_path
+        })
+
+    def delete(self, request):
+        """
+            Delete a file from inputs or config folder on s3 by filename
+            """
+        analysis = get_current_analysis(request)
+        iam = get_current_iam(request)
+
+        dicts = QueryDict(request.body)
+        file_name = dicts.get('file_name')
+        _type = dicts.get('type')
+
+        file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
+
+        return JsonResponse({
+            "status": 200,
+            "message": delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=file_key)
+        })
+
+    def put(self, request):
+        """
+            Download a file or folder from inputs or config folder on s3 by filename
+            """
+        analysis = get_current_analysis(request)
+        iam = get_current_iam(request)
+        dicts = QueryDict(request.body)
+
+        file_name = dicts.get('file_name')
+        _type = dicts.get('type')
+        choice = dicts.get('choice', 'file')
+        timestamp = dicts.get('timestamp', 0)
+
+        file = ""
+        if choice == 'file':
+            file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
+            file = get_download_file(iam=iam,
+                                     bucket=analysis.bucket_name,
+                                     key=file_key,
+                                     timestamp=_type)
+        else:
+            """ 
+                Folder downloading here 
+                """
+            root_folder = "%s/%s/" % (iam.group.name, _type)
+            if _type == 'results':
+                folder = "%s%s%s/%s" % (root_folder, analysis.result_prefix, timestamp, file_name)
+            else:
+                folder = "%s%s" % (root_folder, file_name)
+
+            downloaded_path = download_directory_from_s3(
+                iam=iam,
+                bucket=analysis.bucket_name,
+                folder=folder)
+
+            zip_name = file_name.split('/')[-2] if file_name else _type
+            zip_path = "static/downloads/%s/%s" % (time.time(), zip_name)
+            mkdir(os.path.dirname(zip_path))
+
+            shutil.make_archive(zip_path, 'zip', downloaded_path)
+            file = "%s.zip" % zip_path
+
+        return JsonResponse({
+            "status": 200,
+            "message": file
+        })
 
 
 @method_decorator(csrf_exempt, name='dispatch')
