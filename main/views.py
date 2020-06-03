@@ -166,7 +166,7 @@ class FilesView(LoginRequiredMixin, View):
 
     def get(self, request, ana_id):
         """
-            return inputs and config files users uploaded so far
+            Download file from s3 and return downloaded file path
             """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
@@ -180,6 +180,34 @@ class FilesView(LoginRequiredMixin, View):
         return JsonResponse({
             "status": 200,
             "message": downloaded_path
+        })
+
+    def post(self, request, ana_id):
+        """
+            Download folder from s3, zipping folder and return zip file path
+            """
+
+        analysis = get_current_analysis(ana_id)
+        iam = get_current_iam(request)
+
+        key = request.POST.get('key', None)
+        folder_key = "%s/%s" % (iam.group.name, key)
+
+        downloaded_path = download_directory_from_s3(
+            iam=iam,
+            bucket=analysis.bucket_name,
+            folder=folder_key, un_cert=False)
+
+        zip_name = key.split('/')[-1]
+        zip_path = "static/downloads/%s/%s" % (time.time(), zip_name)
+        mkdir(os.path.dirname(zip_path))
+
+        shutil.make_archive(zip_path, 'zip', downloaded_path)
+        file = "%s.zip" % zip_path
+
+        return JsonResponse({
+            "status": 200,
+            "message": file
         })
 
     def delete(self, request):

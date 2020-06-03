@@ -78,16 +78,16 @@ def get_list_keys(iam, bucket, folder, un_cert=True):
 
     file_keys = []
 
-    try:
-        for obj in bucket.objects.filter(Prefix=prefix):
-            if un_cert and obj.key.endswith('certificate.txt'):
-                continue
-            if obj.key.count('internal_ec2_logs') or obj.key == prefix or \
-                    obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
-                continue
-            file_keys.append(obj.key)
-    except Exception as e:
-        print(e)
+    # try:
+    for obj in bucket.objects.filter(Prefix=prefix):
+        if un_cert and obj.key.endswith('certificate.txt'):
+            continue
+        if obj.key.count('internal_ec2_logs') or obj.key == prefix or \
+                obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
+            continue
+        file_keys.append(obj.key)
+    # except Exception as e:
+    #     print(e)
 
     return file_keys
 
@@ -128,7 +128,6 @@ def download_directory_from_s3(iam, bucket, folder, un_cert=True):
 
     s3 = s3_resource(iam=iam)
 
-    bucket = s3.Bucket(bucket)
     timestamp = time.time()
     # create folders
     root = "static/downloads/%s" % timestamp
@@ -136,7 +135,7 @@ def download_directory_from_s3(iam, bucket, folder, un_cert=True):
     mkdir(root)
 
     keys = get_list_keys(iam=iam, bucket=bucket, folder=folder, un_cert=un_cert)
-
+    bucket = s3.Bucket(bucket)
     for key in keys:
         path = "%s/%s" % (root, key.replace(folder, ''))
         mkdir(os.path.dirname(path))

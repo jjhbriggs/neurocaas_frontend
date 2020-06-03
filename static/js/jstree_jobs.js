@@ -92,46 +92,55 @@ function AjaxRequest(url, method='GET', data=null){
     });
 }
 
-// download Action
-function down_action(node, type, tree, job_history=false){
 
-    var path = tree.get_path(node,"/").replace(node.text, node.li_attr.title)
-    path =  node.li_attr.type === 'folder' ?  path + "/" : path;
-    path = path.replace(type + "/", '');
-    $.ajax({
-        url: '/get_user_files/',
-        method: 'PUT',
-        data: {
-            file_name: path,
-            type: type,
-            choice: node.li_attr.type,
-            timestamp: timestamp,
-            ana_id: ana_id,
-            job_history: job_history
-        },
-        success: function(res){
-            if (res.message !== null){
-                document.getElementById('_iframe').href = "/" + res.message;
-                document.getElementById('_iframe').click();
-            } else {
-                // window.location.reload();
-            }
-        },
-        error: function(err){
-            console.log(err);
-        }
-    })
+function get_full_path_of_node(node, tree){
+    return tree.get_path(node,"/").replace(node.text, node.li_attr.title) + "/";
+}
+
+
+// download Action
+async function down_action(node, key){
+
+    if (node.li_attr.type === 'folder')
+        download_folder(key, ana_id);
+    else
+        download_file(key, ana_id);
+}
+
+
+async function download_file(file_key, ana_id){
+    var url = '/files/' + ana_id + '/?key=' + encodeURIComponent(file_key);
+    var res = await AjaxRequest(url);
+
+    if (res.status == 200){
+        document.getElementById('_iframe').href = "/" + res.message;
+        document.getElementById('_iframe').click();
+    }
+}
+
+
+async function download_folder(folder_key, ana_id){
+    var url = '/files/' + ana_id + '/';
+
+    var params = {
+        'key': folder_key
+    }
+
+    var res = await AjaxRequest(url, 'POST', params);
+
+    if (res.status === 200){
+        document.getElementById('_iframe').href = "/" + res.message;
+        document.getElementById('_iframe').click();
+    }
 }
 
 
 async function show_file_content(file_key, ana_id){
-    var url = '/files/' + ana_id + '/?key=' + file_key;
+    var url = '/files/' + ana_id + '/?key=' + encodeURIComponent(file_key);
     var res = await AjaxRequest(url);
 
     if (res.status == 200)
-        window.open("/" + res.path, '_blank');
-
-    console.log(res);
+        window.open("/" + res.message, '_blank');
 }
 
 
@@ -142,8 +151,8 @@ function create_job_tree(paths){
             if(data.selected.length) {
                 if (data.node.li_attr.type === 'folder') return;
                 var full_path = data.instance.get_path(data.node,'/').replace(data.node.text, data.node.li_attr.title).replace("results/", '');
-                console.log( "selected node path", full_path);
                 full_path = 'results/' + ana_prefix + timestamp + '/' + full_path;
+                console.log( "selected node path", full_path);
                 show_file_content(full_path, ana_id);
             }
         })
@@ -156,10 +165,11 @@ function create_job_tree(paths){
                         downItem: { // The "delete" menu item
                             label: "Download",
                             action: function () {
-                                if (node.li_attr.type === 'folder'){
-                                    var tree = $('#job_detail_view').jstree(true);
-                                    down_action(node, 'results', tree);
-                                }
+                                var tree = $('#job_detail_view').jstree(true);
+                                var path = get_full_path_of_node(node, tree);
+                                path = path.replace("results/", '');
+                                var key =  'results/' + ana_prefix + timestamp + "/" + path;
+                                down_action(node, key.slice(0, -1));
                             }
                         }
                     };
@@ -173,22 +183,4 @@ function create_job_tree(paths){
                 'data' : get_json_from_array(paths, 50)
             }
         });
-}
-
-
-// get selected node by tree_id and prefix
-function get_selected_nodes(tree_id, prefix){
-    var files = [];
-    var selectedNodes = $('#' + tree_id).jstree(true).get_selected();
-    for(var i = 0; i < selectedNodes.length; i++) {
-        var full_node = $('#' + tree_id).jstree(true).get_node(selectedNodes[i]);
-
-        var path = $('#' + tree_id).jstree(true).get_path(full_node,"/").replace(full_node.text, full_node.li_attr.title);
-        var ext = (/[.]/.exec(path)) ? /[^.]+$/.exec(path) : undefined;
-        if (ext) {
-            path = path.replace(prefix, '');
-            files.push(path);
-        }
-    }
-    return files;
 }
