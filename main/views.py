@@ -357,23 +357,23 @@ class UserFilesView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         # data_set files list
-        dt_folder = '%s/inputs' % iam.group
-        data_set_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=dt_folder)
+        data_set_folder = '%s/inputs' % iam.group
+        data_set_keys = get_files_detail_list(iam=iam, bucket=analysis.bucket_name, folder=data_set_folder)
 
         data_sets = []
         for key in data_set_keys:
             row = key.copy()
-            path = key['key'].replace("%s/" % dt_folder, "")
+            path = key['key'].replace("%s/" % data_set_folder, "")
             row.update({'name': path})
             data_sets.append(row)
 
         # config files list
-        cf_folder = '%s/configs' % iam.group
-        config_keys = get_file_list(iam=iam, bucket=analysis.bucket_name, folder=cf_folder)
+        config_folder = '%s/configs' % iam.group
+        config_keys = get_files_detail_list(iam=iam, bucket=analysis.bucket_name, folder=config_folder)
         configs = []
         for key in config_keys:
             row = key.copy()
-            path = key['key'].replace("%s/" % cf_folder, "")
+            path = key['key'].replace("%s/" % config_folder, "")
             content = get_file_content(iam=iam, bucket=analysis.bucket_name, key=key['key'])
             row.update({'content': content, 'name': path})
             configs.append(row)
@@ -399,54 +399,7 @@ class UserFilesView(LoginRequiredMixin, View):
 
         return JsonResponse({
             "status": 200,
-            "message": delete_file_from_bucket(iam=iam, bucket_name=analysis.bucket_name, key=file_key)
-        })
-
-    def put(self, request):
-        """
-            Download a file or folder from inputs or config folder on s3 by filename
-            """
-        analysis = get_current_analysis(request)
-        iam = get_current_iam(request)
-        dicts = QueryDict(request.body)
-
-        file_name = dicts.get('file_name')
-        _type = dicts.get('type')
-        choice = dicts.get('choice', 'file')
-        timestamp = dicts.get('timestamp', 0)
-
-        file = ""
-        if choice == 'file':
-            file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
-            file = get_download_file(iam=iam,
-                                     bucket=analysis.bucket_name,
-                                     key=file_key,
-                                     timestamp=_type)
-        else:
-            """ 
-                Folder downloading here 
-                """
-            root_folder = "%s/%s/" % (iam.group.name, _type)
-            if _type == 'results':
-                folder = "%s%s%s/%s" % (root_folder, analysis.result_prefix, timestamp, file_name)
-            else:
-                folder = "%s%s" % (root_folder, file_name)
-
-            downloaded_path = download_directory_from_s3(
-                iam=iam,
-                bucket=analysis.bucket_name,
-                folder=folder)
-
-            zip_name = file_name.split('/')[-2] if file_name else _type
-            zip_path = "static/downloads/%s/%s" % (time.time(), zip_name)
-            mkdir(os.path.dirname(zip_path))
-
-            shutil.make_archive(zip_path, 'zip', downloaded_path)
-            file = "%s.zip" % zip_path
-
-        return JsonResponse({
-            "status": 200,
-            "message": file
+            "message": delete_file_from_bucket(iam=iam, bucket=analysis.bucket_name, key=file_key)
         })
 
 
