@@ -21,7 +21,7 @@
                 <div id="data_set_folder"></div>
             </div>
 
-            <table class="mt-3 hidden" id="dataset_table">
+            <table class="mt-3 hidden" id="data_set_table">
                 <tbody>
                     <tr>
                         <td>loading ...</td>
@@ -138,6 +138,7 @@
 
 {% block js_content %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.9/jstree.min.js"></script>
+    <script src="{% static 'js/jstree_utils.js' %}"></script>
     <script src="{% static 'js/jstree_usage.js' %}"></script>
 
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.617.0.min.js"></script>
@@ -160,7 +161,8 @@
         var data_set_dir = "{{data_set_dir}}";
         var config_dir = "{{config_dir}}";
         var bucket = "{{bucket}}";
-        var ana_id = {{ana_id}};
+        var ana_id = {{analysis.id}};
+        var ana_prefix = '{{analysis.result_prefix}}';
         var data_set_area = new FileUpload();
         var config_area = new FileUpload();
         var timestamp = 0;
