@@ -1,5 +1,4 @@
 // show dataset and config file list
-
 function get_tr_template(file, type, name, ind, flag=0){
 	return '<tr onclick="show_detail(' + ind + ', ' + flag + ')"><td class="value">' + file + '</td><td><input type="' + type + '" name="' + name + '"></td>';
 }
@@ -8,6 +7,15 @@ function get_tr_template(file, type, name, ind, flag=0){
 function get_file_name(url){
     return url === null ? "" : url.split("/").slice(-1)[0]
 }
+
+function hide_spinner(){
+    $('#spinner').css('display', 'none');
+}
+
+function show_spinner(){
+    $('#spinner').css('display', 'block');
+}
+
 
 function download_cert(){
     var path = '/static/downloads/' + timestamp + "/certificate.txt";
