@@ -75,8 +75,19 @@ function get_json_from_array(arr, text_length=34){
     return objectArray;
 }
 
+
 // Async Ajax Request
 function AjaxRequest(url, method='GET', data=null){
+    /*
+        Async Ajax Module
+
+        @params:
+                url: endpoint,
+                data: array,
+                method: request method
+        @return:
+                array
+    */
     show_spinner();
     return new Promise((resolve, reject) => {
        $.ajax({
@@ -97,19 +108,47 @@ function AjaxRequest(url, method='GET', data=null){
 
 
 function get_full_path_of_node(node, tree){
+    /*
+        Get full path from jstree node.
+
+        @params:
+                node: jstree node,
+                tree: jstree object,
+        @return:
+                string
+    */
     return tree.get_path(node,"/").replace(node.text, node.li_attr.title) + "/";
 }
 
 
 // download Action
 function down_action(node, key){
+    /*
+        Down file or folder
+
+        @params:
+                node: jstree node,
+                key: folder or file path,
+        @return:
+                None
+    */
     if (node.li_attr.type === 'folder')
         download_folder(key, ana_id);
     else
         download_file(key, ana_id);
 }
 
+
 async function download_file(file_key, ana_id){
+    /*
+        Down file
+
+        @params:
+                node: jstree node,
+                file_key: file path,
+        @return:
+                None
+    */
     var url = '/files/' + ana_id + '/?key=' + encodeURIComponent(file_key);
     var res = await AjaxRequest(url);
 
@@ -121,8 +160,17 @@ async function download_file(file_key, ana_id){
 
 
 async function download_folder(folder_key, ana_id){
-    var url = '/files/' + ana_id + '/';
+    /*
+        Down folder
 
+        @params:
+                node: jstree node,
+                folder_key: folder path,
+        @return:
+                None
+    */
+
+    var url = '/files/' + ana_id + '/';
     var params = {
         'key': folder_key
     }
@@ -137,6 +185,16 @@ async function download_folder(folder_key, ana_id){
 
 
 async function show_file_content(file_key, ana_id){
+    /*
+        Show file content in new tab when user click file of jstree
+
+        @params:
+                ana_id: analysis id,
+                file_key: file path,
+        @return:
+                None
+    */
+
     var url = '/files/' + ana_id + '/?key=' + encodeURIComponent(file_key);
     var res = await AjaxRequest(url);
 
@@ -146,7 +204,15 @@ async function show_file_content(file_key, ana_id){
 
 
 function create_job_tree(paths){
-    // console.log(paths);
+    /*
+        Create Jstree with paths
+
+        @params:
+                paths: array of keys,
+        @return:
+                None
+    */
+
     $('#job_detail_view')
         .on("changed.jstree", function (e, data) {
             if(data.selected.length) {
