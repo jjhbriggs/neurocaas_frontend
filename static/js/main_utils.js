@@ -16,6 +16,36 @@ function show_spinner(){
     $('#spinner').css('display', 'block');
 }
 
+// Async Ajax Request
+function AjaxRequest(url, method='GET', data=null){
+    /*
+        Async Ajax Module
+
+        @params:
+                url: endpoint,
+                data: array,
+                method: request method
+        @return:
+                array
+    */
+    show_spinner();
+    return new Promise((resolve, reject) => {
+       $.ajax({
+            url : url,
+            method : method,
+            data : data,
+            success :  function(res){
+                hide_spinner();
+                resolve(res);
+            },
+            error: function(err){
+                hide_spinner();
+                reject();
+            }
+       });
+    });
+}
+
 
 function download_cert(){
     var path = '/static/downloads/' + timestamp + "/certificate.txt";
@@ -38,61 +68,58 @@ function show_detail(ind, type){
     $('#status-text').html(content)
 }
 
-function refresh_databucket_list(){
+async function refresh_bucket(){
     var loading_template = "<tr><td>loading ...</td></tr>";
     var empty_template = "<tr><td> No files found. </td></tr>";
 
-    $('#dataset_folder').html(loading_template);
+    $('#data_set_folder').html(loading_template);
     $('#config_folder').html(loading_template);
 
-	$.ajax({
-		url: '/user_files/' + ana_id,
-		success: function(res){
-			console.log(res);
-			if (res.status == 200){
-			    configs = res.configs;
-			    datasets = res.data_sets;
+    var url = '/user_files/' + ana_id;
+    var res = await AjaxRequest(url);
+    console.log(res);
+    if (res.status == 200){
+        configs = res.configs;
+        datasets = res.data_sets;
 
-				var dataset_html = '';
-				for ( var i = 0 ; i < datasets.length ; i++)
-					dataset_html += get_tr_template(datasets[i].name, "checkbox", "dataset_file", i, 0)
+        var dataset_html = '';
+        for ( var i = 0 ; i < datasets.length ; i++)
+            dataset_html += get_tr_template(datasets[i].name, "checkbox", "dataset_file", i, 0)
 
-				dataset_html === '' ? $('#dataset_table tbody').html(empty_template) : $('#dataset_table tbody').html(dataset_html);
+        dataset_html === '' ? $('#dataset_table tbody').html(empty_template) : $('#dataset_table tbody').html(dataset_html);
 
-				var config_html = '';
-				for ( var i = 0 ; i < configs.length ; i++)
-					config_html += get_tr_template(configs[i].name, "radio", "config_file", i, 1)
+        var config_html = '';
+        for ( var i = 0 ; i < configs.length ; i++)
+            config_html += get_tr_template(configs[i].name, "radio", "config_file", i, 1)
 
-                 config_html === '' ? $('#config_table tbody').html(empty_template) : $('#config_table tbody').html(config_html);
+         config_html === '' ? $('#config_table tbody').html(empty_template) : $('#config_table tbody').html(config_html);
 
-				// add eventlistener for each tr
-				$('tr').click(function(event){
-					if (event.target.type !== 'checkbox') {
-                        $(':checkbox', this).trigger('click');                        
-                    }
+        // add eventlistener for each tr
+        $('tr').click(function(event){
+            if (event.target.type !== 'checkbox') {
+                $(':checkbox', this).trigger('click');                        
+            }
 
-                    if (event.target.type !== 'radio') {
-                        $(':radio', this).trigger('click');                        
-                    }                    
+            if (event.target.type !== 'radio') {
+                $(':radio', this).trigger('click');                        
+            }                    
 
-                    if ($(this).find('input').is(":checked") === true){
-                    	$(this).addClass('active');
-                    }
-                    else
-                    	$(this).removeClass('active');
+            if ($(this).find('input').is(":checked") === true){
+                $(this).addClass('active');
+            }
+            else
+                $(this).removeClass('active');
 
-                    if ($(this).find('input[type="radio"]').val() === 'on'){
-                        $('input[type="radio"]').parent().parent().removeClass('active');
-                        $(this).addClass('active');
-                    }
-				})
+            if ($(this).find('input[type="radio"]').val() === 'on'){
+                $('input[type="radio"]').parent().parent().removeClass('active');
+                $(this).addClass('active');
+            }
+        })
 
-				refresh_data_jstrees();
+        refresh_data_jstrees();
 
-				datasets.length == 0 ? $('#dataset_folder').html(empty_template): null;
-                configs.length == 0 ? $('#config_folder').html(empty_template): null;
-			}
-		}
-	})
+        datasets.length == 0 ? $('#dataset_folder').html(empty_template): null;
+        configs.length == 0 ? $('#config_folder').html(empty_template): null;
+    }
 }
 
