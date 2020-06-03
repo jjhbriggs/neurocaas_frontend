@@ -1,6 +1,6 @@
 /* function to show processing status from certificate.txt */
 function get_status(timestamp){
-    url = "/get_results/?timestamp=" + timestamp;
+    url = "/results/?timestamp=" + timestamp;
     $.ajax({
         url: url,
         success: function(res){
@@ -18,7 +18,7 @@ function get_status(timestamp){
 
 /* function to show processing results from log and hp_optimum folder */
 function get_results(timestamp){
-    url = "/get_results/";
+    url = "/results/";
     $.ajax({
         url: url,
         method: "POST",
