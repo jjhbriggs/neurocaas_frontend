@@ -66,8 +66,7 @@ function get_selected_nodes(tree_id, prefix){
 // update JSTree
 function update_jstree(){
     var paths = [];
-
-    [...dtset_logs, ...results_links].forEach(function(item){
+    results_links.forEach(function(item){
         paths.push('/results/' + item.path);
     });
     create_results_tree(paths);
