@@ -131,7 +131,7 @@ function create_data_set_jstree(paths){
                         deleteItem: { // The "delete" menu item
                             label: "Delete",
                             action: function () {
-                                var tree = $('#dataset_folder').jstree(true);
+                                var tree = $('#data_set_folder').jstree(true);
 
                                 if (confirm("Are you sure to delete item, " + node.li_attr.title + "?")){
                                     var key = get_full_path_of_node(node, tree);
@@ -146,6 +146,7 @@ function create_data_set_jstree(paths){
                         delete items.deleteItem;
                         delete items.downItem;
                     }
+                    return items;
                },
                 select_node: false,
                 icon: true,
@@ -186,8 +187,11 @@ function create_config_jstree(paths){
                             label: "Delete",
                             action: function () {
                                 var tree = $('#config_folder').jstree(true);
-                                if (node.li_attr.type === 'folder') return;
-                                if (confirm("Are you sure to delete item, " + node.li_attr.title + "?")) delete_action(node, 'configs', tree);
+                                
+                                if (confirm("Are you sure to delete item, " + node.li_attr.title + "?")){
+                                    var key = get_full_path_of_node(node, tree);
+                                    delete_action(node, key.slice(0, -1), tree);
+                                }
                             }
                         },
                         downItem: { // The "delete" menu item
@@ -225,7 +229,7 @@ function create_config_jstree(paths){
 // create dataset and config jstrees
 function refresh_data_jstrees(){
 
-    // create dataset jstree
+    // create data_set jstree
     data = [];
     for ( var i = 0; i < data_sets.length; i++){
         data.push("/inputs/" + data_sets[i].name);

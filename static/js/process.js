@@ -118,8 +118,8 @@ var trigger_function = function(timestamp){
 
 var submit_trigger = function(){
     setTimeout(function(){
-        refresh_databucket_list();
-        dataset_area.clear_status();
+        refresh_bucket();
+        data_set_area.clear_status();
         config_area.clear_status();
     }, 700);
 }
