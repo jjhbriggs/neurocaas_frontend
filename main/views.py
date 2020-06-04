@@ -229,73 +229,6 @@ class FilesView(LoginRequiredMixin, View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ProcessView(LoginRequiredMixin, View):
-    """
-        Processing View
-        """
-    template_name = "main/process.html"
-
-    def get(self, request, id):
-        analysis = Analysis.objects.get(pk=id)
-        iam = get_current_iam(request)
-
-        if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
-            return redirect('/')
-
-        # convert aws keys to base64 string
-        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
-        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-
-        return render(request=request, template_name=self.template_name, context={
-            "id1": access_id,
-            "id2": secret_key,
-            'bucket': analysis.bucket_name,
-            "data_set_dir": "%s/inputs" % iam.group.name,
-            "config_dir": "%s/configs" % iam.group.name,
-            "title": analysis.analysis_name,
-            'iam': iam,
-            'analysis': analysis
-        })
-
-    def post(self, request, id):
-        """
-            Start new processing with analysis ID, inputs and config files
-            """
-        analysis = get_current_analysis(request)
-        iam = get_current_iam(request)
-
-        data_set_files = request.POST.getlist('dataset_files[]')
-        config_file = request.POST['config_file']
-        cur_timestamp = int(time.time())
-
-        process_data_set = []
-        for file in data_set_files:
-            process_data_set.append("%s/inputs/%s" % (iam.group.name, file))
-
-        submit_data = {
-            "dataname": process_data_set,
-            "configname": "%s/configs/%s" % (iam.group.name, config_file),
-            "timestamp": str(cur_timestamp),
-            # "instance_type": "t2.micro",
-        }
-
-        submit_key = "%s/submissions/submit.json" % iam.group.name
-        create_submit_json(iam=iam,
-                           work_bucket=analysis.bucket_name,
-                           key=submit_key,
-                           json_data=submit_data)
-
-        # store timestamp in session
-        request.session['last_timestamp'] = cur_timestamp
-
-        return JsonResponse({
-            "status": True,
-            "timestamp": cur_timestamp
-        })
-
-
-@method_decorator(csrf_exempt, name='dispatch')
 class UserFilesView(LoginRequiredMixin, View):
     """
         View to manage files for each analysis
@@ -336,33 +269,79 @@ class UserFilesView(LoginRequiredMixin, View):
             "configs": configs
         })
 
-    def delete(self, request):
+
+@method_decorator(csrf_exempt, name='dispatch')
+class ProcessView(LoginRequiredMixin, View):
+    """
+        Processing View
         """
-            Delete a file from inputs or config folder on s3 by filename
-            """
-        analysis = get_current_analysis(request)
+    template_name = "main/process.html"
+
+    def get(self, request, ana_id):
+        analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
 
-        dicts = QueryDict(request.body)
-        file_name = dicts.get('file_name')
-        _type = dicts.get('type')
+        if not analysis.check_iam(iam):
+            messages.error(request, "You don't have permission for this analysis.")
+            return redirect('/')
 
-        file_key = "%s/%s/%s" % (iam.group.name, _type, file_name)
+        # convert aws keys to base64 string
+        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
+        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+
+        return render(request=request, template_name=self.template_name, context={
+            "id1": access_id,
+            "id2": secret_key,
+            'bucket': analysis.bucket_name,
+            "data_set_dir": "%s/inputs" % iam.group.name,
+            "config_dir": "%s/configs" % iam.group.name,
+            "title": analysis.analysis_name,
+            'iam': iam,
+            'analysis': analysis
+        })
+
+    def post(self, request, ana_id):
+        """
+            Start new processing with analysis ID, inputs and config files
+            """
+        analysis = get_current_analysis(ana_id)
+        iam = get_current_iam(request)
+
+        data_set_files = request.POST.getlist('data_set_files[]')
+        config_file = request.POST['config_file']
+        cur_timestamp = int(time.time())
+
+        process_data_set = []
+        for file in data_set_files:
+            process_data_set.append("%s/inputs/%s" % (iam.group.name, file))
+
+        submit_data = {
+            "dataname": process_data_set,
+            "configname": "%s/configs/%s" % (iam.group.name, config_file),
+            "timestamp": str(cur_timestamp),
+            # "instance_type": "t2.micro",
+        }
+
+        submit_key = "%s/submissions/submit.json" % iam.group.name
+        create_submit_json(iam=iam,
+                           bucket=analysis.bucket_name,
+                           key=submit_key,
+                           json_data=submit_data)
 
         return JsonResponse({
-            "status": 200,
-            "message": delete_file_from_bucket(iam=iam, bucket=analysis.bucket_name, key=file_key)
+            "status": True,
+            "timestamp": cur_timestamp
         })
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ResultView(LoginRequiredMixin, View):
 
-    def get(self, request):
+    def get(self, request, ana_id):
         """
             Retrieve Certificate.txt content from s3 and return it
             """
-        analysis = get_current_analysis(request)
+        analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
 
@@ -379,32 +358,23 @@ class ResultView(LoginRequiredMixin, View):
                                             bucket=analysis.bucket_name,
                                             key=cert_file)
 
-        # store cert content to server
-        mkdir("static/downloads")
-        mkdir("static/downloads/%s" % timestamp)
-
-        cert_path = "static/downloads/%s/certificate.txt" % timestamp
-        file = open(cert_path, 'w')
-        file.write(cert_content)
-        file.close()
-
         return JsonResponse({
             "status": True,
             "cert_file": cert_content
         })
 
-    def post(self, request):
+    def post(self, request, ana_id):
         """
             Retrieve files from results and logs folder on s3 and return them.
             Checking update.txt and end.txt so that determine analysis was finished or not.
             """
-        analysis = get_current_analysis(request)
+        analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
         timestamp = int(request.POST['timestamp'])
 
-        result_folder = "%s/results/job__%s_%s/process_results" % (iam.group.name, analysis.bucket_name, timestamp)
-        update_file = "%s/update.txt" % result_folder
-        end_file = "%s/end.txt" % result_folder
+        result_folder = "%s/results/job__%s_%s" % (iam.group.name, analysis.bucket_name, timestamp)
+        update_file = "%s/process_results/update.txt" % result_folder
+        end_file = "%s/process_results/end.txt" % result_folder
         end_flag = False
 
         result_links = []
@@ -424,7 +394,8 @@ class ResultView(LoginRequiredMixin, View):
             for key in result_keys:
                 if key in previous_keys:
                     continue
-                link = get_download_file(iam=iam,
+
+                link = download_file_from_s3(iam=iam,
                                          bucket=analysis.bucket_name,
                                          key=key,
                                          timestamp=timestamp)
