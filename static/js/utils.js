@@ -15,7 +15,7 @@ function show_spinner(){
 
 
 // Async Ajax Request
-function AjaxRequest(url, method='GET', data=null){
+function AjaxRequest(url, method='GET', data=null, spin=true){
     /*
         Async Ajax Module
 
@@ -26,7 +26,8 @@ function AjaxRequest(url, method='GET', data=null){
         @return:
                 array
     */
-    show_spinner();
+
+    if (spin) show_spinner();
     return new Promise((resolve, reject) => {
        $.ajax({
             url : url,
