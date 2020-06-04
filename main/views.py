@@ -378,54 +378,25 @@ class ResultView(LoginRequiredMixin, View):
         end_flag = False
 
         result_links = []
-        update_timestamp = get_last_modified_timestamp(iam=iam,
-                                                       bucket=analysis.bucket_name,
-                                                       key=update_file)
+        # update_timestamp = get_last_modified_timestamp(iam=iam,
+        #                                                bucket=analysis.bucket_name,
+        #                                                key=update_file)
+
         end_timestamp = get_last_modified_timestamp(iam=iam,
                                                     bucket=analysis.bucket_name,
                                                     key=end_file)
-        if update_timestamp > 0 or end_timestamp > 0:
-            previous_keys = json.loads(request.session.get('keys_%s' % timestamp, '[]'))
-            result_links = json.loads(request.session.get('results_%s' % timestamp, '[]'))
-            result_keys = get_list_keys(iam=iam,
-                                        bucket=analysis.bucket_name,
-                                        folder=result_folder)
+        result_keys = get_list_keys(iam=iam,
+                                    bucket=analysis.bucket_name,
+                                    folder=result_folder)
+        for key in result_keys:
+            path = key.replace('%s/results/job__%s_%s/' % (iam.group.name, analysis.bucket_name, timestamp), '')
+            result_links.append({'path': path})
 
-            for key in result_keys:
-                if key in previous_keys:
-                    continue
-
-                link = download_file_from_s3(iam=iam,
-                                         bucket=analysis.bucket_name,
-                                         key=key,
-                                         timestamp=timestamp)
-                path = key.replace('%s/results/job__%s_%s/' % (iam.group.name, analysis.bucket_name, timestamp), '')
-                result_links.append({'link': link, 'path': path})
-                previous_keys.append(key)
-            request.session['keys_%s' % timestamp] = json.dumps(previous_keys)
-            request.session['results_%s' % timestamp] = json.dumps(result_links)
-
-            if end_timestamp > 0:
-                del request.session['keys_%s' % timestamp]
-                del request.session['results_%s' % timestamp]
-                end_flag = True
-
-        data_set_logs = []
-        log_dir = "%s/results/job__%s_%s/logs/" % (iam.group.name, analysis.bucket_name, timestamp)
-        data_set_logs_keys = get_data_set_logs(iam=iam,
-                                               bucket=analysis.bucket_name,
-                                               log_dir=log_dir)
-        for key in data_set_logs_keys:
-            path = key.replace("%s/results/job__%s_%s/" % (iam.group.name, analysis.bucket_name, timestamp), "")
-            data_set_logs.append({
-                'link': get_download_file(iam, analysis.bucket_name, key, timestamp),
-                'path': path
-            })
+        if end_timestamp > 0:
+            end_flag = True
 
         return JsonResponse({
             "status": 200,
             "result_links": result_links,
-            "data_set_logs": data_set_logs,
             "end": end_flag
         })
-
