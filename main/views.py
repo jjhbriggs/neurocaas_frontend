@@ -18,7 +18,8 @@ import shutil
 
 class IntroView(View):
     """
-        Intro View
+        Intro View (Index View)
+        Detail of Neuroscience and Available Analyses
         """
     template_name = "main/intro.html"
 
@@ -34,7 +35,8 @@ class IntroView(View):
 
 class AnalysisListView(View):
     """
-        Show all analyses
+        Analysis List View
+        List of all Available and Custom Analyses
         """
     template_name = "main/analysis_list.html"
 
@@ -68,7 +70,8 @@ class QAView(View):
 
 class AnalysisIntroView(View):
     """
-        Analysis Intro View
+        Intro View of Analysis
+        Detail of Analysis : Description and Useful link
         """
     template_name = "main/analysis_intro.html"
 
@@ -87,7 +90,7 @@ class AnalysisIntroView(View):
 
 class HomeView(View):
     """
-        Home Page View
+        View to check if logged in or not, if not, redirected to login page
         """
     template_name = "main/home.html"
 
@@ -112,6 +115,9 @@ class HomeView(View):
 
 
 class JobListView(LoginRequiredMixin, View):
+    """
+        Shows List of Jobs done for analysis
+        """
     template_name = 'main/job_history.html'
 
     def get(self, request, ana_id):
@@ -134,6 +140,9 @@ class JobListView(LoginRequiredMixin, View):
 
 
 class JobDetailView(LoginRequiredMixin, View):
+    """
+        Shows detail of Job done for analysis, User can check and download the content of job files
+        """
     template_name = 'main/job_detail.html'
 
     def get(self, request, ana_id, job_id):
@@ -161,7 +170,7 @@ class JobDetailView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class FilesView(LoginRequiredMixin, View):
     """
-        View to manage files for each analysis
+        View to manage files for each analysis, get and download, delete file and folders
         """
 
     def get(self, request, ana_id):
@@ -231,7 +240,7 @@ class FilesView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class UserFilesView(LoginRequiredMixin, View):
     """
-        View to manage files for each analysis
+        Return list of inputs and configs files for analysis
         """
 
     def get(self, request, ana_id):
@@ -336,7 +345,9 @@ class ProcessView(LoginRequiredMixin, View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ResultView(LoginRequiredMixin, View):
-
+    """
+        Process results View
+        """
     def get(self, request, ana_id):
         """
             Retrieve Certificate.txt content from s3 and return it
