@@ -34,6 +34,7 @@ async function get_results(timestamp){
             // set the processing status to FALSE
             processing_status = false;
             $('.spinner').css('display', 'none');
+            alert("Process has just finished.");
         }
         update_jstree();
     }
@@ -63,7 +64,7 @@ function submit(){
     	alert('Select config file');
     	return;
     }
-    
+
     console.log(data_set_files, config_files[0]);
 
     $('#btn-spinner').css('display', 'inline-block');
