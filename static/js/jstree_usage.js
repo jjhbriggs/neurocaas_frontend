@@ -82,7 +82,7 @@ function down_action(node, type, tree, job_history=false){
     path =  node.li_attr.type === 'folder' ?  path + "/" : path;
     path = path.replace(type + "/", '');
     $.ajax({
-        url: '/get_user_files/',
+        url: '/user_files/',
         method: 'PUT',
         data: {
             file_name: path,
@@ -108,13 +108,16 @@ function down_action(node, type, tree, job_history=false){
 
 
 // create jstrees for data_sets
-function create_dataset_jstree(paths){
-    $('#dataset_folder').remove();
-    $("#dataset_div").append('<div id="dataset_folder"></div>');
-    $('#dataset_folder')
+function create_data_set_jstree(paths){
+
+    $('#data_set_folder').remove();
+    $("#data_set_div").append('<div id="data_set_folder"></div>');
+    $('#data_set_folder')
         .on("changed.jstree", function (e, data) {
             if (data.node.li_attr.type === 'folder') return;
             var filename = data.instance.get_path(data.node,'/').replace(data.node.text, data.node.li_attr.title).replace("inputs/", '');
+            console.log(filename);
+
             for ( var i=0; i< data_sets.length; i++ ){
                 if (data_sets[i].name === filename) show_detail(i, 0);
             }
@@ -143,9 +146,7 @@ function create_dataset_jstree(paths){
                         delete items.deleteItem;
                         delete items.downItem;
                     }
-
-                    return items;
-                },
+               },
                 select_node: false,
                 icon: true,
             },
@@ -229,7 +230,7 @@ function refresh_data_jstrees(){
     for ( var i = 0; i < data_sets.length; i++){
         data.push("/inputs/" + data_sets[i].name);
     }
-    if (data.length > 0) create_dataset_jstree(data);
+    if (data.length > 0) create_data_set_jstree(data);
 
     // create config jstree
     data = [];
