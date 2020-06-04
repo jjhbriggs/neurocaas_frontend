@@ -6,6 +6,7 @@
 
 {% block content %}
     <div class="row">
+        <!-- Title -->
         <div class="col-md-10 offset-md-1 mt-5">
             <div class="row">
                 <div class="col-sm-8 offset-sm-2 col-md-8 offset-md-2">
@@ -14,37 +15,50 @@
                 </div>
             </div>
         </div>
+        <!-- #END Title -->
+
+        <!-- Analysis description -->
         <div class="col-md-8 offset-md-2 mt-3 text-left">
             <span class="text-bold">Analysis description</span>
+            <!-- Long Description -->
             <div class="description">
                 <p class="text-left">
                     {{ analysis.long_description  | safe }}
                 </p>
             </div>
+            <!-- #END Long Description -->
 
+            <!-- Useful links -->
             <span class="text-bold">Useful links</span>
-
             <div class="paper-link mt-2">
                 <a href="{{ analysis.paper_link }}" class="bottom-line" target="_blank">{{ analysis.analysis_name }} Paper Link</a>
             </div>
+            <!-- #END Useful links -->
 
-
+            <!-- Github link -->
             <div class="repo-link mt-2">
                 <a href="{{ analysis.git_link }}" class="bottom-line"  target="_blank">{{ analysis.analysis_name }} Github Repo Link</a>
             </div>
+            <!-- #END Github link -->
 
+            <!-- Bash Script Link -->
             <div class="repo-link mt-2">
                 <a href="{{ analysis.bash_link }}" class="bottom-line" target="_blank">{{ analysis.analysis_name }} Bash Script Link</a>
             </div>
+            <!-- #END Bash Script Link -->
 
+            <!-- Demo Link -->
             <div class="repo-link mt-2">
                 <a href="{{ analysis.demo_link }}" class="bottom-line" target="_blank">{{ analysis.analysis_name }} Demo Link</a>
             </div>
+            <!-- #END Demo Link -->
 
+            <!-- Signature -->
             <div class="repo-link mt-4">
             <span class="text-bold">How to use this analysis</span>
                 <p>{{ analysis.signature | safe }}</p>
             </div>
+            <!-- #END Signature -->
 
             <div class="text-center mt-4">
                 <button onclick="start_process({{analysis.id}})">
@@ -55,6 +69,7 @@
                 </button>
             </div>
         </div>
+        <!-- #END Analysis description -->
     </div>
 
 {% endblock %}
