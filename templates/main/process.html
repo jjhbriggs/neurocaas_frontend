@@ -8,19 +8,24 @@
         <div class="row">
             <div class="col-md-6 offset-md-3 mt-5">
                 <h2>{{title}}</h2>
-                <hr style="top:0px;"/>
+                <hr class="top-0" />
             </div>
         </div>
     </div>
 
     <div class="col-md-4">
-        <!--    DataSet Uploading Area    -->
+
         <h3>Select or upload dataset(s)</h3>
+
+        <!--  DataSet Jstree Area  -->
         <div class="table-div no-left-margin">
             <div id="data_set_div" class="text-left">
                 <div id="data_set_folder"></div>
             </div>
         </div>
+        <!--  #END DataSet Jstree Area  -->
+
+        <!--  DataSet Uploading Area  -->
         <div class="upload-div" id="data_set-area">
             <form class="drop-area">
                 <p>Drag & Drop or Click!</p>
@@ -29,23 +34,21 @@
             </form>
             <div class="gallery"></div>
         </div>
+        <!-- #END DataSet Uploading Area  -->
         <hr>
 
-        <!-- Json file Uploading Area    -->
+        <!-- Config data Area -->
         <div class="mt-2">
             <h3>Select or upload config</h3>
+            <!-- Config Jstree Area -->
             <div class="table-div no-left-margin">
                 <div id="config_div" class="text-left">
                     <div id="config_folder"></div>
                 </div>
-                <table class="mt-3 hidden" id="config_table">
-                    <tbody>
-                        <tr>
-                            <td>loading ...</td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
+            <!-- #END Config Jstree Area -->
+
+            <!-- Config file Uploading Area    -->
             <div class="upload-div" id="config-area">
                 <form class="drop-area">
                     <p>Drag & Drop or Click!</p>
@@ -54,6 +57,8 @@
                 </form>
                 <div class="gallery"></div>
             </div>
+            <!-- #END Config file Uploading Area    -->
+
             <div class="mt-2 table-div">
                 <button onclick="submit();" id="submit_button" class="disabled">
                     <span id="btn-spinner" style="display: block;"><i class="fas fa-sync-alt fa-spin"></i></span>
@@ -65,6 +70,8 @@
                 </div>
             </div>
         </div>
+        <!-- #END Config data Area -->
+
     </div>
     <!--# END Uploading Area    -->
 
@@ -83,9 +90,7 @@
     <!--# Processing Result -->
     <div class="col-md-4 result-div">
         <h3>Results</h3>
-
         <!--  Hierarchy View  -->
-        <!--  https://www.w3schools.com/icons/fontawesome_icons_filetype.asp   -->
         <br>
         <div id="hierarchy_div" style="display: block;">
             <div id="hierarchy"></div>
@@ -113,7 +118,7 @@
 {% block js_content %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.9/jstree.min.js"></script>
     <script src="{% static 'js/jstree_utils.js' %}"></script>
-    <script src="{% static 'js/jstree_usage.js' %}"></script>
+    <script src="{% static 'js/jstree_process.js' %}"></script>
 
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.617.0.min.js"></script>
     <script src="{% static 'js/file_upload.js' %}"></script>

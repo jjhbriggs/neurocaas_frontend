@@ -100,10 +100,32 @@ function submit(){
 }
 
 
+async function refresh_bucket(){
+    var loading_template = "<tr><td>loading ...</td></tr>";
+    var empty_template = "<tr><td> No files found. </td></tr>";
+
+    $('#data_set_folder').html(loading_template);
+    $('#config_folder').html(loading_template);
+
+    var url = '/user_files/' + ana_id;
+    var res = await AjaxRequest(url);
+    console.log(res);
+
+    if (res.status == 200){
+        configs = res.configs;
+        data_sets = res.data_sets;
+
+        refresh_data_jstrees();
+
+        data_sets.length == 0 ? $('#data_set_folder').html(empty_template): null;
+        configs.length == 0 ? $('#config_folder').html(empty_template): null;
+    }
+}
+
+
 var trigger_function = function(timestamp){
     $('.spinner').css('display', 'block');
     setTimeout(function(){
-        // timestamp = Math.floor(Date.now()/1000);
         get_status(timestamp);
         get_results(timestamp);
     }, 1000);
