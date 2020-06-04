@@ -24,7 +24,6 @@ function create_results_tree(paths){
                         downItem: { // The "delete" menu item
                             label: "Download",
                             action: function () {
-
                                 var tree = $('#hierarchy').jstree(true);
                                 var path = get_full_path_of_node(node, tree);
                                 path = path.replace("results/", '');
@@ -72,38 +71,6 @@ function update_jstree(){
         paths.push('/results/' + item.path);
     });
     create_results_tree(paths);
-}
-
-
-// download Action
-function down_action(node, type, tree, job_history=false){
-
-    var path = tree.get_path(node,"/").replace(node.text, node.li_attr.title)
-    path =  node.li_attr.type === 'folder' ?  path + "/" : path;
-    path = path.replace(type + "/", '');
-    $.ajax({
-        url: '/user_files/',
-        method: 'PUT',
-        data: {
-            file_name: path,
-            type: type,
-            choice: node.li_attr.type,
-            timestamp: timestamp,
-            ana_id: ana_id,
-            job_history: job_history
-        },
-        success: function(res){
-            if (res.message !== null){
-                document.getElementById('_iframe').href = "/" + res.message;
-                document.getElementById('_iframe').click();
-            } else {
-                // window.location.reload();
-            }
-        },
-        error: function(err){
-            console.log(err);
-        }
-    })
 }
 
 
@@ -198,7 +165,8 @@ function create_config_jstree(paths){
                             label: "Download",
                             action: function () {
                                 var tree = $('#config_folder').jstree(true);
-                                down_action(node, 'configs', tree);
+                                var path = get_full_path_of_node(node, tree);                                
+                                down_action(node, path.slice(0, -1));
                             }
                         }
                     };

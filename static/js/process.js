@@ -57,12 +57,12 @@ function get_results(timestamp){
 
 
 function submit(){
-    var dataset_files = [];
+    var data_set_files = [];
     var config_file = null;
 
-    dataset_files = get_selected_nodes('dataset_folder', 'inputs/');
+    data_set_files = get_selected_nodes('data_set_folder', 'inputs/');
 
-    if (dataset_files.length < 1) {
+    if (data_set_files.length < 1) {
     	alert('Select dataset files');
     	return;
     }
@@ -74,7 +74,7 @@ function submit(){
     	alert('Select config file');
     	return;
     }
-    console.log(dataset_files, config_files[0]);
+    console.log(data_set_files, config_files[0]);
 
     $('#btn-spinner').css('display', 'inline-block');
 
@@ -84,11 +84,12 @@ function submit(){
     // disabled showing detail of dataset and config files
     detail_flag = false;
 
+    
     $.ajax({
     	url: window.location.pathname,
     	method: 'POST',
     	data: {
-    		dataset_files: dataset_files,
+    		data_set_files: data_set_files,
     		config_file: config_files[0]
     	},
     	success: function(res){

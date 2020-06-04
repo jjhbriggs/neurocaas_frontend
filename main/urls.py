@@ -12,7 +12,7 @@ urlpatterns = [
     path('history/<int:ana_id>/<str:job_id>', JobDetailView.as_view(), name='job_detail'),
     path('files/<int:ana_id>/', FilesView.as_view(), name='file_view'),
 
-    path('process/<int:id>', ProcessView.as_view(), name='process'),
+    path('process/<int:ana_id>', ProcessView.as_view(), name='process'),
     path('user_files/<int:ana_id>', UserFilesView.as_view(), name='get_user_files'),
-    path('results/', ResultView.as_view(), name='get_results')
+    path('results/<int:ana_id>', ResultView.as_view(), name='get_results')
 ]
