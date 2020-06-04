@@ -1,3 +1,20 @@
+
+function show_detail(ind, type){
+    if (!detail_flag) return;
+    var content = "";
+    if (type === 0){
+        content += 'Name: ' + data_sets[ind].name + '\n\n';
+        content += 'Size: ' + data_sets[ind].size + '\n\n';
+        content += 'Date modified: ' + data_sets[ind].date_modified + '\n';
+    } else {
+        content += 'Name: ' + configs[ind].name + '\n\n';
+        content += 'Date modified: ' + configs[ind].date_modified + '\n\n';
+        content += configs[ind].content + '\n';
+    }
+    $('#status-text').html(content)
+}
+
+
 function create_results_tree(paths){
     // console.log(paths);
     $('#hierarchy').remove();
@@ -42,34 +59,6 @@ function create_results_tree(paths){
                 'data' : get_json_from_array(paths)
             }
         });
-}
-
-
-// get selected node by tree_id and prefix
-function get_selected_nodes(tree_id, prefix){
-    var files = [];
-    var selectedNodes = $('#' + tree_id).jstree(true).get_selected();
-    for(var i = 0; i < selectedNodes.length; i++) {
-        var full_node = $('#' + tree_id).jstree(true).get_node(selectedNodes[i]);
-
-        var path = $('#' + tree_id).jstree(true).get_path(full_node,"/").replace(full_node.text, full_node.li_attr.title);
-        var ext = (/[.]/.exec(path)) ? /[^.]+$/.exec(path) : undefined;
-        if (ext) {
-            path = path.replace(prefix, '');
-            files.push(path);
-        }
-    }
-    return files;
-}
-
-
-// update JSTree
-function update_jstree(){
-    var paths = [];
-    results_links.forEach(function(item){
-        paths.push('/results/' + item.path);
-    });
-    create_results_tree(paths);
 }
 
 
@@ -210,4 +199,14 @@ function refresh_data_jstrees(){
     }
 
     if (data.length > 0) create_config_jstree(data);
+}
+
+
+// update JSTree
+function update_jstree(){
+    var paths = [];
+    results_links.forEach(function(item){
+        paths.push('/results/' + item.path);
+    });
+    create_results_tree(paths);
 }
