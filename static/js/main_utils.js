@@ -83,7 +83,6 @@ async function refresh_bucket(){
         configs = res.configs;
         data_sets = res.data_sets;
 
-
         refresh_data_jstrees();
 
         data_sets.length == 0 ? $('#data_set_folder').html(empty_template): null;
