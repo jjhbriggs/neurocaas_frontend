@@ -387,7 +387,8 @@ class ResultView(LoginRequiredMixin, View):
                                                     key=end_file)
         result_keys = get_list_keys(iam=iam,
                                     bucket=analysis.bucket_name,
-                                    folder=result_folder)
+                                    folder=result_folder,
+                                    un_cert=False)
         for key in result_keys:
             path = key.replace('%s/results/job__%s_%s/' % (iam.group.name, analysis.bucket_name, timestamp), '')
             result_links.append({'path': path})
