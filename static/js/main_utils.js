@@ -43,7 +43,7 @@ function AjaxRequest(url, method='GET', data=null){
 
 
 function download_cert(){
-    if (!processing_status){
+    if (timestamp === 0){
         alert('Please start process first.');
         return;
     }
