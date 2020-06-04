@@ -1,50 +1,47 @@
 /* function to show processing status from certificate.txt */
-function get_status(timestamp){
+async function get_status(timestamp){
     url = "/results/" + ana_id + "?timestamp=" + timestamp;
-    $.ajax({
-        url: url,
-        success: function(res){
-            console.log(res);
-            $('#status-text').html(res.cert_file);
-            if (res.cert_file !== '')
-                $('#down_cert').removeClass('hidden');
-            if (processing_status)
-                setTimeout(function(){
-                    get_status(timestamp)
-                }, 10000);
-        }
-    })
+
+    var res = await AjaxRequest(url, 'GET', null, false);
+    console.log(res);
+
+    $('#status-text').html(res.cert_file);
+    if (res.cert_file !== '')
+        $('#down_cert').removeClass('hidden');
+
+    if (processing_status)
+        setTimeout(function(){
+            get_status(timestamp)
+        }, 10000);
+
 }
 
+
 /* function to show processing results from log and hp_optimum folder */
-function get_results(timestamp){
-    url = "/results/" + ana_id;
-    $.ajax({
-        url: url,
-        method: "POST",
-        data: {
-            timestamp: timestamp
-        },
-        success: function(res){
-            console.log(res);
+async function get_results(timestamp){    
+    var url = "/results/" + ana_id;
+    var data = {
+        timestamp: timestamp
+    }
 
-            if(res.result_links.length > 0) {
-                results_links = res.result_links;
+    var res = await AjaxRequest(url, 'POST', data, false);
+    console.log(res);
 
-                if (res.end){
-                    // set the processing status to FALSE
-                    processing_status = false;
-                    $('.spinner').css('display', 'none');
-                }
-                update_jstree();
-            }
+    if(res.result_links.length > 0) {
+        results_links = res.result_links;
 
-            if (processing_status)
-                setTimeout(function(){
-                    get_results(timestamp)
-                }, 30000);
+        if (res.end){
+            // set the processing status to FALSE
+            processing_status = false;
+            $('.spinner').css('display', 'none');
         }
-    })
+        update_jstree();
+    }
+
+    if (processing_status)
+        setTimeout(function(){
+            get_results(timestamp)
+        }, 30000);
 }
 
 
@@ -66,6 +63,7 @@ function submit(){
     	alert('Select config file');
     	return;
     }
+    
     console.log(data_set_files, config_files[0]);
 
     $('#btn-spinner').css('display', 'inline-block');
@@ -108,7 +106,7 @@ async function refresh_bucket(){
     $('#config_folder').html(loading_template);
 
     var url = '/user_files/' + ana_id;
-    var res = await AjaxRequest(url);
+    var res = await AjaxRequest(url, 'GET', null, false);
     console.log(res);
 
     if (res.status == 200){
