@@ -1,13 +1,13 @@
 function truncate(n, len) {
-/*
-    truncate text
+    /*
+        truncate text
 
-    @params:
-            n: string,
-            len: int
-    @return:
-            truncated string
-*/
+        @params:
+                n: string,
+                len: int
+        @return:
+                truncated string
+    */
 
     if(n.length <= len) {
         return n;
@@ -172,7 +172,6 @@ async function show_file_content(file_key, ana_id){
 }
 
 
-
 // delete Action
 async function delete_action(node, key, tree){
 
@@ -183,4 +182,33 @@ async function delete_action(node, key, tree){
 
     var res = await AjaxRequest(url, 'DELETE', data);
     tree.delete_node(node);
+}
+
+
+// get selected node by tree_id and prefix
+function get_selected_nodes(tree_id, prefix){
+    var files = [];
+    var selectedNodes = $('#' + tree_id).jstree(true).get_selected();
+    for(var i = 0; i < selectedNodes.length; i++) {
+        var full_node = $('#' + tree_id).jstree(true).get_node(selectedNodes[i]);
+
+        var path = $('#' + tree_id).jstree(true).get_path(full_node,"/").replace(full_node.text, full_node.li_attr.title);
+        var ext = (/[.]/.exec(path)) ? /[^.]+$/.exec(path) : undefined;
+        if (ext) {
+            path = path.replace(prefix, '');
+            files.push(path);
+        }
+    }
+    return files;
+}
+
+
+function download_cert(){
+    if (timestamp === 0){
+        alert('Please start process first.');
+        return;
+    }
+    
+    var path = 'results/' + ana_prefix + timestamp + "/logs/certificate.txt";
+    download_file(path, ana_id);
 }
