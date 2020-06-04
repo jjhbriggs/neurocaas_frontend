@@ -125,6 +125,10 @@ class JobListView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
         results_folder = '%s/results' % iam.group
 
+        if not analysis.check_iam(iam):
+            messages.error(request, "You don't have permission for this analysis.")
+            return redirect('/')
+
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
 
         print(job_list)
@@ -148,6 +152,11 @@ class JobDetailView(LoginRequiredMixin, View):
     def get(self, request, ana_id, job_id):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
+
+        if not analysis.check_iam(iam):
+            messages.error(request, "You don't have permission for this analysis.")
+            return redirect('/')
+
         result_folder = "%s/results/%s" % (iam.group.name, job_id)
         result_keys = get_list_keys(iam=iam,
                                     bucket=analysis.bucket_name,
