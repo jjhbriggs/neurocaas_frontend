@@ -15,11 +15,17 @@ def get_current_iam(request):
     return IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
 
 
-def get_current_analysis(request):
+def s3_resource(iam):
+    return boto3.resource(
+            's3',
+            aws_access_key_id=iam.aws_access_key,
+            aws_secret_access_key=iam.aws_secret_access_key)
+
+
+def get_current_analysis(ana_id):
     """
         get current analysis from analysis id stored in session
         """
-    ana_id = request.session.get('ana_id', 1)
     analysis = Analysis.objects.get(pk=ana_id)
     return analysis
 
@@ -32,39 +38,128 @@ def mkdir(path):
         os.makedirs(path)
 
 
-def get_download_file(iam, bucket, key, timestamp):
+def convert_size(size):
+    """
+        Return size converted to appropriate format from Byte
+        """
+    if size > 1024 * 1024 * 1024:
+        return str(round(float(size / (1024 * 1024 * 1024)), 2)) + " GB"
+    elif size > 1024 * 1024:
+        return str(round(float(size / (1024 * 1024)), 2)) + " MB"
+    elif size > 1024:
+        return str(round(float(size / 1024), 2)) + " KB"
+    else:
+        return str(size) + " B"
+
+
+def get_name_only(key):
+    """
+        Function to get only file name from link or full path
+        """
+    return key.split('/')[-1]
+
+
+def get_list_keys(iam, bucket, folder, un_cert=True):
+    """
+        Return keys of files and folders in s3
+
+        @params:
+                iam: User's IAM object
+                bucket: bucket name
+                folder: folder path on s3 bucket
+
+        @return:
+                list of files and folders
+        """
+    s3 = s3_resource(iam=iam)
+
+    bucket = s3.Bucket(bucket)
+    prefix = "%s/" % folder
+
+    file_keys = []
+
+    # try:
+    for obj in bucket.objects.filter(Prefix=prefix):
+        if un_cert and obj.key.endswith('certificate.txt'):
+            continue
+        if obj.key.count('internal_ec2_logs') or obj.key == prefix or \
+                obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
+            continue
+        file_keys.append(obj.key)
+    # except Exception as e:
+    #     print(e)
+
+    return file_keys
+
+
+def generate_folder():
+    return "%s/%s" % ("static/downloads", time.time())
+
+
+def download_file_from_s3(iam, bucket, key, folder):
     """
         Download file from s3 and return link of it
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key
-    )
-    parent_folder = "static/downloads"
-    mkdir(parent_folder)
-    folder = "static/downloads/%s" % timestamp
-    mkdir(folder)
+    s3 = s3_resource(iam=iam)
 
-    output = "%s/%s" % (folder, key.split("/")[-1])
+    mkdir(folder)
+    file_path = "%s/%s" % (folder, get_name_only(key))
     try:
-        s3.Bucket(bucket).download_file(key, output)
+        s3.Bucket(bucket).download_file(key, file_path)
     except Exception as e:
         print(e)
         return None
 
-    return output
+    return file_path
+
+
+def download_directory_from_s3(iam, bucket, folder, un_cert=True):
+    """
+        Download a folder from s3 bucket
+
+        @params:
+                iam: User IAM Object
+                bucket: bucket name
+                folder: folder on s3 bucket
+                un_cert: flag for certificate.txt file, if True, result will not contain cert.txt, if not, it contains.
+        @return:
+                downloaded directory location
+        """
+
+    s3 = s3_resource(iam=iam)
+
+    timestamp = time.time()
+    # create folders
+    root = "static/downloads/%s" % timestamp
+    mkdir("static/downloads")
+    mkdir(root)
+
+    keys = get_list_keys(iam=iam, bucket=bucket, folder=folder, un_cert=un_cert)
+    bucket = s3.Bucket(bucket)
+    for key in keys:
+        path = "%s/%s" % (root, key.replace(folder, ''))
+        mkdir(os.path.dirname(path))
+        if key.endswith('/'):
+            continue
+
+        bucket.download_file(key, path)
+
+    return root
 
 
 def get_last_modified_timestamp(iam, bucket, key):
     """
-        Return last process files' timestamp
+        Return file's timestamp on s3 bucket
+
+        @params:
+                iam: User's IAM object
+                bucket: bucket name
+                key: file key on s3 bucket
+
+        @return:
+                timestamp of file
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key
-    )
+    s3 = s3_resource(iam=iam)
     obj = s3.Object(bucket, key)
     try:
         body = obj.get()
@@ -78,13 +173,17 @@ def get_last_modified_timestamp(iam, bucket, key):
 
 def get_file_content(iam, bucket, key):
     """
-        Get content of file by key in s3
+        Return content of file in s3
+
+        @params:
+                iam: User's IAM object
+                bucket: bucket name
+                key: file key on s3 bucket
+
+        @return:
+                content of file
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key
-    )
+    s3 = s3_resource(iam=iam)
     obj = s3.Object(bucket, key)
 
     try:
@@ -95,51 +194,43 @@ def get_file_content(iam, bucket, key):
         return None
 
 
-def get_data_set_logs(iam, bucket, log_dir):
+def get_data_set_logs(iam, bucket, timestamp):
     """
-        Retrieve logs for each dataset
+        Retrieve logs' keys for each data set
+
+        @params:
+                iam: User IAM Object
+                bucket: bucket name
+                timestamp: id of job (timestamp)
+        @return:
+                key list of data set log
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key
-    )
 
-    # Bucket to use
-    bucket = s3.Bucket(bucket)
+    data_set_logs = []
+    log_dir = "%s/results/job__%s_%s/logs/" % (iam.group.name, bucket, timestamp)
+    file_keys = get_list_keys(iam=iam, bucket=bucket, folder=log_dir)
 
-    # log files
-    file_keys = []
-    # List objects within a given prefix
-    try:
-        for obj in bucket.objects.filter(Delimiter='/', Prefix=log_dir):
-            if obj.key.endswith('certificate.txt'):
-                continue
-            file_keys.append(obj.key)
-    except Exception as e:
-        print(e)
+    for key in file_keys:
+        path = key.replace("%s/results/job__%s_%s/" % (iam.group.name, bucket, timestamp), "")
+        data_set_logs.append({
+            'path': path
+        })
 
-    return file_keys
-
-
-def convert_size(size):
-    """
-        Return size converted to appropriate format from Byte
-    """
-    if size > 1024 * 1024 * 1024:
-        return str(round(float(size / (1024 * 1024 * 1024)), 2)) + " GB"
-    elif size > 1024 * 1024:
-        return str(round(float(size / (1024 * 1024)), 2)) + " MB"
-    elif size > 1024:
-        return str(round(float(size / 1024), 2)) + " KB"
-    else:
-        return str(size) + " B"
+    return data_set_logs
 
 
 def get_job_list(iam, bucket, folder):
     """
-       return only job folder list
+        Retrieve job list from s3
+
+        @params:
+                iam: User IAM Object
+                bucket: bucket name
+                folder: folder in s3
+        @return:
+                folder list of jobs
         """
+
     s3 = boto3.client('s3',
                       aws_access_key_id=iam.aws_access_key,
                       aws_secret_access_key=iam.aws_secret_access_key)
@@ -163,15 +254,22 @@ def get_job_list(iam, bucket, folder):
 
 
 # function to get all files only of folder in bucket
-def get_file_list(iam, bucket, folder):
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
+def get_files_detail_list(iam, bucket, folder):
+    """
+        Retrieve file list and its detail content from s3
+
+        @params:
+                iam: User IAM Object
+                bucket: bucket name
+                folder: folder in s3
+        @return:
+                list of files with its detail (last_modified and size)
+        """
+    s3 = s3_resource(iam=iam)
 
     bucket = s3.Bucket(bucket)
 
-    file_keys = []
+    file_details = []
 
     prefix = "%s/" % folder
 
@@ -181,98 +279,66 @@ def get_file_list(iam, bucket, folder):
         for obj in objects:
             if obj.key.count('internal_ec2_logs') or obj.key == prefix or obj.key.endswith('/'):
                 continue
-            file_keys.append({
+            file_details.append({
                 'key': obj.key,
                 'date_modified': obj.last_modified.strftime('%Y-%m-%d'),
                 'size': convert_size(obj.size)
             })
-
     except Exception as e:
         print(e)
 
-    return file_keys
+    return file_details
 
 
-def get_list_keys(iam, bucket, folder):
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
+def delete_folder_from_bucket(iam, bucket, prefix):
+    """
+        Delete a folder from s3 bucket
 
+        @params:
+                iam: User IAM Object
+                bucket: bucket name
+                prefix: prefix for filter (folder name)
+        @return:
+                delete folder from s3
+        """
+    s3 = s3_resource(iam=iam)
     bucket = s3.Bucket(bucket)
-    prefix = "%s/" % folder
-
-    file_keys = []
-
-    for obj in bucket.objects.filter(Prefix=prefix):
-        if obj.key.count('internal_ec2_logs') or obj.key == prefix or obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
-            continue
-        file_keys.append(obj.key)
-
-    return file_keys
-
-
-def get_name_only(key):
-    """
-        Function to get only file name from link or full path
-        """
-    return key.split('/')[-1]
-
-
-def delete_folder_from_bucket(iam, bucket_name, prefix):
-    """
-        Delete existing json files from s3 before start new job
-        """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
-    bucket = s3.Bucket(bucket_name)
     for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
         obj.delete()
 
 
-def delete_file_from_bucket(iam, bucket_name, key):
+def delete_file_from_bucket(iam, bucket, key):
     """
         Delete a file from s3 bucket
+
+        @params:
+                iam: User IAM Object
+                bucket: bucket name
+                key: file key
+        @return:
+                delete a file from s3
         """
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
-    obj = s3.Object(bucket_name, key)
+    s3 = s3_resource(iam=iam)
+    obj = s3.Object(bucket, key)
     obj.delete()
 
 
-def create_submit_json(iam, work_bucket, key, json_data):
-    s3 = boto3.resource(
-        's3',
-        aws_access_key_id=iam.aws_access_key,
-        aws_secret_access_key=iam.aws_secret_access_key)
-    s3object = s3.Object(work_bucket, key)
+def create_submit_json(iam, bucket, key, json_data):
+    """
+        Create submit.json object with json data
+
+        @params:
+                iam: User IAM Object
+                bucket: bucket name
+                key: json file key
+                json_data: json data
+        @return:
+                None
+        """
+    s3 = s3_resource(iam=iam)
+    s3object = s3.Object(bucket, key)
 
     s3object.put(
         Body=(bytes(json.dumps(json_data).encode('UTF-8')))
     )
     print("successfully created submit.json")
-
-
-def download_directory_from_s3(iam, bucket, folder):
-    s3_resource = boto3.resource('s3',
-                                 aws_access_key_id=iam.aws_access_key,
-                                 aws_secret_access_key=iam.aws_secret_access_key)
-    bucket = s3_resource.Bucket(bucket)
-    timestamp = time.time()
-    root = "static/downloads/%s" % timestamp
-    mkdir(root)
-
-    for obj in bucket.objects.filter(Prefix=folder):
-        if obj.key.count('internal_ec2_logs') or obj.key.endswith('certificate.txt') or \
-                obj.key.endswith('end.txt') or obj.key.endswith('update.txt'):
-            continue
-        path = "%s/%s" % (root, obj.key.replace(folder, ''))
-        mkdir(os.path.dirname(path))
-        if obj.key.endswith('/'):
-            continue
-        bucket.download_file(obj.key, path)
-    return root
