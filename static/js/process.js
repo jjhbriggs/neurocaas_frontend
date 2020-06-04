@@ -42,7 +42,7 @@ function get_results(timestamp){
             if (processing_status)
                 setTimeout(function(){
                     get_results(timestamp)
-                }, 20000);
+                }, 30000);
         }
     })
 }
