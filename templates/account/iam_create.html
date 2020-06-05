@@ -4,23 +4,32 @@
 {% block title %}Create IAM{% endblock %}
 
 {% block content %}
+
     <div class="container">
+        <!-- IAM Create Form -->
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
+
             <div class="col-md-10 offset-md-1 mt-5">
+                <!-- Title -->
                 <div class="row">
                     <div class="col-sm-8 offset-sm-2 col-md-8 offset-md-2">
                         <h2 class="clickable"> Create IAM From JSON</h2>
                         <hr style="top:0px;">
                     </div>
                 </div>
+                <!-- #END Title -->
+
+                <!-- Drag & Drop File Upload Element -->
                 <div class="upload-div" id="dropContainer">
                     <div class="drop-area">
                         <span id="file-name" class="underline">Drag & Drop or Click!</span>
                         <input type="file" class="fileElem" accept=".json" id="fileInput" name="file">
                     </div>
                 </div>
+                <!-- #END Drag & Drop File Upload Element -->
 
+                <!-- Upload Button -->
                 <div class="text-center mt-4">
                     <button type="submit">
                         Upload
@@ -31,8 +40,10 @@
                         </a>
                     </div>
                 </div>
+                <!-- #END Upload Button -->
             </div>
         </form>
+        <!-- #END IAM Create Form-->
     </div>
 {% endblock %}
 
