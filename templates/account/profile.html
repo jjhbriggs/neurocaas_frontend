@@ -24,6 +24,7 @@
                             <input type="text" name="first_name" placeholder="First Name" class="form-control" value="{{user.first_name}}" required>
                         </div>
                     </div>
+                    <!-- #END First Name -->
 
                     <!-- Last Name -->
                     <div class="form-group row pb-3">
@@ -32,23 +33,9 @@
                             <input name="last_name" placeholder="Last Name" class="form-control" type="text"  value="{{user.last_name}}" required>
                         </div>
                     </div>
+                    <!-- #END Last Name -->
 
-                    <!-- AWS Credentials Status -->
-                    <!--<div class="form-group row pb-3">
-                        <label class="col-5 col-form-label">AWS Credentials Status</label>
-                        <div class="col-7 text-left">
-                            {% if aws_req %}
-                            <label class="{{aws_req.get_status_display}}">{{aws_req.get_status_display}}</label>
-                                {% if aws_req.get_status_display == 'Denied' %}
-                                    <a href="{% url 'aws_cred_request' %}" class="btn btn-warning ml-2">Send request again</a>
-                                {% endif %}
-                            {% else %}
-                                <a href="{% url 'aws_cred_request' %}" class="btn btn-warning">Send Request</a>
-                            {% endif %}
-                        </div>
-                    </div>-->
-
-                    <!-- AWS Credentials Detail -->
+                    <!-- AWS User Name -->
                     {% if aws_req.get_status_display == 'Completed' %}
                     <div class="form-group row pb-3">
                         <label class="col-5 col-form-label">AWS User Name <span class="danger">*</span> </label>
@@ -56,25 +43,34 @@
                             <input class="form-control" type="text"  value="{{iam.aws_user}}" disabled>
                         </div>
                     </div>
+                    <!-- #END AWS User Name -->
+
+                    <!-- AWS Access Key -->
                     <div class="form-group row pb-3">
                         <label class="col-5 col-form-label">AWS Access Key <span class="danger">*</span></label>
                         <div class="col-7">
                             <input class="form-control" type="text"  value="{{iam.aws_access_key}}" disabled>
                         </div>
                     </div>
+                    <!-- #END AWS Access Key -->
+
+                    <!-- AWS Secret Access Key -->
                     <div class="form-group row pb-3">
                         <label class="col-5 col-form-label">AWS Secret Access Key <span class="danger">*</span></label>
                         <div class="col-7">
                             <input class="form-control" type="text"  value="{{iam.aws_secret_access_key}}" disabled>
                         </div>
                     </div>
+                    <!-- #END AWS Secret Access Key -->
 
+                    <!-- AWS S3 Bucket For Datasets and config files -->
                     <div class="form-group row pb-3">
                         <label class="col-5 col-form-label">S3 Bucket For Datasets and config files <span class="danger">*</span></label>
                         <div class="col-7">
                             <input class="form-control" type="text"  value="{{iam.data_bucket}}" disabled>
                         </div>
                     </div>
+                    <!-- #END S3 Bucket For Datasets and config files -->
 
                     {% endif %}
 
@@ -87,9 +83,10 @@
                             <!--<button type="button" class="btn btn-primary" onclick="user_password_change()">Change Password?</button>-->
                         </div>
                     </div>
+                    <!-- #END Submit Button -->
 
                 </form>
-                <!--# END Form -->
+                <!--#END Profile Form -->
             </div>
         </div>
     </div>
