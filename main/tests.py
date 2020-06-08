@@ -7,20 +7,33 @@ from account.models import *
 
 class AnalysisTestCase(TestCase):
     def setUp(self):
-        User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
-        User.objects.create(email="test2@test.com", first_name="Test2", last_name="User")
+        user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
+        group = AnaGroup.objects.create(name="test group")
+        self.iam = IAM.objects.create(user=user,
+                                      aws_user="AWS user",
+                                      aws_access_key="AWS access key",
+                                      aws_secret_access_key="AWS secret key",
+                                      group=group)
 
-    def test_get_full_name_with_user(self):
+        Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="test_prefix",
+            bucket_name="Test bucket",
+            custom=True,
+            groups=group,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+
+    def test_check_iam_with_analysis(self):
         """ User's full name check """
+
         user1 = User.objects.get(email="test1@test.com")
         user2 = User.objects.get(email="test2@test.com")
         self.assertEqual(user1.get_full_name(), 'Test1 User')
         self.assertEqual(user2.get_full_name(), 'Test User')
-
-    def test_get_short_name_with_user(self):
-        """ User's email as short name """
-        user1 = User.objects.get(email="test1@test.com")
-        user2 = User.objects.get(email="test2@test.com")
-        self.assertEqual(user1.get_short_name(), 'Test1 User')
-        self.assertEqual(user2.get_short_name(), 'test1@test.com')
-
