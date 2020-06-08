@@ -1,5 +1,14 @@
-
 function show_detail(ind, type){
+    /*
+        Show detail of item in data set and config folder
+        @params:
+                ind: index of data array
+                type: "config" or "dataset"
+
+        @return:
+                None
+    */
+
     if (!detail_flag) return;
     var content = "";
     if (type === 0){
@@ -14,6 +23,25 @@ function show_detail(ind, type){
     $('#status-text').html(content)
 }
 
+
+function set_jstree_state(tree_id, id_arr){
+    /*
+        Set checked state in jstree
+        @params:
+                ind: index of data array
+                type: "config" or "dataset"
+
+        @return:
+                None
+    */
+
+    setTimeout(function(){
+        var _tree = $('#' + tree_id).jstree(true);
+        for ( i = 0 ; i < id_arr.length; i++ ){
+            _tree.select_node(id_arr[i]);
+        }
+    }, 200);
+}
 
 function create_results_tree(paths){
     // console.log(paths);
@@ -56,7 +84,7 @@ function create_results_tree(paths){
                 icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths)
+                'data' : get_json_from_array(paths, "results")
             }
         });
 }
@@ -107,7 +135,7 @@ function create_data_set_jstree(paths){
                 icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths),
+                'data' : get_json_from_array(paths, "data_set"),
                 "check_callback" : true,
                 'themes': {
                     'responsive': false,
@@ -115,6 +143,11 @@ function create_data_set_jstree(paths){
                 }
             }
         });
+
+    if (_Nodes && 'data_set' in _Nodes && processing_status){
+        data_set = _Nodes['data_set'];
+        set_jstree_state("data_set_folder", data_set);
+    }
 }
 
 
@@ -171,7 +204,7 @@ function create_config_jstree(paths){
                 icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths),
+                'data' : get_json_from_array(paths, "config"),
                 "check_callback" : true,
                 'themes': {
                     'responsive': false,
@@ -179,6 +212,12 @@ function create_config_jstree(paths){
                 }
             }
         });
+
+    if (_Nodes && 'config' in _Nodes && processing_status){
+        configs = _Nodes['config'];
+        
+        set_jstree_state("config_folder", configs);
+    }
 }
 
 
