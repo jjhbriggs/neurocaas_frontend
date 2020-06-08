@@ -144,6 +144,7 @@
         var data_set_area = new FileUpload();
         var config_area = new FileUpload();
         var timestamp = 0;
+        var _Nodes = [];
 
     </script>
     <script src="{% static 'js/process.js' %}"></script>
@@ -160,6 +161,7 @@
 
             timestamp = localStorage.getItem("timestamp");
             _ana_id = parseInt(localStorage.getItem("ana_id"));
+            _Nodes = JSON.parse(localStorage.getItem("Nodes"));            
             
             if (timestamp > 0 && ana_id === _ana_id){
                 submit_effect();
@@ -168,6 +170,7 @@
             else {
                 localStorage.setItem("timestamp", 0);
                 localStorage.setItem("ana_id", 0);
+                localStorage.setItem("Nodes", "[]");
             }
         })
     </script>
