@@ -56,7 +56,7 @@ function create_results_tree(paths){
                 icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths)
+                'data' : get_json_from_array(paths, "results")
             }
         });
 }
@@ -107,7 +107,7 @@ function create_data_set_jstree(paths){
                 icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths),
+                'data' : get_json_from_array(paths, "data_set"),
                 "check_callback" : true,
                 'themes': {
                     'responsive': false,
@@ -115,6 +115,16 @@ function create_data_set_jstree(paths){
                 }
             }
         });
+
+    if (_Nodes && 'data_set' in _Nodes && processing_status){
+        data_set = _Nodes['data_set'];
+        setTimeout(function(){
+            var _tree = $('#data_set_folder').jstree(true);
+            for ( i = 0 ; i < data_set.length; i++ ){
+                _tree.select_node(data_set[i]);
+            }
+        }, 200);
+    }
 }
 
 
@@ -171,7 +181,7 @@ function create_config_jstree(paths){
                 icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths),
+                'data' : get_json_from_array(paths, "config"),
                 "check_callback" : true,
                 'themes': {
                     'responsive': false,
@@ -179,6 +189,16 @@ function create_config_jstree(paths){
                 }
             }
         });
+
+    if (_Nodes && 'config' in _Nodes && processing_status){
+        configs = _Nodes['config'];
+        setTimeout(function(){
+            var _tree = $('#config_folder').jstree(true);
+            for ( i = 0 ; i < configs.length; i++ ){
+                _tree.select_node(configs[i]);
+            }
+        }, 200);
+    }
 }
 
 

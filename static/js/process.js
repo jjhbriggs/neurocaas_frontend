@@ -47,7 +47,8 @@ function end_effect(){
     $('.spinner').css('display', 'none');
     $('#btn-spinner').css('display', 'none');
     localStorage.setItem("timestamp", null);
-    localStorage.setItem("ana_id", null);    
+    localStorage.setItem("ana_id", null);
+    localStorage.setItem("Nodes", null);
     alert("Process has just finished.");
 }
 
@@ -99,8 +100,18 @@ function submit(){
     	    $('#btn-spinner').css('display', 'none');
     		console.log(res)
     		timestamp = res.timestamp;
+
             localStorage.setItem("timestamp", timestamp);
             localStorage.setItem("ana_id", ana_id);
+            
+            var data_set_Nodes = $('#data_set_folder').jstree(true).get_selected();
+            var config_Nodes = $('#config_folder').jstree(true).get_selected();
+            var m_Nodes = {
+                "data_set": data_set_Nodes,
+                "config": config_Nodes
+            };
+            localStorage.setItem("Nodes", JSON.stringify(m_Nodes));
+
     		trigger_function(res.timestamp);
     	},
     	error: function(err){
