@@ -97,7 +97,7 @@ function submit(){
     		config_file: config_files[0]
     	},
     	success: function(res){
-    	    $('#btn-spinner').css('display', 'none');
+    	    // $('#btn-spinner').css('display', 'none');
     		console.log(res)
     		timestamp = res.timestamp;
 
