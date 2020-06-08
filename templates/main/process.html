@@ -151,12 +151,24 @@
     <script type="text/javascript">
         
         data_set_area.init("data_set-area", id1, id2, bucket, data_set_dir, "", submit_trigger, true);
-        config_area.init("config-area", id1, id2, bucket, config_dir, "", submit_trigger, true)
+        config_area.init("config-area", id1, id2, bucket, config_dir, "", submit_trigger, true);
 
         $(document).ready(function(){
             $('.spinner').css('display', 'none');
             $('#btn-spinner').css('display', 'none');
             refresh_bucket();
+
+            timestamp = localStorage.getItem("timestamp");
+            _ana_id = parseInt(localStorage.getItem("ana_id"));
+            
+            if (timestamp > 0 && ana_id === _ana_id){
+                submit_effect();
+                trigger_function(timestamp);
+            }
+            else {
+                localStorage.setItem("timestamp", 0);
+                localStorage.setItem("ana_id", 0);
+            }
         })
     </script>
 {% endblock %}
