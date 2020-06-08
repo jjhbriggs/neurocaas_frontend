@@ -1,3 +1,4 @@
+var ind = 0;
 function truncate(n, len) {
     /*
         truncate text
@@ -21,7 +22,7 @@ function truncate(n, len) {
 };
 
 
-function insert(children = [], [head, ...tail], text_length) {
+function insert(children = [], [head, ...tail], text_length, prefix) {
     /*
         Insert path into directory tree structure:
 
@@ -36,7 +37,9 @@ function insert(children = [], [head, ...tail], text_length) {
         var text = truncate(head, text_length);
         tail.length === 0 ?
         children.push(child = {
-            text: text, children: [],
+            id: prefix + ind++,
+            text: text,
+            children: [],
             icon: 'jstree-file',
             li_attr: {
                 title: head,
@@ -54,12 +57,12 @@ function insert(children = [], [head, ...tail], text_length) {
         })
     }
 
-    if (tail.length > 0) insert(child.children, tail, text_length);
+    if (tail.length > 0) insert(child.children, tail, text_length, prefix);
     return children;
 }
 
 
-function get_json_from_array(arr, text_length=34){
+function get_json_from_array(arr, prefix="", text_length=34){
     /*
         get JSON from files path array
 
@@ -69,9 +72,10 @@ function get_json_from_array(arr, text_length=34){
         @return:
                 json
     */
+    ind = 0;
     let objectArray = arr
         .map(path => path.split('/').slice(1))
-        .reduce((children, path) => insert(children, path, text_length), []);
+        .reduce((children, path) => insert(children, path, text_length, prefix), []);
     return objectArray;
 }
 
@@ -189,6 +193,7 @@ async function delete_action(node, key, tree){
 function get_selected_nodes(tree_id, prefix){
     var files = [];
     var selectedNodes = $('#' + tree_id).jstree(true).get_selected();
+    
     for(var i = 0; i < selectedNodes.length; i++) {
         var full_node = $('#' + tree_id).jstree(true).get_node(selectedNodes[i]);
 
