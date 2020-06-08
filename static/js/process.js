@@ -30,12 +30,7 @@ async function get_results(timestamp){
     if(res.result_links.length > 0) {
         results_links = res.result_links;
 
-        if (res.end){
-            // set the processing status to FALSE
-            processing_status = false;
-            $('.spinner').css('display', 'none');
-            alert("Process has just finished.");
-        }
+        if (res.end) end_effect();
         update_jstree();
     }
 
@@ -43,6 +38,30 @@ async function get_results(timestamp){
         setTimeout(function(){
             get_results(timestamp)
         }, 30000);
+}
+
+
+function end_effect(){
+    // set the processing status to FALSE
+    processing_status = false;
+    $('.spinner').css('display', 'none');
+    $('#btn-spinner').css('display', 'none');
+    localStorage.setItem("timestamp", null);
+    localStorage.setItem("ana_id", null);
+    localStorage.setItem("Nodes", null);
+    alert("Process has just finished.");
+}
+
+
+function submit_effect(){
+    $('#btn-spinner').css('display', 'inline-block');
+
+    // set the processing status to TRUE
+    processing_status = true;
+
+    // disabled showing detail of dataset and config files
+    detail_flag = false;
+    $('#submit_button').attr('disabled', true);
 }
 
 
@@ -67,13 +86,7 @@ function submit(){
 
     console.log(data_set_files, config_files[0]);
 
-    $('#btn-spinner').css('display', 'inline-block');
-
-    // set the processing status to TRUE
-    processing_status = true;
-
-    // disabled showing detail of dataset and config files
-    detail_flag = false;
+    submit_effect();
 
 
     $.ajax({
@@ -87,6 +100,18 @@ function submit(){
     	    $('#btn-spinner').css('display', 'none');
     		console.log(res)
     		timestamp = res.timestamp;
+
+            localStorage.setItem("timestamp", timestamp);
+            localStorage.setItem("ana_id", ana_id);
+            
+            var data_set_Nodes = $('#data_set_folder').jstree(true).get_selected();
+            var config_Nodes = $('#config_folder').jstree(true).get_selected();
+            var m_Nodes = {
+                "data_set": data_set_Nodes,
+                "config": config_Nodes
+            };
+            localStorage.setItem("Nodes", JSON.stringify(m_Nodes));
+
     		trigger_function(res.timestamp);
     	},
     	error: function(err){
@@ -94,8 +119,7 @@ function submit(){
     		console.log(err);
     		$('#submit_button').attr('disabled', false);
     	}
-    })
-    $('#submit_button').attr('disabled', true);
+    })    
 }
 
 
@@ -129,6 +153,7 @@ var trigger_function = function(timestamp){
         get_results(timestamp);
     }, 1000);
 }
+
 
 var submit_trigger = function(){
     setTimeout(function(){
