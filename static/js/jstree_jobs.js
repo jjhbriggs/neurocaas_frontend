@@ -43,7 +43,7 @@ function create_job_tree(paths){
                 icon: true,
             },
             'core' : {
-                'data' : get_json_from_array(paths, 50)
+                'data' : get_json_from_array(paths, "job", 50)
             }
         });
 }
