@@ -15,25 +15,25 @@ class AnalysisTestCase(TestCase):
                                       aws_secret_access_key="AWS secret key",
                                       group=group)
 
-        # Analysis.objects.create(
-        #     analysis_name="Test Analysis",
-        #     result_prefix="test_prefix",
-        #     bucket_name="Test bucket",
-        #     custom=True,
-        #     groups=group,
-        #     short_description="Short Description",
-        #     long_description="Long Description",
-        #     paper_link="Paper Link",
-        #     git_link="Github Link",
-        #     bash_link="Bash Script Link",
-        #     demo_link="Demo page link",
-        #     signature="Signature"
-        # )
+        analysis = Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="test_prefix",
+            bucket_name="Test bucket",
+            custom=True,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+
+        analysis.groups.add(group)
 
     def test_check_iam_with_analysis(self):
         """ User's full name check """
 
-        user1 = User.objects.get(email="test1@test.com")
-        user2 = User.objects.get(email="test2@test.com")
-        self.assertEqual(user1.get_full_name(), 'Test1 User')
-        self.assertEqual(user2.get_full_name(), 'Test User')
+        analysis = Analysis.objects.get(bucket_name='Test bucket')
+        iam = IAM.objects.get(aws_user='AWS user')
+        self.assertIs(analysis.check_iam(iam), True)
