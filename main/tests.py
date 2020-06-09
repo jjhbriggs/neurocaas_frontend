@@ -77,3 +77,4 @@ class AnalysisListViewTest(TestCase):
         response = self.client.get('/analyses/')
         self.assertQuerysetEqual(response.context['main_analyses'], ['<Analysis: Test Analysis1>'])
         self.assertQuerysetEqual(response.context['custom_analyses'], ['<Analysis: Test Analysis2>'])
+        self.assertEqual(response.context['iam'], None)
