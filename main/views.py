@@ -393,14 +393,10 @@ class ResultView(LoginRequiredMixin, View):
         timestamp = int(request.POST['timestamp'])
 
         result_folder = "%s/results/job__%s_%s" % (iam.group.name, analysis.bucket_name, timestamp)
-        update_file = "%s/process_results/update.txt" % result_folder
         end_file = "%s/process_results/end.txt" % result_folder
         end_flag = False
 
         result_links = []
-        # update_timestamp = get_last_modified_timestamp(iam=iam,
-        #                                                bucket=analysis.bucket_name,
-        #                                                key=update_file)
 
         end_timestamp = get_last_modified_timestamp(iam=iam,
                                                     bucket=analysis.bucket_name,
