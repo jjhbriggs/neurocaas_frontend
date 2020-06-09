@@ -37,3 +37,43 @@ class AnalysisTestCase(TestCase):
         analysis = Analysis.objects.get(bucket_name='Test bucket')
         iam = IAM.objects.get(aws_user='AWS user')
         self.assertIs(analysis.check_iam(iam), True)
+
+
+class AnalysisListViewTest(TestCase):
+    def setUp(self):
+        group1 = AnaGroup.objects.create(name="test group1")
+        group2 = AnaGroup.objects.create(name="test group2")
+        analysis1 = Analysis.objects.create(
+            analysis_name="Test Analysis1",
+            result_prefix="test_prefix1",
+            bucket_name="Test bucket1",
+            custom=False,
+            short_description="Short Description1",
+            long_description="Long Description1",
+            paper_link="Paper Link1",
+            git_link="Github Link1",
+            bash_link="Bash Script Link1",
+            demo_link="Demo page link1",
+            signature="Signature1"
+        )
+        analysis1.groups.add(group1)
+
+        analysis2 = Analysis.objects.create(
+            analysis_name="Test Analysis2",
+            result_prefix="test_prefix2",
+            bucket_name="Test bucket2",
+            custom=True,
+            short_description="Short Description2",
+            long_description="Long Description2",
+            paper_link="Paper Link2",
+            git_link="Github Link2",
+            bash_link="Bash Script Link2",
+            demo_link="Demo page link2",
+            signature="Signature2"
+        )
+        analysis2.groups.add(group2)
+
+    def test_analysis_list_view(self):
+        response = self.client.get('/analyses/')
+        self.assertQuerysetEqual(response.context['main_analyses'], ['<Analysis: Test Analysis1>'])
+        self.assertQuerysetEqual(response.context['custom_analyses'], ['<Analysis: Test Analysis2>'])
