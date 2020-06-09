@@ -15,20 +15,20 @@ class AnalysisTestCase(TestCase):
                                       aws_secret_access_key="AWS secret key",
                                       group=group)
 
-        Analysis.objects.create(
-            analysis_name="Test Analysis",
-            result_prefix="test_prefix",
-            bucket_name="Test bucket",
-            custom=True,
-            groups=group,
-            short_description="Short Description",
-            long_description="Long Description",
-            paper_link="Paper Link",
-            git_link="Github Link",
-            bash_link="Bash Script Link",
-            demo_link="Demo page link",
-            signature="Signature"
-        )
+        # Analysis.objects.create(
+        #     analysis_name="Test Analysis",
+        #     result_prefix="test_prefix",
+        #     bucket_name="Test bucket",
+        #     custom=True,
+        #     groups=group,
+        #     short_description="Short Description",
+        #     long_description="Long Description",
+        #     paper_link="Paper Link",
+        #     git_link="Github Link",
+        #     bash_link="Bash Script Link",
+        #     demo_link="Demo page link",
+        #     signature="Signature"
+        # )
 
     def test_check_iam_with_analysis(self):
         """ User's full name check """
