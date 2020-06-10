@@ -28,13 +28,14 @@ class UserLoginViewTest(TestCase):
     def setUp(self):
         user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
         group = AnaGroup.objects.create(name="test group")
-        iam = IAM.objects.create(user=user,
-                                 aws_user="AWS user",
-                                 aws_access_key="AWS access key",
-                                 aws_secret_access_key="AWS secret key",
-                                 group=group)
+        IAM.objects.create(user=user,
+                           aws_user="AWS user",
+                           aws_access_key="AWS access key",
+                           aws_secret_access_key="AWS secret key",
+                           group=group)
 
     def test_login_view_with_iam(self):
+        """ Login Test with AWS credentials """
         form = {
             'aws_access_key': 'AWS access key',
             'aws_secret_access_key': 'AWS secret key',
