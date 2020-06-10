@@ -78,3 +78,40 @@ class AnalysisListViewTest(TestCase):
         self.assertQuerysetEqual(response.context['main_analyses'], ['<Analysis: Test Analysis1>'])
         self.assertQuerysetEqual(response.context['custom_analyses'], ['<Analysis: Test Analysis2>'])
         self.assertEqual(response.context['iam'], None)
+
+
+class AnalysisIntroViewTest(TestCase):
+    def setUp(self):
+        user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
+        group = AnaGroup.objects.create(name="test group")
+        self.iam = IAM.objects.create(user=user,
+                                      aws_user="AWS user",
+                                      aws_access_key="AWS access key",
+                                      aws_secret_access_key="AWS secret key",
+                                      group=group)
+
+        analysis = Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="test_prefix",
+            bucket_name="Test bucket",
+            custom=True,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+
+        analysis.groups.add(group)
+
+    def test_with_intro_view(self):
+        response = self.client.get('/analysis/1')
+        analysis = Analysis.objects.filter(analysis_name='Test Analysis').first()
+        self.assertEqual(response.context['analysis'], analysis)
+        self.assertEqual(response.context['iam'], None)
+
+
+class JobListViewTest(TestCase):
+    pass
