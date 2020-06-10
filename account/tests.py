@@ -35,6 +35,7 @@ class UserLoginViewTest(TestCase):
                            group=group)
 
     def test_login_view_with_iam(self):
+        """ Login Test with AWS credentials """
         form = {
             'aws_access_key': 'AWS access key',
             'aws_secret_access_key': 'AWS secret key',
