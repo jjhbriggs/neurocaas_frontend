@@ -89,7 +89,6 @@ class ProfileView(LoginRequiredMixin, View):
         form = ProfileChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             user = form.save()
-
             messages.success(request, 'Successfully updated!')
 
         return redirect('profile')
