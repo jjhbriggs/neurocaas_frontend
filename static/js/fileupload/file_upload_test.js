@@ -289,41 +289,67 @@ FileUpload.prototype ={
             files.forEach(previewFile)
         }
 
-        function traverseFileTree(item, path) {
-              path = path || "";
-              if (item.isFile) {
-                // Get file
+        /* Functions for Drag & Drop folder */
+        var readEntriesPromise = function(reader) {
+            return new Promise(function(resolve, reject) {
+                reader.readEntries(function(entries) {
+                    resolve(entries);
+                }, reject);
+            });
+        };
+
+        var filePromise = function(item) {
+            return new Promise(function(resolve, reject) {
                 item.file(function(file) {
-                    console.log("File:", path + file.name);
-                    file.name = path + file.name;
-                    handleFiles(sender, [file]);
+                    resolve(file);
+                }, reject);
+            });
+        };
+
+        var func_deep = 0;
+        var traverseFileTree = async function(item, path, callback) {
+            func_deep++;
+            path = path || "";
+            if (item.isFile) {
+                // Get file
+                file = await filePromise(item);
+                console.log("File:", path + file.name);
+                sender.files.push({
+                    path: path + file.name,
+                    file: file
                 });
-              } else if (item.isDirectory) {
+            } else if (item.isDirectory) {
                 // Get folder contents
                 var dirReader = item.createReader();
-                dirReader.readEntries(function(entries) {
-                    for (var i=0; i<entries.length; i++) {
-                        traverseFileTree(entries[i], path + item.name + "/");
-                    }
-                });
-              }
+                etries = await readEntriesPromise(dirReader);
+                for (var i=0; i<etries.length; i++) {                    
+                    traverseFileTree(etries[i], path + item.name + "/", callback);                    
+                }
             }
+            callback(func_deep--);
+        }
 
         // Handle dropped files
-        this.dropArea.addEventListener('drop', function(e){
+        this.dropArea.addEventListener('drop', async function(e){
             if (!sender.contentious && sender.status) return;
             var items = event.dataTransfer.items;
+            console.log("traverseFileTree start")
+            func_deep = 0;
             for (var i=0; i<items.length; i++) {
                 // webkitGetAsEntry is where the magic happens
                 var item = items[i].webkitGetAsEntry();
                 if (item) {
-                    traverseFileTree(item);
+                    traverseFileTree(item, "", function(deep){
+                        if (deep > 1) return;
+                        console.log("traverseFileTree end", deep);
+                        console.log(sender.files);
+                    });
                 }
             }
 
-           // var dt = e.dataTransfer
-           // var files = dt.files
-           // handleFiles(sender, files)
+            // var dt = e.dataTransfer
+            // var files = dt.files
+            // handleFiles(sender, files)
         }, false);
 
         // add eventlistener when the file tag is changed
