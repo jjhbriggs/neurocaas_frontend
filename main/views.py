@@ -131,8 +131,6 @@ class JobListView(LoginRequiredMixin, View):
 
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
 
-        print(job_list)
-
         return render(
             request=request,
             template_name=self.template_name,
