@@ -415,3 +415,29 @@ class ResultView(LoginRequiredMixin, View):
             "result_links": result_links,
             "end": end_flag
         })
+
+
+class TestView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        analysis = Analysis.objects.get(pk=2)
+        iam = get_current_iam(request)
+
+        if not analysis.check_iam(iam):
+            messages.error(request, "You don't have permission for this analysis.")
+            return redirect('/')
+
+        # convert aws keys to base64 string
+        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
+        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+
+        return render(request=request, template_name="main/test.html", context={
+            "id1": access_id,
+            "id2": secret_key,
+            'bucket': analysis.bucket_name,
+            "data_set_dir": "%s/inputs" % iam.group.name,
+            "config_dir": "%s/configs" % iam.group.name,
+            "title": analysis.analysis_name,
+            'iam': iam,
+            'analysis': analysis
+        })
