@@ -150,12 +150,12 @@ FileUpload.prototype ={
 
         // preview file after drop a file
         var previewFile = function(file) {
-            console.log(file.file.name)
+            console.log(file.name)
             let reader = new FileReader()
-            reader.readAsDataURL(file.file)
+            reader.readAsDataURL(file)
             reader.onloadend = function() {
                 let label = document.createElement('label');
-                label.innerText = file.file.name;
+                label.innerText = file.name;
                 console.log(document.querySelector('#' + sender.form_id + ' .gallery'));
                 document.querySelector('#' + sender.form_id + ' .gallery').appendChild(label)
             }
@@ -169,7 +169,7 @@ FileUpload.prototype ={
 
             for(let i = 0; i < Files.length; i++) {
                 sender.uploadProgress.push(0)
-                sender.uploadFileSize.push(Files[i].file.size);
+                sender.uploadFileSize.push(Files[i].size);
             }
 
             $('#' + sender.form_id + " .gallery").html("");
@@ -198,12 +198,12 @@ FileUpload.prototype ={
 
         var uploadFile = function(_this, file) {
             const reader = new FileReader();
-            reader.readAsArrayBuffer(file.file)
+            reader.readAsArrayBuffer(file)
 
             var params = {
                 Bucket: sender.bucket,
-                Key: sender.subfolder + "/" + file.path,
-                Body: file.file
+                Key: sender.subfolder + "/" + file.name,
+                Body: file
             };
 
             /* Disabled the upload once for demo */
@@ -229,16 +229,16 @@ FileUpload.prototype ={
                 _this.buffer = reader.result;
                 _this.startTime = new Date();
                 _this.partNum = 0;
-                _this.fileKey = file.path;
-                _this.partSize = file.file.size / 20 > _this.defaultSize ? file.file.size / 20 : _this.defaultSize;
-                _this.numPartsLeft = Math.floor(file.file.size / _this.partSize);
-                file.file.size - _this.partSize * _this.numPartsLeft > _this.defaultSize ? _this.numPartsLeft++ : null;
+                _this.fileKey = file.name
+                _this.partSize = file.size / 20 > _this.defaultSize ? file.size / 20 : _this.defaultSize;
+                _this.numPartsLeft = Math.floor(file.size / _this.partSize);
+                file.size - _this.partSize * _this.numPartsLeft > _this.defaultSize ? _this.numPartsLeft++ : null;
 
                 _this.maxUploadTries = 3;
                 _this.multiPartParams = {
                     Bucket: _this.bucket,
                     Key: _this.subfolder + "/" + _this.fileKey,
-                    ContentType: file.file.type
+                    ContentType: file.type
                 };
                 _this.multipartMap = {
                     Parts: []
@@ -289,78 +289,17 @@ FileUpload.prototype ={
             files.forEach(previewFile)
         }
 
-        /* Functions for Drag & Drop folder */
-        var readEntriesPromise = function(reader) {
-            return new Promise(function(resolve, reject) {
-                reader.readEntries(function(entries) {
-                    resolve(entries);
-                }, reject);
-            });
-        };
-
-        var filePromise = function(item) {
-            return new Promise(function(resolve, reject) {
-                item.file(function(file) {
-                    resolve(file);
-                }, reject);
-            });
-        };
-
-        var func_deep = 0;
-        var traverseFileTree = async function(item, path, callback) {
-            func_deep++;
-            path = path || "";
-            if (item.isFile) {
-                // Get file
-                file = await filePromise(item);
-                console.log("File:", path + file.name);
-                sender.files.push({
-                    path: path + file.name,
-                    file: file
-                });
-            } else if (item.isDirectory) {
-                // Get folder contents
-                var dirReader = item.createReader();
-                etries = await readEntriesPromise(dirReader);
-                for (var i=0; i<etries.length; i++) {                    
-                    traverseFileTree(etries[i], path + item.name + "/", callback);                    
-                }
-            }
-            callback(func_deep--);
-        }
-
         // Handle dropped files
-        this.dropArea.addEventListener('drop', async function(e){
+        this.dropArea.addEventListener('drop', function(e){
             if (!sender.contentious && sender.status) return;
-            var items = event.dataTransfer.items;
-            console.log("traverseFileTree start")
-            func_deep = 0;
-            for (var i=0; i<items.length; i++) {
-                // webkitGetAsEntry is where the magic happens
-                var item = items[i].webkitGetAsEntry();
-                if (item) {
-                    traverseFileTree(item, "", function(deep){
-                        if (deep > 1) return;
-                        console.log("traverseFileTree end", deep);
-                        console.log(sender.files);
-                        handleFiles(sender, sender.files);
-                    });
-                }
-            }
+            var dt = e.dataTransfer
+            var files = dt.files
+            handleFiles(sender, files)
         }, false);
 
         // add eventlistener when the file tag is changed
         document.querySelector('#' + this.form_id + ' .fileElem').addEventListener('change', function(e){
-            var m_files = e.target.files;
-            var files = [];
-
-            for ( var i = 0; i < m_files.length; i++ ){
-                files.push({
-                    path: m_files[i].name,
-                    file: m_files[i]
-                })
-            }
-
+            var files = e.target.files;
             handleFiles(sender, files);
         }, false);
     },
