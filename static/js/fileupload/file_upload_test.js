@@ -289,12 +289,41 @@ FileUpload.prototype ={
             files.forEach(previewFile)
         }
 
+        function traverseFileTree(item, path) {
+              path = path || "";
+              if (item.isFile) {
+                // Get file
+                item.file(function(file) {
+                    console.log("File:", path + file.name);
+                    file.name = path + file.name;
+                    handleFiles(sender, [file]);
+                });
+              } else if (item.isDirectory) {
+                // Get folder contents
+                var dirReader = item.createReader();
+                dirReader.readEntries(function(entries) {
+                    for (var i=0; i<entries.length; i++) {
+                        traverseFileTree(entries[i], path + item.name + "/");
+                    }
+                });
+              }
+            }
+
         // Handle dropped files
         this.dropArea.addEventListener('drop', function(e){
             if (!sender.contentious && sender.status) return;
-            var dt = e.dataTransfer
-            var files = dt.files
-            handleFiles(sender, files)
+            var items = event.dataTransfer.items;
+            for (var i=0; i<items.length; i++) {
+                // webkitGetAsEntry is where the magic happens
+                var item = items[i].webkitGetAsEntry();
+                if (item) {
+                    traverseFileTree(item);
+                }
+            }
+
+           // var dt = e.dataTransfer
+           // var files = dt.files
+           // handleFiles(sender, files)
         }, false);
 
         // add eventlistener when the file tag is changed
