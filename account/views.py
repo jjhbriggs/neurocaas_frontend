@@ -16,6 +16,9 @@ from django.contrib import messages
 # Create your views here.
 
 class LoginView(View):
+    """
+        User Login View with his AWS credentials
+        """
     template_name = "account/login.html"
 
     def get(self, request):
@@ -40,6 +43,9 @@ class LoginView(View):
 
 
 class SignUpView(View):
+    """
+        User Sign Up View with his Email address
+        """
     template_name = "account/signup.html"
 
     def get(self, request):
@@ -65,6 +71,9 @@ class SignUpView(View):
 
 
 class ProfileView(LoginRequiredMixin, View):
+    """
+        User's Detail View
+        """
     template_name = "account/profile.html"
 
     def get(self, request):
@@ -80,14 +89,15 @@ class ProfileView(LoginRequiredMixin, View):
         form = ProfileChangeForm(request.POST, instance=request.user)
         if form.is_valid():
             user = form.save()
-
             messages.success(request, 'Successfully updated!')
 
         return redirect('profile')
 
 
 class AWSCredRequestView(LoginRequiredMixin, View):
-
+    """
+        AWS Credentials Request object View
+        """
     def get(self, request):
         aws_req = AWSRequest.objects.filter(user=request.user).first()
         if aws_req:
@@ -99,6 +109,9 @@ class AWSCredRequestView(LoginRequiredMixin, View):
 
 
 class ChangePWDView(LoginRequiredMixin, View):
+    """
+        User's password change View
+        """
     template_name = "account/change_password.html"
 
     def get(self, request):
@@ -129,6 +142,9 @@ class AdminMixin(UserPassesTestMixin):
 
 
 class IamCreateView(AdminMixin, View):
+    """
+        IAM Creation View with json file uploaded.
+        """
     login_url = '/'
 
     def get(self, request):
