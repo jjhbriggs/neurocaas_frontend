@@ -314,7 +314,7 @@ FileUpload.prototype ={
     },
 
     unhighlight(e) {
-        this.classList.remove('active')
+        // this.classList.remove('active')
     },
     clear_status: function(){
         this.progressBar.value = 0;
