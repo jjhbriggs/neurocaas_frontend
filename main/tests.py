@@ -114,4 +114,39 @@ class AnalysisIntroViewTest(TestCase):
 
 
 class JobListViewTest(TestCase):
-    pass
+    def setUp(self):
+        self.user = User.objects.create(email="test1@test.com", first_name="Johannes", last_name="Fourie")
+        self.group = AnaGroup.objects.create(name="reviewers")
+        self.iam = IAM.objects.create(user=self.user,
+                                      aws_user="johannesus-east-1",
+                                      aws_access_key="AKIA2YSWAZCCRK2H3SHJ",
+                                      aws_secret_access_key="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",
+                                      group=self.group)
+
+        self.analysis = Analysis.objects.create(
+            analysis_name="Emergent Property Inference (Bittner et al. 2019)",
+            result_prefix="job__epi-ncap-web_",
+            bucket_name="epi-ncap-web",
+            custom=False,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+
+        self.analysis.groups.add(self.group)
+
+        # login here
+        form = {
+            'aws_access_key': 'AKIA2YSWAZCCRK2H3SHJ',
+            'aws_secret_access_key': '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',
+        }
+        self.client.post('/login/', form)
+
+    def test_job_list_view(self):
+        response = self.client.get('/history/%s' % self.analysis.id)
+        self.assertEqual(response.context['analysis'], self.analysis)
+        self.assertEqual(response.context['iam'], self.iam)
