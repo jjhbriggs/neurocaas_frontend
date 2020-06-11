@@ -131,8 +131,6 @@ class JobListView(LoginRequiredMixin, View):
 
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
 
-        print(job_list)
-
         return render(
             request=request,
             template_name=self.template_name,
@@ -393,14 +391,10 @@ class ResultView(LoginRequiredMixin, View):
         timestamp = int(request.POST['timestamp'])
 
         result_folder = "%s/results/job__%s_%s" % (iam.group.name, analysis.bucket_name, timestamp)
-        update_file = "%s/process_results/update.txt" % result_folder
         end_file = "%s/process_results/end.txt" % result_folder
         end_flag = False
 
         result_links = []
-        # update_timestamp = get_last_modified_timestamp(iam=iam,
-        #                                                bucket=analysis.bucket_name,
-        #                                                key=update_file)
 
         end_timestamp = get_last_modified_timestamp(iam=iam,
                                                     bucket=analysis.bucket_name,
@@ -420,4 +414,30 @@ class ResultView(LoginRequiredMixin, View):
             "status": 200,
             "result_links": result_links,
             "end": end_flag
+        })
+
+
+class TestView(LoginRequiredMixin, View):
+
+    def get(self, request):
+        analysis = Analysis.objects.get(pk=2)
+        iam = get_current_iam(request)
+
+        if not analysis.check_iam(iam):
+            messages.error(request, "You don't have permission for this analysis.")
+            return redirect('/')
+
+        # convert aws keys to base64 string
+        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
+        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+
+        return render(request=request, template_name="main/test.html", context={
+            "id1": access_id,
+            "id2": secret_key,
+            'bucket': analysis.bucket_name,
+            "data_set_dir": "%s/inputs" % iam.group.name,
+            "config_dir": "%s/configs" % iam.group.name,
+            "title": analysis.analysis_name,
+            'iam': iam,
+            'analysis': analysis
         })
