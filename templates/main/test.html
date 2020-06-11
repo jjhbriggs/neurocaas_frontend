@@ -84,7 +84,7 @@
 
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.617.0.min.js"></script>
     <script src="{% static 'js/fileupload/polyfill.js' %}"></script>
-    <script src="{% static 'js/fileupload/file_upload.js' %}"></script>
+    <script src="{% static 'js/fileupload/file_upload_test.js' %}"></script>
 
     <script>
         var configs = [];
@@ -105,6 +105,7 @@
         var ana_prefix = '{{analysis.result_prefix}}';
         var data_set_area = new FileUpload();
         var timestamp = 0;
+        var _Nodes = [];
     </script>
 
     <script src="{% static 'js/process.js' %}"></script>
