@@ -8,6 +8,9 @@ from .managers import UserManager
 
 
 class Base(models.Model):
+    """Sample Docstring
+
+    Extra Description here"""
     created_on = models.DateTimeField(auto_now_add=True, db_index=True,
                                       help_text='(Read-only) Date/time when record was created.')
     updated_on = models.DateTimeField(auto_now=True, db_index=True,
