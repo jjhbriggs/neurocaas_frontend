@@ -152,58 +152,159 @@
 <span id="models"></span><h1>Models<a class="headerlink" href="#module-account.models" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="account.models.AWSRequest">
-<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">AWSRequest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">created_on</span></em>, <em class="sig-param"><span class="n">updated_on</span></em>, <em class="sig-param"><span class="n">user</span></em>, <em class="sig-param"><span class="n">status</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.AWSRequest" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">AWSRequest</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.AWSRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>AWSRequest class which holds basic information about the status of a user account.</p>
+<p>A user can have a status of ‘Pending,’ ‘Completed,’ or ‘Denied,’ depending on the approval status of their account</p>
+<dl class="py attribute">
+<dt id="account.models.AWSRequest.status">
+<code class="sig-name descname">status</code><a class="headerlink" href="#account.models.AWSRequest.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>The status of this user’s account. (‘Pending,’ ‘Completed,’ or ‘Denied’)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.AWSRequest.user">
+<code class="sig-name descname">user</code><a class="headerlink" href="#account.models.AWSRequest.user" title="Permalink to this definition">¶</a></dt>
+<dd><p>The user which this AWSRequest is associated with.</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py class">
 <dt id="account.models.AnaGroup">
-<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">AnaGroup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">created_on</span></em>, <em class="sig-param"><span class="n">updated_on</span></em>, <em class="sig-param"><span class="n">name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.AnaGroup" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">AnaGroup</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.AnaGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>AnaGroup model.</p>
+<p>All users belong to a group.</p>
+<dl class="py attribute">
+<dt id="account.models.AnaGroup.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#account.models.AnaGroup.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the group.</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py class">
 <dt id="account.models.Base">
 <em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">Base</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.Base" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base Class which other Models inherit from.</p>
-<p>Contains timestamp information about actions.</p>
+<p>Contains timestamp information about the model.</p>
 <dl class="py attribute">
 <dt id="account.models.Base.created_on">
 <code class="sig-name descname">created_on</code><a class="headerlink" href="#account.models.Base.created_on" title="Permalink to this definition">¶</a></dt>
-<dd><p>The time when the model was created</p>
+<dd><p>Date/time when record was created.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.Base.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.Base.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriden save function to change ‘updated_on’ to reflect proper update time</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="account.models.Base.updated_on">
 <code class="sig-name descname">updated_on</code><a class="headerlink" href="#account.models.Base.updated_on" title="Permalink to this definition">¶</a></dt>
-<dd><p>The time when the model was last updated</p>
+<dd><p>Date/time when record was updated.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt id="account.models.IAM">
-<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">IAM</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">created_on</span></em>, <em class="sig-param"><span class="n">updated_on</span></em>, <em class="sig-param"><span class="n">user</span></em>, <em class="sig-param"><span class="n">aws_user</span></em>, <em class="sig-param"><span class="n">aws_access_key</span></em>, <em class="sig-param"><span class="n">aws_secret_access_key</span></em>, <em class="sig-param"><span class="n">group</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.IAM" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">IAM</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.IAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>IAM model which is associated with a user.</p>
+<p>Each IAM model contains basic AWS IAM information such as username, access key, and secret access key of the IAM account.</p>
+<dl class="py method">
+<dt id="account.models.IAM.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.IAM.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriden save function to update the AWSRequest class associated with this IAM user. 
+Changes the AWSRequest status to ‘Completed.’</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py class">
 <dt id="account.models.User">
-<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">id</span></em>, <em class="sig-param"><span class="n">password</span></em>, <em class="sig-param"><span class="n">last_login</span></em>, <em class="sig-param"><span class="n">date_added</span></em>, <em class="sig-param"><span class="n">date_updated</span></em>, <em class="sig-param"><span class="n">email</span></em>, <em class="sig-param"><span class="n">first_name</span></em>, <em class="sig-param"><span class="n">last_name</span></em>, <em class="sig-param"><span class="n">is_active</span></em>, <em class="sig-param"><span class="n">is_admin</span></em>, <em class="sig-param"><span class="n">data_transfer_permission</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic User model.</p>
+<p>Contains basic user information such as email, name, admin rights, etc.
+A new user is created every time someone signs up using their email through the website.</p>
+<dl class="py attribute">
+<dt id="account.models.User.data_transfer_permission">
+<code class="sig-name descname">data_transfer_permission</code><a class="headerlink" href="#account.models.User.data_transfer_permission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean value checking for permission for individual users access to data transfer.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.date_added">
+<code class="sig-name descname">date_added</code><a class="headerlink" href="#account.models.User.date_added" title="Permalink to this definition">¶</a></dt>
+<dd><p>Date/time when user was added.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.date_updated">
+<code class="sig-name descname">date_updated</code><a class="headerlink" href="#account.models.User.date_updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Date/time when user was updated.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.email">
+<code class="sig-name descname">email</code><a class="headerlink" href="#account.models.User.email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Email associated with the user. Users are identified by this email address.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.first_name">
+<code class="sig-name descname">first_name</code><a class="headerlink" href="#account.models.User.first_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>First Name of User.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.get_full_name">
+<code class="sig-name descname">get_full_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.get_full_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns first and last name of user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.get_short_name">
+<code class="sig-name descname">get_short_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.get_short_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns email of user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.has_module_perms">
+<code class="sig-name descname">has_module_perms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app_label</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.has_module_perms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True. [Jflag]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.has_perm">
+<code class="sig-name descname">has_perm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">perm</span></em>, <em class="sig-param"><span class="n">obj</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.has_perm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True. [Jflag]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.is_admin">
+<code class="sig-name descname">is_admin</code><a class="headerlink" href="#account.models.User.is_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean value checking if the account is an admin.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.is_staff">
+<code class="sig-name descname">is_staff</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.is_staff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if user is an admin.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.last_name">
+<code class="sig-name descname">last_name</code><a class="headerlink" href="#account.models.User.last_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Last Name of User.</p>
+</dd></dl>
+
+</dd></dl>
 
 <dl class="py attribute">
 <dt id="account.models">
 <code class="sig-prename descclassname">account.</code><code class="sig-name descname">models</code><a class="headerlink" href="#account.models" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <a class="reference internal" href="#account.models" title="account.models"><code class="xref py py-class docutils literal notranslate"><span class="pre">account.models</span></code></a></p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="account.models.Base.save">
-<code class="sig-prename descclassname">Base.</code><code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.Base.save" title="Permalink to this definition">¶</a></dt>
-<dd><p>Save the current instance. Override this in a subclass if you want to
-control the saving process.</p>
-<p>The ‘force_insert’ and ‘force_update’ parameters can be used to insist
-that the “save” must be an SQL insert or update (or equivalent for
-non-SQL backends), respectively. Normally, they should not be set.</p>
-<p>Overriden save function to change ‘updated_on’ to reflect proper update time</p>
 </dd></dl>
 
 </div>
