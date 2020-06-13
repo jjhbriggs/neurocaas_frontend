@@ -9,12 +9,12 @@ Welcome to NeuroCAAS Website's documentation!
 Sample text here, more to come later. Currently documented: Account app
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
    tutorial
    project
-   account
+   models
 
 Indices and tables
 ==================
