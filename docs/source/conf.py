@@ -12,8 +12,9 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('~/ncap/account'))
-
+sys.path.insert(0, os.path.abspath('~/ncap'))
+from django.conf import settings
+settings.configure()
 
 # -- Project information -----------------------------------------------------
 
