@@ -14,7 +14,7 @@ Sample text here, more to come later. Currently documented: Account app
 
    tutorial
    project
-   models
+   modules/models
 
 Indices and tables
 ==================
