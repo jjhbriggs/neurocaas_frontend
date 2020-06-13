@@ -12,9 +12,13 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('~/ncap'))
-from django.conf import settings
-settings.configure()
+sys.path.append(os.path.abspath('../../'))
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ncap.settings')
+
+# Setup Django
+import django
+django.setup()
+#os.environ['DJANGO_SETTINGS_MODULE'] = 'ncap.settings'
 
 # -- Project information -----------------------------------------------------
 
@@ -31,8 +35,7 @@ release = '0.0.1'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-]
+extensions = ['sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
