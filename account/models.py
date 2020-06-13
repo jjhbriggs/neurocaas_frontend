@@ -9,15 +9,17 @@ from .managers import UserManager
 
 class Base(models.Model):
     """
-    Sample Docstring
+    Base Class which other Models inherit from
 
-    Extra Description here
+    Contains timestamp information about actions
     """
+    #: The time when the model was created
     created_on = models.DateTimeField(auto_now_add=True, db_index=True,
                                       help_text='(Read-only) Date/time when record was created.')
+    #: The time when the model was last updated
     updated_on = models.DateTimeField(auto_now=True, db_index=True,
                                       help_text='(Read-only) Date/time when record was updated.')
-
+    #: Overriden save function to change 'updated_on' to reflect proper update time
     def save(self, *args, **kwargs):
         if self.pk is not None:
             self.updated_on = datetime.utcnow()
