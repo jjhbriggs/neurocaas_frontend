@@ -11,7 +11,7 @@ class Base(models.Model):
     """
     Base Class which other Models inherit from
 
-    Contains timestamp information about actions
+    Contains timestamp information about actions.
     """
     #: The time when the model was created
     created_on = models.DateTimeField(auto_now_add=True, db_index=True,
