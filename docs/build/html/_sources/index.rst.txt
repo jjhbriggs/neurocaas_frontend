@@ -9,7 +9,7 @@ Welcome to NeuroCAAS Website's documentation!
 Sample text here, more to come later. Currently documented: Account app
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
    :caption: Contents:
 
    tutorial
