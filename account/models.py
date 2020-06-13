@@ -9,7 +9,7 @@ from .managers import UserManager
 
 class Base(models.Model):
     """
-    Base Class which other Models inherit from
+    Base Class which other Models inherit from.
 
     Contains timestamp information about actions.
     """
@@ -24,7 +24,6 @@ class Base(models.Model):
         if self.pk is not None:
             self.updated_on = datetime.utcnow()
         super(Base, self).save(*args, **kwargs)
-
     class Meta:
         abstract = True
 
