@@ -15,7 +15,6 @@ import shutil
 
 
 # Create your views here.
-
 class IntroView(View):
     """
         Intro View (Index View)
