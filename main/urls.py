@@ -1,6 +1,7 @@
 from django.urls import path, include
 from .views import *
-
+from django.conf.urls import url
+from django.conf import settings
 
 urlpatterns = [
     path('', IntroView.as_view(), name='intro'),
