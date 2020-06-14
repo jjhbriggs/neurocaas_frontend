@@ -112,10 +112,15 @@ class IAM(Base):
 
     Each IAM model contains basic AWS IAM information such as username, access key, and secret access key of the IAM account.
     """
+    #: The User this IAM is associated with.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    #: AWS account username.
     aws_user = models.CharField(max_length=155, help_text="AWS account username")
+    #: AWS access key
     aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id", unique=True)
+    #: AWS secret access key
     aws_secret_access_key = models.CharField(max_length=255, help_text="AWS Secret key")
+    #: The group this IAM is associated with
     group = models.ForeignKey(AnaGroup, on_delete=models.CASCADE)
     # group = models.CharField(max_length=255, help_text='Group Name', default='bendeskylab')
 
