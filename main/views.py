@@ -237,10 +237,16 @@ class FilesView(LoginRequiredMixin, View):
         key = dicts.get('key')
 
         file_key = "%s/%s" % (iam.group.name, key)
+        print(file_key)
+
+        if file_key.endswith("/"):
+            msg = delete_folder_from_bucket(iam=iam, bucket=analysis.bucket_name, prefix=file_key)
+        else:
+            msg = delete_file_from_bucket(iam=iam, bucket=analysis.bucket_name, key=file_key)
 
         return JsonResponse({
             "status": 200,
-            "message": delete_file_from_bucket(iam=iam, bucket=analysis.bucket_name, key=file_key)
+            "message": msg
         })
 
 
