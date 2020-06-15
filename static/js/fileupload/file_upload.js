@@ -119,7 +119,7 @@ FileUpload.prototype ={
                     completeMultipartUpload(_this, s3, doneParams);
                     updateProgress(_this);
                     //_this.status = true;
-                    $('#' + _this.form_id + ' p').html("Uploading was finished!");
+                    // $('#' + _this.form_id + ' p').html("Uploading was finished!");
                     // $('#' + _this.file_tag_id).val(_this.fileKey);
                 });
             }
@@ -192,6 +192,8 @@ FileUpload.prototype ={
             console.log('update', _this.partNum, _this.numPartsLeft, percent);
 
             _this.progressBar.value = percent;
+            if (percent === 100)
+                $('#' + _this.form_id + ' p').html("Uploading was finished!");
         };
 
         // upload file to s3
