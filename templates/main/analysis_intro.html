@@ -61,16 +61,12 @@
             <!-- #END Signature -->
 
             <div class="text-center mt-4">
-                <div class="from-group">
-                    <button onclick="start_process({{analysis.id}})">
-                        Start analysis
-                    </button>
-                </div>
-                <div class="from-group">
-                    <button onclick="job_history({{analysis.id}})">
-                        Job History
-                    </button>
-                </div>
+                <button class="mb-1" onclick="start_process({{analysis.id}})">
+                    Start analysis
+                </button>
+                <button onclick="job_history({{analysis.id}})">
+                    Job History
+                </button>
             </div>
         </div>
         <!-- #END Analysis description -->
