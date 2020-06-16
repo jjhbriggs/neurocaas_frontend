@@ -303,7 +303,7 @@ def delete_folder_from_bucket(iam, bucket, prefix):
         """
     s3 = s3_resource(iam=iam)
     bucket = s3.Bucket(bucket)
-    for obj in bucket.objects.filter(Delimiter='/', Prefix=prefix):
+    for obj in bucket.objects.filter(Prefix=prefix):
         obj.delete()
 
 
