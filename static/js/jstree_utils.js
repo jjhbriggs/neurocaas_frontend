@@ -177,14 +177,22 @@ async function show_file_content(file_key, ana_id){
 
 
 // delete Action
-async function delete_action(node, key, tree){
+async function delete_action(node, tree){
 
+    if (!confirm("Are you sure to delete " + node.li_attr.type + ", " + node.li_attr.title + "?")) return;
+
+    var key = get_full_path_of_node(node, tree);
+    node.li_attr.type === 'folder'? key = key : key = key.slice(0, -1);
+
+    if (key === 'inputs/' || key === 'configs/') return;
     var url = '/files/' + ana_id + '/';
+    
     data = {
         key: key
     };
 
-    var res = await AjaxRequest(url, 'DELETE', data);
+    console.log(key);
+    var res = await AjaxRequest(url, 'DELETE', data);    
     tree.delete_node(node);
 }
 
