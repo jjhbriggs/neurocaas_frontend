@@ -1,0 +1,307 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tests &mdash; NeuroCAAS Website 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Views" href="views.html" />
+    <link rel="prev" title="Models" href="models.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> NeuroCAAS Website
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Django Apps</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Account</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="forms.html">Forms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="managers.html">Managers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html">Views</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NeuroCAAS Website</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Django Apps</a> &raquo;</li>
+        
+          <li><a href="index.html">Account</a> &raquo;</li>
+        
+      <li>Tests</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apps/account/tests.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-account.tests">
+<span id="tests"></span><h1>Tests<a class="headerlink" href="#module-account.tests" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="account.tests.ProfileViewTest">
+<em class="property">class </em><code class="sig-prename descclassname">account.tests.</code><code class="sig-name descname">ProfileViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ProfileViewTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing the user profile page.</p>
+<dl class="py method">
+<dt id="account.tests.ProfileViewTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ProfileViewTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create basic test user and associate it with a basic test IAM and group.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.ProfileViewTest.test_profile_view_with_get_request">
+<code class="sig-name descname">test_profile_view_with_get_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ProfileViewTest.test_profile_view_with_get_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that checking the profile view of a logged in user displays the user’s email, name, and IAM username.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.ProfileViewTest.test_profile_view_with_post_request">
+<code class="sig-name descname">test_profile_view_with_post_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ProfileViewTest.test_profile_view_with_post_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that updating the profile view of a logged in user is successful.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="account.tests.UserLoginViewTest">
+<em class="property">class </em><code class="sig-prename descclassname">account.tests.</code><code class="sig-name descname">UserLoginViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserLoginViewTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing user login.</p>
+<dl class="py method">
+<dt id="account.tests.UserLoginViewTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserLoginViewTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create basic test user and associate it with a basic test IAM and group.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserLoginViewTest.test_login_view_with_iam">
+<code class="sig-name descname">test_login_view_with_iam</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserLoginViewTest.test_login_view_with_iam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that logging in with AWS credentials logins in and redirects to profile page successfully.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="account.tests.UserSignUpViewTest">
+<em class="property">class </em><code class="sig-prename descclassname">account.tests.</code><code class="sig-name descname">UserSignUpViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserSignUpViewTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing user signup.</p>
+<dl class="py method">
+<dt id="account.tests.UserSignUpViewTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserSignUpViewTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>none</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserSignUpViewTest.test_sign_up_view_with_post_request">
+<code class="sig-name descname">test_sign_up_view_with_post_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserSignUpViewTest.test_sign_up_view_with_post_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that signing up with email signs up and redirects to home page successfully.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="account.tests.UserTestCase">
+<em class="property">class </em><code class="sig-prename descclassname">account.tests.</code><code class="sig-name descname">UserTestCase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing user information.</p>
+<dl class="py method">
+<dt id="account.tests.UserTestCase.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserTestCase.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create basic test users.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserTestCase.test_get_full_name_with_user">
+<code class="sig-name descname">test_get_full_name_with_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserTestCase.test_get_full_name_with_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that user’s full name is returned accurately</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserTestCase.test_get_short_name_with_user">
+<code class="sig-name descname">test_get_short_name_with_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserTestCase.test_get_short_name_with_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that user’s email is returned accurately</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.tests">
+<code class="sig-prename descclassname">account.</code><code class="sig-name descname">tests</code><a class="headerlink" href="#account.tests" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#account.tests" title="account.tests"><code class="xref py py-class docutils literal notranslate"><span class="pre">account.tests</span></code></a></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="views.html" class="btn btn-neutral float-right" title="Views" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="models.html" class="btn btn-neutral float-left" title="Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Jack Briggs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
