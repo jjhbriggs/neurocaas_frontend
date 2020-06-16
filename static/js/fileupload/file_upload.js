@@ -144,8 +144,8 @@ FileUpload.prototype ={
 
         // On Click event when user click drop area
         this.dropArea.addEventListener('click', function(e){
-            if (sender.status) {
-                alert("Please try again after current uploading.");
+            if (sender.status || processing_status) {
+                alert("Please try again after current processing.");
                 return;
             }
             $( '#' + sender.form_id + ' .fileElem' ).trigger('click');
@@ -344,8 +344,8 @@ FileUpload.prototype ={
 
         // Handle dropped files
         this.dropArea.addEventListener('drop', async function(e){
-            if (sender.status) {
-                alert("Please try again after current uploading.")
+            if (sender.status || processing_status) {
+                alert("Please try again after current processing.")
                 return;
             }
             var items = event.dataTransfer.items;
