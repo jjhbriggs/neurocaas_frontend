@@ -3,7 +3,9 @@ Project
 
 Website
 -------
-This Website and documentation are currently under development.
+The NeuroCAAS website and documentation are part of the NeuroCAAS project, and are currently under development. 
+This website is powered by django. 
+Currently, only the :ref:`Account` app of this website is documented, however more will be documented soon.
 
 NeuroCAAS
 ---------
@@ -11,6 +13,6 @@ NeuroCAAS is an open-source scientific resource that uses cloud resources to run
 
 `Github Repo Link <https://github.com/cunningham-lab/neurocaas>`_
 
-`Wesbite Link <http://neurocaas.com/>`_
+`Website Link <http://neurocaas.com/>`_
 
 `Paper Link <https://www.biorxiv.org/content/10.1101/2020.06.11.146746v1>`_
