@@ -17,8 +17,8 @@ from django.contrib import messages
 
 class LoginView(View):
     """
-        User Login View with his AWS credentials
-        """
+        View for user login with AWS credentials.
+    """
     template_name = "account/login.html"
 
     def get(self, request):
@@ -44,8 +44,8 @@ class LoginView(View):
 
 class SignUpView(View):
     """
-        User Sign Up View with his Email address
-        """
+        View for user signup with email address.
+    """
     template_name = "account/signup.html"
 
     def get(self, request):
@@ -72,8 +72,8 @@ class SignUpView(View):
 
 class ProfileView(LoginRequiredMixin, View):
     """
-        User's Detail View
-        """
+        View for viewing and updating a user's profile.
+    """
     template_name = "account/profile.html"
 
     def get(self, request):
@@ -97,7 +97,7 @@ class ProfileView(LoginRequiredMixin, View):
 class AWSCredRequestView(LoginRequiredMixin, View):
     """
         AWS Credentials Request object View
-        """
+     """
     def get(self, request):
         aws_req = AWSRequest.objects.filter(user=request.user).first()
         if aws_req:
@@ -110,8 +110,8 @@ class AWSCredRequestView(LoginRequiredMixin, View):
 
 class ChangePWDView(LoginRequiredMixin, View):
     """
-        User's password change View
-        """
+        View for changing a user's password.
+    """
     template_name = "account/change_password.html"
 
     def get(self, request):
@@ -133,6 +133,9 @@ class ChangePWDView(LoginRequiredMixin, View):
 
 
 class AdminMixin(UserPassesTestMixin):
+    """
+        Mixin for checking user admin status.
+    """
     login_url = '/'
 
     def test_func(self):
@@ -143,8 +146,8 @@ class AdminMixin(UserPassesTestMixin):
 
 class IamCreateView(AdminMixin, View):
     """
-        IAM Creation View with json file uploaded.
-        """
+        View for creating an IAM given an uploaded JSON file.
+    """
     login_url = '/'
 
     def get(self, request):
