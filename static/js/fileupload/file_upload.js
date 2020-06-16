@@ -118,7 +118,7 @@ FileUpload.prototype ={
                     console.log("Completing upload...");
                     completeMultipartUpload(_this, s3, doneParams);
                     updateProgress(_this);
-                    //_this.status = true;
+                    // _this.status = true;
                     // $('#' + _this.form_id + ' p').html("Uploading was finished!");
                     // $('#' + _this.file_tag_id).val(_this.fileKey);
                 });
@@ -144,7 +144,10 @@ FileUpload.prototype ={
 
         // On Click event when user click drop area
         this.dropArea.addEventListener('click', function(e){
-            if ( !sender.contentious && sender.status ) return;
+            if (sender.status) {
+                alert("Please try again after current uploading.");
+                return;
+            }
             $( '#' + sender.form_id + ' .fileElem' ).trigger('click');
         }, false);
 
@@ -154,8 +157,9 @@ FileUpload.prototype ={
             let reader = new FileReader()
             reader.readAsDataURL(file.file)
             reader.onloadend = function() {
-                let label = document.createElement('label');
+                let label = document.createElement('div');
                 label.innerText = file.file.name;
+
                 console.log(document.querySelector('#' + sender.form_id + ' .gallery'));
                 document.querySelector('#' + sender.form_id + ' .gallery').appendChild(label)
             }
@@ -172,7 +176,7 @@ FileUpload.prototype ={
                 sender.uploadFileSize.push(Files[i].file.size);
             }
 
-            $('#' + sender.form_id + " .gallery").html("");
+            $('#' + sender.form_id + " .gallery").html('');
         }
 
         // update uploading status in progress bar
@@ -192,8 +196,10 @@ FileUpload.prototype ={
             console.log('update', _this.partNum, _this.numPartsLeft, percent);
 
             _this.progressBar.value = percent;
-            if (percent === 100)
+            if (percent === 100){
                 $('#' + _this.form_id + ' p').html("Uploading was finished!");
+                _this.status = false;
+            }
         };
 
         // upload file to s3
@@ -291,7 +297,9 @@ FileUpload.prototype ={
             initializeProgress(files)
             _this.current_file_id = 0;
             uploadFile(_this, files[_this.current_file_id]);
-            files.forEach(previewFile)
+            $('#' + sender.form_id + " .gallery").prepend('<div id="btn-spinner" style="display: block;"><i class="fas fa-sync-alt fa-spin"></i></div>');
+            files.forEach(previewFile);
+            _this.status = true;
         }
 
         /* Functions for Drag & Drop folder */
@@ -327,8 +335,8 @@ FileUpload.prototype ={
                 // Get folder contents
                 var dirReader = item.createReader();
                 etries = await readEntriesPromise(dirReader);
-                for (var i=0; i<etries.length; i++) {                    
-                    traverseFileTree(etries[i], path + item.name + "/", callback);                    
+                for (var i=0; i<etries.length; i++) {
+                    traverseFileTree(etries[i], path + item.name + "/", callback);
                 }
             }
             callback(func_deep--);
@@ -336,7 +344,10 @@ FileUpload.prototype ={
 
         // Handle dropped files
         this.dropArea.addEventListener('drop', async function(e){
-            if (!sender.contentious && sender.status) return;
+            if (sender.status) {
+                alert("Please try again after current uploading.")
+                return;
+            }
             var items = event.dataTransfer.items;
             console.log("traverseFileTree start")
             func_deep = 0;
@@ -386,7 +397,7 @@ FileUpload.prototype ={
     clear_status: function(){
         this.progressBar.value = 0;
         $('#' + this.form_id + ' p').html("Drag & Drop or Click!");
-        $('#' + this.form_id + ' .gallery').html("");        
+        $('#' + this.form_id + ' .gallery').html("");
     },
     set_bucket(bucket){
         console.log(this.bucket);
