@@ -99,7 +99,7 @@ FileUpload.prototype ={
                         }
                         return;
                     }
-                    _this.multipartMap.Parts[this.request.params.PartNumber - 1] = {
+                    _this.multipartMap.Parts[Number(this.request.params.PartNumber) - 1] = {
                         ETag: mData.ETag,
                         PartNumber: Number(this.request.params.PartNumber)
                     };
@@ -118,7 +118,7 @@ FileUpload.prototype ={
                     console.log("Completing upload...");
                     completeMultipartUpload(_this, s3, doneParams);
                     updateProgress(_this);
-                    //_this.status = true;
+                    // _this.status = true;
                     // $('#' + _this.form_id + ' p').html("Uploading was finished!");
                     // $('#' + _this.file_tag_id).val(_this.fileKey);
                 });
@@ -144,7 +144,10 @@ FileUpload.prototype ={
 
         // On Click event when user click drop area
         this.dropArea.addEventListener('click', function(e){
-            if ( !sender.contentious && sender.status ) return;
+            if (sender.status || processing_status) {
+                alert("Please try again after current processing.");
+                return;
+            }
             $( '#' + sender.form_id + ' .fileElem' ).trigger('click');
         }, false);
 
@@ -154,8 +157,9 @@ FileUpload.prototype ={
             let reader = new FileReader()
             reader.readAsDataURL(file.file)
             reader.onloadend = function() {
-                let label = document.createElement('label');
+                let label = document.createElement('div');
                 label.innerText = file.file.name;
+
                 console.log(document.querySelector('#' + sender.form_id + ' .gallery'));
                 document.querySelector('#' + sender.form_id + ' .gallery').appendChild(label)
             }
@@ -172,7 +176,7 @@ FileUpload.prototype ={
                 sender.uploadFileSize.push(Files[i].file.size);
             }
 
-            $('#' + sender.form_id + " .gallery").html("");
+            $('#' + sender.form_id + " .gallery").html('');
         }
 
         // update uploading status in progress bar
@@ -192,8 +196,10 @@ FileUpload.prototype ={
             console.log('update', _this.partNum, _this.numPartsLeft, percent);
 
             _this.progressBar.value = percent;
-            if (percent === 100)
+            if (percent === 100){
                 $('#' + _this.form_id + ' p').html("Uploading was finished!");
+                _this.status = false;
+            }
         };
 
         // upload file to s3
@@ -232,9 +238,12 @@ FileUpload.prototype ={
                 _this.startTime = new Date();
                 _this.partNum = 0;
                 _this.fileKey = file.path;
-                _this.partSize = file.file.size / 20 > _this.defaultSize ? file.file.size / 20 : _this.defaultSize;
+                _this.partSize = Math.round(file.file.size / 20) > _this.defaultSize ? Math.round(file.file.size / 20) : _this.defaultSize;
                 _this.numPartsLeft = Math.floor(file.file.size / _this.partSize);
-                file.file.size - _this.partSize * _this.numPartsLeft > _this.defaultSize ? _this.numPartsLeft++ : null;
+                
+                console.log("Total Part Number", _this.numPartsLeft);
+
+                // file.file.size - _this.partSize * _this.numPartsLeft > _this.defaultSize ? _this.numPartsLeft++ : null;
 
                 _this.maxUploadTries = 3;
                 _this.multiPartParams = {
@@ -257,7 +266,7 @@ FileUpload.prototype ={
                         var end = Math.min(rangeStart + _this.partSize, _this.buffer.byteLength);
                         if ( _this.buffer.byteLength - end < _this.partSize ) end = _this.buffer.byteLength;
 
-                        console.log(end - rangeStart, _this.partSize)
+                        console.log(end, rangeStart, _this.partSize)
 
                         var partParams = {
                               Body: _this.buffer.slice(rangeStart, end),
@@ -271,7 +280,7 @@ FileUpload.prototype ={
                         console.log('Uploading part: #', partParams.PartNumber, ', Range start:', rangeStart);
                         //updateProgress(sender);
                         uploadPart(_this, _this.s3, multipart, partParams);
-                        if (end == _this.buffer.byteLength) break;
+                        if (end === _this.buffer.byteLength) break;
                     }
                 });
             }
@@ -283,12 +292,14 @@ FileUpload.prototype ={
                 alert("Select a bucket for uploading");
                 return;
             }
-            files = [...files];
+            //files = [...files];
             _this.files = files;
             initializeProgress(files)
             _this.current_file_id = 0;
             uploadFile(_this, files[_this.current_file_id]);
-            files.forEach(previewFile)
+            $('#' + sender.form_id + " .gallery").prepend('<div id="btn-spinner" style="display: block;"><i class="fas fa-sync-alt fa-spin"></i></div>');
+            files.forEach(previewFile);
+            _this.status = true;
         }
 
         /* Functions for Drag & Drop folder */
@@ -324,8 +335,8 @@ FileUpload.prototype ={
                 // Get folder contents
                 var dirReader = item.createReader();
                 etries = await readEntriesPromise(dirReader);
-                for (var i=0; i<etries.length; i++) {                    
-                    traverseFileTree(etries[i], path + item.name + "/", callback);                    
+                for (var i=0; i<etries.length; i++) {
+                    traverseFileTree(etries[i], path + item.name + "/", callback);
                 }
             }
             callback(func_deep--);
@@ -333,10 +344,14 @@ FileUpload.prototype ={
 
         // Handle dropped files
         this.dropArea.addEventListener('drop', async function(e){
-            if (!sender.contentious && sender.status) return;
+            if (sender.status || processing_status) {
+                alert("Please try again after current processing.")
+                return;
+            }
             var items = event.dataTransfer.items;
             console.log("traverseFileTree start")
             func_deep = 0;
+            sender.files = [];
             for (var i=0; i<items.length; i++) {
                 // webkitGetAsEntry is where the magic happens
                 var item = items[i].webkitGetAsEntry();
@@ -382,7 +397,7 @@ FileUpload.prototype ={
     clear_status: function(){
         this.progressBar.value = 0;
         $('#' + this.form_id + ' p').html("Drag & Drop or Click!");
-        $('#' + this.form_id + ' .gallery').html("");        
+        $('#' + this.form_id + ' .gallery').html("");
     },
     set_bucket(bucket){
         console.log(this.bucket);
