@@ -36,6 +36,7 @@ To learn more about NeuroCAAS, check out our github repo, paper, and website bel
    :caption: Contents:
 
    apps/index
+   permissions
 
 Indices and tables
 ==================
