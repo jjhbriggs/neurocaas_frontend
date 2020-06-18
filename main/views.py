@@ -18,7 +18,7 @@ import shutil
 class IntroView(View):
     """
         Intro View (Index View).
-        Detail of Neuroscience and Available Analyses.
+        Detail of NeuroCAAS and Available Analyses.
     """
     template_name = "main/intro.html"
 

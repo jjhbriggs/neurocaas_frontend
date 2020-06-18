@@ -6,7 +6,9 @@ from account.models import *
 
 
 class AnalysisTestCase(TestCase):
+    """Class for testing IAM connected to analyses."""
     def setUp(self):
+        """Setup user, group, IAM, and analysis"""
         user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
         group = AnaGroup.objects.create(name="test group")
         self.iam = IAM.objects.create(user=user,
@@ -32,7 +34,7 @@ class AnalysisTestCase(TestCase):
         analysis.groups.add(group)
 
     def test_check_iam_with_analysis(self):
-        """ User's full name check """
+        """Test the current IAM is the same which is associated with the analysis request."""
 
         analysis = Analysis.objects.get(bucket_name='Test bucket')
         iam = IAM.objects.get(aws_user='AWS user')
@@ -40,7 +42,9 @@ class AnalysisTestCase(TestCase):
 
 
 class AnalysisListViewTest(TestCase):
+    """Class for testing the list view of analyses."""
     def setUp(self):
+        """Setup two groups and analyses"""
         group1 = AnaGroup.objects.create(name="test group1")
         group2 = AnaGroup.objects.create(name="test group2")
         analysis1 = Analysis.objects.create(
@@ -74,6 +78,7 @@ class AnalysisListViewTest(TestCase):
         analysis2.groups.add(group2)
 
     def test_analysis_list_view(self):
+        """Check that the the two analyses are displayed correctly."""
         response = self.client.get('/analyses/')
         self.assertQuerysetEqual(response.context['main_analyses'], ['<Analysis: Test Analysis1>'])
         self.assertQuerysetEqual(response.context['custom_analyses'], ['<Analysis: Test Analysis2>'])
@@ -81,7 +86,9 @@ class AnalysisListViewTest(TestCase):
 
 
 class AnalysisIntroViewTest(TestCase):
+    """Class for testing analysis intro view."""
     def setUp(self):
+        """Setup user, group, IAM, and analysis"""
         user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
         group = AnaGroup.objects.create(name="test group")
         self.iam = IAM.objects.create(user=user,
@@ -107,6 +114,7 @@ class AnalysisIntroViewTest(TestCase):
         analysis.groups.add(group)
 
     def test_with_intro_view(self):
+        """Checks that the proper analysis details are returned when visiting the analysis intro view."""
         response = self.client.get('/analysis/1')
         analysis = Analysis.objects.filter(analysis_name='Test Analysis').first()
         self.assertEqual(response.context['analysis'], analysis)
@@ -114,7 +122,9 @@ class AnalysisIntroViewTest(TestCase):
 
 
 class JobListViewTest(TestCase):
+    """Class for testing the job list view."""
     def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
         self.user = User.objects.create(email="test1@test.com", first_name="Johannes", last_name="Fourie")
         self.group = AnaGroup.objects.create(name="reviewers")
         self.iam = IAM.objects.create(user=self.user,
@@ -147,6 +157,7 @@ class JobListViewTest(TestCase):
         self.client.post('/login/', form)
 
     def test_job_list_view(self):
+        """Check that history of user's analyses are displayed properly."""
         response = self.client.get('/history/%s' % self.analysis.id)
         self.assertEqual(response.context['analysis'], self.analysis)
         self.assertEqual(response.context['iam'], self.iam)

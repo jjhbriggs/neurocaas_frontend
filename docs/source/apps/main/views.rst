@@ -1,7 +1,7 @@
-Account Tests
-=============
-.. automodule:: account.tests
+Main Views
+==========
+.. automodule:: main.views
     :members:
     :exclude-members: DoesNotExist, MultipleObjectsReturned
-.. autoclass:: account.tests
+.. autoclass:: main.views
     :members:
