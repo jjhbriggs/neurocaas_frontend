@@ -173,6 +173,15 @@
                 localStorage.setItem("ana_id", 0);
                 localStorage.setItem("Nodes", "[]");
             }
+
+            $('.refresh_link').click(function(eve){
+                eve.preventDefault();
+                localStorage.setItem("timestamp", 0);
+                localStorage.setItem("ana_id", 0);
+                localStorage.setItem("Nodes", "[]");
+
+                location.reload();
+            })
         })
     </script>
 {% endblock %}
