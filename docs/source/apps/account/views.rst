@@ -1,5 +1,5 @@
-Views
-=====
+Account Views
+=============
 .. automodule:: account.views
     :members:
     :exclude-members: DoesNotExist, MultipleObjectsReturned
