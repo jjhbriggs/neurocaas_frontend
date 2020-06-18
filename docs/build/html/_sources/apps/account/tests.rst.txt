@@ -1,5 +1,5 @@
-Tests
-=====
+Account Tests
+=============
 .. automodule:: account.tests
     :members:
     :exclude-members: DoesNotExist, MultipleObjectsReturned
