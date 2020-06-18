@@ -10,3 +10,4 @@ while 'main' handles analysis and the core of the NeuroCAAS project.
    :caption: Contents:
 
    account/index
+   main/index

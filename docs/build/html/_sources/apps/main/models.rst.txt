@@ -1,7 +1,7 @@
-Account Tests
-=============
-.. automodule:: account.tests
+Main Models
+===========
+.. automodule:: main.models
     :members:
     :exclude-members: DoesNotExist, MultipleObjectsReturned
-.. autoclass:: account.tests
+.. autoclass:: main.models
     :members:

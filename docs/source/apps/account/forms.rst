@@ -1,5 +1,5 @@
-Forms
-=====
+Account Forms
+=============
 .. automodule:: account.forms
     :members:
     :exclude-members: DoesNotExist, MultipleObjectsReturned
