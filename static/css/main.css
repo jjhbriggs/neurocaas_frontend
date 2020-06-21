@@ -2482,7 +2482,7 @@ input, select, textarea {
 	#footer {
 		position: relative;
 		overflow: hidden;
-		padding: 6em 0 6em 0;
+		padding: 0 0 0 0;
 		background: #2b252c;
 		color: #fff;
 	}
