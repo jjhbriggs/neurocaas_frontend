@@ -76,14 +76,19 @@ class AnalysisIntroView(View):
 
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
-        iam = get_current_iam(request)
-
+        iam = ""
+        access = ""
+        if not request.user.is_anonymous:
+            iam = get_current_iam(request)
+            access = analysis.check_iam(iam)
         return render(
             request=request,
             template_name=self.template_name,
             context={
                 "analysis": analysis,
-                'iam': iam
+                'iam': iam,
+                'access': access,
+                'logged_in': not request.user.is_anonymous
             })
 
 
@@ -125,7 +130,7 @@ class JobListView(LoginRequiredMixin, View):
         results_folder = '%s/results' % iam.group
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
@@ -151,7 +156,7 @@ class JobDetailView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         result_folder = "%s/results/%s" % (iam.group.name, job_id)
@@ -303,7 +308,7 @@ class ProcessView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         # convert aws keys to base64 string
@@ -429,7 +434,7 @@ class TestView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         # convert aws keys to base64 string
