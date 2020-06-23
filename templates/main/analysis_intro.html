@@ -59,15 +59,38 @@
                 <p>{{ analysis.signature | safe }}</p>
             </div>
             <!-- #END Signature -->
-
-            <div class="text-center mt-4">
-                <button class="mb-1" onclick="start_process({{analysis.id}})">
-                    Start analysis
-                </button>
-                <button onclick="job_history({{analysis.id}})">
-                    Job History
-                </button>
-            </div>
+            <hr>
+			{% if logged_in %}
+				{% if access %}
+					<div class="text-center mt-4">
+						<button class="mb-1" onclick="start_process({{analysis.id}})">
+							Start analysis
+						</button>
+						<button onclick="job_history({{analysis.id}})">
+							Job History
+						</button>
+					</div>
+				{% endif %}
+				{% if not access %}
+					<div class="text-center mt-4">
+						<p>You do not have permission to use this analysis.</p>
+						<button class="mb-1" onclick="location.href='/permissions/'">
+							Learn how to gain access
+						</button>
+					</div>
+				{% endif %}
+			{% endif %}
+			{% if not logged_in %}
+				<div class="text-center mt-4">
+						<p>You must login to use an analysis.</p>
+						<button class="mb-1" onclick="location.href='/login/'">
+							Login
+						</button>
+					</div>
+			{% endif %}
+			
+			
+            
         </div>
         <!-- #END Analysis description -->
     </div>
