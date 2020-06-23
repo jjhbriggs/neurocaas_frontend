@@ -14,7 +14,7 @@ Reference documentation
 Technologies
 ------------
  Project is created with
-- python version: 3
+- Python version: 3
 - Django version: 2.2.3
 
 
