@@ -51,6 +51,20 @@ class AnalysisListView(View):
                           'iam': get_current_iam(request)
                       })
 
+class PermissionView(View):
+    """
+        Permission Page View.
+    """
+
+    template_name = "main/permissions.html"
+
+    def get(self, request):
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={
+                          'iam': get_current_iam(request)
+                      })
+
 
 class QAView(View):
     """
