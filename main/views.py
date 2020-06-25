@@ -15,12 +15,11 @@ import shutil
 
 
 # Create your views here.
-
 class IntroView(View):
     """
-        Intro View (Index View)
-        Detail of Neuroscience and Available Analyses
-        """
+        Intro View (Index View).
+        Detail of NeuroCAAS and Available Analyses.
+    """
     template_name = "main/intro.html"
 
     def get(self, request):
@@ -35,9 +34,9 @@ class IntroView(View):
 
 class AnalysisListView(View):
     """
-        Analysis List View
-        List of all Available and Custom Analyses
-        """
+        Analysis List View.
+        List of all Available and Custom Analyses.
+    """
     template_name = "main/analysis_list.html"
 
     def get(self, request):
@@ -55,8 +54,8 @@ class AnalysisListView(View):
 
 class QAView(View):
     """
-        Q/A Page View
-        """
+        Q/A Page View.
+    """
 
     template_name = "main/qa_page.html"
 
@@ -70,9 +69,9 @@ class QAView(View):
 
 class AnalysisIntroView(View):
     """
-        Intro View of Analysis
-        Detail of Analysis : Description and Useful link
-        """
+        Intro View of Analysis.
+        Detail of Analysis : Description and Useful link.
+    """
     template_name = "main/analysis_intro.html"
 
     def get(self, request, ana_id):
@@ -90,8 +89,8 @@ class AnalysisIntroView(View):
 
 class HomeView(View):
     """
-        View to check if logged in or not, if not, redirected to login page
-        """
+        View to check if logged in or not, if not, redirected to login page.
+    """
     template_name = "main/home.html"
 
     def get(self, request):
@@ -116,8 +115,8 @@ class HomeView(View):
 
 class JobListView(LoginRequiredMixin, View):
     """
-        Shows List of Jobs done for analysis
-        """
+        Shows List of Jobs done for analysis.
+    """
     template_name = 'main/job_history.html'
 
     def get(self, request, ana_id):
@@ -143,8 +142,8 @@ class JobListView(LoginRequiredMixin, View):
 
 class JobDetailView(LoginRequiredMixin, View):
     """
-        Shows detail of Job done for analysis, User can check and download the content of job files
-        """
+        Shows detail of Job done for analysis, User can check and download the content of job files.
+    """
     template_name = 'main/job_detail.html'
 
     def get(self, request, ana_id, job_id):
@@ -177,13 +176,13 @@ class JobDetailView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class FilesView(LoginRequiredMixin, View):
     """
-        View to manage files for each analysis, get and download, delete file and folders
-        """
+        View to manage files for each analysis, get and download, delete file and folders.
+    """
 
     def get(self, request, ana_id):
         """
-            Download file from s3 and return downloaded file path
-            """
+            Download file from s3 and return downloaded file path.
+         """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
@@ -200,8 +199,8 @@ class FilesView(LoginRequiredMixin, View):
 
     def post(self, request, ana_id):
         """
-            Download folder from s3, zipping folder and return zip file path
-            """
+            Download folder from s3, zipping folder and return zip file path.
+        """
 
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
@@ -228,8 +227,8 @@ class FilesView(LoginRequiredMixin, View):
 
     def delete(self, request, ana_id):
         """
-            Delete a file from inputs or config folder on s3 by filename
-            """
+            Delete a file from inputs or config folder on s3 by filename.
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
@@ -253,13 +252,13 @@ class FilesView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class UserFilesView(LoginRequiredMixin, View):
     """
-        Return list of inputs and configs files for analysis
-        """
+        Return list of inputs and configs files for analysis.
+    """
 
     def get(self, request, ana_id):
         """
-            return inputs and config files users uploaded so far
-            """
+            Return inputs and config files users uploaded so far.
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
@@ -295,8 +294,8 @@ class UserFilesView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ProcessView(LoginRequiredMixin, View):
     """
-        Processing View
-        """
+        Processing View.
+    """
     template_name = "main/process.html"
 
     def get(self, request, ana_id):
@@ -324,8 +323,8 @@ class ProcessView(LoginRequiredMixin, View):
 
     def post(self, request, ana_id):
         """
-            Start new processing with analysis ID, inputs and config files
-            """
+            Start new processing with analysis ID, inputs and config files.
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
@@ -359,12 +358,12 @@ class ProcessView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ResultView(LoginRequiredMixin, View):
     """
-        Process results View
-        """
+        Process results View.
+    """
     def get(self, request, ana_id):
         """
-            Retrieve Certificate.txt content from s3 and return it
-            """
+            Retrieve Certificate.txt content from s3 and return it.
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
@@ -391,7 +390,7 @@ class ResultView(LoginRequiredMixin, View):
         """
             Retrieve files from results and logs folder on s3 and return them.
             Checking update.txt and end.txt so that determine analysis was finished or not.
-            """
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
         timestamp = int(request.POST['timestamp'])
