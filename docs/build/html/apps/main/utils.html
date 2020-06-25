@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Main Utils &mdash; NeuroCAAS Website 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Main Views" href="views.html" />
+    <link rel="prev" title="Main Tests" href="tests.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> NeuroCAAS Website
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Django Apps</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../account/index.html">Account</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Main</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="models.html">Main Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html">Main Tests</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Main Utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html">Main Views</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../permissions.html">Accounts and Permissions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NeuroCAAS Website</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Django Apps</a> &raquo;</li>
+        
+          <li><a href="index.html">Main</a> &raquo;</li>
+        
+      <li>Main Utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apps/main/utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-main.utils">
+<span id="main-utils"></span><h1>Main Utils<a class="headerlink" href="#module-main.utils" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="main.utils.convert_size">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">convert_size</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">size</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.convert_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return size converted to appropriate format from Byte.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.create_submit_json">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">create_submit_json</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">json_data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.create_submit_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create submit.json object with json data.</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User IAM Object
+bucket: bucket name
+key: json file key
+json_data: json data</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.delete_file_from_bucket">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">delete_file_from_bucket</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.delete_file_from_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a file from s3 bucket.</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User IAM Object
+bucket: bucket name
+key: file key</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>delete a file from s3</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.delete_folder_from_bucket">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">delete_folder_from_bucket</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">prefix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.delete_folder_from_bucket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a folder from s3 bucket.</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User IAM Object
+bucket: bucket name
+prefix: prefix for filter (folder name)</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>delete folder from s3</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.download_directory_from_s3">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">download_directory_from_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">folder</span></em>, <em class="sig-param"><span class="n">un_cert</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.download_directory_from_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download a folder from s3 bucket,</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User IAM Object
+bucket: bucket name
+folder: folder on s3 bucket
+un_cert: flag for certificate.txt file, if True, result will not contain cert.txt, if not, it contains.</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>downloaded directory location</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.download_file_from_s3">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">download_file_from_s3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">key</span></em>, <em class="sig-param"><span class="n">folder</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.download_file_from_s3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download file from s3 and return link of it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.generate_folder">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">generate_folder</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.generate_folder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate folder with current time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.get_current_analysis">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">get_current_analysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ana_id</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.get_current_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get current analysis from analysis id stored in session.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.get_current_iam">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">get_current_iam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">request</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.get_current_iam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return current iam object from request.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.get_data_set_logs">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">get_data_set_logs</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">timestamp</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.get_data_set_logs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve logs’ keys for each data set.</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User IAM Object
+bucket: bucket name
+timestamp: id of job (timestamp)</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>key list of data set log</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.get_file_content">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">get_file_content</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.get_file_content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return content of file in s3.</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User’s IAM object
+bucket: bucket name
+key: file key on s3 bucket</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>content of file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.get_files_detail_list">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">get_files_detail_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">folder</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.get_files_detail_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve file list and its detail content from s3.</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User IAM Object
+bucket: bucket name
+folder: folder in s3</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>list of files with its detail (last_modified and size)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.get_job_list">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">get_job_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">folder</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.get_job_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve job list from s3.</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User IAM Object
+bucket: bucket name
+folder: folder in s3</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>folder list of jobs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.get_last_modified_timestamp">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">get_last_modified_timestamp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.get_last_modified_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return file’s timestamp on s3 bucket.</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User’s IAM object
+bucket: bucket name
+key: file key on s3 bucket</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>timestamp of file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.get_list_keys">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">get_list_keys</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em>, <em class="sig-param"><span class="n">bucket</span></em>, <em class="sig-param"><span class="n">folder</span></em>, <em class="sig-param"><span class="n">un_cert</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.get_list_keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return keys of files and folders in s3.</p>
+<dl class="simple">
+<dt>&#64;params:</dt><dd><p>iam: User’s IAM object
+bucket: bucket name
+folder: folder path on s3 bucket</p>
+</dd>
+<dt>&#64;return:</dt><dd><p>list of files and folders</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.get_name_only">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">get_name_only</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.get_name_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to get only file name from link or full path.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="main.utils.mkdir">
+<code class="sig-prename descclassname">main.utils.</code><code class="sig-name descname">mkdir</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.utils.mkdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create new folder by path.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.utils">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">utils</code><a class="headerlink" href="#main.utils" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#main.utils" title="main.utils"><code class="xref py py-class docutils literal notranslate"><span class="pre">main.utils</span></code></a></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="views.html" class="btn btn-neutral float-right" title="Main Views" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tests.html" class="btn btn-neutral float-left" title="Main Tests" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Jack Briggs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

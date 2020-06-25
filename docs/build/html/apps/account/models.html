@@ -1,0 +1,406 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Account Models &mdash; NeuroCAAS Website 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Account Tests" href="tests.html" />
+    <link rel="prev" title="Account Managers" href="managers.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> NeuroCAAS Website
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Django Apps</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Account</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="forms.html">Account Forms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="managers.html">Account Managers</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Account Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html">Account Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html">Account Views</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../main/index.html">Main</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../permissions.html">Accounts and Permissions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NeuroCAAS Website</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Django Apps</a> &raquo;</li>
+        
+          <li><a href="index.html">Account</a> &raquo;</li>
+        
+      <li>Account Models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apps/account/models.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-account.models">
+<span id="account-models"></span><h1>Account Models<a class="headerlink" href="#module-account.models" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="account.models.AWSRequest">
+<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">AWSRequest</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.AWSRequest" title="Permalink to this definition">¶</a></dt>
+<dd><p>AWSRequest class which holds basic information about the status of a user account.</p>
+<p>A user can have a status of ‘Pending,’ ‘Completed,’ or ‘Denied,’ depending on the approval status of their account</p>
+<dl class="py attribute">
+<dt id="account.models.AWSRequest.status">
+<code class="sig-name descname">status</code><a class="headerlink" href="#account.models.AWSRequest.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>The status of this user’s account. (‘Pending,’ ‘Completed,’ or ‘Denied’)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.AWSRequest.user">
+<code class="sig-name descname">user</code><a class="headerlink" href="#account.models.AWSRequest.user" title="Permalink to this definition">¶</a></dt>
+<dd><p>The user which this AWSRequest is associated with.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="account.models.AnaGroup">
+<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">AnaGroup</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.AnaGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>AnaGroup model.</p>
+<p>All users belong to a group.</p>
+<dl class="py attribute">
+<dt id="account.models.AnaGroup.name">
+<code class="sig-name descname">name</code><a class="headerlink" href="#account.models.AnaGroup.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the group.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="account.models.Base">
+<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">Base</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.Base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base Class which other Models inherit from.</p>
+<p>Contains timestamp information about the model.</p>
+<dl class="py attribute">
+<dt id="account.models.Base.created_on">
+<code class="sig-name descname">created_on</code><a class="headerlink" href="#account.models.Base.created_on" title="Permalink to this definition">¶</a></dt>
+<dd><p>Date/time when record was created.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.Base.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.Base.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriden save function to change ‘updated_on’ to reflect proper update time</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.Base.updated_on">
+<code class="sig-name descname">updated_on</code><a class="headerlink" href="#account.models.Base.updated_on" title="Permalink to this definition">¶</a></dt>
+<dd><p>Date/time when record was updated.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="account.models.IAM">
+<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">IAM</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.IAM" title="Permalink to this definition">¶</a></dt>
+<dd><p>IAM model which is associated with a user.</p>
+<p>Each IAM model contains basic AWS IAM information such as username, access key, and secret access key of the IAM account.</p>
+<dl class="py attribute">
+<dt id="account.models.IAM.aws_access_key">
+<code class="sig-name descname">aws_access_key</code><a class="headerlink" href="#account.models.IAM.aws_access_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>AWS access key</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.IAM.aws_secret_access_key">
+<code class="sig-name descname">aws_secret_access_key</code><a class="headerlink" href="#account.models.IAM.aws_secret_access_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>AWS secret access key</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.IAM.aws_user">
+<code class="sig-name descname">aws_user</code><a class="headerlink" href="#account.models.IAM.aws_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>AWS account username.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.IAM.group">
+<code class="sig-name descname">group</code><a class="headerlink" href="#account.models.IAM.group" title="Permalink to this definition">¶</a></dt>
+<dd><p>The group this IAM is associated with</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.IAM.save">
+<code class="sig-name descname">save</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.IAM.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overriden save function to update the AWSRequest class associated with this IAM user. 
+Changes the AWSRequest status to ‘Completed.’</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.IAM.user">
+<code class="sig-name descname">user</code><a class="headerlink" href="#account.models.IAM.user" title="Permalink to this definition">¶</a></dt>
+<dd><p>The User this IAM is associated with.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="account.models.User">
+<em class="property">class </em><code class="sig-prename descclassname">account.models.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic User model.</p>
+<p>Contains basic user information such as email, name, admin rights, etc.
+A new user is created every time someone signs up using their email through the website.</p>
+<dl class="py attribute">
+<dt id="account.models.User.data_transfer_permission">
+<code class="sig-name descname">data_transfer_permission</code><a class="headerlink" href="#account.models.User.data_transfer_permission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean value checking for permission for individual users access to data transfer.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.date_added">
+<code class="sig-name descname">date_added</code><a class="headerlink" href="#account.models.User.date_added" title="Permalink to this definition">¶</a></dt>
+<dd><p>Date/time when user was added.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.date_updated">
+<code class="sig-name descname">date_updated</code><a class="headerlink" href="#account.models.User.date_updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Date/time when user was updated.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.email">
+<code class="sig-name descname">email</code><a class="headerlink" href="#account.models.User.email" title="Permalink to this definition">¶</a></dt>
+<dd><p>Email associated with the user. Users are identified by this email address.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.first_name">
+<code class="sig-name descname">first_name</code><a class="headerlink" href="#account.models.User.first_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>First Name of User.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.get_full_name">
+<code class="sig-name descname">get_full_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.get_full_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns first and last name of user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.get_short_name">
+<code class="sig-name descname">get_short_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.get_short_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns email of user.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.has_module_perms">
+<code class="sig-name descname">has_module_perms</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">app_label</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.has_module_perms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True. [Jflag]</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.has_perm">
+<code class="sig-name descname">has_perm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">perm</span></em>, <em class="sig-param"><span class="n">obj</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.has_perm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True. [Jflag]</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.is_admin">
+<code class="sig-name descname">is_admin</code><a class="headerlink" href="#account.models.User.is_admin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean value checking if the account is an admin.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.models.User.is_staff">
+<code class="sig-name descname">is_staff</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.models.User.is_staff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns true if user is an admin.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models.User.last_name">
+<code class="sig-name descname">last_name</code><a class="headerlink" href="#account.models.User.last_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Last Name of User.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="account.models">
+<code class="sig-prename descclassname">account.</code><code class="sig-name descname">models</code><a class="headerlink" href="#account.models" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#account.models" title="account.models"><code class="xref py py-class docutils literal notranslate"><span class="pre">account.models</span></code></a></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tests.html" class="btn btn-neutral float-right" title="Account Tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="managers.html" class="btn btn-neutral float-left" title="Account Managers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Jack Briggs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
