@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Main Models &mdash; NeuroCAAS Website 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Main Tests" href="tests.html" />
+    <link rel="prev" title="Main" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> NeuroCAAS Website
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Django Apps</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../account/index.html">Account</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Main</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Main Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tests.html">Main Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="utils.html">Main Utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html">Main Views</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../permissions.html">Accounts and Permissions</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">NeuroCAAS Website</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Django Apps</a> &raquo;</li>
+        
+          <li><a href="index.html">Main</a> &raquo;</li>
+        
+      <li>Main Models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apps/main/models.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-main.models">
+<span id="main-models"></span><h1>Main Models<a class="headerlink" href="#module-main.models" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="main.models.Analysis">
+<em class="property">class </em><code class="sig-prename descclassname">main.models.</code><code class="sig-name descname">Analysis</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.models.Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Analysis Model. Contains specific analysis options and details.</p>
+<dl class="py attribute">
+<dt id="main.models.Analysis.analysis_name">
+<code class="sig-name descname">analysis_name</code><a class="headerlink" href="#main.models.Analysis.analysis_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of Process.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.bash_link">
+<code class="sig-name descname">bash_link</code><a class="headerlink" href="#main.models.Analysis.bash_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bash script link of Analysis.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.bucket_name">
+<code class="sig-name descname">bucket_name</code><a class="headerlink" href="#main.models.Analysis.bucket_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>S3 Bucket Name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.models.Analysis.check_iam">
+<code class="sig-name descname">check_iam</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">iam</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.models.Analysis.check_iam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check’s if the user’s IAM Group has permission to access this analysis</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.custom">
+<code class="sig-name descname">custom</code><a class="headerlink" href="#main.models.Analysis.custom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom Analysis option.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.demo_link">
+<code class="sig-name descname">demo_link</code><a class="headerlink" href="#main.models.Analysis.demo_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Link of Demo page.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.git_link">
+<code class="sig-name descname">git_link</code><a class="headerlink" href="#main.models.Analysis.git_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Github link of Analysis.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.groups">
+<code class="sig-name descname">groups</code><a class="headerlink" href="#main.models.Analysis.groups" title="Permalink to this definition">¶</a></dt>
+<dd><p>Groups with access to use this analysis.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.long_description">
+<code class="sig-name descname">long_description</code><a class="headerlink" href="#main.models.Analysis.long_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Long description of analysis.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.paper_link">
+<code class="sig-name descname">paper_link</code><a class="headerlink" href="#main.models.Analysis.paper_link" title="Permalink to this definition">¶</a></dt>
+<dd><p>Link of Analysis Paper.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.result_prefix">
+<code class="sig-name descname">result_prefix</code><a class="headerlink" href="#main.models.Analysis.result_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prefix of result folder name.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.short_description">
+<code class="sig-name descname">short_description</code><a class="headerlink" href="#main.models.Analysis.short_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Short description of analysis.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models.Analysis.signature">
+<code class="sig-name descname">signature</code><a class="headerlink" href="#main.models.Analysis.signature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signature of analysis.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="main.models">
+<code class="sig-prename descclassname">main.</code><code class="sig-name descname">models</code><a class="headerlink" href="#main.models" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#main.models" title="main.models"><code class="xref py py-class docutils literal notranslate"><span class="pre">main.models</span></code></a></p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tests.html" class="btn btn-neutral float-right" title="Main Tests" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Main" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Jack Briggs
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
