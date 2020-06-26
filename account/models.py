@@ -71,7 +71,9 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=100, default="")
     #: Last Name of User.
     last_name = models.CharField(max_length=100, default="")
-
+    
+    has_migrated_pwd = models.BooleanField(default=False)
+    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     #: Boolean value checking if the account is active. [JFlag]
