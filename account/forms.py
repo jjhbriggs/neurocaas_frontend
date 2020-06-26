@@ -32,7 +32,6 @@ class UserCreationForm(forms.ModelForm):
     email = forms.CharField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control'}))
     #first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
     #last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
-
     class Meta:
         """The Meta class creates form fields from model fields. 
         In this case the model being used is :class:`~account.models.User`, and the user's :attr:`~account.models.User.email`
@@ -61,6 +60,7 @@ class UserCreationForm(forms.ModelForm):
     def save(self, commit=True):
         user = super(UserCreationForm, self).save(commit=False)
         user.set_password(self.clean_password2())
+        user.has_migrated_pwd = True
         if commit:
             user.save()
         return user
