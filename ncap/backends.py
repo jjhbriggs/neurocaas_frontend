@@ -3,11 +3,17 @@ from django.contrib.auth import get_user_model
 from account.models import IAM, User
 
 
-def authenticate( aws_access_key=None, aws_secret_access_key=None):
-    try:
-        customer = IAM.objects.filter(aws_access_key=aws_access_key,
-                                      aws_secret_access_key=aws_secret_access_key).first()
+def authenticate( email=None, password=None):
+    '''try:
+        customer = User.objects.filter(email=email,
+                                      password=password).first()
         if customer:
-            return customer.user
+            return customer
     except User.DoesNotExist:
-        pass
+        pass'''
+    try:
+        user = User.objects.get(email=email)
+        if user.check_password(password):
+            return user
+    except User.DoesNotExist:
+            return None

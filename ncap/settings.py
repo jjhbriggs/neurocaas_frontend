@@ -52,6 +52,9 @@ MIDDLEWARE = [
 ]
 
 AUTH_USER_MODEL = 'account.User'  # new user model
+#AUTHENTICATION_BACKENDS = ['account.backends.EmailBackend']
+
+
 LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/'
