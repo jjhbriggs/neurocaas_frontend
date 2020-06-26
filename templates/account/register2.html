@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<h1>Register</h1>
+
+<form action="{% url 'register2' %}" method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" id="submit">Register</button>
+</form>
+{% endblock %}

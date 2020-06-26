@@ -13,8 +13,13 @@ def get_current_iam(request):
         Return current iam object from request.
         """
     return IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
+    
 
-
+def get_current_user(request):
+    """
+        Return current user object from request.
+        """
+    return request.user if not request.user.is_anonymous else None
 def s3_resource(iam):
     return boto3.resource(
             's3',
