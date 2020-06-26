@@ -56,7 +56,11 @@ class LoginView(View):
                              password=form.data['password'])
         if user:
             login(request, user)
-            next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
+            
+            if user.has_migrated_pwd:
+            	next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
+            else:
+            	next_url = 'change_password'
             return redirect(next_url)
 
         messages.error(request=request, message="Invalid Credentials, Try again!")
@@ -135,6 +139,7 @@ class ChangePWD2(LoginRequiredMixin, View):
     def get(self, request):
         form = PasswordChangeForm(request.user)
         return render(request, 'account/change_password.html', {
+                'password_form': form,
         		'form': form,
                 'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None,
                 'user': request.user if not request.user.is_anonymous else None,
@@ -144,12 +149,15 @@ class ChangePWD2(LoginRequiredMixin, View):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
+            user.has_migrated_pwd = True
+            user.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
-            return redirect('change_password')
+            return redirect('profile')
         else:
-            messages.error(request, 'There was an error. Check that your old password is correct, and that your new password meets the requirements.')
+            messages.error(request, 'There was an error processing your request.')
             return render(request, 'account/change_password.html', {
+        		'password_form': form,
         		'form': form
         	}) 
 
