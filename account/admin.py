@@ -13,17 +13,17 @@ class UserAdministrator(UserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    list_display = ('email', 'is_admin', 'first_name', 'last_name')
+    list_display = ('email', 'is_admin', 'has_migrated_pwd', 'first_name', 'last_name')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'first_name', 'last_name')}),
+        (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name')}),
         ('Permissions', {'fields': ('data_transfer_permission',)}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'first_name', 'last_name', 'data_transfer_permission',)}
+            'fields': ('email', 'password1', 'password2', 'has_migrated_pwd', 'first_name', 'last_name', 'data_transfer_permission',)}
          ),
     )
     search_fields = ('email',)
