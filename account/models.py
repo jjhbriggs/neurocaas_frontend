@@ -3,7 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser
 from datetime import datetime
 from .managers import UserManager
 
-
+from django.contrib.auth.models import AbstractUser
+from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
 
@@ -33,6 +34,25 @@ STATUS_COMPLETED = 'C'
 STATUS_DENIED = 'D'
 
 
+'''
+class User(AbstractUser):
+    email = models.EmailField(_('email address'), unique=True)
+    username = models.CharField(max_length=140, default=email)
+	#: First Name of User.
+    first_name = models.CharField(max_length=100, default="")
+    #: Last Name of User.
+    last_name = models.CharField(max_length=100, default="")
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    #: Boolean value checking if the account is active. [JFlag]
+    is_active = models.BooleanField(default=True)
+    #: Boolean value checking if the account is an admin.
+    is_admin = models.BooleanField(default=False, help_text="Flag for administrator account")
+    #: Boolean value checking for permission for individual users access to data transfer.
+    data_transfer_permission = models.BooleanField(default=True,
+                                                   help_text="Permission for individual users access to data transfer")
+'''
 class User(AbstractBaseUser):
     """
     Basic User model.
@@ -51,7 +71,9 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=100, default="")
     #: Last Name of User.
     last_name = models.CharField(max_length=100, default="")
-
+    
+    has_migrated_pwd = models.BooleanField(default=False)
+    
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     #: Boolean value checking if the account is active. [JFlag]
@@ -65,6 +87,8 @@ class User(AbstractBaseUser):
     def get_full_name(self):
         """Returns first and last name of user."""
         # The user is identified by their email address
+        if self.first_name  == "" and self.last_name == "": 
+             return self.email
         return self.first_name + " " + self.last_name
 
     def get_short_name(self):
@@ -90,7 +114,6 @@ class User(AbstractBaseUser):
         """Returns True. [Jflag]"""
         # Simplest possible answer: Yes, always
         return True
-
 
 class AnaGroup(Base):
     """

@@ -10,8 +10,29 @@
             <h2>Sign In to NCAP</h2>
             <hr />
         </div>
+    </div>
         <!-- #END Title -->
-
+        <style>
+        #close {
+			float:right;
+			display:inline-block;
+			padding-top:0.5em;
+			color: white;
+			/*background:#ccc;*/
+		}		
+		</style>
+    <div class="col-xl-8 offset-xl-2 col-md-12" style="border: 2px dashed #DBAA31;">
+        <span style="float:right;" id='close' onclick='this.parentNode.parentNode.removeChild(this.parentNode); return false;'>&#10006;</span>
+        <br>
+		<p><span class="text-warning">NOTICE FOR OLDER NeuroCAAS USERS (Accounts made before July 1st):</span><br>
+		NeuroCAAS has migrated to an email and password based account system. 
+		If you created a password with your account please proceed normally.
+		If not, existing users without passwords may <a href="{% url 'password_reset' %}">click here</a> to generate a password. 
+		This change will not effect the core functionality of NeuroCAAS, and its workflow will remain the same after login. 
+		If you have any questions about this change, please contact us at <span class="text-warning">neurocaas@gmail.com</span>.
+		</p>
+	</div>
+	<div class="col-xl-4 offset-xl-4 col-md-12">
         <!-- Login Form -->
         <form method="post" class="mt-3">
             {% csrf_token %}
@@ -19,8 +40,8 @@
             <!-- AWS Access Key -->
             <div class="form-group">
 
-                <label for="{{ form.aws_access_key.id_for_label }}">AWS Access Key:</label>
-                {{ form.aws_access_key }}
+                <label for="{{ form.email.id_for_label }}">Email:</label>
+                {{ form.email }}
 
             </div>
             <!-- #END AWS Access Key -->
@@ -28,11 +49,11 @@
             <!-- Password -->
             <div class="form-group">
 
-                <label for="{{ form.aws_secret_access_key.id_for_label }}">AWS Secret Access Key:</label>
-                {{ form.aws_secret_access_key }}
+                <label for="{{ form.password.id_for_label }}">Password:</label>
+                {{ form.password }}
             </div>
             <!-- #END Password -->
-
+			<a href="{% url 'password_reset' %}">Forgot Password?</a>
             <!-- Next Url -->
             <input type="hidden" name="next" value="{{ next }}" />
             <!-- #END Next Url -->

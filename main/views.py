@@ -28,7 +28,9 @@ class IntroView(View):
                       template_name=self.template_name,
                       context={
                           'main_analyses': main_analyses,
-                          'iam': get_current_iam(request)
+                          'iam': get_current_iam(request),
+                          'user': get_current_user(request),
+                          'logged_in': not request.user.is_anonymous
                       })
 
 
@@ -48,7 +50,24 @@ class AnalysisListView(View):
                       context={
                           'main_analyses': main_analyses,
                           'custom_analyses': custom_analyses,
-                          'iam': get_current_iam(request)
+                          'iam': get_current_iam(request),
+                          'user': get_current_user(request),
+                          'logged_in': not request.user.is_anonymous
+                      })
+
+class PermissionView(View):
+    """
+        Permission Page View.
+    """
+
+    template_name = "main/permissions.html"
+
+    def get(self, request):
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={
+                          'iam': get_current_iam(request),
+                          'user': get_current_user(request)
                       })
 
 
@@ -63,7 +82,9 @@ class QAView(View):
         return render(request=request,
                       template_name=self.template_name,
                       context={
-                          'iam': get_current_iam(request)
+                          'iam': get_current_iam(request),
+                          'user': get_current_user(request),
+                          'logged_in': not request.user.is_anonymous
                       })
 
 
@@ -77,13 +98,18 @@ class AnalysisIntroView(View):
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
-
+        access = False
+        if not request.user.is_anonymous and iam:
+            access = analysis.check_iam(iam)
         return render(
             request=request,
             template_name=self.template_name,
             context={
                 "analysis": analysis,
-                'iam': iam
+                'iam': iam,
+                'user': get_current_user(request),
+                'access': access,
+                'logged_in': not request.user.is_anonymous
             })
 
 
@@ -125,7 +151,7 @@ class JobListView(LoginRequiredMixin, View):
         results_folder = '%s/results' % iam.group
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
@@ -136,7 +162,9 @@ class JobListView(LoginRequiredMixin, View):
             context={
                 "analysis": analysis,
                 'iam': iam,
-                'job_list': job_list
+                'user': get_current_user(request),
+                'job_list': job_list,
+                'logged_in': not request.user.is_anonymous
             })
 
 
@@ -151,7 +179,7 @@ class JobDetailView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         result_folder = "%s/results/%s" % (iam.group.name, job_id)
@@ -167,6 +195,8 @@ class JobDetailView(LoginRequiredMixin, View):
             context={
                 "analysis": analysis,
                 'iam': iam,
+                'user': get_current_user(request),
+                'logged_in': not request.user.is_anonymous,
                 'job_id': job_id,
                 'job_detail': json.dumps(job_detail),
                 'timestamp': job_id.split('_')[-1]
@@ -303,7 +333,7 @@ class ProcessView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         # convert aws keys to base64 string
@@ -318,6 +348,8 @@ class ProcessView(LoginRequiredMixin, View):
             "config_dir": "%s/configs" % iam.group.name,
             "title": analysis.analysis_name,
             'iam': iam,
+            'user': get_current_user(request),
+            'logged_in': not request.user.is_anonymous,
             'analysis': analysis
         })
 
@@ -429,7 +461,7 @@ class TestView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         # convert aws keys to base64 string
@@ -444,5 +476,7 @@ class TestView(LoginRequiredMixin, View):
             "config_dir": "%s/configs" % iam.group.name,
             "title": analysis.analysis_name,
             'iam': iam,
+            'user': get_current_user(request),
+            'logged_in': not request.user.is_anonymous,
             'analysis': analysis
         })
