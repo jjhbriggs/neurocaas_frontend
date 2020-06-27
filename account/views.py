@@ -11,6 +11,26 @@ from .forms import *
 from ncap.backends import authenticate
 import json
 from django.contrib import messages
+from django.contrib.auth.views import PasswordChangeView
+
+'''
+from django.contrib.auth import views as auth_views
+from django.views import generic
+from django.urls import reverse_lazy
+
+from .forms import LoginForm, RegisterForm
+
+
+class LoginView2(auth_views.LoginView):
+    form_class = LoginForm
+    template_name = 'account/login2.html'
+
+
+class RegisterView2(generic.CreateView):
+    form_class = RegisterForm
+    template_name = 'account/register2.html'
+    success_url = reverse_lazy('login2')
+'''
 
 
 # Create your views here.
@@ -30,12 +50,17 @@ class LoginView(View):
 
     def post(self, request):
         form = UserLoginForm(request.POST)
-        user = authenticate(aws_access_key=form.data['aws_access_key'],
-                            aws_secret_access_key=form.data['aws_secret_access_key'])
-
+        #user = authenticate(aws_access_key=form.data['aws_access_key'],
+        #                    aws_secret_access_key=form.data['aws_secret_access_key'])
+        user = authenticate(email=form.data['email'],
+                             password=form.data['password'])
         if user:
             login(request, user)
-            next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
+            
+            if user.has_migrated_pwd:
+            	next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
+            else:
+            	next_url = 'change_password'
             return redirect(next_url)
 
         messages.error(request=request, message="Invalid Credentials, Try again!")
@@ -82,7 +107,9 @@ class ProfileView(LoginRequiredMixin, View):
         return render(request, template_name=self.template_name, context={
             "user": request.user,
             "aws_req": aws_req,
-            "iam": iam
+            'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None,
+            'user': request.user if not request.user.is_anonymous else None,
+            'logged_in': not request.user.is_anonymous
         })
 
     def post(self, request):
@@ -108,28 +135,31 @@ class AWSCredRequestView(LoginRequiredMixin, View):
         return redirect('profile')
 
 
-class ChangePWDView(LoginRequiredMixin, View):
-    """
-        View for changing a user's password.
-    """
-    template_name = "account/change_password.html"
-
+class ChangePWD2(LoginRequiredMixin, View):
     def get(self, request):
         form = PasswordChangeForm(request.user)
-        return render(request, template_name=self.template_name, context={
-            "user": request.user, "form": form
-        })
-
+        return render(request, 'account/change_password.html', {
+                'password_form': form,
+        		'form': form,
+                'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None,
+                'user': request.user if not request.user.is_anonymous else None,
+                'logged_in': not request.user.is_anonymous
+        	}) 
     def post(self, request):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            update_session_auth_hash(request, user)
+            user.has_migrated_pwd = True
+            user.save()
+            update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
             return redirect('profile')
         else:
-            messages.error(request, 'An Error was occurred, Please try again!')
-            return redirect('user_password_change')
+            messages.error(request, 'There was an error processing your request.')
+            return render(request, 'account/change_password.html', {
+        		'password_form': form,
+        		'form': form
+        	}) 
 
 
 class AdminMixin(UserPassesTestMixin):

@@ -47,7 +47,7 @@
 						<!--<div class="container">-->
 						<nav class="navbar navbar-dark bg-dark">
 							<div class="col-md-12">
-								{% if iam %}
+								{% if logged_in %}
 									
 									<div style="display:inline; float:left;">
 										<a class="no-border display-inline-table" style="padding-right:2em" href="/" title="Back Home">Home</a>
@@ -57,7 +57,7 @@
 									<div style="display:inline; float:right;">
 										
 										<a class="text-warning no-border" href="/profile/" title="Current User">
-											{{ iam.aws_user }}
+											{{ user.get_full_name }}
 										</a>
 										&nbsp;&nbsp;
 										<a class="no-border" href="/logout/" title="Log out">
