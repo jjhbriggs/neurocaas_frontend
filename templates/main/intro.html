@@ -32,7 +32,7 @@
                 <span class="" style="font-size: 1.2em; border-bottom: 1px solid #ccc;">How does NeuroCAAS work?</span>
                 
                 <p class="text-justify">
-                    Neuroscience Cloud Analysis As a Service (NeuroCAAS) is a drag-and-drop data analysis platform for neuroscience. To get started, select one of our available analyses below, and analyze some demo data or bring your own. NeuroCAAS is committed to an open source model; contact us at <a class="text-warning" href="javascript:void(0)">neurocaas@gmail.com</a> if you are interested in helping to develop or fund NeuroCAAS.  
+                    Neuroscience Cloud Analysis As a Service (NeuroCAAS) is a drag-and-drop data analysis platform for neuroscience. To get started, select one of our available analyses below, and analyze some demo data or bring your own. NeuroCAAS is committed to an open source model; contact us at <span class="text-warning">neurocaas@gmail.com</span> if you are interested in helping to develop or fund NeuroCAAS.  
                 </p>
                 <br>
                 <p class="">
@@ -75,7 +75,7 @@
                 <ul class="analysis-list mt-4">
                     {% for item in main_analyses %}
                     <li>
-                        <h3>{{item.analysis_name}} <a href="/analysis/{{item.id}}"><span class="text-danger">Start Analysis</span></a></h3>
+                        <h3>{{item.analysis_name}} <a href="/analysis/{{item.id}}"><span class="text-danger">View Analysis</span></a></h3>
                         <p>
                             {{item.short_description}}
                         </p>
