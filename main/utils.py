@@ -10,11 +10,16 @@ from .models import Analysis
 
 def get_current_iam(request):
     """
-        return current iam object from request
+        Return current iam object from request.
         """
     return IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None
+    
 
-
+def get_current_user(request):
+    """
+        Return current user object from request.
+        """
+    return request.user if not request.user.is_anonymous else None
 def s3_resource(iam):
     return boto3.resource(
             's3',
@@ -24,7 +29,7 @@ def s3_resource(iam):
 
 def get_current_analysis(ana_id):
     """
-        get current analysis from analysis id stored in session
+        Get current analysis from analysis id stored in session.
         """
     analysis = Analysis.objects.get(pk=ana_id)
     return analysis
@@ -32,7 +37,7 @@ def get_current_analysis(ana_id):
 
 def mkdir(path):
     """
-        create new folder by path
+        Create new folder by path.
         """
     if not os.path.exists(path):
         os.makedirs(path)
@@ -40,7 +45,7 @@ def mkdir(path):
 
 def convert_size(size):
     """
-        Return size converted to appropriate format from Byte
+        Return size converted to appropriate format from Byte.
         """
     if size > 1024 * 1024 * 1024:
         return str(round(float(size / (1024 * 1024 * 1024)), 2)) + " GB"
@@ -54,14 +59,14 @@ def convert_size(size):
 
 def get_name_only(key):
     """
-        Function to get only file name from link or full path
+        Function to get only file name from link or full path.
         """
     return key.split('/')[-1]
 
 
 def get_list_keys(iam, bucket, folder, un_cert=True):
     """
-        Return keys of files and folders in s3
+        Return keys of files and folders in s3.
 
         @params:
                 iam: User's IAM object
@@ -93,12 +98,13 @@ def get_list_keys(iam, bucket, folder, un_cert=True):
 
 
 def generate_folder():
+    """Generate folder with current time."""
     return "%s/%s" % ("static/downloads", time.time())
 
 
 def download_file_from_s3(iam, bucket, key, folder):
     """
-        Download file from s3 and return link of it
+        Download file from s3 and return link of it.
         """
     s3 = s3_resource(iam=iam)
 
@@ -115,7 +121,7 @@ def download_file_from_s3(iam, bucket, key, folder):
 
 def download_directory_from_s3(iam, bucket, folder, un_cert=True):
     """
-        Download a folder from s3 bucket
+        Download a folder from s3 bucket,
 
         @params:
                 iam: User IAM Object
@@ -149,7 +155,7 @@ def download_directory_from_s3(iam, bucket, folder, un_cert=True):
 
 def get_last_modified_timestamp(iam, bucket, key):
     """
-        Return file's timestamp on s3 bucket
+        Return file's timestamp on s3 bucket.
 
         @params:
                 iam: User's IAM object
@@ -173,7 +179,7 @@ def get_last_modified_timestamp(iam, bucket, key):
 
 def get_file_content(iam, bucket, key):
     """
-        Return content of file in s3
+        Return content of file in s3.
 
         @params:
                 iam: User's IAM object
@@ -196,7 +202,7 @@ def get_file_content(iam, bucket, key):
 
 def get_data_set_logs(iam, bucket, timestamp):
     """
-        Retrieve logs' keys for each data set
+        Retrieve logs' keys for each data set.
 
         @params:
                 iam: User IAM Object
@@ -221,7 +227,7 @@ def get_data_set_logs(iam, bucket, timestamp):
 
 def get_job_list(iam, bucket, folder):
     """
-        Retrieve job list from s3
+        Retrieve job list from s3.
 
         @params:
                 iam: User IAM Object
@@ -256,7 +262,7 @@ def get_job_list(iam, bucket, folder):
 # function to get all files only of folder in bucket
 def get_files_detail_list(iam, bucket, folder):
     """
-        Retrieve file list and its detail content from s3
+        Retrieve file list and its detail content from s3.
 
         @params:
                 iam: User IAM Object
@@ -292,7 +298,7 @@ def get_files_detail_list(iam, bucket, folder):
 
 def delete_folder_from_bucket(iam, bucket, prefix):
     """
-        Delete a folder from s3 bucket
+        Delete a folder from s3 bucket.
 
         @params:
                 iam: User IAM Object
@@ -309,7 +315,7 @@ def delete_folder_from_bucket(iam, bucket, prefix):
 
 def delete_file_from_bucket(iam, bucket, key):
     """
-        Delete a file from s3 bucket
+        Delete a file from s3 bucket.
 
         @params:
                 iam: User IAM Object
@@ -325,7 +331,7 @@ def delete_file_from_bucket(iam, bucket, key):
 
 def create_submit_json(iam, bucket, key, json_data):
     """
-        Create submit.json object with json data
+        Create submit.json object with json data.
 
         @params:
                 iam: User IAM Object

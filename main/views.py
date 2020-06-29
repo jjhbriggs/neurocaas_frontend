@@ -15,12 +15,11 @@ import shutil
 
 
 # Create your views here.
-
 class IntroView(View):
     """
-        Intro View (Index View)
-        Detail of Neuroscience and Available Analyses
-        """
+        Intro View (Index View).
+        Detail of NeuroCAAS and Available Analyses.
+    """
     template_name = "main/intro.html"
 
     def get(self, request):
@@ -29,15 +28,17 @@ class IntroView(View):
                       template_name=self.template_name,
                       context={
                           'main_analyses': main_analyses,
-                          'iam': get_current_iam(request)
+                          'iam': get_current_iam(request),
+                          'user': get_current_user(request),
+                          'logged_in': not request.user.is_anonymous
                       })
 
 
 class AnalysisListView(View):
     """
-        Analysis List View
-        List of all Available and Custom Analyses
-        """
+        Analysis List View.
+        List of all Available and Custom Analyses.
+    """
     template_name = "main/analysis_list.html"
 
     def get(self, request):
@@ -49,14 +50,31 @@ class AnalysisListView(View):
                       context={
                           'main_analyses': main_analyses,
                           'custom_analyses': custom_analyses,
-                          'iam': get_current_iam(request)
+                          'iam': get_current_iam(request),
+                          'user': get_current_user(request),
+                          'logged_in': not request.user.is_anonymous
+                      })
+
+class PermissionView(View):
+    """
+        Permission Page View.
+    """
+
+    template_name = "main/permissions.html"
+
+    def get(self, request):
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={
+                          'iam': get_current_iam(request),
+                          'user': get_current_user(request)
                       })
 
 
 class QAView(View):
     """
-        Q/A Page View
-        """
+        Q/A Page View.
+    """
 
     template_name = "main/qa_page.html"
 
@@ -64,34 +82,41 @@ class QAView(View):
         return render(request=request,
                       template_name=self.template_name,
                       context={
-                          'iam': get_current_iam(request)
+                          'iam': get_current_iam(request),
+                          'user': get_current_user(request),
+                          'logged_in': not request.user.is_anonymous
                       })
 
 
 class AnalysisIntroView(View):
     """
-        Intro View of Analysis
-        Detail of Analysis : Description and Useful link
-        """
+        Intro View of Analysis.
+        Detail of Analysis : Description and Useful link.
+    """
     template_name = "main/analysis_intro.html"
 
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
-
+        access = False
+        if not request.user.is_anonymous and iam:
+            access = analysis.check_iam(iam)
         return render(
             request=request,
             template_name=self.template_name,
             context={
                 "analysis": analysis,
-                'iam': iam
+                'iam': iam,
+                'user': get_current_user(request),
+                'access': access,
+                'logged_in': not request.user.is_anonymous
             })
 
 
 class HomeView(View):
     """
-        View to check if logged in or not, if not, redirected to login page
-        """
+        View to check if logged in or not, if not, redirected to login page.
+    """
     template_name = "main/home.html"
 
     def get(self, request):
@@ -116,8 +141,8 @@ class HomeView(View):
 
 class JobListView(LoginRequiredMixin, View):
     """
-        Shows List of Jobs done for analysis
-        """
+        Shows List of Jobs done for analysis.
+    """
     template_name = 'main/job_history.html'
 
     def get(self, request, ana_id):
@@ -126,7 +151,7 @@ class JobListView(LoginRequiredMixin, View):
         results_folder = '%s/results' % iam.group
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
@@ -137,14 +162,16 @@ class JobListView(LoginRequiredMixin, View):
             context={
                 "analysis": analysis,
                 'iam': iam,
-                'job_list': job_list
+                'user': get_current_user(request),
+                'job_list': job_list,
+                'logged_in': not request.user.is_anonymous
             })
 
 
 class JobDetailView(LoginRequiredMixin, View):
     """
-        Shows detail of Job done for analysis, User can check and download the content of job files
-        """
+        Shows detail of Job done for analysis, User can check and download the content of job files.
+    """
     template_name = 'main/job_detail.html'
 
     def get(self, request, ana_id, job_id):
@@ -152,7 +179,7 @@ class JobDetailView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         result_folder = "%s/results/%s" % (iam.group.name, job_id)
@@ -168,6 +195,8 @@ class JobDetailView(LoginRequiredMixin, View):
             context={
                 "analysis": analysis,
                 'iam': iam,
+                'user': get_current_user(request),
+                'logged_in': not request.user.is_anonymous,
                 'job_id': job_id,
                 'job_detail': json.dumps(job_detail),
                 'timestamp': job_id.split('_')[-1]
@@ -177,13 +206,13 @@ class JobDetailView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class FilesView(LoginRequiredMixin, View):
     """
-        View to manage files for each analysis, get and download, delete file and folders
-        """
+        View to manage files for each analysis, get and download, delete file and folders.
+    """
 
     def get(self, request, ana_id):
         """
-            Download file from s3 and return downloaded file path
-            """
+            Download file from s3 and return downloaded file path.
+         """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
@@ -200,8 +229,8 @@ class FilesView(LoginRequiredMixin, View):
 
     def post(self, request, ana_id):
         """
-            Download folder from s3, zipping folder and return zip file path
-            """
+            Download folder from s3, zipping folder and return zip file path.
+        """
 
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
@@ -228,8 +257,8 @@ class FilesView(LoginRequiredMixin, View):
 
     def delete(self, request, ana_id):
         """
-            Delete a file from inputs or config folder on s3 by filename
-            """
+            Delete a file from inputs or config folder on s3 by filename.
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
@@ -253,13 +282,13 @@ class FilesView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class UserFilesView(LoginRequiredMixin, View):
     """
-        Return list of inputs and configs files for analysis
-        """
+        Return list of inputs and configs files for analysis.
+    """
 
     def get(self, request, ana_id):
         """
-            return inputs and config files users uploaded so far
-            """
+            Return inputs and config files users uploaded so far.
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
@@ -295,8 +324,8 @@ class UserFilesView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ProcessView(LoginRequiredMixin, View):
     """
-        Processing View
-        """
+        Processing View.
+    """
     template_name = "main/process.html"
 
     def get(self, request, ana_id):
@@ -304,7 +333,7 @@ class ProcessView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         # convert aws keys to base64 string
@@ -319,13 +348,15 @@ class ProcessView(LoginRequiredMixin, View):
             "config_dir": "%s/configs" % iam.group.name,
             "title": analysis.analysis_name,
             'iam': iam,
+            'user': get_current_user(request),
+            'logged_in': not request.user.is_anonymous,
             'analysis': analysis
         })
 
     def post(self, request, ana_id):
         """
-            Start new processing with analysis ID, inputs and config files
-            """
+            Start new processing with analysis ID, inputs and config files.
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
 
@@ -359,12 +390,12 @@ class ProcessView(LoginRequiredMixin, View):
 @method_decorator(csrf_exempt, name='dispatch')
 class ResultView(LoginRequiredMixin, View):
     """
-        Process results View
-        """
+        Process results View.
+    """
     def get(self, request, ana_id):
         """
-            Retrieve Certificate.txt content from s3 and return it
-            """
+            Retrieve Certificate.txt content from s3 and return it.
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
@@ -391,7 +422,7 @@ class ResultView(LoginRequiredMixin, View):
         """
             Retrieve files from results and logs folder on s3 and return them.
             Checking update.txt and end.txt so that determine analysis was finished or not.
-            """
+        """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
         timestamp = int(request.POST['timestamp'])
@@ -430,7 +461,7 @@ class TestView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
 
         if not analysis.check_iam(iam):
-            messages.error(request, "You don't have permission for this analysis.")
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         # convert aws keys to base64 string
@@ -445,5 +476,7 @@ class TestView(LoginRequiredMixin, View):
             "config_dir": "%s/configs" % iam.group.name,
             "title": analysis.analysis_name,
             'iam': iam,
+            'user': get_current_user(request),
+            'logged_in': not request.user.is_anonymous,
             'analysis': analysis
         })
