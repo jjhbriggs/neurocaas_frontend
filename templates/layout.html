@@ -2,7 +2,7 @@
 <!DOCTYPE HTML>
 <html lang="en">
 	<head>
-		<title>NeuroCaaS | {% block title %}{% endblock %}</title>
+		<title>NeuroCAAS | {% block title %}{% endblock %}</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="description" content="Neuroscience Cloud Analysis As a Service">
@@ -46,40 +46,40 @@
 				<div id="header">
 						<!--<div class="container">-->
 						<nav class="navbar navbar-dark bg-dark">
-							<div class="col-md-12 text-right">
-								{% if iam %}
-									<a class="text-warning no-border" href="javascript:void(0)" title="Current User">
-										{{ iam.aws_user }}
-									</a>
+							<div class="col-md-12">
+								{% if logged_in %}
+									
+									<div style="display:inline; float:left;">
+										<a class="no-border display-inline-table" style="padding-right:2em" href="/" title="Back Home">Home</a>
+										<a class="no-border display-inline-table" style="padding-right:2em" href="/analyses/" title="Available Analyses">Available Analyses</a>
+										<a class="no-border display-inline-table" style="padding-right:2em" href="/freq_qa/" title="FAQ">FAQ</a>
+									</div>
+									<div style="display:inline; float:right;">
+										
+										<a class="text-warning no-border" href="/profile/" title="Current User">
+											{{ user.get_full_name }}
+										</a>
+										&nbsp;&nbsp;
+										<a class="no-border" href="/logout/" title="Log out">
+											<svg class="bi bi-power" width="1.25em" height="1.25em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+											  <path fill-rule="evenodd" d="M5.578 4.437a5 5 0 104.922.044l.5-.866a6 6 0 11-5.908-.053l.486.875z" clip-rule="evenodd"/>
+											  <path fill-rule="evenodd" d="M7.5 8V1h1v7h-1z" clip-rule="evenodd"/>
+											</svg>
+										</a>
+									
+										
+									</div>
 
-									&nbsp;&nbsp;
-
-									<a class="no-border" href="/" title="Back Home">
-										<svg class="bi bi-house" width="1.25em" height="1.25em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-										  	<path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
-										  	<path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
-										</svg>
-									</a>
-
-									&nbsp;
-
-									<a class="no-border" href="/logout/" title="Log out">
-										<svg class="bi bi-power" width="1.25em" height="1.25em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-										  <path fill-rule="evenodd" d="M5.578 4.437a5 5 0 104.922.044l.5-.866a6 6 0 11-5.908-.053l.486.875z" clip-rule="evenodd"/>
-										  <path fill-rule="evenodd" d="M7.5 8V1h1v7h-1z" clip-rule="evenodd"/>
-										</svg>
-									</a>
+									
 								{% else %}
-									<a class="text-warning no-border" href="javascript:void(0)">Anonymous User</a>
-
-									&nbsp;&nbsp;
-
-									<a class="no-border display-inline-table" href="/" title="Back Home">
-										<svg class="bi bi-house" width="1.25em" height="1.25em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-										  	<path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
-										  	<path fill-rule="evenodd" d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z"/>
-										</svg>
-									</a>
+									<div style="display:inline; float:left;">
+										<a class="no-border display-inline-table" style="padding-right:2em" href="/" title="Back Home">Home</a>
+										<a class="no-border display-inline-table" style="padding-right:2em" href="/analyses/" title="Back Home">Available Analyses</a>
+										<a class="no-border display-inline-table" style="padding-right:2em" href="/freq_qa/" title="Back Home">FAQ</a>
+									</div>
+									<div style="display:inline; float:right;">
+										<a class="text-warning no-border" href="/home/">Sign In</a>
+									</div>
 								{% endif %}
 							</div>
 						</nav>
@@ -94,7 +94,7 @@
 				<div id="footer">
 					<div class="container">
 						<div class="row">
-							<div class="col-12">
+							<div class="col-12" style="padding-top: 3em;">
 
 								<!-- Contact -->
 									<section class="contact">
@@ -104,6 +104,11 @@
 											<li>
 												<a href="https://twitter.com/neurocaas" class="icon brands fa-twitter" target="_blank" rel="noopener">
 													<span class="label">Twitter</span>
+												</a>
+											</li>
+											<li>
+												<a href="https://github.com/cunningham-lab/neurocaas" class="icon brands fa-github" target="_blank" rel="noopener">
+													<span class="label">Github</span>
 												</a>
 											</li>
 											<li>

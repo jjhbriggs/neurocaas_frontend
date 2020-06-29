@@ -52,6 +52,15 @@ MIDDLEWARE = [
 ]
 
 AUTH_USER_MODEL = 'account.User'  # new user model
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'neurocaas@gmail.com'
+EMAIL_HOST_PASSWORD = 'nifHiv-sejwex-0wehci'
+#AUTHENTICATION_BACKENDS = ['account.backends.EmailBackend']
+
+
 LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/home/'
 LOGOUT_REDIRECT_URL = '/'
@@ -61,7 +70,7 @@ ROOT_URLCONF = 'ncap.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates', ],
+        'DIRS': ['templates', 'docs/build'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -121,9 +130,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'docs/build/html/_static'),
 )

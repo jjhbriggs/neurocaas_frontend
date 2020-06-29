@@ -34,9 +34,14 @@
                         </div>
                     </div>
                     <!-- #END Last Name -->
-
+					<div class="form-group row pb-3">
+                        <label class="col-5 col-form-label">Email <span class="danger">*</span> </label>
+                        <div class="col-7">
+                            <input class="form-control" type="text"  value="{{user.email}}" disabled>
+                        </div>
+                    </div>
                     <!-- AWS User Name -->
-                    {% if aws_req.get_status_display == 'Completed' %}
+                    
                     <div class="form-group row pb-3">
                         <label class="col-5 col-form-label">AWS User Name <span class="danger">*</span> </label>
                         <div class="col-7">
@@ -70,17 +75,19 @@
                             <input class="form-control" type="text"  value="{{iam.data_bucket}}" disabled>
                         </div>
                     </div>
+                    
+                    <div class="form-group row pb-3">
+                        <a href="/changepwd/">Change Password</a>
+                    </div>
+                    
                     <!-- #END S3 Bucket For Datasets and config files -->
 
-                    {% endif %}
+                   
 
                     <!-- Submit Button -->
-                    <div class="form-group row pb-3">
-                        <div class="col-5 text-left">
-                            <input type="submit" class="btn btn-primary" value="Save">
-                        </div>
-                        <div class="col-7 text-right">
-                            <!--<button type="button" class="btn btn-primary" onclick="user_password_change()">Change Password?</button>-->
+                    <div class="form-group row pb-3 style="border:2px solid red;">
+                        <div class="col-11" >
+                            <button type="submit" style="margin: 1em;" value="Save">Save</button>
                         </div>
                     </div>
                     <!-- #END Submit Button -->
