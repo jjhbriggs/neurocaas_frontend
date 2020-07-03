@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Django Apps" href="apps/index.html" /> 
@@ -49,7 +50,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> NeuroCAAS Website
+            <a href="#" class="icon icon-home" alt="Documentation Home"> NeuroCAAS Website
           
 
           
@@ -72,6 +73,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -83,11 +85,13 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="apps/index.html">Django Apps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="permissions.html">Accounts and Permissions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide.html">Developer Guide</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -126,7 +130,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
       <li>Welcome to the NeuroCAAS Website docs!</li>
     
@@ -156,7 +160,7 @@
 <div class="line"><br /></div>
 </div>
 <div class="line">The NeuroCAAS website and documentation are part of the NeuroCAAS project, and are currently under development.</div>
-<div class="line">This website is powered by Django. Currently, only the <a class="reference internal" href="apps/account/index.html#account"><span class="std std-ref">Account</span></a> app of this website is documented, however more will be documented soon.</div>
+<div class="line">This website is powered by Django.</div>
 </div>
 <div class="section" id="neurocaas">
 <h2>NeuroCAAS<a class="headerlink" href="#neurocaas" title="Permalink to this headline">¶</a></h2>
@@ -191,11 +195,15 @@ To learn more about NeuroCAAS, check out our github repo, paper, and website bel
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="permissions.html">Accounts and Permissions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="permissions.html#user-addition">User Addition</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="permissions.html#potential-improvements-jack-s-opinions">Potential Improvements (Jack’s opinions)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="permissions.html#user-addition">User Addition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="permissions.html#user-permissions">User Permissions</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="permissions.html#user-permissions">User Permissions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide.html">Developer Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="devguide.html#project-structure">1. Project Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devguide.html#deployment-on-ubuntu-server">2. Deployment on Ubuntu Server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devguide.html#database-information">3. Database Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="devguide.html#aws-s3-file-uploading">4. AWS S3 File Uploading</a></li>
 </ul>
 </li>
 </ul>
@@ -229,11 +237,19 @@ To learn more about NeuroCAAS, check out our github repo, paper, and website bel
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Jack Briggs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -244,7 +260,6 @@ To learn more about NeuroCAAS, check out our github repo, paper, and website bel
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

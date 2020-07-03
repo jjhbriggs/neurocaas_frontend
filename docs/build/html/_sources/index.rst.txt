@@ -10,7 +10,7 @@ Welcome to the NeuroCAAS Website docs!
 |     *This documentation is not for the NeuroCAAS project. To access the docs of the NeuroCAAS project, navigate to the Github repository below.* 
 |
 | The NeuroCAAS website and documentation are part of the NeuroCAAS project, and are currently under development.
-| This website is powered by Django. Currently, only the :ref:`Account` app of this website is documented, however more will be documented soon.
+| This website is powered by Django.
 
 NeuroCAAS
 ---------
@@ -37,6 +37,7 @@ To learn more about NeuroCAAS, check out our github repo, paper, and website bel
 
    apps/index
    permissions
+   devguide
 
 Indices and tables
 ==================

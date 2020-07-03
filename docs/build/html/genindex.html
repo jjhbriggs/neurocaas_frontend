@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -48,7 +49,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> NeuroCAAS Website
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> NeuroCAAS Website
           
 
           
@@ -71,6 +72,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -82,11 +84,13 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="apps/index.html">Django Apps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="permissions.html">Accounts and Permissions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide.html">Developer Guide</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -125,7 +129,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Index</li>
     
@@ -212,10 +216,10 @@
 </li>
       <li><a href="apps/account/models.html#account.models.AnaGroup">AnaGroup (class in account.models)</a>
 </li>
-      <li><a href="apps/main/models.html#main.models.Analysis">Analysis (class in main.models)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apps/main/models.html#main.models.Analysis">Analysis (class in main.models)</a>
+</li>
       <li><a href="apps/main/models.html#main.models.Analysis.analysis_name">analysis_name (main.models.Analysis attribute)</a>
 </li>
       <li><a href="apps/main/views.html#main.views.AnalysisIntroView">AnalysisIntroView (class in main.views)</a>
@@ -228,18 +232,10 @@
 </li>
       <li><a href="apps/main/tests.html#main.tests.AnalysisTestCase">AnalysisTestCase (class in main.tests)</a>
 </li>
-      <li><a href="apps/account/forms.html#account.forms.UserLoginForm.aws_access_key">aws_access_key (account.forms.UserLoginForm attribute)</a>
-
-      <ul>
-        <li><a href="apps/account/models.html#account.models.IAM.aws_access_key">(account.models.IAM attribute)</a>
+      <li><a href="apps/account/models.html#account.models.IAM.aws_access_key">aws_access_key (account.models.IAM attribute)</a>
 </li>
-      </ul></li>
-      <li><a href="apps/account/forms.html#account.forms.UserLoginForm.aws_secret_access_key">aws_secret_access_key (account.forms.UserLoginForm attribute)</a>
-
-      <ul>
-        <li><a href="apps/account/models.html#account.models.IAM.aws_secret_access_key">(account.models.IAM attribute)</a>
+      <li><a href="apps/account/models.html#account.models.IAM.aws_secret_access_key">aws_secret_access_key (account.models.IAM attribute)</a>
 </li>
-      </ul></li>
       <li><a href="apps/account/models.html#account.models.IAM.aws_user">aws_user (account.models.IAM attribute)</a>
 </li>
       <li><a href="apps/account/views.html#account.views.AWSCredRequestView">AWSCredRequestView (class in account.views)</a>
@@ -266,12 +262,16 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="apps/account/views.html#account.views.ChangePWDView">ChangePWDView (class in account.views)</a>
+      <li><a href="apps/account/views.html#account.views.ChangePWD2">ChangePWD2 (class in account.views)</a>
 </li>
       <li><a href="apps/main/models.html#main.models.Analysis.check_iam">check_iam() (main.models.Analysis method)</a>
 </li>
-      <li><a href="apps/account/forms.html#account.forms.UserCreationForm.clean_password2">clean_password2() (account.forms.UserCreationForm method)</a>
+      <li><a href="apps/account/forms.html#account.forms.UserChangeForm.clean_password2">clean_password2() (account.forms.UserChangeForm method)</a>
+
+      <ul>
+        <li><a href="apps/account/forms.html#account.forms.UserCreationForm.clean_password2">(account.forms.UserCreationForm method)</a>
 </li>
+      </ul></li>
       <li><a href="apps/main/utils.html#main.utils.convert_size">convert_size() (in module main.utils)</a>
 </li>
   </ul></td>
@@ -321,6 +321,8 @@
       <li><a href="apps/account/forms.html#account.forms.UserCreationForm.email">email (account.forms.UserCreationForm attribute)</a>
 
       <ul>
+        <li><a href="apps/account/forms.html#account.forms.UserLoginForm.email">(account.forms.UserLoginForm attribute)</a>
+</li>
         <li><a href="apps/account/models.html#account.models.User.email">(account.models.User attribute)</a>
 </li>
       </ul></li>
@@ -368,14 +370,16 @@
 </li>
       <li><a href="apps/main/utils.html#main.utils.get_current_iam">get_current_iam() (in module main.utils)</a>
 </li>
+      <li><a href="apps/main/utils.html#main.utils.get_current_user">get_current_user() (in module main.utils)</a>
+</li>
       <li><a href="apps/main/utils.html#main.utils.get_data_set_logs">get_data_set_logs() (in module main.utils)</a>
 </li>
       <li><a href="apps/main/utils.html#main.utils.get_file_content">get_file_content() (in module main.utils)</a>
 </li>
-      <li><a href="apps/main/utils.html#main.utils.get_files_detail_list">get_files_detail_list() (in module main.utils)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apps/main/utils.html#main.utils.get_files_detail_list">get_files_detail_list() (in module main.utils)</a>
+</li>
       <li><a href="apps/account/models.html#account.models.User.get_full_name">get_full_name() (account.models.User method)</a>
 </li>
       <li><a href="apps/main/utils.html#main.utils.get_job_list">get_job_list() (in module main.utils)</a>
@@ -549,7 +553,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apps/main/models.html#main.models.Analysis.paper_link">paper_link (main.models.Analysis attribute)</a>
 </li>
-      <li><a href="apps/account/forms.html#account.forms.UserChangeForm.password">password (account.forms.UserChangeForm attribute)</a>
+      <li><a href="apps/account/forms.html#account.forms.UserLoginForm.password">password (account.forms.UserLoginForm attribute)</a>
+</li>
+      <li><a href="apps/account/forms.html#account.forms.UserChangeForm.password1">password1 (account.forms.UserChangeForm attribute)</a>
+</li>
+      <li><a href="apps/main/views.html#main.views.PermissionView">PermissionView (class in main.views)</a>
 </li>
       <li><a href="apps/main/views.html#main.views.FilesView.post">post() (main.views.FilesView method)</a>
 
@@ -738,11 +746,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Jack Briggs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -753,7 +769,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

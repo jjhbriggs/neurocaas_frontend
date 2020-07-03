@@ -13,26 +13,6 @@ import json
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
 
-'''
-from django.contrib.auth import views as auth_views
-from django.views import generic
-from django.urls import reverse_lazy
-
-from .forms import LoginForm, RegisterForm
-
-
-class LoginView2(auth_views.LoginView):
-    form_class = LoginForm
-    template_name = 'account/login2.html'
-
-
-class RegisterView2(generic.CreateView):
-    form_class = RegisterForm
-    template_name = 'account/register2.html'
-    success_url = reverse_lazy('login2')
-'''
-
-
 # Create your views here.
 
 class LoginView(View):
@@ -136,6 +116,9 @@ class AWSCredRequestView(LoginRequiredMixin, View):
 
 
 class ChangePWD2(LoginRequiredMixin, View):
+    """
+        View for changing users password, given old password and new password that meets django requirements. 
+    """
     def get(self, request):
         form = PasswordChangeForm(request.user)
         return render(request, 'account/change_password.html', {
