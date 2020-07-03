@@ -36,6 +36,22 @@ Refer to `this link <https://www.digitalocean.com/community/tutorials/how-to-set
    $ sudo ufw allow 8000
    $ deactivate
 
+**Clone the repo**
+
+.. code-block::
+
+   $ git clone https://github.com/jjhbriggs/neurocaas_frontend ncap
+
+**Install dependencies**
+
+.. code-block::
+
+   $ cd ncap
+   $ virtualenv venv
+   $ source  venv/bin/activate
+   (venv) $ pip install -r requirements.txt 
+
+
 **Create systemd Socket and Service Files for Gunicorn**
 
 .. code-block::
