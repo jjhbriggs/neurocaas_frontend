@@ -34,25 +34,6 @@ STATUS_COMPLETED = 'C'
 STATUS_DENIED = 'D'
 
 
-'''
-class User(AbstractUser):
-    email = models.EmailField(_('email address'), unique=True)
-    username = models.CharField(max_length=140, default=email)
-	#: First Name of User.
-    first_name = models.CharField(max_length=100, default="")
-    #: Last Name of User.
-    last_name = models.CharField(max_length=100, default="")
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
-    #: Boolean value checking if the account is active. [JFlag]
-    is_active = models.BooleanField(default=True)
-    #: Boolean value checking if the account is an admin.
-    is_admin = models.BooleanField(default=False, help_text="Flag for administrator account")
-    #: Boolean value checking for permission for individual users access to data transfer.
-    data_transfer_permission = models.BooleanField(default=True,
-                                                   help_text="Permission for individual users access to data transfer")
-'''
 class User(AbstractBaseUser):
     """
     Basic User model.
@@ -76,7 +57,7 @@ class User(AbstractBaseUser):
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
-    #: Boolean value checking if the account is active. [JFlag]
+    #: Boolean value checking if the account is active. 
     is_active = models.BooleanField(default=True)
     #: Boolean value checking if the account is an admin.
     is_admin = models.BooleanField(default=False, help_text="Flag for administrator account")
@@ -106,12 +87,12 @@ class User(AbstractBaseUser):
         return self.is_admin
 
     def has_perm(self, perm, obj=None):
-        """Returns True. [Jflag]"""
+        """Returns True. """
         # Simplest possible answer: Yes, always
         return True
 
     def has_module_perms(self, app_label):
-        """Returns True. [Jflag]"""
+        """Returns True. """
         # Simplest possible answer: Yes, always
         return True
 

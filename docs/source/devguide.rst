@@ -1,0 +1,158 @@
+Developer Guide
+========================
+
+This section contains guidance for developing NeuroCAAS
+
+To contribute to NeuroCAAS, please contact us at neurocaas@gmail.com
+
+1. Project Structure
+---------------------
+
+This project utilizes two django apps, :ref:`Account` and :ref:`Main`.
+The :ref:`Account` app handles user management, 
+and the :ref:`Main` app has core functions to process data.
+
+2. Deployment on Ubuntu Server
+------------------------------
+
+Refer to `this link <https://www.digitalocean.com/community/tutorials/how-to-set-up-django-with-postgres-nginx-and-gunicorn-on-ubuntu-18-04>`_ for additional assistance.
+
+**Install essential packages:**
+
+.. code-block::
+
+   $ sudo apt update
+   $ sudo apt install python3-pip python3-dev libpq-dev postgresql postgresql-contrib nginx curl
+
+**Install virtualenv:**
+
+.. code-block::
+
+   $ sudo pip3 install virtualenv
+   $ cd /home/ubuntu/ncap
+   $ virtualenv venv
+   $ source venv/bin/activate
+   $ pip install –r requirements.txt
+   $ sudo ufw allow 8000
+   $ deactivate
+
+**Create systemd Socket and Service Files for Gunicorn**
+
+.. code-block::
+   
+   $ sudo nano /etc/systemd/system/gunicorn. Service
+   
+Add the following content and save:
+
+.. code-block::
+
+	[Unit]
+	Description=gunicorn daemon
+	Requires=gunicorn.socket
+	After=network.target
+
+	[Service]
+	User=ubuntu
+	Group=www-data
+	WorkingDirectory=/home/ubuntu/ncap
+	ExecStart=/home/ubuntu/ncap/venv/bin/gunicorn \
+			  --access-logfile - \
+			  --workers 3 \
+			  --bind unix:/run/gunicorn.sock \
+			  ncap.wsgi:application
+	[Install]
+	WantedBy=multi-user.target
+
+.. code-block::
+   
+   $ sudo systemctl daemon-reload
+   $ sudo systemctl restart gunicorn
+   
+**Configure Nginx to Proxy Pass to Gunicorn**
+
+Install  Nginx
+
+.. code-block::
+   
+   $ sudo apt install nginx
+
+Configure Nginx
+
+.. code-block::
+
+   $ sudo nano /etc/nginx/sites-available/ncap
+
+Add following content and save:
+
+.. code-block::
+
+	server {
+		listen 80;
+		server_name www.neurocaas.com neurocaas.com neurocaas.org www.neurocaas.org;
+		location = /favicon.ico { access_log off; log_not_found off; }
+		location /static/ {
+				root /home/ubuntu/ncap;
+		}
+		location /docs/ {
+				alias /home/ubuntu/ncap/docs/build/html/;
+				index  index.html index.htm;
+		}
+		location / {
+				include proxy_params;
+				proxy_pass http://unix:/run/gunicorn.sock;
+		 }
+	}
+
+.. code-block::
+
+   $ sudo ln -s /etc/nginx/sites-available/ncap /etc/nginx/sites-enabled
+   $ sudo nginx –t
+   $ sudo systemctl restart nginx
+   $ sudo ufw delete allow 8000
+   $ sudo ufw allow 'Nginx Full'
+
+**Cron Job**
+
+There is a python script located "/home/ubuntu/ncap/cron.py".
+It is running daily, removing old files in "/home/ubuntu/ncap/static/downloads" folder.
+
+Run the following command to edit crontab config
+
+.. code-block::
+
+   $ crontab –e
+   
+Add this line and save:
+
+.. code-block::
+
+   5 4 * * * /usr/bin/python3 /home/ubuntu/ncap/cron.py >> ~/cron.log 2>&1
+   
+Start Cron job
+
+.. code-block::
+
+   $ sudo service cron start
+
+3. Database Information
+-----------------------
+
+Currently the database used in NeuroCAAS is sqlite. The DB configuration is stored in ncap/settings.py.
+
+To migrate the database, run the following in the command line:
+
+.. code-block::
+
+   python3 manage.py migrate
+
+**Database Diagram:**
+.. image:: example.png
+
+
+
+
+
+4. AWS S3 File Uploading
+------------------------
+
+dd

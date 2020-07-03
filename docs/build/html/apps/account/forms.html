@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
@@ -29,10 +34,6 @@
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Account Managers" href="managers.html" />
@@ -50,7 +51,7 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home"> NeuroCAAS Website
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> NeuroCAAS Website
           
 
           
@@ -73,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -95,11 +97,13 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../permissions.html">Accounts and Permissions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../devguide.html">Developer Guide</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -138,7 +142,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
         
           <li><a href="../index.html">Django Apps</a> &raquo;</li>
         
@@ -203,7 +207,7 @@ In this case the model being used is <a class="reference internal" href="models.
 fields are being used. [Jflag pass field is inherited for abstract class and not in docs]</p>
 <dl class="py attribute">
 <dt id="account.forms.UserChangeForm.Meta.fields">
-<code class="sig-name descname">fields</code><em class="property"> = ('email', 'password')</em><a class="headerlink" href="#account.forms.UserChangeForm.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fields</code><em class="property"> = ('password',)</em><a class="headerlink" href="#account.forms.UserChangeForm.Meta.fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fields used.</p>
 </dd></dl>
 
@@ -215,9 +219,15 @@ fields are being used. [Jflag pass field is inherited for abstract class and not
 
 </dd></dl>
 
+<dl class="py method">
+<dt id="account.forms.UserChangeForm.clean_password2">
+<code class="sig-name descname">clean_password2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.forms.UserChangeForm.clean_password2" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function to check that the two passwords provided by the user match.</p>
+</dd></dl>
+
 <dl class="py attribute">
-<dt id="account.forms.UserChangeForm.password">
-<code class="sig-name descname">password</code><a class="headerlink" href="#account.forms.UserChangeForm.password" title="Permalink to this definition">¶</a></dt>
+<dt id="account.forms.UserChangeForm.password1">
+<code class="sig-name descname">password1</code><a class="headerlink" href="#account.forms.UserChangeForm.password1" title="Permalink to this definition">¶</a></dt>
 <dd><p>User’s new password</p>
 </dd></dl>
 
@@ -282,27 +292,27 @@ In this case the model being used is <a class="reference internal" href="models.
 fields are being used.</p>
 <dl class="py attribute">
 <dt id="account.forms.UserLoginForm.Meta.fields">
-<code class="sig-name descname">fields</code><em class="property"> = ('aws_access_key', 'aws_secret_access_key')</em><a class="headerlink" href="#account.forms.UserLoginForm.Meta.fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">fields</code><em class="property"> = ('email', 'password')</em><a class="headerlink" href="#account.forms.UserLoginForm.Meta.fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fields used.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt id="account.forms.UserLoginForm.Meta.model">
 <code class="sig-name descname">model</code><a class="headerlink" href="#account.forms.UserLoginForm.Meta.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="models.html#account.models.IAM" title="account.models.IAM"><code class="xref py py-class docutils literal notranslate"><span class="pre">account.models.IAM</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="models.html#account.models.User" title="account.models.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">account.models.User</span></code></a></p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="account.forms.UserLoginForm.aws_access_key">
-<code class="sig-name descname">aws_access_key</code><a class="headerlink" href="#account.forms.UserLoginForm.aws_access_key" title="Permalink to this definition">¶</a></dt>
+<dt id="account.forms.UserLoginForm.email">
+<code class="sig-name descname">email</code><a class="headerlink" href="#account.forms.UserLoginForm.email" title="Permalink to this definition">¶</a></dt>
 <dd><p>AWS access key. [Jflag repet w/ meta?]</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="account.forms.UserLoginForm.aws_secret_access_key">
-<code class="sig-name descname">aws_secret_access_key</code><a class="headerlink" href="#account.forms.UserLoginForm.aws_secret_access_key" title="Permalink to this definition">¶</a></dt>
+<dt id="account.forms.UserLoginForm.password">
+<code class="sig-name descname">password</code><a class="headerlink" href="#account.forms.UserLoginForm.password" title="Permalink to this definition">¶</a></dt>
 <dd><p>AWS secret access key. [Jflag repet w/ meta?]</p>
 </dd></dl>
 
@@ -336,11 +346,19 @@ fields are being used.</p>
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Jack Briggs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -351,7 +369,6 @@ fields are being used.</p>
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

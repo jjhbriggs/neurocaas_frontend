@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,12 +34,9 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer Guide" href="devguide.html" />
     <link rel="prev" title="Main Views" href="apps/main/views.html" /> 
 </head>
 
@@ -49,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> NeuroCAAS Website
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> NeuroCAAS Website
           
 
           
@@ -72,6 +74,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -83,18 +86,17 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="apps/index.html">Django Apps</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Accounts and Permissions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#user-addition">User Addition</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#potential-improvements-jack-s-opinions">Potential Improvements (Jack’s opinions)</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="#user-addition">User Addition</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#user-permissions">User Permissions</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="devguide.html">Developer Guide</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -133,7 +135,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Accounts and Permissions</li>
     
@@ -177,17 +179,6 @@
 <li><p>Users may also optionally add their name to their account details.</p></li>
 </ol>
 </div></blockquote>
-<div class="section" id="potential-improvements-jack-s-opinions">
-<h3>Potential Improvements (Jack’s opinions)<a class="headerlink" href="#potential-improvements-jack-s-opinions" title="Permalink to this headline">¶</a></h3>
-<ul class="simple">
-<li><p>Automated IAM creation and association with user (only a checkbox approval form and association with group required by admin).</p></li>
-<li><p>Force users to login using their email and a password. Currently users are identified by their email, their IAM is identified by username, however they login using AWS access keys.
-I believe this workflow could be simplified if users created an account, and signed in with their email and password, and were able to check profile details and the status of their AWS credential request
-from this profile page. Once the user is given an IAM and gains access to the analyses, the IAM associated with the user account can be used for processing, and users don’t need to store their own access keys.</p></li>
-<li><p>Remove the unused and extraneous views, variables, and functions.</p></li>
-<li><p>Automatically delete users who have been denied access after a time interval (so they can see in their profile that they were denied).</p></li>
-</ul>
-</div>
 </div>
 <div class="section" id="user-permissions">
 <h2>User Permissions<a class="headerlink" href="#user-permissions" title="Permalink to this headline">¶</a></h2>
@@ -203,6 +194,8 @@ from this profile page. Once the user is given an IAM and gains access to the an
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="devguide.html" class="btn btn-neutral float-right" title="Developer Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
       
         <a href="apps/main/views.html" class="btn btn-neutral float-left" title="Main Views" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
@@ -213,11 +206,19 @@ from this profile page. Once the user is given an IAM and gains access to the an
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Jack Briggs
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -228,7 +229,6 @@ from this profile page. Once the user is given an IAM and gains access to the an
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
