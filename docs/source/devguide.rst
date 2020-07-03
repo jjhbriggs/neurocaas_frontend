@@ -146,13 +146,37 @@ To migrate the database, run the following in the command line:
    python3 manage.py migrate
 
 **Database Diagram:**
-.. image:: example.png
 
+.. image:: dbdiagram.png
 
-
-
+Additionally, Django stores a hashed password for every user. See the Django documentation on this for more information: https://docs.djangoproject.com/en/3.0/topics/auth/passwords/
 
 4. AWS S3 File Uploading
 ------------------------
 
-dd
+File uploading is done using a multipart upload based on the aws sdk javascript plugin (https://sdk.amazonaws.com/js/aws-sdk-2.617.0.min.js).
+All functions needed to perform uploading are stored inside a js file named "file_upload.js" inside the "static/js/fileupload" folder.
+
+Multiple large files can be uploaded via this drag and drop box.
+To upload file to the s3 bucket, we need to add following permission on s3 bucket.
+
+This allows users to upload files directly through a web browser.
+
+.. code-block::
+
+	<?xml version="1.0" encoding="UTF-8"?>
+        <CORSConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+        <CORSRule>
+            <AllowedOrigin>*</AllowedOrigin>
+            <AllowedMethod>GET</AllowedMethod>
+            <AllowedMethod>PUT</AllowedMethod>
+            <AllowedMethod>POST</AllowedMethod>
+            <AllowedMethod>DELETE</AllowedMethod>
+            <MaxAgeSeconds>3000</MaxAgeSeconds>
+            <ExposeHeader>ETag</ExposeHeader>
+            <AllowedHeader>*</AllowedHeader>
+        </CORSRule>
+        </CORSConfiguration>
+        
+.. image:: s3pic.png
+
