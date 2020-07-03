@@ -1,12 +1,12 @@
-NueroCAAS
+NeuroCAAS
 =========
 
-This readme is for developers only. Please refer to our website (http://neurocaas.com/) to gain access or learn more about NeuroCAAS. 
+This readme is for website developers only. Please refer to our website (http://neurocaas.com/) to gain access or learn more about NeuroCAAS. 
 
-Installation and Development
+Installation and Website Development
 ----------------------------
 
-To install or develop neurocaas, please see the developer guide: http://neurocaas.com/docs/devguide.html
+To install or develop the neurocaas frontend, please see the website developer guide: http://neurocaas.com/docs/devguide.html
 
 
 Technologies
