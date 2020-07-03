@@ -15,7 +15,7 @@ Technologies
 ------------
  Project is created with
 - Python version: 3
-- Django version: 2.2.3
+- Django version: 2.2.13
 
 
 Installation
