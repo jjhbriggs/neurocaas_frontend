@@ -185,6 +185,17 @@ $ sudo ufw allow 8000
 $ deactivate
 </pre></div>
 </div>
+<p><strong>Clone the repo</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/jjhbriggs/neurocaas_frontend ncap
+</pre></div>
+</div>
+<p><strong>Install dependencies</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd ncap
+$ virtualenv venv
+$ source  venv/bin/activate
+(venv) $ pip install -r requirements.txt
+</pre></div>
+</div>
 <p><strong>Create systemd Socket and Service Files for Gunicorn</strong></p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ sudo nano /etc/systemd/system/gunicorn. Service
 </pre></div>
