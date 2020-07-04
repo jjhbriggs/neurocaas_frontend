@@ -10,7 +10,6 @@ from .models import *
 
 class UserAdministrator(UserAdmin):
     # The forms to add and change user instances
-    form = UserChangeForm
     add_form = UserCreationForm
 
     list_display = ('email', 'is_admin', 'has_migrated_pwd', 'first_name', 'last_name')
