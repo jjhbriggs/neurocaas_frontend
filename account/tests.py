@@ -84,7 +84,73 @@ class UserSignUpViewTest(TestCase):
         response = self.client.post('/signup/', form_data, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.request['PATH_INFO'], '/home/')
+    def test_unmatched_sign_up_view_with_post_request(self):
+        """Test that signing up with unmatching passwords redirects to signup page successfully."""
+        form_data = {
+            "email": "test@test.com",
+            "password1": "complexPWD123",
+            "password2": "complexPWD1234",
+            "next_url": "home"
+        }
+        response = self.client.post('/signup/', form_data, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.request['PATH_INFO'], '/signup/')
+        
+        
+class ChangePWDTest(TestCase):
+    """
+    Class for testing the user profile page.
+    """
+    def setUp(self):
+        """Create basic test user and associate it with a basic test IAM and group."""
+        user = User.objects.create_user('test@test.com', password='test')
+        user.first_name = "Test1"
+        user.last_name = "User"
+        user.save()
+        group = AnaGroup.objects.create(name="test group")
+        AWSRequest.objects.create(user=user)
+        IAM.objects.create(user=user,
+                           aws_user="AWS user",
+                           aws_access_key="AWS access key",
+                           aws_secret_access_key="AWS secret key",
+                           group=group)
 
+        # login here
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        self.client.post('/login/', form)
+
+    def test_pwd_change_with_post_request(self):
+        """Test that updating the password of a logged in user is successful."""
+        data = {
+            "old_password": "test",
+            "new_password1": "complexPWD123",
+            "new_password2": "complexPWD123",
+        }
+        response = self.client.post('/profile/', data)
+        self.assertEqual(response.status_code, 302)
+    def test_unmatched_pwd_change_with_post_request(self):
+        """Test that updating the password with unmatched passwords of a logged in user fails."""
+        data = {
+            "old_password": "test",
+            "new_password1": "complexPWD123",
+            "new_password2": "complexPWD1234",
+        }
+        response = self.client.post('/changepwd/', data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.request['PATH_INFO'], '/changepwd/')
+    def test_incorrect_pwd_change_with_post_request(self):
+        """Test that updating the password with unmatched passwords of a logged in user fails."""
+        data = {
+            "old_password": "test1",
+            "new_password1": "complexPWD123",
+            "new_password2": "complexPWD123",
+        }
+        response = self.client.post('/changepwd/', data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.request['PATH_INFO'], '/changepwd/')
 
 class ProfileViewTest(TestCase):
     """
