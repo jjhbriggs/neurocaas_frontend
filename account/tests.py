@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 # Create your tests here.
 from .models import *
-
+from .managers import UserManager
 
 class UserTestCase(TestCase):
     """
@@ -10,8 +10,14 @@ class UserTestCase(TestCase):
     """
     def setUp(self):
         """Create basic test users."""
-        User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
-        User.objects.create(email="test2@test.com", first_name="Test2", last_name="User")
+        usr1 = User.objects.create_user('test1@test.com', password='test')
+        usr1.first_name = "Test1"
+        usr1.last_name = "User"
+        usr1.save()
+        usr2 = User.objects.create_user('test2@test.com', password='test')
+        usr2.first_name = "Test2"
+        usr2.last_name = "User"
+        usr2.save()
 
     def test_get_full_name_with_user(self):
         """Test that user's full name is returned accurately"""
@@ -34,7 +40,13 @@ class UserLoginViewTest(TestCase):
     """
     def setUp(self):
         """Create basic test user and associate it with a basic test IAM and group."""
-        user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
+        user = User.objects.create_user('test1@test.com', password='test')
+        user.first_name = "Test1"
+        user.last_name = "User"
+        user.has_migrated_pwd = True
+        user.save()
+        
+        #user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
         group = AnaGroup.objects.create(name="test group")
         IAM.objects.create(user=user,
                            aws_user="AWS user",
@@ -45,8 +57,8 @@ class UserLoginViewTest(TestCase):
     def test_login_view_with_iam(self):
         """Test that logging in with AWS credentials logins in and redirects to profile page successfully."""
         form = {
-            'aws_access_key': 'AWS access key',
-            'aws_secret_access_key': 'AWS secret key',
+            'email': 'test1@test.com',
+            'password': 'test',
         }
         response = self.client.post('/login/', form, follow=True)
         self.assertEqual(response.status_code, 200)
@@ -65,6 +77,8 @@ class UserSignUpViewTest(TestCase):
         """Test that signing up with email signs up and redirects to home page successfully."""
         form_data = {
             "email": "test@test.com",
+            "password1": "complexPWD123",
+            "password2": "complexPWD123",
             "next_url": "home"
         }
         response = self.client.post('/signup/', form_data, follow=True)
@@ -78,7 +92,10 @@ class ProfileViewTest(TestCase):
     """
     def setUp(self):
         """Create basic test user and associate it with a basic test IAM and group."""
-        user = User.objects.create(email="test@test.com", first_name="Test1", last_name="User")
+        user = User.objects.create_user('test@test.com', password='test')
+        user.first_name = "Test1"
+        user.last_name = "User"
+        user.save()
         group = AnaGroup.objects.create(name="test group")
         AWSRequest.objects.create(user=user)
         IAM.objects.create(user=user,
@@ -89,8 +106,8 @@ class ProfileViewTest(TestCase):
 
         # login here
         form = {
-            'aws_access_key': 'AWS access key',
-            'aws_secret_access_key': 'AWS secret key',
+            'email': 'test@test.com',
+            'password': 'test',
         }
         self.client.post('/login/', form)
 

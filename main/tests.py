@@ -9,7 +9,10 @@ class AnalysisTestCase(TestCase):
     """Class for testing IAM connected to analyses."""
     def setUp(self):
         """Setup user, group, IAM, and analysis"""
-        user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
+        user = User.objects.create_user('test1@test.com', password='test')
+        user.first_name = "Test1"
+        user.last_name = "User"
+        user.save()
         group = AnaGroup.objects.create(name="test group")
         self.iam = IAM.objects.create(user=user,
                                       aws_user="AWS user",
@@ -89,7 +92,10 @@ class AnalysisIntroViewTest(TestCase):
     """Class for testing analysis intro view."""
     def setUp(self):
         """Setup user, group, IAM, and analysis"""
-        user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
+        user = User.objects.create_user('test1@test.com', password='test')
+        user.first_name = "Test1"
+        user.last_name = "User"
+        user.save()
         group = AnaGroup.objects.create(name="test group")
         self.iam = IAM.objects.create(user=user,
                                       aws_user="AWS user",
@@ -125,7 +131,11 @@ class JobListViewTest(TestCase):
     """Class for testing the job list view."""
     def setUp(self):
         """Setup user, group, IAM, and analysis. Login IAM."""
-        self.user = User.objects.create(email="test1@test.com", first_name="Johannes", last_name="Fourie")
+        self.user = User.objects.create_user('test1@test.com', password='test')
+        self.user.first_name = "Johannes"
+        self.user.last_name = "Fourie"
+        self.user.save()
+        #self.user = User.objects.create(email="test1@test.com", first_name="Johannes", last_name="Fourie")
         self.group = AnaGroup.objects.create(name="reviewers")
         self.iam = IAM.objects.create(user=self.user,
                                       aws_user="johannesus-east-1",
@@ -151,9 +161,13 @@ class JobListViewTest(TestCase):
 
         # login here
         form = {
-            'aws_access_key': 'AKIA2YSWAZCCRK2H3SHJ',
-            'aws_secret_access_key': '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',
+            'email': 'test1@test.com',
+            'password': 'test',
         }
+        #form = {
+        #    'aws_access_key': 'AKIA2YSWAZCCRK2H3SHJ',
+        #    'aws_secret_access_key': '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',
+        #}
         self.client.post('/login/', form)
 
     def test_job_list_view(self):
