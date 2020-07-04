@@ -65,35 +65,7 @@ class UserCreationForm(forms.ModelForm):
             user.save()
         return user
 
-"""
-class UserChangeForm(forms.ModelForm):
-    ""UserChangeForm()
-    A form for changing a user's password.""
-    
-    #: User's new password
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
-    class Meta:
-        """The Meta class creates form fields from model fields. 
-        In this case the model being used is :class:`~account.models.User`, and the user's :attr:`~account.models.User.email` and :attr:`~account.models.User.password` 
-        fields are being used. [Jflag pass field is inherited for abstract class and not in docs]"""
-        model = User
-        #: Fields used.
-        fields = ('password',)
-    def clean_password2(self):
-        """A function to check that the two passwords provided by the user match."""
-        # Check that the two password entries match
-        #: User's password.
-        password1 = self.cleaned_data.get("password1")
-        #: Password confirm.
-        password2 = self.cleaned_data.get("password2")
-        if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords must match.")
-        return password2
-    def clean_password(self):
-        return self.initial["password"]
-"""
 
 class UserLoginForm(forms.ModelForm):
     """UserLoginForm()
