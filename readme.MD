@@ -1,7 +1,8 @@
-NeuroCAAS
-=========
+NeuroCAAS Website
+=================
 
 [![Build Status](https://travis-ci.org/jjhbriggs/neurocaas_frontend.svg?branch=master)](https://travis-ci.org/jjhbriggs/neurocaas_frontend)
+[![codecov](https://codecov.io/gh/jjhbriggs/neurocaas_frontend/branch/master/graph/badge.svg)](https://codecov.io/gh/jjhbriggs/neurocaas_frontend)
 
 This readme is for website developers only. Please refer to our website (http://neurocaas.com/) to gain access or learn more about NeuroCAAS. 
 
