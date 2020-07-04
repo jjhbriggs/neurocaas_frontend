@@ -65,10 +65,10 @@ class UserCreationForm(forms.ModelForm):
             user.save()
         return user
 
-
+"""
 class UserChangeForm(forms.ModelForm):
-    """UserChangeForm()
-    A form for changing a user's password."""
+    ""UserChangeForm()
+    A form for changing a user's password.""
     
     #: User's new password
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -93,7 +93,7 @@ class UserChangeForm(forms.ModelForm):
         return password2
     def clean_password(self):
         return self.initial["password"]
-
+"""
 
 class UserLoginForm(forms.ModelForm):
     """UserLoginForm()
