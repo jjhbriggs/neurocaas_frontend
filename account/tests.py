@@ -18,6 +18,14 @@ class UserTestCase(TestCase):
         usr2.first_name = "Test2"
         usr2.last_name = "User"
         usr2.save()
+        usr3 = User.objects.create_user('test3@test.com', password='test')
+        usr3.first_name = ""
+        usr3.last_name = ""
+        usr3.save()
+        usrA = User.objects.create_superuser('test@admin.com', password='test')
+        usrA.first_name = "Admin"
+        usrA.last_name = "User"
+        usrA.save()
 
     def test_get_full_name_with_user(self):
         """Test that user's full name is returned accurately"""
@@ -25,14 +33,21 @@ class UserTestCase(TestCase):
         user2 = User.objects.get(email="test2@test.com")
         self.assertEqual(user1.get_full_name(), 'Test1 User')
         self.assertEqual(user2.get_full_name(), 'Test2 User')
-
+    def test_get_empty_name_with_user(self):
+        """Test that user's full name is returned accurately"""
+        user3 = User.objects.get(email="test3@test.com")
+        self.assertEqual(user3.get_full_name(), 'test3@test.com')
     def test_get_short_name_with_user(self):
         """Test that user's email is returned accurately"""
         user1 = User.objects.get(email="test1@test.com")
         user2 = User.objects.get(email="test2@test.com")
         self.assertEqual(user1.get_short_name(), 'test1@test.com')
         self.assertEqual(user2.get_short_name(), 'test2@test.com')
-
+    def test_admin_perm(self):
+        """Test that an admin user has the proper permissions"""
+        userA = User.objects.get(email="test@admin.com")
+        self.assertEqual(userA.is_admin, True)
+        self.assertEqual(userA.is_staff(), True)
 
 class UserLoginViewTest(TestCase):
     """
