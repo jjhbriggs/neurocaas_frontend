@@ -70,7 +70,7 @@ class UserLoginViewTest(TestCase):
                            group=group)
 
     def test_login_view_with_iam(self):
-        """Test that logging in with AWS credentials logins in and redirects to profile page successfully."""
+        """Test that logging in with email logins in and redirects to profile page successfully."""
         form = {
             'email': 'test1@test.com',
             'password': 'test',
@@ -78,7 +78,37 @@ class UserLoginViewTest(TestCase):
         response = self.client.post('/login/', form, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.request['PATH_INFO'], '/profile/')
-
+    def test_failed_login_view_with_iam(self):
+        """Test that logging in with incorrect credentials doesnt logins in and redirects to this login page."""
+        form = {
+            'email': 'test1@test.com',
+            'password': 'test2',
+        }
+        response = self.client.post('/login/', form, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.request['PATH_INFO'], '/')
+    def test_redirect_if_logged_in_already(self):
+        """Test that viewing login page when already logged in redirects to profile page."""
+        # login here
+        form = {
+            'email': 'test1@test.com',
+            'password': 'test',
+        }
+        self.client.post('/login/', form, follow=True)
+        response = self.client.get('/login/')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/profile/')
+    def test_redirect_if_logged_in_already_next(self):
+        """Test that viewing login page when already logged in redirects to profile page."""
+        # login here
+        form = {
+            'email': 'test1@test.com',
+            'password': 'test',
+        }
+        self.client.post('/login/', form)
+        response = self.client.get('/login/?next=/changepwd/')
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/changepwd/')
 
 class UserSignUpViewTest(TestCase):
     """
