@@ -169,11 +169,13 @@ class IamCreateView(AdminMixin, View):
         })
 
     def post(self, request):
+        errorg = ""
         if 'file' in request.FILES:
             file_content = request.FILES['file'].read().decode('utf-8')
             try:
                 data = json.loads(file_content)
                 email = data['email']
+                password = data['password']
                 username = data['username']
                 access_key = data['accesskey']
                 secret_access_key = data['secretaccesskey']
@@ -182,12 +184,14 @@ class IamCreateView(AdminMixin, View):
                 # check if IAM is already existed or not
                 if IAM.objects.filter(aws_user=username).count() > 0:
                     messages.error(request, f"IAM ( {username} ) is already existed.")
+                    errorg = "?error=repeatusername"
                 else:
                     # create new user with email
                     if User.objects.filter(email=email).count() > 0:
                         new_user = User.objects.filter(email=email).first()
                     else:
-                        new_user = User(email=email)
+                        #new_user = User(email=email)
+                        new_user = User.objects.create_user(email, password=password)
                         new_user.save()
 
                     if AWSRequest.objects.filter(user=new_user).count() == 0:
@@ -209,7 +213,9 @@ class IamCreateView(AdminMixin, View):
                     return redirect('/admin/account/iam/')
             except Exception as e:
                 messages.error(request, f"Issue: {e}")
+                errorg = "?error=" + e
         else:
             messages.error(request, "File is empty. please upload json file")
+            errorg = "?error=emptyfile"
 
-        return redirect('/iamcreate/')
+        return redirect('/iamcreate/' + errorg)
