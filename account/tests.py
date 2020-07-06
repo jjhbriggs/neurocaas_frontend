@@ -213,6 +213,51 @@ class ChangePWDTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.request['PATH_INFO'], '/changepwd/')
 
+class AWSCredViewTest(TestCase):
+    """
+    Class for testing user signup.
+    """
+    def setUp(self):
+        """Create basic test users"""
+        user = User.objects.create_user('test@test.com', password='test')
+        user.first_name = "Test1"
+        user.last_name = "User"
+        user.save()
+        aws_req = AWSRequest.objects.create(user=user)
+        user2 = User.objects.create_user('test2@test.com', password='test')
+        user2.first_name = "Test2"
+        user2.last_name = "User"
+        user2.save()
+        
+    def test_existing_cred_request(self):
+        """Test that accessing the AWS Cred Request View with an existing request switches its state to pending and redirects to profile."""
+        # login here
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        self.client.post('/login/', form)
+        
+        response = self.client.get('/aws_cred_request/')
+        self.assertEqual(AWSRequest.objects.filter(user=User.objects.filter(email='test@test.com').first()).first().status, STATUS_PENDING)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/profile/')
+    def test_no_cred_request(self):
+        """Test that accessing the AWS Cred Request View without an existing request creates one and redirects to profile."""
+        # login here
+        form = {
+            'email': 'test2@test.com',
+            'password': 'test',
+        }
+        self.client.post('/login/', form)
+        
+        response = self.client.get('/aws_cred_request/')
+        user = User.objects.filter(email='test@test.com').first()
+        self.assertEqual(AWSRequest.objects.filter(user=user).first().user, user)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/profile/')
+
+
 class ProfileViewTest(TestCase):
     """
     Class for testing the user profile page.
