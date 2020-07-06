@@ -18,6 +18,7 @@ class UserManager(BaseUserManager):
             email=UserManager.normalize_email(email),
         )
         user.set_password(password)
+        user.has_migrated_pwd = True
         user.save(using=self._db)
         return user
 
@@ -30,5 +31,6 @@ class UserManager(BaseUserManager):
         user.is_admin = True
         user.is_staff = True
         user.is_superuser = True
+        user.has_migrated_pwd = True
         user.save(using=self._db)
         return user

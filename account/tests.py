@@ -3,7 +3,7 @@ from django.urls import reverse
 # Create your tests here.
 from .models import *
 from .managers import UserManager
-
+import json
 class UserTestCase(TestCase):
     """
     Class for testing user information.
@@ -215,7 +215,7 @@ class ChangePWDTest(TestCase):
 
 class AWSCredViewTest(TestCase):
     """
-    Class for testing user signup.
+    Class for testing AWS Credential View.
     """
     def setUp(self):
         """Create basic test users"""
@@ -298,3 +298,31 @@ class ProfileViewTest(TestCase):
         }
         response = self.client.post('/profile/', data)
         self.assertEqual(response.status_code, 302)
+
+
+class IAMCreateTest(TestCase):
+    """
+    Class for testing IAM creation from a JSON file.
+    """
+    def setUp(self):
+        """none"""
+        user = User.objects.create_superuser('testadmin@test.com', password='test')
+        user.first_name = "Test1"
+        user.last_name = "User"
+        user.save()
+        form = {
+            'email': 'testadmin@test.com',
+            'password': 'test',
+        }
+        self.client.post('/login/', form)
+    def test_proper_get(self):
+        response = self.client.get('/iamcreate/')
+        self.assertTemplateUsed(response, "account/iam_create.html")
+    def test_unique_data(self):
+        """Test that creating an IAM with entirely unique data works."""
+        with open('account/test_data/iamcreate.json', 'r') as handle:
+            response = self.client.post('/iamcreate/', {'file':handle})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/admin/account/iam/')
+
+

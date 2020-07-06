@@ -1,0 +1,9 @@
+{
+"email": "test@test.com",
+"password": "test",
+"username": "reviewersnn",
+"accesskey":"aws_access_key",
+"secretaccesskey":"aws_secret_access_key",
+"groupname":"test_group"
+}
+
