@@ -85,6 +85,9 @@ class UserLoginViewTest(TestCase):
             'password': 'test2',
         }
         response = self.client.post('/login/', form, follow=True)
+        messages = list(response.context['messages'])
+        self.assertEqual(len(messages), 1)
+        self.assertEqual(str(messages[0]), 'Invalid Credentials, Try again!')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.request['PATH_INFO'], '/')
     def test_redirect_if_logged_in_already(self):
