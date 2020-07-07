@@ -1,0 +1,9 @@
+{
+"qemail": "test@test.com",
+"qpassword": "test",
+"qusername": "test_user",
+"qaccesskey":"aws_access_key",
+"qsecretaccesskey":"aws_secret_access_key",
+"qgroupname":"test_group"
+}
+
