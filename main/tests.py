@@ -91,45 +91,45 @@ class AnalysisListViewTest(TestCase):
         self.assertEqual(response.context['iam'], None)
 
 
-# class AnalysisIntroViewTest(TestCase):
-#     """Class for testing analysis intro view."""
-#     def setUp(self):
-#         """Setup user, group, IAM, and analysis"""
-#         user = User.objects.create_user('test1@test.com', password='test')
-#         user.first_name = "Test1"
-#         user.last_name = "User"
-#         user.save()
-#         group = AnaGroup.objects.create(name="test group")
-#         self.iam = IAM.objects.create(user=user,
-#                                       aws_user="AWS user",
-#                                       aws_access_key="AWS access key",
-#                                       aws_secret_access_key="AWS secret key",
-#                                       group=group)
-# 
-#         analysis = Analysis.objects.create(
-#             analysis_name="Test Analysis",
-#             result_prefix="test_prefix",
-#             bucket_name="Test bucket",
-#             custom=True,
-#             short_description="Short Description",
-#             long_description="Long Description",
-#             paper_link="Paper Link",
-#             git_link="Github Link",
-#             bash_link="Bash Script Link",
-#             demo_link="Demo page link",
-#             signature="Signature"
-#         )
-# 
-#         analysis.groups.add(group)
-# 
-#     def test_with_intro_view(self):
-#         """Checks that the proper analysis details are returned when visiting the analysis intro view."""
-#         response = self.client.get('/analysis/1')
-#         analysis = Analysis.objects.filter(analysis_name='Test Analysis').first()
-#         self.assertEqual(response.context['analysis'], analysis)
-#         self.assertEqual(response.context['iam'], None)
-# 
-# 
+class AnalysisIntroViewTest(TestCase):
+    """Class for testing analysis intro view."""
+    def setUp(self):
+        """Setup user, group, IAM, and analysis"""
+        user = User.objects.create_user('test1@test.com', password='test')
+        user.first_name = "Test1"
+        user.last_name = "User"
+        user.save()
+        group = AnaGroup.objects.create(name="test group")
+        self.iam = IAM.objects.create(user=user,
+                                      aws_user="AWS user",
+                                      aws_access_key="AWS access key",
+                                      aws_secret_access_key="AWS secret key",
+                                      group=group)
+
+        analysis = Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="test_prefix",
+            bucket_name="Test bucket",
+            custom=True,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+
+        analysis.groups.add(group)
+
+    def test_with_intro_view(self):
+        """Checks that the proper analysis details are returned when visiting the analysis intro view."""
+        response = self.client.get('/analysis/1')
+        analysis = Analysis.objects.filter(analysis_name='Test Analysis').first()
+        self.assertEqual(response.context['analysis'], analysis)
+        self.assertEqual(response.context['iam'], None)
+
+
 # class JobListViewTest(TestCase):
 #     """Class for testing the job list view."""
 #     def setUp(self):
