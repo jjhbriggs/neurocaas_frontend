@@ -213,7 +213,7 @@ class IamCreateView(AdminMixin, View):
                     return redirect('/admin/account/iam/')
             except Exception as e:
                 messages.error(request, f"Issue: {e}")
-                errorg = "?error=" + e
+                errorg = "?error=exception"
         else:
             messages.error(request, "File is empty. please upload json file")
             errorg = "?error=emptyfile"

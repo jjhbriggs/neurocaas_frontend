@@ -318,11 +318,62 @@ class IAMCreateTest(TestCase):
     def test_proper_get(self):
         response = self.client.get('/iamcreate/')
         self.assertTemplateUsed(response, "account/iam_create.html")
+        
     def test_unique_data(self):
         """Test that creating an IAM with entirely unique data works."""
         with open('account/test_data/iamcreate.json', 'r') as handle:
             response = self.client.post('/iamcreate/', {'file':handle})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/admin/account/iam/')
+        
+    def test_existing_user(self):
+        """Test that creating an IAM with entirely unique data (except that it should be attatched to an existing user) works."""
+        
+        user = User.objects.create_user('test@test.com', password='test')
+        user.save()
+        with open('account/test_data/iamcreate.json', 'r') as handle:
+            response = self.client.post('/iamcreate/', {'file':handle})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/admin/account/iam/')
 
-
+    def test_existing_group(self):
+        """Test that creating an IAM with entirely unique data (except that it should be attatched to an existing group) works."""
+        
+        group = AnaGroup(name="test_group")
+        group.save()
+        with open('account/test_data/iamcreate.json', 'r') as handle:
+            response = self.client.post('/iamcreate/', {'file':handle})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/admin/account/iam/')
+        
+    def test_duplicate_iam_name(self):
+        """Test that creating an IAM with a duplicate username fails."""
+        
+        user = User.objects.create_user('test@test.com', password='test')
+        user.save()
+        group = AnaGroup.objects.create(name="test_group")
+        AWSRequest.objects.create(user=user)
+        IAM.objects.create(user=user,
+                           aws_user="test_user",
+                           aws_access_key="AWS access key",
+                           aws_secret_access_key="AWS secret key",
+                           group=group)
+        
+        with open('account/test_data/iamcreate.json', 'r') as handle:
+            response = self.client.post('/iamcreate/', {'file':handle})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/iamcreate/?error=repeatusername')
+        
+    def test_exception(self):
+        """Test that creating an IAM with an exception fails (in the test a file with improper json data is used)."""
+        with open('account/test_data/broken.json', 'r') as handle:
+            response = self.client.post('/iamcreate/', {'file':handle})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/iamcreate/?error=exception')
+        
+    def test_empty_json(self):
+        """Test that creating an IAM with an empty json file fails."""
+        response = self.client.post('/iamcreate/', {'file':""})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/iamcreate/?error=emptyfile')
+    
