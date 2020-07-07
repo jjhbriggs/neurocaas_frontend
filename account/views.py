@@ -40,7 +40,7 @@ class LoginView(View):
             if user.has_migrated_pwd:
             	next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
             else:
-            	next_url = 'change_password'
+            	next_url = '/password_reset/'
             return redirect(next_url)
 
         messages.error(request=request, message="Invalid Credentials, Try again!")

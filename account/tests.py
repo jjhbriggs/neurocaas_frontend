@@ -26,6 +26,14 @@ class UserTestCase(TestCase):
         usrA.first_name = "Admin"
         usrA.last_name = "User"
         usrA.save()
+        
+        group = AnaGroup.objects.create(name="test group")
+        IAM.objects.create(user=usr1,
+                           aws_user="AWS user",
+                           aws_access_key="AWS access key",
+                           aws_secret_access_key="AWS secret key",
+                           group=group)
+        AWSRequest.objects.create(user=usr1)
 
     def test_get_full_name_with_user(self):
         """Test that user's full name is returned accurately"""
@@ -48,7 +56,16 @@ class UserTestCase(TestCase):
         userA = User.objects.get(email="test@admin.com")
         self.assertEqual(userA.is_admin, True)
         self.assertEqual(userA.is_staff(), True)
-
+    def test_get_strs(self):
+        """Test that user's email and group and iam names are returned accurately (when calling __str__())"""
+        user1 = User.objects.get(email="test1@test.com")
+        iam = IAM.objects.get(user=user1)
+        group = AnaGroup.objects.get(name="test group")
+        aws_cred = AWSRequest.objects.get(user=user1)
+        self.assertEqual(str(user1), 'test1@test.com')
+        self.assertEqual(str(iam), "AWS user")
+        self.assertEqual(str(group), "test group")
+        self.assertEqual(str(aws_cred), 'test1@test.com')
 class UserLoginViewTest(TestCase):
     """
     Class for testing user login.
@@ -60,7 +77,11 @@ class UserLoginViewTest(TestCase):
         user.last_name = "User"
         user.has_migrated_pwd = True
         user.save()
-        
+        user2 = User.objects.create_user('test2@test.com', password='test')
+        user2.first_name = "Test1"
+        user2.last_name = "User"
+        user2.has_migrated_pwd = False
+        user2.save()
         #user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
         group = AnaGroup.objects.create(name="test group")
         IAM.objects.create(user=user,
@@ -78,6 +99,15 @@ class UserLoginViewTest(TestCase):
         response = self.client.post('/login/', form, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.request['PATH_INFO'], '/profile/')
+    def test_login_view_with_iam_non_migrated(self):
+        """Test that logging in with email logins in and redirects to change password page successfully if the user has not yet made a password."""
+        form = {
+            'email': 'test2@test.com',
+            'password': 'test',
+        }
+        response = self.client.post('/login/', form, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.request['PATH_INFO'], '/password_reset/')
     def test_failed_login_view_with_iam(self):
         """Test that logging in with incorrect credentials doesnt logins in and redirects to this login page."""
         form = {
