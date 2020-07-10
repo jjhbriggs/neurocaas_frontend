@@ -236,7 +236,6 @@ def get_job_list(iam, bucket, folder):
         @return:
                 folder list of jobs
         """
-
     s3 = boto3.client('s3',
                       aws_access_key_id=iam.aws_access_key,
                       aws_secret_access_key=iam.aws_secret_access_key)
