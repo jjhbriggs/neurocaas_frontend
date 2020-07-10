@@ -3,7 +3,7 @@ from django.test import TestCase
 # Create your tests here.
 from .models import Analysis
 from account.models import *
-
+import os
 
 class AnalysisTestCase(TestCase):
     """Class for testing IAM connected to analyses."""
@@ -142,8 +142,8 @@ class JobListViewTest(TestCase):
         self.group = AnaGroup.objects.create(name="reviewers")
         self.iam = IAM.objects.create(user=self.user,
                                       aws_user="jbriggs",
-                                      aws_access_key="AKIA2YSWAZCCV345ENWD",
-                                      aws_secret_access_key="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",
+                                      aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
+                                      aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
                                       group=self.group)
         self.analysis = Analysis.objects.create(
             analysis_name="Emergent Property Inference (Bittner et al. 2019)",
