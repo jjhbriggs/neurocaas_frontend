@@ -153,9 +153,7 @@ class JobListView(LoginRequiredMixin, View):
         if not analysis.check_iam(iam):
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
-
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
-
         return render(
             request=request,
             template_name=self.template_name,
