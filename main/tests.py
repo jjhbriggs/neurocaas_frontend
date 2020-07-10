@@ -138,7 +138,6 @@ class JobListViewTest(TestCase):
         self.user.first_name = "Jack"
         self.user.last_name = "Briggs"
         self.user.save()
-        #self.user = User.objects.create(email="test1@test.com", first_name="Johannes", last_name="Fourie")
         self.group = AnaGroup.objects.create(name="reviewers")
         self.iam = IAM.objects.create(user=self.user,
                                       aws_user="jbriggs",
@@ -146,7 +145,7 @@ class JobListViewTest(TestCase):
                                       aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
                                       group=self.group)
         self.analysis = Analysis.objects.create(
-            analysis_name="Emergent Property Inference (Bittner et al. 2019)",
+            analysis_name="Test Analysis",
             result_prefix="job__epi-ncap-web_",
             bucket_name="epi-ncap-web",
             custom=False,
@@ -159,15 +158,24 @@ class JobListViewTest(TestCase):
             signature="Signature"
         )
         self.analysis.groups.add(self.group)
+        self.analysis2 = Analysis.objects.create(
+            analysis_name="Test Analaysis (No perms)",
+            result_prefix="job__epi-ncap-web_",
+            bucket_name="epi-ncap-web",
+            custom=False,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
         # login here
         form = {
             'email': 'test@test.com',
             'password': 'test',
         }
-        #form = {
-        #    'aws_access_key': 'AKIA2YSWAZCCRK2H3SHJ',
-        #    'aws_secret_access_key': '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',
-        #}
         r = self.client.post('/login/', form)
     def test_job_list_view(self):
         """Check that history of user's analyses are displayed properly."""
@@ -175,3 +183,9 @@ class JobListViewTest(TestCase):
         response = self.client.get('/history/%s' % self.analysis.id)
         self.assertEqual(response.context['analysis'], self.analysis)
         self.assertEqual(response.context['iam'], self.iam)
+    def test_no_perms_job_list_view(self):
+        """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
+        
+        response = self.client.get('/history/%s' % self.analysis2.id)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/')
