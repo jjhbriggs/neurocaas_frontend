@@ -186,7 +186,6 @@ class JobDetailView(LoginRequiredMixin, View):
                                     folder=result_folder,
                                     un_cert=False)
         job_detail = [item.replace(result_folder, '/results') for item in result_keys]
-        print(job_detail)
         return render(
             request=request,
             template_name=self.template_name,
