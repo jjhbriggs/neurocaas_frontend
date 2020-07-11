@@ -8,6 +8,8 @@ static/suit/
 /test.py
 static/downloads
 .coverage
+.bashrc
+.bash_profile
 
 ### Django ###
 *.log
