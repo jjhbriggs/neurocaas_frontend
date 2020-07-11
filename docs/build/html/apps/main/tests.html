@@ -223,6 +223,30 @@
 </dd></dl>
 
 <dl class="py class">
+<dt id="main.tests.JobDetailViewTest">
+<em class="property">class </em><code class="sig-prename descclassname">main.tests.</code><code class="sig-name descname">JobDetailViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.JobDetailViewTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing the job detail view.</p>
+<dl class="py method">
+<dt id="main.tests.JobDetailViewTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.JobDetailViewTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup user, group, IAM, and analysis. Login IAM.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.tests.JobDetailViewTest.test_job_detail_view">
+<code class="sig-name descname">test_job_detail_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.JobDetailViewTest.test_job_detail_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that detail of a user’s previous analysis are displayed properly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.tests.JobDetailViewTest.test_no_perms_job_list_view">
+<code class="sig-name descname">test_no_perms_job_list_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.JobDetailViewTest.test_no_perms_job_list_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that detail of a user’s previous analysis is not displayed if the user doesn’t have permission to access to the analysis.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="main.tests.JobListViewTest">
 <em class="property">class </em><code class="sig-prename descclassname">main.tests.</code><code class="sig-name descname">JobListViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.JobListViewTest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for testing the job list view.</p>
@@ -236,6 +260,12 @@
 <dt id="main.tests.JobListViewTest.test_job_list_view">
 <code class="sig-name descname">test_job_list_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.JobListViewTest.test_job_list_view" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that history of user’s analyses are displayed properly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.tests.JobListViewTest.test_no_perms_job_list_view">
+<code class="sig-name descname">test_no_perms_job_list_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.JobListViewTest.test_no_perms_job_list_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that history of user’s analyses is not displayed if the user doesn’t have permission to access to the analysis.</p>
 </dd></dl>
 
 </dd></dl>

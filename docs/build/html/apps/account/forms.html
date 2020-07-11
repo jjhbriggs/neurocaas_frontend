@@ -196,44 +196,6 @@ In this case the model being used is <a class="reference internal" href="models.
 </dd></dl>
 
 <dl class="py class">
-<dt id="account.forms.UserChangeForm">
-<em class="property">class </em><code class="sig-prename descclassname">account.forms.</code><code class="sig-name descname">UserChangeForm</code><a class="headerlink" href="#account.forms.UserChangeForm" title="Permalink to this definition">¶</a></dt>
-<dd><p>A form for changing a user’s password.</p>
-<dl class="py class">
-<dt id="account.forms.UserChangeForm.Meta">
-<em class="property">class </em><code class="sig-name descname">Meta</code><a class="headerlink" href="#account.forms.UserChangeForm.Meta" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Meta class creates form fields from model fields. 
-In this case the model being used is <a class="reference internal" href="models.html#account.models.User" title="account.models.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">User</span></code></a>, and the user’s <a class="reference internal" href="models.html#account.models.User.email" title="account.models.User.email"><code class="xref py py-attr docutils literal notranslate"><span class="pre">email</span></code></a> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">password</span></code> 
-fields are being used. [Jflag pass field is inherited for abstract class and not in docs]</p>
-<dl class="py attribute">
-<dt id="account.forms.UserChangeForm.Meta.fields">
-<code class="sig-name descname">fields</code><em class="property"> = ('password',)</em><a class="headerlink" href="#account.forms.UserChangeForm.Meta.fields" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fields used.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="account.forms.UserChangeForm.Meta.model">
-<code class="sig-name descname">model</code><a class="headerlink" href="#account.forms.UserChangeForm.Meta.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <a class="reference internal" href="models.html#account.models.User" title="account.models.User"><code class="xref py py-class docutils literal notranslate"><span class="pre">account.models.User</span></code></a></p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py method">
-<dt id="account.forms.UserChangeForm.clean_password2">
-<code class="sig-name descname">clean_password2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.forms.UserChangeForm.clean_password2" title="Permalink to this definition">¶</a></dt>
-<dd><p>A function to check that the two passwords provided by the user match.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="account.forms.UserChangeForm.password1">
-<code class="sig-name descname">password1</code><a class="headerlink" href="#account.forms.UserChangeForm.password1" title="Permalink to this definition">¶</a></dt>
-<dd><p>User’s new password</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt id="account.forms.UserCreationForm">
 <em class="property">class </em><code class="sig-prename descclassname">account.forms.</code><code class="sig-name descname">UserCreationForm</code><a class="headerlink" href="#account.forms.UserCreationForm" title="Permalink to this definition">¶</a></dt>
 <dd><p>A form for creating new users with the given information.</p>

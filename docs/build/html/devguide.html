@@ -258,15 +258,30 @@ $ sudo ufw delete allow 8000
 $ sudo ufw allow &#39;Nginx Full&#39;
 </pre></div>
 </div>
+<p><strong>Environment Variables</strong></p>
+<p>A set of valid AWS keys is needed to run tests properly. These should be set in .bash_profile.</p>
+<p>Add these lines to your .bash_profile in the home directory (with your keys in place of the placeholders).
+Travis CI has a similar set of environement variables in its project settings which are used for testing, however local testing requires that the developer source bash_profile by running:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">source</span> <span class="o">.</span><span class="n">bash_profile</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">AWS_ACCESS_KEY</span><span class="o">=&lt;</span><span class="n">placeholder</span><span class="o">&gt;</span>
+<span class="n">export</span> <span class="n">AWS_SECRET_ACCESS_KEY</span><span class="o">=&lt;</span><span class="n">placeholder</span><span class="o">&gt;</span>
+</pre></div>
+</div>
 <p><strong>Cron Job</strong></p>
 <p>There is a python script located “/home/ubuntu/ncap/cron.py”.
 It is running daily, removing old files in “/home/ubuntu/ncap/static/downloads” folder.</p>
-<p>Run the following command to edit crontab config</p>
+<p>There is an additional python script called db_backup.py that backups the database to an s3 bucket daily.</p>
+<p>Run the following command to edit crontab config (with &lt;placeholder&gt;s replaced with the AWS keys used to access your s3 bucket.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ crontab –e
 </pre></div>
 </div>
-<p>Add this line and save:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">5</span> <span class="mi">4</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">ubuntu</span><span class="o">/</span><span class="n">ncap</span><span class="o">/</span><span class="n">cron</span><span class="o">.</span><span class="n">py</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="n">cron</span><span class="o">.</span><span class="n">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+<p>Add these line and save:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">AWS_ACCESS_KEY</span><span class="o">=&lt;</span><span class="n">placeholder</span><span class="o">&gt;</span>
+<span class="n">AWS_SECRET_ACCESS_KEY</span><span class="o">=&lt;</span><span class="n">placeholder</span><span class="o">&gt;</span>
+<span class="mi">5</span> <span class="mi">4</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">ubuntu</span><span class="o">/</span><span class="n">ncap</span><span class="o">/</span><span class="n">cron</span><span class="o">.</span><span class="n">py</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="n">cron</span><span class="o">.</span><span class="n">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
+<span class="mi">0</span> <span class="mi">0</span> <span class="o">*</span> <span class="o">*</span> <span class="o">*</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">ubuntu</span><span class="o">/</span><span class="n">ncap</span><span class="o">/</span><span class="n">db_backup</span><span class="o">.</span><span class="n">py</span> <span class="o">&gt;&gt;</span> <span class="o">~/</span><span class="n">cron_db</span><span class="o">.</span><span class="n">log</span> <span class="mi">2</span><span class="o">&gt;&amp;</span><span class="mi">1</span>
 </pre></div>
 </div>
 <p>Start Cron job</p>

@@ -170,6 +170,108 @@
   <div class="section" id="module-account.tests">
 <span id="account-tests"></span><h1>Account Tests<a class="headerlink" href="#module-account.tests" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
+<dt id="account.tests.AWSCredViewTest">
+<em class="property">class </em><code class="sig-prename descclassname">account.tests.</code><code class="sig-name descname">AWSCredViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.AWSCredViewTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing AWS Credential View.</p>
+<dl class="py method">
+<dt id="account.tests.AWSCredViewTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.AWSCredViewTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create basic test users</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.AWSCredViewTest.test_existing_cred_request">
+<code class="sig-name descname">test_existing_cred_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.AWSCredViewTest.test_existing_cred_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that accessing the AWS Cred Request View with an existing request switches its state to pending and redirects to profile.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.AWSCredViewTest.test_no_cred_request">
+<code class="sig-name descname">test_no_cred_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.AWSCredViewTest.test_no_cred_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that accessing the AWS Cred Request View without an existing request creates one and redirects to profile.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="account.tests.ChangePWDTest">
+<em class="property">class </em><code class="sig-prename descclassname">account.tests.</code><code class="sig-name descname">ChangePWDTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ChangePWDTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing the user profile page.</p>
+<dl class="py method">
+<dt id="account.tests.ChangePWDTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ChangePWDTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create basic test user and associate it with a basic test IAM and group.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.ChangePWDTest.test_incorrect_pwd_change_with_post_request">
+<code class="sig-name descname">test_incorrect_pwd_change_with_post_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ChangePWDTest.test_incorrect_pwd_change_with_post_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that updating the password with unmatched passwords of a logged in user fails.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.ChangePWDTest.test_pwd_change_with_post_request">
+<code class="sig-name descname">test_pwd_change_with_post_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ChangePWDTest.test_pwd_change_with_post_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that updating the password of a logged in user is successful.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.ChangePWDTest.test_unmatched_pwd_change_with_post_request">
+<code class="sig-name descname">test_unmatched_pwd_change_with_post_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ChangePWDTest.test_unmatched_pwd_change_with_post_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that updating the password with unmatched passwords of a logged in user fails.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="account.tests.IAMCreateTest">
+<em class="property">class </em><code class="sig-prename descclassname">account.tests.</code><code class="sig-name descname">IAMCreateTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.IAMCreateTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing IAM creation from a JSON file.</p>
+<dl class="py method">
+<dt id="account.tests.IAMCreateTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.IAMCreateTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>none</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.IAMCreateTest.test_duplicate_iam_name">
+<code class="sig-name descname">test_duplicate_iam_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.IAMCreateTest.test_duplicate_iam_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that creating an IAM with a duplicate username fails.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.IAMCreateTest.test_empty_json">
+<code class="sig-name descname">test_empty_json</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.IAMCreateTest.test_empty_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that creating an IAM with an empty json file fails.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.IAMCreateTest.test_exception">
+<code class="sig-name descname">test_exception</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.IAMCreateTest.test_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that creating an IAM with an exception fails (in the test a file with improper json data is used).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.IAMCreateTest.test_existing_group">
+<code class="sig-name descname">test_existing_group</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.IAMCreateTest.test_existing_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that creating an IAM with entirely unique data (except that it should be attatched to an existing group) works.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.IAMCreateTest.test_existing_user">
+<code class="sig-name descname">test_existing_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.IAMCreateTest.test_existing_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that creating an IAM with entirely unique data (except that it should be attatched to an existing user) works.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.IAMCreateTest.test_unique_data">
+<code class="sig-name descname">test_unique_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.IAMCreateTest.test_unique_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that creating an IAM with entirely unique data works.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="account.tests.ProfileViewTest">
 <em class="property">class </em><code class="sig-prename descclassname">account.tests.</code><code class="sig-name descname">ProfileViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.ProfileViewTest" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class for testing the user profile page.</p>
@@ -204,9 +306,39 @@
 </dd></dl>
 
 <dl class="py method">
+<dt id="account.tests.UserLoginViewTest.test_failed_login_view_with_iam">
+<code class="sig-name descname">test_failed_login_view_with_iam</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserLoginViewTest.test_failed_login_view_with_iam" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that logging in with incorrect credentials doesnt logins in and redirects to this login page.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="account.tests.UserLoginViewTest.test_login_view_with_iam">
 <code class="sig-name descname">test_login_view_with_iam</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserLoginViewTest.test_login_view_with_iam" title="Permalink to this definition">¶</a></dt>
-<dd><p>Test that logging in with AWS credentials logins in and redirects to profile page successfully.</p>
+<dd><p>Test that logging in with email logins in and redirects to profile page successfully.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserLoginViewTest.test_login_view_with_iam_non_migrated">
+<code class="sig-name descname">test_login_view_with_iam_non_migrated</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserLoginViewTest.test_login_view_with_iam_non_migrated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that logging in with email logins in and redirects to change password page successfully if the user has not yet made a password.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserLoginViewTest.test_redirect_if_logged_in_already">
+<code class="sig-name descname">test_redirect_if_logged_in_already</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserLoginViewTest.test_redirect_if_logged_in_already" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that viewing login page when already logged in redirects to profile page.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserLoginViewTest.test_redirect_if_logged_in_already_next">
+<code class="sig-name descname">test_redirect_if_logged_in_already_next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserLoginViewTest.test_redirect_if_logged_in_already_next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that viewing login page when already logged in redirects to profile page.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserLoginViewTest.test_redirect_if_logged_out_next">
+<code class="sig-name descname">test_redirect_if_logged_out_next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserLoginViewTest.test_redirect_if_logged_out_next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that viewing login page when already logged in redirects to profile page.</p>
 </dd></dl>
 
 </dd></dl>
@@ -227,6 +359,12 @@
 <dd><p>Test that signing up with email signs up and redirects to home page successfully.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt id="account.tests.UserSignUpViewTest.test_unmatched_sign_up_view_with_post_request">
+<code class="sig-name descname">test_unmatched_sign_up_view_with_post_request</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserSignUpViewTest.test_unmatched_sign_up_view_with_post_request" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that signing up with unmatching passwords redirects to signup page successfully.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -240,6 +378,18 @@
 </dd></dl>
 
 <dl class="py method">
+<dt id="account.tests.UserTestCase.test_admin_perm">
+<code class="sig-name descname">test_admin_perm</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserTestCase.test_admin_perm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that an admin user has the proper permissions</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserTestCase.test_get_empty_name_with_user">
+<code class="sig-name descname">test_get_empty_name_with_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserTestCase.test_get_empty_name_with_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that user’s full name is returned accurately</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="account.tests.UserTestCase.test_get_full_name_with_user">
 <code class="sig-name descname">test_get_full_name_with_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserTestCase.test_get_full_name_with_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test that user’s full name is returned accurately</p>
@@ -249,6 +399,12 @@
 <dt id="account.tests.UserTestCase.test_get_short_name_with_user">
 <code class="sig-name descname">test_get_short_name_with_user</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserTestCase.test_get_short_name_with_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test that user’s email is returned accurately</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="account.tests.UserTestCase.test_get_strs">
+<code class="sig-name descname">test_get_strs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#account.tests.UserTestCase.test_get_strs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that user’s email and group and iam names are returned accurately (when calling __str__())</p>
 </dd></dl>
 
 </dd></dl>
