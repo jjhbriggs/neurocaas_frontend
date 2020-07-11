@@ -127,22 +127,43 @@ Add following content and save:
    $ sudo ufw delete allow 8000
    $ sudo ufw allow 'Nginx Full'
 
+**Environment Variables**
+
+A set of valid AWS keys is needed to run tests properly. These should be set in .bash_profile.
+
+Add these lines to your .bash_profile in the home directory (with your keys in place of the placeholders).
+Travis CI has a similar set of environement variables in its project settings which are used for testing, however local testing requires that the developer source bash_profile by running:
+
+.. code-block::
+
+   source .bash_profile
+
+.. code-block::
+
+   export AWS_ACCESS_KEY=<placeholder>
+   export AWS_SECRET_ACCESS_KEY=<placeholder>
+
 **Cron Job**
 
 There is a python script located "/home/ubuntu/ncap/cron.py".
 It is running daily, removing old files in "/home/ubuntu/ncap/static/downloads" folder.
 
-Run the following command to edit crontab config
+There is an additional python script called db_backup.py that backups the database to an s3 bucket daily.
+
+Run the following command to edit crontab config (with <placeholder>s replaced with the AWS keys used to access your s3 bucket.
 
 .. code-block::
 
    $ crontab –e
    
-Add this line and save:
+Add these line and save:
 
 .. code-block::
 
+   AWS_ACCESS_KEY=<placeholder>
+   AWS_SECRET_ACCESS_KEY=<placeholder>
    5 4 * * * /usr/bin/python3 /home/ubuntu/ncap/cron.py >> ~/cron.log 2>&1
+   0 0 * * * /usr/bin/python3 /home/ubuntu/ncap/db_backup.py >> ~/cron_db.log 2>&1
    
 Start Cron job
 
