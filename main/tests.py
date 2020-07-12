@@ -360,21 +360,20 @@ class ProcessViewTest(TestCase):
         r = self.client.post('/login/', form)
         
     def test_get_process_view(self):
-        """Check that detail of a user's previous analysis are displayed properly."""
+        """Check that getting the process information displays properly."""
         
         response = self.client.get('/process/%s' % self.analysis.id)
 
         self.assertEqual(response.context['analysis'], self.analysis)
         self.assertEqual(response.context['iam'], self.iam)
-        self.assertIsNotNone(response.context['job_detail'])
         self.assertIsNotNone(response.context['id1'])
         self.assertIsNotNone(response.context['id2'])
         self.assertEqual(response.context["data_set_dir"], "%s/inputs" % self.iam.group.name)
         self.assertEqual(response.context["config_dir"], "%s/configs" % self.iam.group.name)
-        self.assertEqual(response.context["bucket"], "%s/configs" % self.analysis.bucket_name)
+        self.assertEqual(response.context["bucket"], self.analysis.bucket_name)
         
     def test_no_perms_get_process(self):
-        """Check that detail of a user's previous analysis is not displayed if the user doesn't have permission to access to the analysis."""
+        """Check that getting the process information does not display if the user does not have permissions for the analysis."""
         
         response = self.client.get('/history/%s' % self.analysis2.id)
         self.assertEqual(response.status_code, 302)
