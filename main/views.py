@@ -216,7 +216,9 @@ class FilesView(LoginRequiredMixin, View):
         key = request.GET.get('key', None)
         file_key = "%s/%s" % (iam.group.name, key)
         folder = generate_folder()
-
+        print("Bucket name: " + analysis.bucket_name)
+        print("key:" + file_key)
+        print("folder:" + folder)
         downloaded_path = download_file_from_s3(iam=iam, bucket=analysis.bucket_name, key=file_key, folder=folder)
 
         return JsonResponse({
