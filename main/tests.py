@@ -5,6 +5,7 @@ from .models import Analysis
 from account.models import *
 import os
 from .utils import *
+import json
 
 class AnalysisTestCase(TestCase):
     """Class for testing IAM connected to analyses."""
@@ -266,3 +267,50 @@ class JobDetailViewTest(TestCase):
         response = self.client.get('/history/' + str(self.analysis2.id) + '/' + self.job_id)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
+        
+        
+        
+class UserFilesViewTest(TestCase):
+    """Class for testing the user files view."""
+    def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
+        self.user = User.objects.create_user('test@test.com', password='test')
+        self.user.first_name = "Jack"
+        self.user.last_name = "Briggs"
+        self.user.save()
+        self.group = AnaGroup.objects.create(name="reviewers")
+        self.iam = IAM.objects.create(user=self.user,
+                                      aws_user="jbriggs",
+                                      aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
+                                      aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+                                      group=self.group)
+        self.analysis = Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="job__epi-ncap-web_",
+            bucket_name="epi-ncap-web",
+            custom=False,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+        self.analysis.groups.add(self.group)
+        # login here
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+        
+    def test_job_detail_view(self):
+        """Check that detail of a user's previous analysis are displayed properly."""
+        
+        response = self.client.get('/user_files/%s' % self.analysis.id)
+        data = response.json()
+
+        self.assertEqual(data['status'], 200)
+        self.assertIsNotNone(data['data_sets'])
+        self.assertIsNotNone(data['configs'])

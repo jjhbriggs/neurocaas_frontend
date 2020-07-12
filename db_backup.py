@@ -30,6 +30,6 @@ def upload_file(file_name, bucket, object_name=None):
 
 os.system('source /home/ubuntu/.bash_profile')
 if(upload_file('db.sqlite3', 'neurocaas-db-backups')):
-    print("worked")
+    print("Upload Successfull")
 else:
-    print("didn't work")
+    print("Upload Failed")
