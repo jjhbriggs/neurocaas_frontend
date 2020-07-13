@@ -358,7 +358,8 @@ class ProcessView(LoginRequiredMixin, View):
         """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
-
+        
+        print(request.body)
         data_set_files = request.POST.getlist('data_set_files[]')
         config_file = request.POST['config_file']
         cur_timestamp = int(time.time())
