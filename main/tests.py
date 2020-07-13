@@ -375,6 +375,20 @@ class ProcessViewTest(TestCase):
     def test_no_perms_get_process(self):
         """Check that getting the process information does not display if the user does not have permissions for the analysis."""
         
-        response = self.client.get('/history/%s' % self.analysis2.id)
+        response = self.client.get('/process/%s' % self.analysis2.id)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
+        
+    def test_post_to_process_view(self):
+        """Check that posting file names returns the proper json response."""
+
+        form = {
+            'config_file': 'sample_file_name.txt',
+            'data_set_files': ['sample_file_name_2.txt'],
+        }
+        response = self.client.post('/process/%s' % self.analysis.id, form, follow=True)
+        
+        data = response.json()
+        self.assertEqual(data['status'], True)
+        self.assertIsNotNone(data['timestamp'])
+  
