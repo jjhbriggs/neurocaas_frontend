@@ -359,11 +359,10 @@ class ProcessView(LoginRequiredMixin, View):
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
         
-        print(request.body)
         data_set_files = request.POST.getlist('data_set_files[]')
         config_file = request.POST['config_file']
         cur_timestamp = int(time.time())
-
+        
         process_data_set = []
         for file in data_set_files:
             process_data_set.append("%s/inputs/%s" % (iam.group.name, file))
@@ -383,7 +382,9 @@ class ProcessView(LoginRequiredMixin, View):
 
         return JsonResponse({
             "status": True,
-            "timestamp": cur_timestamp
+            "timestamp": cur_timestamp,
+            "data_set_files": data_set_files,
+            "config_file": config_file
         })
 
 

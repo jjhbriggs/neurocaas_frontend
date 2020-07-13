@@ -384,11 +384,13 @@ class ProcessViewTest(TestCase):
 
         form = {
             'config_file': 'sample_file_name.txt',
-            'data_set_files': ['sample_file_name_2.txt'],
+            "data_set_files[]": ["sample_file_name_2.txt", "sample_file_name_3.txt"],
         }
         response = self.client.post('/process/%s' % self.analysis.id, form, follow=True)
         
         data = response.json()
         self.assertEqual(data['status'], True)
         self.assertIsNotNone(data['timestamp'])
+        self.assertIsNotNone(data['data_set_files'])
+        self.assertIsNotNone(data['config_file'])
   
