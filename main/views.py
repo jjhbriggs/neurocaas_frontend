@@ -435,18 +435,19 @@ class ResultView(LoginRequiredMixin, View):
         end_flag = False
 
         result_links = []
-
+        
         end_timestamp = get_last_modified_timestamp(iam=iam,
                                                     bucket=analysis.bucket_name,
                                                     key=end_file)
+
         result_keys = get_list_keys(iam=iam,
                                     bucket=analysis.bucket_name,
                                     folder=result_folder,
                                     un_cert=False)
+
         for key in result_keys:
             path = key.replace('%s/results/job__%s_%s/' % (iam.group.name, analysis.bucket_name, timestamp), '')
             result_links.append({'path': path})
-
         if end_timestamp > 0:
             end_flag = True
 
