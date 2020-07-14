@@ -393,4 +393,51 @@ class ProcessViewTest(TestCase):
         self.assertIsNotNone(data['timestamp'])
         self.assertIsNotNone(data['data_set_files'])
         self.assertIsNotNone(data['config_file'])
+        
+class ResultViewTest(TestCase):
+    """Class for testing the result view."""
+    
+    def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
+        
+        self.user = User.objects.create_user('test@test.com', password='test')
+        self.user.first_name = "Jack"
+        self.user.last_name = "Briggs"
+        self.user.save()
+        self.group = AnaGroup.objects.create(name="reviewers")
+        self.iam = IAM.objects.create(user=self.user,
+                                      aws_user="jbriggs",
+                                      aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
+                                      aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+                                      group=self.group)
+        self.analysis = Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="job__epi-ncap-web_",
+            bucket_name="epi-ncap-web",
+            custom=False,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+        self.analysis.groups.add(self.group)
+        # login here
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+        
+    def test_get_user_files(self):
+        """Check that detail of a user's previous analysis are displayed properly."""
+
+        #the timestamp used her is fairly arbitrary, it is from a random process which occurred on July 13 around 9:20pm est
+        response = self.client.get('/results/%s' % self.analysis.id,{'timestamp': str(1594689728)}) 
+        data = response.json()
+
+        self.assertEqual(data['status'], True)
+        self.assertNotEqual(data['cert_file'], "")
   
