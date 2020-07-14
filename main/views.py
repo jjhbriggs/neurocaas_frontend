@@ -399,9 +399,11 @@ class ResultView(LoginRequiredMixin, View):
         """
         analysis = get_current_analysis(ana_id)
         iam = get_current_iam(request)
+
         timestamp = int(request.GET['timestamp']) if 'timestamp' in request.GET else 0
 
         cert_file = "%s/results/job__%s_%s/logs/certificate.txt" % (iam.group.name, analysis.bucket_name, timestamp)
+
         cert_timestamp = get_last_modified_timestamp(
             iam=iam,
             bucket=analysis.bucket_name,
