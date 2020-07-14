@@ -431,7 +431,7 @@ class ResultViewTest(TestCase):
         }
         r = self.client.post('/login/', form)
         
-    def test_get_user_files(self):
+    def test_get_results(self):
         """Check that detail of a user's previous analysis are displayed properly."""
 
         #the timestamp used here is arbitrary, it works as long as there is a corresponding file in s3.
@@ -440,7 +440,7 @@ class ResultViewTest(TestCase):
 
         self.assertEqual(data['status'], True)
         self.assertNotEqual(data['cert_file'], "")
-    def test_post_user_files(self):
+    def test_post_results(self):
         """Check that is able to retrieve files from results and logs folder on s3 and determine if analysis was finished or not."""
 
         #the timestamp used here is arbitrary, it works as long as there is a corresponding file in s3.
