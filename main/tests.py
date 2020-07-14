@@ -440,4 +440,14 @@ class ResultViewTest(TestCase):
 
         self.assertEqual(data['status'], True)
         self.assertNotEqual(data['cert_file'], "")
+    def test_post_user_files(self):
+        """Check that is able to retrieve files from results and logs folder on s3 and determine if analysis was finished or not."""
+
+        #the timestamp used here is arbitrary, it works as long as there is a corresponding file in s3.
+        response = self.client.post('/results/%s' % self.analysis.id,{'timestamp': str(1)}, follow=True) 
+        data = response.json()
+
+        self.assertEqual(data['status'], 200)
+        self.assertNotEqual(data["result_links"], "")
+        self.assertEqual(data["end"], True)
   
