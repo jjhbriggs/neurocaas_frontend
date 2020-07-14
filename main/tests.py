@@ -434,8 +434,8 @@ class ResultViewTest(TestCase):
     def test_get_user_files(self):
         """Check that detail of a user's previous analysis are displayed properly."""
 
-        #the timestamp used her is fairly arbitrary, it is from a random process which occurred on July 13 around 9:20pm est
-        response = self.client.get('/results/%s' % self.analysis.id,{'timestamp': str(1594689728)}) 
+        #the timestamp used here is arbitrary, it works as long as there is a corresponding file in s3.
+        response = self.client.get('/results/%s' % self.analysis.id,{'timestamp': str(1)}) 
         data = response.json()
 
         self.assertEqual(data['status'], True)
