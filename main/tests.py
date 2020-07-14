@@ -389,6 +389,11 @@ class ProcessViewTest(TestCase):
         response = self.client.post('/process/%s' % self.analysis.id, form, follow=True)
         
         data = response.json()
+        
+        #add new result to a file which flags it for removal 
+        if data['timestamp'] != "":
+            with open("prefixes_for_delete.txt", "a") as f:
+                 f.write("reviewers/results/job__epi-ncap-web_" + str(data['timestamp']) + "/")
         self.assertEqual(data['status'], True)
         self.assertIsNotNone(data['timestamp'])
         self.assertIsNotNone(data['data_set_files'])

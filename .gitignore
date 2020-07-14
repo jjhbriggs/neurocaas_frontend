@@ -10,6 +10,7 @@ static/downloads
 .coverage
 .bashrc
 .bash_profile
+prefixes_for_delete.txt
 
 ### Django ###
 *.log
