@@ -393,8 +393,8 @@ class ProcessViewTest(TestCase):
         #add new result to a file which flags it for removal 
         if data['timestamp'] != "":
             try:
-                with open(os.path.join(os.path.dirname(__file__), "prefixes_for_delete.txt"), "a") as f:
-                    f.write("frontendtravisci/results/job__cianalysispermastack_" + str(data['timestamp']) + "/")
+                with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "prefixes_for_delete.txt"), "a") as f:
+                    f.write("frontendtravisci/results/job__cianalysispermastack_" + str(data['timestamp']) + "/\n")
             except EnvironmentError:
                 print ('There was an error flagging data for removal')
         self.assertEqual(data['status'], True)
