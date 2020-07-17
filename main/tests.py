@@ -391,13 +391,21 @@ class ProcessViewTest(TestCase):
         data = response.json()
         
         #add new result to a file which flags it for removal 
-        if data['timestamp'] != "":
+        upload_data = "frontendtravisci/results/job__cianalysispermastack_" + str(data['timestamp']) + "/\n"
+        # Method 1: Object.put()
+        s3 = boto3.resource('s3',
+                    aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
+                    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'))
+        object = s3.Object('cianalysispermastack', 'frontendtravisci/results/prefixes_for_delete.txt')
+        content = object.get()['Body'].read().decode('utf-8') 
+        object.put(Body=content + upload_data)
+        '''if data['timestamp'] != "":
             try:
                 print(os.path.join(os.path.dirname(os.path.dirname(__file__)), "prefixes_for_delete.txt"))
                 with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "prefixes_for_delete.txt"), "a") as f:
                     f.write("frontendtravisci/results/job__cianalysispermastack_" + str(data['timestamp']) + "/\n")
             except EnvironmentError:
-                print ('There was an error flagging data for removal')
+                print ('There was an error flagging data for removal')'''
         self.assertEqual(data['status'], True)
         self.assertIsNotNone(data['timestamp'])
         self.assertIsNotNone(data['data_set_files'])
