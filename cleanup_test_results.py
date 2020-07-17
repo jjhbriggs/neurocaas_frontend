@@ -5,7 +5,7 @@ import os
 s3 = boto3.resource('s3',
             aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'),
             aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'))
-bucket = s3.Bucket("epi-ncap-web")
+bucket = s3.Bucket("cianalysispermastack")
 
 with open("prefixes_for_delete.txt", "r+") as f:
     content = f.readlines()

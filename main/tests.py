@@ -140,7 +140,7 @@ class JobListViewTest(TestCase):
         self.user.first_name = "Jack"
         self.user.last_name = "Briggs"
         self.user.save()
-        self.group = AnaGroup.objects.create(name="reviewers")
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,
                                       aws_user="jbriggs",
                                       aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
@@ -148,8 +148,8 @@ class JobListViewTest(TestCase):
                                       group=self.group)
         self.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
-            result_prefix="job__epi-ncap-web_",
-            bucket_name="epi-ncap-web",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
             custom=False,
             short_description="Short Description",
             long_description="Long Description",
@@ -162,8 +162,8 @@ class JobListViewTest(TestCase):
         self.analysis.groups.add(self.group)
         self.analysis2 = Analysis.objects.create(
             analysis_name="Test Analaysis (No perms)",
-            result_prefix="job__epi-ncap-web_",
-            bucket_name="epi-ncap-web",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
             custom=False,
             short_description="Short Description",
             long_description="Long Description",
@@ -201,7 +201,7 @@ class JobDetailViewTest(TestCase):
         self.user.first_name = "Jack"
         self.user.last_name = "Briggs"
         self.user.save()
-        self.group = AnaGroup.objects.create(name="reviewers")
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,
                                       aws_user="jbriggs",
                                       aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
@@ -209,8 +209,8 @@ class JobDetailViewTest(TestCase):
                                       group=self.group)
         self.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
-            result_prefix="job__epi-ncap-web_",
-            bucket_name="epi-ncap-web",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
             custom=False,
             short_description="Short Description",
             long_description="Long Description",
@@ -223,8 +223,8 @@ class JobDetailViewTest(TestCase):
         self.analysis.groups.add(self.group)
         self.analysis2 = Analysis.objects.create(
             analysis_name="Test Analaysis (No perms)",
-            result_prefix="job__epi-ncap-web_",
-            bucket_name="epi-ncap-web",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
             custom=False,
             short_description="Short Description",
             long_description="Long Description",
@@ -272,7 +272,7 @@ class UserFilesViewTest(TestCase):
         self.user.first_name = "Jack"
         self.user.last_name = "Briggs"
         self.user.save()
-        self.group = AnaGroup.objects.create(name="reviewers")
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,
                                       aws_user="jbriggs",
                                       aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
@@ -280,8 +280,8 @@ class UserFilesViewTest(TestCase):
                                       group=self.group)
         self.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
-            result_prefix="job__epi-ncap-web_",
-            bucket_name="epi-ncap-web",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
             custom=False,
             short_description="Short Description",
             long_description="Long Description",
@@ -319,7 +319,7 @@ class ProcessViewTest(TestCase):
         self.user.first_name = "Jack"
         self.user.last_name = "Briggs"
         self.user.save()
-        self.group = AnaGroup.objects.create(name="reviewers")
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,
                                       aws_user="jbriggs",
                                       aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
@@ -327,8 +327,8 @@ class ProcessViewTest(TestCase):
                                       group=self.group)
         self.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
-            result_prefix="job__epi-ncap-web_",
-            bucket_name="epi-ncap-web",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
             custom=False,
             short_description="Short Description",
             long_description="Long Description",
@@ -341,8 +341,8 @@ class ProcessViewTest(TestCase):
         self.analysis.groups.add(self.group)
         self.analysis2 = Analysis.objects.create(
             analysis_name="Test Analaysis (No perms)",
-            result_prefix="job__epi-ncap-web_",
-            bucket_name="epi-ncap-web",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
             custom=False,
             short_description="Short Description",
             long_description="Long Description",
@@ -393,7 +393,7 @@ class ProcessViewTest(TestCase):
         #add new result to a file which flags it for removal 
         if data['timestamp'] != "":
             with open("prefixes_for_delete.txt", "a") as f:
-                 f.write("reviewers/results/job__epi-ncap-web_" + str(data['timestamp']) + "/")
+                 f.write("frontendtravisci/results/job__cianalysispermastack_" + str(data['timestamp']) + "/")
         self.assertEqual(data['status'], True)
         self.assertIsNotNone(data['timestamp'])
         self.assertIsNotNone(data['data_set_files'])
@@ -409,7 +409,7 @@ class ResultViewTest(TestCase):
         self.user.first_name = "Jack"
         self.user.last_name = "Briggs"
         self.user.save()
-        self.group = AnaGroup.objects.create(name="reviewers")
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,
                                       aws_user="jbriggs",
                                       aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
@@ -417,8 +417,8 @@ class ResultViewTest(TestCase):
                                       group=self.group)
         self.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
-            result_prefix="job__epi-ncap-web_",
-            bucket_name="epi-ncap-web",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
             custom=False,
             short_description="Short Description",
             long_description="Long Description",
