@@ -14,7 +14,7 @@ To install or develop the neurocaas frontend, please see the website developer g
 
 Technologies
 ------------
- Project is created with
+This Project is created with
 - Python version: 3
 - Django version: 2.2.13
 
