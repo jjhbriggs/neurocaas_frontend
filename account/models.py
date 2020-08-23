@@ -6,7 +6,10 @@ from .managers import UserManager
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
 # Create your models here.
-
+from django.core.validators import RegexValidator
+import random
+import string
+import uuid
 
 class Base(models.Model):
     """
@@ -55,16 +58,22 @@ class User(AbstractBaseUser):
     
     has_migrated_pwd = models.BooleanField(default=False)
     
+    alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
+    requested_group_name = models.CharField(max_length=50, default="", blank=True, validators=[alphanumeric])
+    requested_group_code = models.CharField(max_length=6, default="", blank=True, validators=[alphanumeric])
+    use_code = models.BooleanField(default=False)
+    #unique=True,
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     #: Boolean value checking if the account is active. 
     is_active = models.BooleanField(default=True)
     #: Boolean value checking if the account is an admin.
     is_admin = models.BooleanField(default=False, help_text="Flag for administrator account")
+    is_staff = models.BooleanField(default=False, help_text="Flag for administrator account")
+    is_superuser = models.BooleanField(default=False, help_text="Flag for administrator account")
     #: Boolean value checking for permission for individual users access to data transfer.
     data_transfer_permission = models.BooleanField(default=True,
                                                    help_text="Permission for individual users access to data transfer")
-
     def get_full_name(self):
         """Returns first and last name of user."""
         # The user is identified by their email address
@@ -81,10 +90,10 @@ class User(AbstractBaseUser):
         """Returns email of user."""
         return self.email
 
-    def is_staff(self):
+    '''def is_staff(self):
         """Returns true if user is an admin."""
         # Simplest possible answer: All admins are staff
-        return self.is_admin
+        return self.is_admin'''
 
     def has_perm(self, perm, obj=None):
         """Returns True. """
@@ -104,6 +113,9 @@ class AnaGroup(Base):
     """
     #: Name of the group.
     name = models.CharField(max_length=50, help_text='Group Name', unique=True)
+    
+    code = models.CharField(max_length=6,blank=False, default=uuid.uuid4().hex.upper()[0:6])
+    
     
     #: Returns name of the group.
     def __str__(self):
