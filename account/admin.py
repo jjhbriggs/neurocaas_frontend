@@ -54,7 +54,7 @@ def register_IAM(modeladmin, request, queryset):
             messages.add_message(request, messages.INFO, "The IAM Creation Process has started. Please check back later to see if your resources have been created.")
             current_p = current_p + 1
         else:
-            messages.error(request, "Users with existing IAMs were selected")
+            messages.error(request, "A User with an existing IAM was selected")
 register_IAM.short_description = "Generate an IAM and Group for this user in django db and cloudformation"
 def remove_IAM(modeladmin, request, queryset):
     current_p = 0
@@ -89,7 +89,7 @@ def remove_IAM(modeladmin, request, queryset):
             #: remove from django
             current_iam.delete()
         else:
-            messages.error(request, "No users with valid IAMs were selected")
+            messages.error(request, "A user was selected that did not contain a valid IAM")
 remove_IAM.short_description = "Remove associated IAM from cloudformation stacks and django db"
 
 
