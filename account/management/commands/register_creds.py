@@ -6,7 +6,7 @@ import logging
 from django.core.management.base import BaseCommand
 from account.models import *
 from main.models import Analysis
-
+from django.core.mail import send_mail
 #: This script is a custom django management command
 #: This should be called in the ~/ncap folder with python manage.py register_creds [PIPEDIR]
 class Command(BaseCommand):
@@ -62,6 +62,14 @@ class Command(BaseCommand):
                                 analysis_to_add = Analysis.objects.filter(bucket_name=bucket).first()
                                 analysis_to_add.groups.add(new_group)
                             logging.info('Finished iam and ana_group creation for user' + creds['Username'] + region)
+                            body_string = "Dear " + user.get_full_name() + ",\n\nYour NeuroCAAS Registration was successful, and you have been granted access to begin running analyses.\n\nRegards,\nThe NeuroCAAS Team"
+                            send_mail(
+                                'NeuroCAAS Registration Complete',
+                                body_string,
+                                'neurocaas@gmail.com',
+                                [user.email],
+                                fail_silently=False,
+                            )
                             num_new_users += 1
                 if num_new_users == 0:
                     logging.warning('No user credentials found in ' + full_path + ' matching usernames in user_config_template')
