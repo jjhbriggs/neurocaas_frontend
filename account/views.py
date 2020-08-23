@@ -15,6 +15,45 @@ from django.contrib.auth.views import PasswordChangeView
 
 # Create your views here.
 
+
+def generateIAMForEDU(usr):
+    user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
+    group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name)))
+    if not group_exists:
+        command = 'bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
+        process = subprocess.Popen([command],
+                    stdout=subprocess.PIPE, 
+                    stderr=subprocess.PIPE,
+                    shell=True)
+        stdout, stderr = process.communicate()
+    user_config_array = {}
+    with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
+        user_config_array = json.load(f)
+        affiliate = user_config_array['UXData']["Affiliates"][0]
+        if (not usr.email[0:15].replace('@', '').split('.', 1)[0] in affiliate["UserNames"]) and (not usr.email in affiliate["ContactEmail"]):
+            if not group_exists:
+                affiliate["AffiliateName"] = usr.requested_group_name
+                affiliate["UserNames"] = [usr.email[0:25].replace('@', '').split('.', 1)[0]]
+                affiliate["ContactEmail"] = [usr.email]
+            else:
+                affiliate["UserNames"].append(usr.email[0:25].replace('@', '').split('.', 1)[0])
+                affiliate["ContactEmail"].append(usr.email)
+        user_config_array['UXData']["Affiliates"][0] = affiliate
+    with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
+        json.dump(user_config_array, outfile)
+    command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
+    outfile = open('logs/iam_creation_out_log.txt','w')
+    errfile = open('logs/iam_creation_err_log.txt','w')
+
+    process = subprocess.Popen([command],
+                    stdout=outfile, 
+                    stderr=errfile,
+                    shell=True, 
+                    executable='/bin/bash')
+    process.communicate()
+    return True
+
+
 class LoginView(View):
     """
         View for user login with AWS credentials.
@@ -66,7 +105,8 @@ class SignUpView(View):
             # create AWS Request object for created user
             aws_req = AWSRequest(user=user)
             aws_req.save()
-
+            if user.email[-3:] == "edu":
+                generateIAMForEDU(user)
             messages.success(request, 'Successfully Registered, Please wait for email from us!')
             next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
             return redirect(next_url)

@@ -13,7 +13,6 @@ class UserManager(BaseUserManager):
         """
         if not email:
             raise ValueError('Users must have an email address')
-
         user = self.model(
             email=UserManager.normalize_email(email),
         )
