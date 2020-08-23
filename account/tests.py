@@ -55,7 +55,7 @@ class UserTestCase(TestCase):
         """Test that an admin user has the proper permissions"""
         userA = User.objects.get(email="test@admin.com")
         self.assertEqual(userA.is_admin, True)
-        self.assertEqual(userA.is_staff(), True)
+        self.assertEqual(userA.is_staff, True)
     def test_get_strs(self):
         """Test that user's email and group and iam names are returned accurately (when calling __str__())"""
         user1 = User.objects.get(email="test1@test.com")
