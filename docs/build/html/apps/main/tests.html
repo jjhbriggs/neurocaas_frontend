@@ -270,6 +270,78 @@
 
 </dd></dl>
 
+<dl class="py class">
+<dt id="main.tests.ProcessViewTest">
+<em class="property">class </em><code class="sig-prename descclassname">main.tests.</code><code class="sig-name descname">ProcessViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.ProcessViewTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing the process view.</p>
+<dl class="py method">
+<dt id="main.tests.ProcessViewTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.ProcessViewTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup user, group, IAM, and analysis. Login IAM.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.tests.ProcessViewTest.test_get_process_view">
+<code class="sig-name descname">test_get_process_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.ProcessViewTest.test_get_process_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that getting the process information displays properly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.tests.ProcessViewTest.test_no_perms_get_process">
+<code class="sig-name descname">test_no_perms_get_process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.ProcessViewTest.test_no_perms_get_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that getting the process information does not display if the user does not have permissions for the analysis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.tests.ProcessViewTest.test_post_to_process_view">
+<code class="sig-name descname">test_post_to_process_view</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.ProcessViewTest.test_post_to_process_view" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that posting file names returns the proper json response.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="main.tests.ResultViewTest">
+<em class="property">class </em><code class="sig-prename descclassname">main.tests.</code><code class="sig-name descname">ResultViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.ResultViewTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing the result view.</p>
+<dl class="py method">
+<dt id="main.tests.ResultViewTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.ResultViewTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup user, group, IAM, and analysis. Login IAM.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.tests.ResultViewTest.test_get_results">
+<code class="sig-name descname">test_get_results</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.ResultViewTest.test_get_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that detail of a user’s previous analysis are displayed properly.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.tests.ResultViewTest.test_post_results">
+<code class="sig-name descname">test_post_results</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.ResultViewTest.test_post_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that is able to retrieve files from results and logs folder on s3 and determine if analysis was finished or not.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="main.tests.UserFilesViewTest">
+<em class="property">class </em><code class="sig-prename descclassname">main.tests.</code><code class="sig-name descname">UserFilesViewTest</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">methodName</span><span class="o">=</span><span class="default_value">'runTest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.UserFilesViewTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class for testing the user files view.</p>
+<dl class="py method">
+<dt id="main.tests.UserFilesViewTest.setUp">
+<code class="sig-name descname">setUp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.UserFilesViewTest.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup user, group, IAM, and analysis. Login IAM.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="main.tests.UserFilesViewTest.test_get_user_files">
+<code class="sig-name descname">test_get_user_files</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main.tests.UserFilesViewTest.test_get_user_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that detail of a user’s previous analysis are displayed properly.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py attribute">
 <dt id="main.tests">
 <code class="sig-prename descclassname">main.</code><code class="sig-name descname">tests</code><a class="headerlink" href="#main.tests" title="Permalink to this definition">¶</a></dt>
