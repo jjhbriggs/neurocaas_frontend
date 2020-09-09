@@ -1,5 +1,6 @@
 
 
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
@@ -270,12 +271,14 @@
 </li>
       <li><a href="apps/main/models.html#main.models.Analysis.check_iam">check_iam() (main.models.Analysis method)</a>
 </li>
-      <li><a href="apps/account/forms.html#account.forms.UserCreationForm.clean_password2">clean_password2() (account.forms.UserCreationForm method)</a>
+      <li><a href="apps/account/forms.html#account.forms.UserCreationForm.clean_group_code">clean_group_code() (account.forms.UserCreationForm method)</a>
 </li>
-      <li><a href="apps/main/utils.html#main.utils.convert_size">convert_size() (in module main.utils)</a>
+      <li><a href="apps/account/forms.html#account.forms.UserCreationForm.clean_password2">clean_password2() (account.forms.UserCreationForm method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apps/main/utils.html#main.utils.convert_size">convert_size() (in module main.utils)</a>
+</li>
       <li><a href="apps/main/utils.html#main.utils.create_submit_json">create_submit_json() (in module main.utils)</a>
 </li>
       <li><a href="apps/account/managers.html#account.managers.UserManager.create_superuser">create_superuser() (account.managers.UserManager method)</a>
@@ -420,15 +423,13 @@
 </li>
       <li><a href="apps/account/tests.html#account.tests.IAMCreateTest">IAMCreateTest (class in account.tests)</a>
 </li>
-      <li><a href="apps/account/views.html#account.views.IamCreateView">IamCreateView (class in account.views)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apps/account/views.html#account.views.IamCreateView">IamCreateView (class in account.views)</a>
+</li>
       <li><a href="apps/main/views.html#main.views.IntroView">IntroView (class in main.views)</a>
 </li>
       <li><a href="apps/account/models.html#account.models.User.is_admin">is_admin (account.models.User attribute)</a>
-</li>
-      <li><a href="apps/account/models.html#account.models.User.is_staff">is_staff() (account.models.User method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -569,6 +570,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apps/main/views.html#main.views.ProcessView">ProcessView (class in main.views)</a>
 </li>
+      <li><a href="apps/main/tests.html#main.tests.ProcessViewTest">ProcessViewTest (class in main.tests)</a>
+</li>
       <li><a href="apps/account/forms.html#account.forms.ProfileChangeForm">ProfileChangeForm (class in account.forms)</a>
 </li>
       <li><a href="apps/account/forms.html#account.forms.ProfileChangeForm.Meta">ProfileChangeForm.Meta (class in account.forms)</a>
@@ -596,6 +599,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="apps/main/views.html#main.views.ResultView">ResultView (class in main.views)</a>
+</li>
+      <li><a href="apps/main/tests.html#main.tests.ResultViewTest">ResultViewTest (class in main.tests)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -635,6 +640,12 @@
         <li><a href="apps/main/tests.html#main.tests.JobDetailViewTest.setUp">(main.tests.JobDetailViewTest method)</a>
 </li>
         <li><a href="apps/main/tests.html#main.tests.JobListViewTest.setUp">(main.tests.JobListViewTest method)</a>
+</li>
+        <li><a href="apps/main/tests.html#main.tests.ProcessViewTest.setUp">(main.tests.ProcessViewTest method)</a>
+</li>
+        <li><a href="apps/main/tests.html#main.tests.ResultViewTest.setUp">(main.tests.ResultViewTest method)</a>
+</li>
+        <li><a href="apps/main/tests.html#main.tests.UserFilesViewTest.setUp">(main.tests.UserFilesViewTest method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -677,9 +688,15 @@
 </li>
       <li><a href="apps/account/tests.html#account.tests.UserTestCase.test_get_full_name_with_user">test_get_full_name_with_user() (account.tests.UserTestCase method)</a>
 </li>
+      <li><a href="apps/main/tests.html#main.tests.ProcessViewTest.test_get_process_view">test_get_process_view() (main.tests.ProcessViewTest method)</a>
+</li>
+      <li><a href="apps/main/tests.html#main.tests.ResultViewTest.test_get_results">test_get_results() (main.tests.ResultViewTest method)</a>
+</li>
       <li><a href="apps/account/tests.html#account.tests.UserTestCase.test_get_short_name_with_user">test_get_short_name_with_user() (account.tests.UserTestCase method)</a>
 </li>
       <li><a href="apps/account/tests.html#account.tests.UserTestCase.test_get_strs">test_get_strs() (account.tests.UserTestCase method)</a>
+</li>
+      <li><a href="apps/main/tests.html#main.tests.UserFilesViewTest.test_get_user_files">test_get_user_files() (main.tests.UserFilesViewTest method)</a>
 </li>
       <li><a href="apps/account/tests.html#account.tests.ChangePWDTest.test_incorrect_pwd_change_with_post_request">test_incorrect_pwd_change_with_post_request() (account.tests.ChangePWDTest method)</a>
 </li>
@@ -695,12 +712,18 @@
 </li>
       <li><a href="apps/account/tests.html#account.tests.AWSCredViewTest.test_no_cred_request">test_no_cred_request() (account.tests.AWSCredViewTest method)</a>
 </li>
+      <li><a href="apps/main/tests.html#main.tests.ProcessViewTest.test_no_perms_get_process">test_no_perms_get_process() (main.tests.ProcessViewTest method)</a>
+</li>
       <li><a href="apps/main/tests.html#main.tests.JobDetailViewTest.test_no_perms_job_list_view">test_no_perms_job_list_view() (main.tests.JobDetailViewTest method)</a>
 
       <ul>
         <li><a href="apps/main/tests.html#main.tests.JobListViewTest.test_no_perms_job_list_view">(main.tests.JobListViewTest method)</a>
 </li>
       </ul></li>
+      <li><a href="apps/main/tests.html#main.tests.ResultViewTest.test_post_results">test_post_results() (main.tests.ResultViewTest method)</a>
+</li>
+      <li><a href="apps/main/tests.html#main.tests.ProcessViewTest.test_post_to_process_view">test_post_to_process_view() (main.tests.ProcessViewTest method)</a>
+</li>
       <li><a href="apps/account/tests.html#account.tests.ProfileViewTest.test_profile_view_with_get_request">test_profile_view_with_get_request() (account.tests.ProfileViewTest method)</a>
 </li>
       <li><a href="apps/account/tests.html#account.tests.ProfileViewTest.test_profile_view_with_post_request">test_profile_view_with_post_request() (account.tests.ProfileViewTest method)</a>
@@ -755,6 +778,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="apps/main/tests.html#main.tests.UserFilesViewTest">UserFilesViewTest (class in main.tests)</a>
+</li>
       <li><a href="apps/account/forms.html#account.forms.UserLoginForm">UserLoginForm (class in account.forms)</a>
 </li>
       <li><a href="apps/account/forms.html#account.forms.UserLoginForm.Meta">UserLoginForm.Meta (class in account.forms)</a>
