@@ -61,6 +61,8 @@ class User(AbstractBaseUser):
     is_active = models.BooleanField(default=True)
     #: Boolean value checking if the account is an admin.
     is_admin = models.BooleanField(default=False, help_text="Flag for administrator account")
+    is_superuser = models.BooleanField(default=False, help_text="Flag for administrator account")
+    is_staff = models.BooleanField(default=False, help_text="Flag for administrator account")
     #: Boolean value checking for permission for individual users access to data transfer.
     data_transfer_permission = models.BooleanField(default=True,
                                                    help_text="Permission for individual users access to data transfer")
@@ -80,12 +82,6 @@ class User(AbstractBaseUser):
     def __str__(self):
         """Returns email of user."""
         return self.email
-
-    def is_staff(self):
-        """Returns true if user is an admin."""
-        # Simplest possible answer: All admins are staff
-        return self.is_admin
-
     def has_perm(self, perm, obj=None):
         """Returns True. """
         # Simplest possible answer: Yes, always
