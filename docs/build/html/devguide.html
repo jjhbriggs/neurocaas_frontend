@@ -386,47 +386,52 @@ python export_credentials.py $PIPEDIR &quot;../../../credentials_folder_from_
 #These should be added
 cd ~/ncap
 python manage.py register_creds $PIPEDIR
-
-  5. Navigate to the neurocaas folder and run:
-
-  .. code-block::
-
-      install requirements.txt
-
-  6. Dxecute aws configure and provide the proper details to setup the aws cli
-
-  .. code-block::
-
-      aws configure
-
-  7. Install other dependencies
-
-  .. code-block::
-
-          sudo apt install jq
-          pip install aws-sam-cli==1.0.0
-          pip install docker==4.2.1
-
-  8. Setup docker
-
-  .. code-block::
-
-          sudo systemctl start docker
-          sudo systemctl enable docker
-          sudo systemctl status docker
-          sudo usermod -a -G docker ubuntu
-
-  9. Restart the shell,  execute &#39;docker ps&#39;, and verify that your shell looks like this:
-
-  .. code-block::
-
-          CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
-
-
-  10. Restart Nginx and Gunicorn
 </pre></div>
 </div>
 </div></blockquote>
+<ol class="arabic" start="5">
+<li><p>Navigate to the neurocaas folder and run:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">install</span> <span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Dxecute aws configure and provide the proper details to setup the aws cli</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">aws</span> <span class="n">configure</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Install other dependencies</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span> <span class="n">install</span> <span class="n">jq</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">aws</span><span class="o">-</span><span class="n">sam</span><span class="o">-</span><span class="n">cli</span><span class="o">==</span><span class="mf">1.0</span><span class="o">.</span><span class="mi">0</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">docker</span><span class="o">==</span><span class="mf">4.2</span><span class="o">.</span><span class="mi">1</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Setup docker</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">start</span> <span class="n">docker</span>
+<span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">enable</span> <span class="n">docker</span>
+<span class="n">sudo</span> <span class="n">systemctl</span> <span class="n">status</span> <span class="n">docker</span>
+<span class="n">sudo</span> <span class="n">usermod</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">G</span> <span class="n">docker</span> <span class="n">ubuntu</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Restart the shell,  execute ‘docker ps’, and verify that your shell looks like this:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CONTAINER</span> <span class="n">ID</span>        <span class="n">IMAGE</span>               <span class="n">COMMAND</span>             <span class="n">CREATED</span>             <span class="n">STATUS</span>              <span class="n">PORTS</span>               <span class="n">NAMES</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Restart Nginx and Gunicorn</p></li>
+</ol>
 <dl class="simple">
 <dt>General Process (IAM Addition):</dt><dd><ol class="arabic simple">
 <li><p>An admin action to create a new IAM for a user is called</p></li>
