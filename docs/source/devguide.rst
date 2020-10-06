@@ -287,19 +287,19 @@ To replicate this process on a new instance, all that needs to be done is as fol
       cd ~/ncap
       python manage.py register_creds $PIPEDIR
 
-	5. Navigate to the neurocaas folder and run:
+5. Navigate to the neurocaas folder and run:
 
 	.. code-block::
 
 	    install requirements.txt
 
-	6. Dxecute aws configure and provide the proper details to setup the aws cli
+6. Dxecute aws configure and provide the proper details to setup the aws cli
     
 	.. code-block::
 
 	    aws configure
 
-	7. Install other dependencies
+7. Install other dependencies
 
 	.. code-block::
 
@@ -307,7 +307,7 @@ To replicate this process on a new instance, all that needs to be done is as fol
 		pip install aws-sam-cli==1.0.0
 		pip install docker==4.2.1
 
-	8. Setup docker
+8. Setup docker
 
 	.. code-block::
 
@@ -316,14 +316,14 @@ To replicate this process on a new instance, all that needs to be done is as fol
 		sudo systemctl status docker
 		sudo usermod -a -G docker ubuntu
 	
-	9. Restart the shell,  execute 'docker ps', and verify that your shell looks like this:
+9. Restart the shell,  execute 'docker ps', and verify that your shell looks like this:
 
 	.. code-block::
 
 		CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 
 
-	10. Restart Nginx and Gunicorn
+10. Restart Nginx and Gunicorn
 	
 General Process (IAM Addition):
 	1. An admin action to create a new IAM for a user is called
