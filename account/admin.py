@@ -136,7 +136,8 @@ class UserAdministrator(UserAdmin):
 
 @admin.register(IAM)
 class IAMAdmin(admin.ModelAdmin):
-    list_display = ('user', 'aws_user', 'aws_access_key', 'created_on')
+    list_display = ('user', 'aws_user', 'aws_access_key', 'group', 'created_on')
+    readonly_fields = ['group']
 
 
 @admin.register(AWSRequest)
