@@ -105,8 +105,8 @@ class SignUpView(View):
             # create AWS Request object for created user
             aws_req = AWSRequest(user=user)
             aws_req.save()
-            if user.email[-3:] == "edu":
-                generateIAMForEDU(user)
+            #if user.email[-3:] == "edu":
+            #    generateIAMForEDU(user)
             messages.success(request, 'Successfully Registered, Please wait for email from us!')
             next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
             return redirect(next_url)
