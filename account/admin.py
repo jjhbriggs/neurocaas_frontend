@@ -21,16 +21,28 @@ def register_IAM(modeladmin, request, queryset):
     for usr in queryset:  
         #: Check that the user doesn't have an IAM already
         if len(IAM.objects.filter(user=usr)) == 0:
+            if usr.requested_group_name == "":
+                messages.error(request, "System error, requested group name blank")
+                continue
             #: Check for existing IAM group in resources for cloudformation
             group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name)))
             #: Generate one if there isn't an existing folder
             if not group_exists:
-                command = 'bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
-                process = subprocess.Popen([command],
+                command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
+                '''process = subprocess.Popen([command],
                             stdout=subprocess.PIPE, 
                             stderr=subprocess.PIPE,
                             shell=True)
-                stdout, stderr = process.communicate()
+                stdout, stderr = process.communicate()'''
+                outfile = open('logs/iam_creation_out_log_1.txt','w')
+                errfile = open('logs/iam_creation_err_log_1.txt','w')
+
+                process = subprocess.Popen([command],
+                                stdout=outfile, 
+                                stderr=errfile,
+                                shell=True, 
+                                executable='/bin/bash')
+                process.communicate()
             user_config_array = {}
             #: Fill correct JSON data for cloudformation
             with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
@@ -48,7 +60,7 @@ def register_IAM(modeladmin, request, queryset):
             with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
                 json.dump(user_config_array, outfile)
             #: Call deploy.sh script to deploy these resources
-            command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
+            command = 'source ~/ncap/venv/bin/activate && source activate /home/ubuntu/ncap/neurocaas && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
             outfile = open('logs/iam_creation_out_log.txt','w')
             errfile = open('logs/iam_creation_err_log.txt','w')
 

@@ -52,9 +52,9 @@ class User(AbstractBaseUser):
     #: Email associated with the user. Users are identified by this email address.
     email = models.EmailField(db_index=True, unique=True)
     #: First Name of User.
-    first_name = models.CharField(max_length=100, default="")
+    first_name = models.CharField(max_length=100, default="", blank=True)
     #: Last Name of User.
-    last_name = models.CharField(max_length=100, default="")
+    last_name = models.CharField(max_length=100, default="", blank=True)
     
     has_migrated_pwd = models.BooleanField(default=False)
     
