@@ -3,12 +3,23 @@ from django.db import models
 from datetime import datetime
 from account.models import Base, AnaGroup
 import uuid
-
+    
 
 def rand_id():
     return str(uuid.uuid1())
 
+class ConfigTemplate(Base):
+    """
+    ConfigTemplate model.
 
+    Allows for embedding configuration files 
+    """
+    config_name = models.CharField(max_length=100, help_text='Name of Process', unique=True, default="default")
+    orig_yaml = models.TextField(help_text='Sample yaml config file (leave sample values entered)', blank=True, null=True)
+
+    def __str__(self):
+        """Returns config name."""
+        return self.config_name
 class Analysis(Base):
     """Analysis Model. Contains specific analysis options and details."""
     
@@ -22,6 +33,8 @@ class Analysis(Base):
     custom = models.BooleanField(help_text='Custom Analysis option', default=False)
     #: Groups with access to use this analysis.
     groups = models.ManyToManyField(AnaGroup)
+
+    config_template = models.ForeignKey(ConfigTemplate, on_delete=models.CASCADE, null=True)
 
     # detail fields of analysis
     #: Short description of analysis.
