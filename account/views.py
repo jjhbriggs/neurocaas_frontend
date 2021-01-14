@@ -20,11 +20,12 @@ def generateIAMForEDU(usr):
     user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
     group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name)))
     if not group_exists:
-        command = 'bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
+        command = 'source /home/ubuntu/ncap/venv/bin/activate && bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
         process = subprocess.Popen([command],
                     stdout=subprocess.PIPE, 
                     stderr=subprocess.PIPE,
-                    shell=True)
+                    shell=True, 
+                    executable='/bin/bash')
         stdout, stderr = process.communicate()
     user_config_array = {}
     with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
@@ -105,8 +106,8 @@ class SignUpView(View):
             # create AWS Request object for created user
             aws_req = AWSRequest(user=user)
             aws_req.save()
-            #if user.email[-3:] == "edu":
-            #    generateIAMForEDU(user)
+            if user.email[-3:] == "edu":
+                generateIAMForEDU(user)
             messages.success(request, 'Successfully Registered, Please wait for email from us!')
             next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
             return redirect(next_url)
