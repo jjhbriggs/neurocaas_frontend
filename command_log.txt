@@ -1,0 +1,13 @@
+2021-01-14 00:44:02:INFO:root:Found data in user_config_template
+2021-01-14 00:44:02:INFO:root:Starting iam and ana_group creation for userautodeploymenttestgmailus-east-1
+2021-01-14 00:44:02:INFO:root:Finished iam and ana_group creation for userautodeploymenttestgmailus-east-1
+2021-01-14 00:44:02:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials v185sm1133528qki.57 - gsmtp')
+2021-01-14 00:44:02:INFO:root:Starting iam and ana_group creation for userbriggsj21stlukesctus-east-1
+2021-01-14 00:44:02:INFO:root:Finished iam and ana_group creation for userbriggsj21stlukesctus-east-1
+2021-01-14 00:44:02:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials n14sm2055963qtr.9 - gsmtp')
+2021-01-14 00:44:02:INFO:root:-----------------------------------
+2021-01-14 00:44:02:INFO:root:2 new users created.
+2021-01-14 00:44:02:INFO:root:-----------------------------------
+2021-01-14 00:44:02:INFO:root:1 affiliates were registered

@@ -16,7 +16,11 @@ class Command(BaseCommand):
         parser.add_argument('pipe_dir', nargs='+', type=str)
 
     def handle(self, *args, **options):
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(filename="email_log.txt",
+                            filemode='a',
+                            format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+                            datefmt="%Y-%m-%d %H:%M:%S",
+                            level=logging.DEBUG)
         pipedir = options.get('pipe_dir', None)[0]
         pipename = os.path.basename(pipedir)
         #: Get Data from user_config_template

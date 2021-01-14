@@ -57,7 +57,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'neurocaas@gmail.com'
-EMAIL_HOST_PASSWORD = 'nifHiv-sejwex-0wehci'
+EMAIL_HOST_PASSWORD = 'gizcu1-fyfbin-qInnur'
 #AUTHENTICATION_BACKENDS = ['account.backends.EmailBackend']
 
 

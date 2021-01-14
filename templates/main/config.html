@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 mt-5">
+                <h2>{{title}}</h2>
+                <hr class="top-0" />
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+
+        <h3>Select or upload dataset(s)</h3>
+
+        <!--  DataSet Jstree Area  -->
+        <div class="table-div no-left-margin">
+            <div id="data_set_div" class="text-left">
+                <div id="data_set_folder"></div>
+            </div>
+        </div>
+        <!--  #END DataSet Jstree Area  -->
+
+        <!--  DataSet Uploading Area  -->
+        <div class="upload-div" id="data_set-area">
+            <form class="drop-area">
+                <p>Drag & Drop or Click!</p>
+                <input type="file" class="fileElem" accept="*/*" multiple>
+                <progress class="progress-bar" max=100 value=0></progress>
+            </form>
+            <div class="gallery"></div>
+        </div>
+        <!-- #END DataSet Uploading Area  -->
+        <hr>
+
+        <!-- Config data Area -->
+        <div class="mt-2">
+            <h3>Select or upload config</h3>
+            <!-- Config Jstree Area -->
+            <div class="table-div no-left-margin">
+                <div id="config_div" class="text-left">
+                    <div id="config_folder"></div>
+                </div>
+            </div>
+            <!-- #END Config Jstree Area -->
+
+            <!-- Config file Uploading Area    -->
+            <div class="upload-div" id="config-area">
+                <form class="drop-area">
+                    <p>Drag & Drop or Click!</p>
+                    <input type="file" class="fileElem" accept=".json" multiple>
+                    <progress class="progress-bar" max=100 value=0></progress>
+                </form>
+                <div class="gallery"></div>
+            </div>
+            <!-- #END Config file Uploading Area    -->
+
+            <div class="mt-2 table-div">
+                <button onclick="submit();" id="submit_button" class="disabled">
+                    <span id="btn-spinner" style="display: block;"><i class="fas fa-sync-alt fa-spin"></i></span>
+                    Submit
+                </button>
+                <div class="mt-3">
+                    Do you want to restart analysis?
+                    <a href="" class="refresh_link">Reset</a>
+                </div>
+            </div>
+        </div>
+        <!-- #END Config data Area -->
+
+    </div>
+    <!--# END Uploading Area    -->
+
+    
+</div>
+
+{% endblock %}
