@@ -13,7 +13,7 @@ docutils==0.15.2
 gunicorn==20.0.4
 idna==2.9
 imagesize==1.2.0
-Jinja2==2.11.2
+Jinja2==2.11.3
 jmespath==0.9.4
 MarkupSafe==1.1.1
 packaging==20.4
