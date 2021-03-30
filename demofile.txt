@@ -1,0 +1,21 @@
+component_eval: false
+fitting_mode: '9'
+param_dict: '6'
+param_mode: '6'
+params:
+  K: 6
+  decay_time: 9.0
+  fr: 8
+  gSig:
+  - 6
+  - 8
+  - 8
+  - 8
+  merge_thr: 6.0
+  method_init: '9'
+  nb: 7
+  p: 9
+  rf: '8'
+  ssub: 7
+  stride: 9
+  tsub: 7

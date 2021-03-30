@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6 offset-md-3 mt-5">
+                <h2>{{title}}</h2>
+                <hr class="top-0" />
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <!-- Config data Area -->
+        <div class="mt-2">
+            <h3>Create a new Config File</h3>
+            
+
+            <!-- Config Jstree Area -->
+            <div class="table-div no-left-margin">
+                <div id="config_div" class="text-left">
+                    <div id="config_folder"></div>
+                </div>
+            </div>
+            <!-- #END Config Jstree Area -->
+
+            <!-- Config file Uploading Area    for="{{ field.id_for_label }}"-->
+            <div class="upload-div" id="config-area">
+            <form method="post">
+                <p>New Config File Name </p>
+                <p style="font-size:14px;">(no '/', no file extension)</p>
+                <div class="form-group  row">
+                    <label class="col-5 col-form-label" for="file_name">Name:</label>
+                    <div class="col-7">
+                        <input class="form-control" for="file_name" name="file_name" placeholder="Enter a file name"></label>
+                    </div>
+                </div>
+                <p>Integer Type Fields</p>
+                {% for key, val in int_dict.items %}
+                    <div class="form-group  row">
+                        <label class="col-5 col-form-label" for="{{ key }}">{{ key }}:</label>
+                        <div class="col-7">
+                            <input class="form-control" type="number" pattern="\d+" for="{{ key }}" name="{{ key }}" value="{{ val }}"></label>
+                        </div>
+                    </div>
+                {% endfor %}
+                <p>Float Type Fields</p>
+                {% for key, val in float_dict.items %}
+                    <div class="form-group  row">
+                        <label class="col-5 col-form-label" for="{{ key }}">{{ key }}:</label>
+                        <div class="col-7">
+                            <input class="form-control" type="number" step=any for="{{ key }}" name="{{ key }}" value="{{ val }}"></label>
+                        </div>
+                    </div>
+                {% endfor %}
+                <p>String Type Fields</p>
+                <p style="font-size:14px;">Quotes are not required.</p>
+                {% for key, val in str_dict.items %}
+                    <div class="form-group  row">
+                        <label class="col-5 col-form-label" for="{{ key }}">{{ key }}:</label>
+                        <div class="col-7">
+                            <input class="form-control" type="text" for="{{ key }}" name="{{ key }}" value="{{ val }}"></label>
+                        </div>
+                    </div>
+                {% endfor %}
+                <p>Bool Type Fields</p>
+                {% for key, val in bool_dict.items %}
+                    <div class="form-group  row">
+                        <label class="col-5 col-form-label" for="{{ key }}">{{ key }}:</label>
+                        <div class="col-7">
+                            <input class="form-control" type="checkbox" for="{{ key }}" value="{{ val }}"></label>
+                        </div>
+                    </div>
+                {% endfor %}
+                <p>List Type Fields</p>
+                <p style="font-size:14px;">Enter a comma deliminated list (No trailing comma).</p>
+                {% for key, val in list_dict.items %}
+                    <div class="form-group  row">
+                        <label class="col-5 col-form-label" for="{{ key }}">{{ key }}:</label>
+                        <div class="col-7">
+                            <input class="form-control" type="text" for="{{ key }}" name="{{ key }}" value="{{ val }}"></label>
+                        </div>
+                    </div>
+                {% endfor %}
+                <p>Unknown Type Fields</p>
+                <p style="font-size:14px;">Reference the sample config file to find proper the data type (if applicable).</p>
+                {% for key, val in none_dict.items %}
+                    <div class="form-group  row">
+                        <label class="col-5 col-form-label" for="{{ key }}">{{ key }}:</label>
+                        <div class="col-7">
+                            <input class="form-control" type="text" for="{{ key }}" name="{{ key }}" value="{{ val }}"></label>
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="mt-2 table-div">
+                <div class="col-11" >
+                    <button type="submit" style="margin: 1em;" value="Create">Create</button>
+                </div>
+                </div>
+            </div>
+            <!-- #END Config file Uploading Area    -->
+
+            
+            </form>
+        </div>
+        <!-- #END Config data Area -->
+
+    </div>
+    <!--# END Uploading Area    -->
+    
+    <div class="col-md-8">
+        <h3>Sample Config File</h3>
+        <i>For variable type and functionality reference</i>
+        <hr>
+            <div class="result-div" style="text-align: left; line-height: normal; padding: 3px">
+                <link rel="stylesheet"
+                href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.3.2/styles/a11y-dark.min.css">
+                <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.3.2/highlight.min.js"></script>
+                <script>hljs.initHighlightingOnLoad();</script>
+                <pre><code class="yaml">{{ config_sample }}</code></pre>
+            </div>
+        </div>
+</div>
+
+{% endblock %}
