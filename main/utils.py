@@ -7,7 +7,6 @@ import boto3
 from account.models import *
 from .models import Analysis
 
-
 def get_current_iam(request):
     """
         Return current iam object from request.
@@ -102,6 +101,13 @@ def generate_folder():
     return "%s/%s" % ("static/downloads", time.time())
 
 
+def upload_file_to_s3(iam, bucket, key, file_path):
+    """
+        Download file from s3 and return link of it.
+        """
+    s3 = s3_resource(iam=iam)
+    
+    return s3.Bucket(bucket).upload_file(file_path,key)
 def download_file_from_s3(iam, bucket, key, folder):
     """
         Download file from s3 and return link of it.
@@ -117,7 +123,6 @@ def download_file_from_s3(iam, bucket, key, folder):
         return None
 
     return file_path
-
 
 def download_directory_from_s3(iam, bucket, folder, un_cert=True):
     """

@@ -12,8 +12,9 @@ from .utils import *
 from django.contrib import messages
 
 import shutil
-
-
+import yaml
+import collections
+import json
 # Create your views here.
 class IntroView(View):
     """
@@ -318,7 +319,155 @@ class UserFilesView(LoginRequiredMixin, View):
             "data_sets": data_sets,
             "configs": configs
         })
+#TEST VIEW
+def flatten(d, parent_key='', sep='.'):
+    items = []
+    for k, v in d.items():
+        new_key = parent_key + sep + k if parent_key else k
+        if isinstance(v, collections.abc.MutableMapping):
+            items.extend(flatten(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+def unflatten(dictionary):
+    resultDict = dict()
+    for key, value in dictionary.items():
+        parts = key.split(".")
+        d = resultDict
+        for part in parts[:-1]:
+            if part not in d:
+                d[part] = dict()
+            d = d[part]
+        d[parts[-1]] = value
+    return resultDict
 
+@method_decorator(csrf_exempt, name='dispatch')
+class ConfigView(LoginRequiredMixin, View):
+    """
+        Processing View.
+    """
+    template_name = "main/config.html"
+
+    def get(self, request, ana_id):
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+
+        if not analysis.check_iam(iam):
+            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
+            return redirect('/')
+
+        # convert aws keys to base64 string
+        secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
+        access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+
+        try:
+            yaml_arr = yaml.safe_load(analysis.config_template.orig_yaml)
+            ncap_sys_pref = '__'
+            ncap_dict = {key:val for key, val in yaml_arr.items()  
+                            if key.startswith(ncap_sys_pref) and key.endswith(ncap_sys_pref)} 
+            custom_dict = {key:val for key, val in yaml_arr.items()  
+                            if not key in ncap_dict} 
+
+            int_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is int}
+            float_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is float}
+            str_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is str}
+            bool_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is bool}
+            list_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is list}
+            for key, val in list_dict.items():
+                list_dict[key] = ','.join(str(v) for v in val)
+            none_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is type(None)}
+        except yaml.YAMLError as exc:
+            messages.error(request, "YAML Parse error." + str(exc))
+            return redirect('/')
+
+        return render(request=request, template_name=self.template_name, context={
+            "id1": access_id,
+            "id2": secret_key,
+            "title": analysis.analysis_name,
+            'iam': iam,
+            'user': get_current_user(request),
+            'logged_in': not request.user.is_anonymous,
+            'config_sample': analysis.config_template.orig_yaml,
+            'analysis': analysis,
+            'ncap_dict': ncap_dict,
+            'int_dict': int_dict,
+            'float_dict': float_dict,
+            'str_dict': str_dict,
+            'bool_dict': bool_dict,
+            'list_dict': list_dict,
+            'none_dict': none_dict
+        })
+    def post(self, request, ana_id):
+        analysis = Analysis.objects.get(pk=ana_id)
+        iam = get_current_iam(request)
+        
+        try:
+            yaml_arr = yaml.safe_load(analysis.config_template.orig_yaml)
+            ncap_sys_pref = '__'
+            ncap_dict = {key:val for key, val in yaml_arr.items()  
+                            if key.startswith(ncap_sys_pref) and key.endswith(ncap_sys_pref)} 
+            custom_dict = {key:val for key, val in yaml_arr.items()  
+                            if not key in ncap_dict} 
+
+            int_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is int}
+            float_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is float}
+            str_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is str}
+            bool_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is bool}
+            list_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is list}
+            none_dict = {key:val for key, val in flatten(custom_dict).items()  
+                   if type(val) is type(None)}
+        except yaml.YAMLError as exc:
+            messages.error(request, "YAML Parse error." + str(exc))
+            return redirect('/')
+        try:
+            final_dict = dict()
+            for key, val in int_dict.items():
+                int_dict[key] = int(request.POST.get(key, None))
+            final_dict.update(int_dict)
+            for key, val in float_dict.items():
+                float_dict[key] = float(request.POST.get(key, None))
+            final_dict.update(float_dict)
+            for key, val in str_dict.items():
+                str_dict[key] = request.POST.get(key, None).replace("\'","").replace("\"","")
+            final_dict.update(str_dict)
+            for key, val in bool_dict.items():
+                bool_dict[key] = False
+                if request.POST.get(key, None) == "on":
+                    bool_dict[key] = True
+            final_dict.update(bool_dict)
+            for key, val in list_dict.items():
+                tmp = list(request.POST.get(key, None).split(",")) 
+                for c, x in enumerate(tmp):
+                    tmp[c] = type(list_dict[key][0])(x)
+                list_dict[key] = tmp
+            final_dict.update(list_dict)
+            for key, val in none_dict.items():
+                none_dict[key] = request.POST.get(key, None)
+            final_dict.update(none_dict)
+
+            ct = str(int(time.time()))
+            f = open("config_generations/config_file" + ct + ".yaml", "w")
+            f.write(str(yaml.dump(unflatten(final_dict))))
+            f.close()
+            file_name = request.POST.get("file_name", None).replace("/","")
+            
+            upload_file_to_s3(iam,analysis.bucket_name, iam.group.name + "/configs/" + file_name + ".yaml", "config_generations/config_file" + ct + ".yaml")
+            messages.success(request, "Your Config File has been created.")
+            return redirect(request.path_info)
+        except:
+            messages.error(request, "An error occurred. Please check that you have no irregular data, and then contact the developer if the issue persists.")
+            return redirect('/')
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ProcessView(LoginRequiredMixin, View):

@@ -14,19 +14,37 @@ import getpass
 
 # Register your models here.
 user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
+#: Registers IAM Automatically with AWS and the Django DB
 def register_IAM(modeladmin, request, queryset):
     current_p = 0
+    #: Register IAM for every user in query
     for usr in queryset:  
+        #: Check that the user doesn't have an IAM already
         if len(IAM.objects.filter(user=usr)) == 0:
+            if usr.requested_group_name == "":
+                messages.error(request, "System error, requested group name blank")
+                continue
+            #: Check for existing IAM group in resources for cloudformation
             group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name)))
+            #: Generate one if there isn't an existing folder
             if not group_exists:
-                command = 'bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
-                process = subprocess.Popen([command],
+                command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
+                '''process = subprocess.Popen([command],
                             stdout=subprocess.PIPE, 
                             stderr=subprocess.PIPE,
                             shell=True)
-                stdout, stderr = process.communicate()
+                stdout, stderr = process.communicate()'''
+                outfile = open('logs/iam_creation_out_log_1.txt','w')
+                errfile = open('logs/iam_creation_err_log_1.txt','w')
+
+                process = subprocess.Popen([command],
+                                stdout=outfile, 
+                                stderr=errfile,
+                                shell=True, 
+                                executable='/bin/bash')
+                process.communicate()
             user_config_array = {}
+            #: Fill correct JSON data for cloudformation
             with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
                 user_config_array = json.load(f)
                 affiliate = user_config_array['UXData']["Affiliates"][0]
@@ -41,7 +59,8 @@ def register_IAM(modeladmin, request, queryset):
                 user_config_array['UXData']["Affiliates"][0] = affiliate
             with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
                 json.dump(user_config_array, outfile)
-            command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
+            #: Call deploy.sh script to deploy these resources
+            command = 'source ~/ncap/venv/bin/activate && source activate /home/ubuntu/ncap/neurocaas && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
             outfile = open('logs/iam_creation_out_log.txt','w')
             errfile = open('logs/iam_creation_err_log.txt','w')
 
@@ -54,16 +73,19 @@ def register_IAM(modeladmin, request, queryset):
             messages.add_message(request, messages.INFO, "The IAM Creation Process has started. Please check back later to see if your resources have been created.")
             current_p = current_p + 1
         else:
-            messages.error(request, "Users with existing IAMs were selected")
+            messages.error(request, "A User with an existing IAM was selected")
 register_IAM.short_description = "Generate an IAM and Group for this user in django db and cloudformation"
+#: Removes IAM Automatically with AWS and the Django DB
 def remove_IAM(modeladmin, request, queryset):
     current_p = 0
+    #: Remove IAM for every user in query
     for usr in queryset:  
+        #: Check that the user has an IAM already
         if len(IAM.objects.filter(user=usr)) > 0:
             user_config_array = {}
             current_iam = IAM.objects.filter(user=usr).first()
             current_group = current_iam.group
-            
+            #: Remove correct JSON data for cloudformation
             with open(os.path.join(user_profiles, 'group-' + str(current_group), 'user_config_template.json')) as f:
                 user_config_array = json.load(f)
                 affiliate = user_config_array['UXData']["Affiliates"][0]
@@ -75,6 +97,7 @@ def remove_IAM(modeladmin, request, queryset):
                 user_config_array['UXData']["Affiliates"][0] = affiliate
             with open(os.path.join(user_profiles, 'group-' + str(current_group), 'user_config_template.json'), 'w') as outfile:
                 json.dump(user_config_array, outfile)
+            #: Call deploy.sh script to deploy these resources
             command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(current_group) + ' &')
             outfile = open('logs/iam_removal_out_log.txt','w')
             errfile = open('logs/iam_removal_err_log.txt','w')
@@ -86,10 +109,10 @@ def remove_IAM(modeladmin, request, queryset):
             process.communicate()
             messages.add_message(request, messages.INFO, "The IAM Removal Process has started. Please check back later to see if your resources have been removed.")
             current_p = current_p + 1
-            #: remove from django
+            #: Remove IAM from django db
             current_iam.delete()
         else:
-            messages.error(request, "No users with valid IAMs were selected")
+            messages.error(request, "A user was selected that did not contain a valid IAM")
 remove_IAM.short_description = "Remove associated IAM from cloudformation stacks and django db"
 
 
@@ -125,7 +148,8 @@ class UserAdministrator(UserAdmin):
 
 @admin.register(IAM)
 class IAMAdmin(admin.ModelAdmin):
-    list_display = ('user', 'aws_user', 'aws_access_key', 'created_on')
+    list_display = ('user', 'aws_user', 'aws_access_key', 'group', 'created_on')
+    readonly_fields = ['group']
 
 
 @admin.register(AWSRequest)
