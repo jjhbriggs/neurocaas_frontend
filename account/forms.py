@@ -90,8 +90,6 @@ class UserCreationForm(forms.ModelForm):
         
         if commit:
             user.save()
-        '''if user.email[-3:] == "edu":
-            generateIAMForEDU(user)'''
         return user
 
 

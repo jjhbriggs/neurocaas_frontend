@@ -1,4 +1,5 @@
 alabaster==0.7.12
+<<<<<<< HEAD
 appnope==0.1.0
 arrow==0.15.8
 asn1crypto==0.24.0
@@ -26,10 +27,20 @@ cycler==0.10.0
 dateparser==0.7.6
 decorator==4.4.0
 Django==2.2.1
+=======
+Babel==2.8.0
+boto3==1.12.3
+botocore==1.15.3
+certifi==2020.4.5.2
+chardet==3.0.4
+coverage
+Django==2.2.13
+>>>>>>> c1ebbc470fbc9db2489f19593f2f46d672628b4c
 django-environ==0.4.5
 django-rest-framework==0.1.0
 django-suit==0.2.28
 djangorestframework==3.11.0
+<<<<<<< HEAD
 docker==4.2.2
 docutils==0.14
 Flask==1.0.4
@@ -84,6 +95,26 @@ six==1.12.0
 snowballstemmer==2.0.0
 Sphinx==3.0.3
 sphinx-rtd-theme==0.5.0
+=======
+docutils==0.15.2
+gunicorn==20.0.4
+idna==2.9
+imagesize==1.2.0
+Jinja2==2.11.2
+jmespath==0.9.4
+MarkupSafe==1.1.1
+packaging==20.4
+Pygments==2.6.1
+pyparsing==2.4.7
+python-dateutil==2.8.1
+pytz==2019.3
+requests==2.23.0
+s3transfer==0.3.3
+six==1.14.0
+snowballstemmer==2.0.0
+Sphinx==3.1.0
+sphinx-rtd-theme==0.4.3
+>>>>>>> c1ebbc470fbc9db2489f19593f2f46d672628b4c
 sphinxcontrib-applehelp==1.0.2
 sphinxcontrib-devhelp==1.0.2
 sphinxcontrib-htmlhelp==1.0.3
@@ -91,6 +122,7 @@ sphinxcontrib-jsmath==1.0.1
 sphinxcontrib-qthelp==1.0.3
 sphinxcontrib-serializinghtml==1.1.4
 sqlparse==0.3.0
+<<<<<<< HEAD
 tomlkit==0.5.8
 tornado==6.0.3
 traitlets==4.3.2
@@ -102,3 +134,7 @@ websocket-client==0.57.0
 Werkzeug==1.0.1
 whichcraft==0.6.1
 zipp==3.1.0
+=======
+urllib3==1.25.8
+
+>>>>>>> c1ebbc470fbc9db2489f19593f2f46d672628b4c

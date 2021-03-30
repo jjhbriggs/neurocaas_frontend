@@ -19,9 +19,7 @@ static/downloads
 db.sqlite3
 db.sqlite3-journal
 db_backups
-
+ncap/.env
 neurocaas
 ncap_user_creds
 logs
-neurocaas2
-config_generations

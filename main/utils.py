@@ -7,6 +7,10 @@ import boto3
 from account.models import *
 from .models import Analysis
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> c1ebbc470fbc9db2489f19593f2f46d672628b4c
 def get_current_iam(request):
     """
         Return current iam object from request.
