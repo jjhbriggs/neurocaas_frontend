@@ -17,4 +17,4 @@ Technologies
 This Project is created with
 - Python version: 3
 - Django version: 2.2.13
-See requirements.txt for a full list of packages
+See requirements.txt for a full list of packages.
