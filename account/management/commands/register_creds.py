@@ -55,11 +55,18 @@ class Command(BaseCommand):
                                 new_group = AnaGroup.objects.create(name=ana_name)
                             else:
                                 new_group = new_group.first()
+
+                            iam_pwd = ""
+                            with open(os.path.join(pipedir, 'compiled_users.json')) as f2:
+                                user_pwd_array = json.load(f2)
+                                iam_pwd = user_pwd_array['Outputs']['Password' + username]['Value']
+                                #------user_config_array['Outputs']['Passwordtestmultiplegmail']['Value']
                             if len(IAM.objects.filter(user=user)) == 0:
                                 iam = IAM.objects.create(user=user,
                                                     aws_user=creds['Username'] + region,
                                                     aws_access_key=creds['Access Key'],
                                                     aws_secret_access_key=creds['Secret Access Key'],
+                                                    aws_pwd = iam_pwd,
                                                     group=new_group)
                             #: Register group with listed buckets
                             for bucket in pipelines:

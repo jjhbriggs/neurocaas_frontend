@@ -139,6 +139,7 @@ class IAM(Base):
     #: The group this IAM is associated with
     group = models.ForeignKey(AnaGroup, on_delete=models.CASCADE)
     # group = models.CharField(max_length=255, help_text='Group Name', default='bendeskylab')
+    aws_pwd = models.CharField(max_length=255, help_text="AWS account password")
 
     def __str__(self):
         """Returns AWS IAM Username."""
