@@ -352,6 +352,9 @@ class ConfigView(LoginRequiredMixin, View):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
 
+        if analysis.config_template is None:
+            messages.error(request, "No config template for this analysis yet.")
+            return redirect('/')
         if not analysis.check_iam(iam):
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
