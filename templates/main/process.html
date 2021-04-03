@@ -39,7 +39,7 @@
 
         <!-- Config data Area -->
         <div class="mt-2">
-            <h3>Select or upload config</h3>
+            <h3>Select, upload, or <u><a href="/config/{{analysis.id}}">create a new</a></u> config</h3>
             <!-- Config Jstree Area -->
             <div class="table-div no-left-margin">
                 <div id="config_div" class="text-left">
@@ -67,6 +67,10 @@
                 <div class="mt-3">
                     Do you want to restart analysis?
                     <a href="" class="refresh_link">Reset</a>
+                </div>
+                <hr>
+                <div class="mt-3" style="font-size:14px;line-height:1.2">
+                    If you have very large files (~2GB or more), Neurocaas may have trouble uploading them. Click <a href="https://s3.console.aws.amazon.com/s3/buckets/{{bucket}}?region=us-east-1&prefix={{iam.group.name}}/inputs/&showversions=false" target="_blank">here</a> and select 'IAM User' to upload them directly through aws. Your credentials can be found in your <a href="/profile" target="_blank">profile</a>, and the account ID is 'neurocaas'.
                 </div>
             </div>
         </div>
