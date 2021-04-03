@@ -29,3 +29,12 @@
 2021-03-31 15:50:36:INFO:root:1 new users created.
 2021-03-31 15:50:36:INFO:root:-----------------------------------
 2021-03-31 15:50:36:INFO:root:1 affiliates were registered
+2021-04-02 13:04:35:INFO:root:Found data in user_config_template
+2021-04-02 13:04:35:INFO:root:Starting iam and ana_group creation for userta2507columbiaus-east-1
+2021-04-02 13:04:35:INFO:root:Finished iam and ana_group creation for userta2507columbiaus-east-1
+2021-04-02 13:04:36:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials v6sm6754158qkf.132 - gsmtp')
+2021-04-02 13:04:36:INFO:root:-----------------------------------
+2021-04-02 13:04:36:INFO:root:1 new users created.
+2021-04-02 13:04:36:INFO:root:-----------------------------------
+2021-04-02 13:04:36:INFO:root:1 affiliates were registered
