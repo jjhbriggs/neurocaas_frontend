@@ -16,6 +16,7 @@ urlpatterns = [
 
     path('process/<int:ana_id>', ProcessView.as_view(), name='process'),
     path('config/<int:ana_id>', ConfigView.as_view(), name='config'),
+    path('largefiledocs/', LFDView.as_view(), name='lfd'),
     path('user_files/<int:ana_id>', UserFilesView.as_view(), name='get_user_files'),
     path('results/<int:ana_id>', ResultView.as_view(), name='get_results'),
 

@@ -88,6 +88,21 @@ class QAView(View):
                           'logged_in': not request.user.is_anonymous
                       })
 
+class LFDView(View):
+    """
+        LFD Page View.
+    """
+
+    template_name = "main/lfd_page.html"
+
+    def get(self, request):
+        return render(request=request,
+                      template_name=self.template_name,
+                      context={
+                          'iam': get_current_iam(request),
+                          'user': get_current_user(request),
+                          'logged_in': not request.user.is_anonymous
+                      })
 
 class AnalysisIntroView(View):
     """
