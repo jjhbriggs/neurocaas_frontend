@@ -1,7 +1,7 @@
 {% load static %}
 <html>
 <head>
-    <link rel="Stylesheet" type="text/css" href="style.css" />
+    <link rel="Stylesheet" type="text/css" href="{% static 'css/lfd_style.css' %}" />
     <title>Large Uploads through AWS Console</title>
 <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -29,50 +29,50 @@ AWS Credentials.
 </ol>
 <p>
 You can get AWS credentials in your account profile (click your name on the website):  
-<a href="{% static 'img/awsloginstep0.png' %}"><img src="{% static 'img/awsloginstep0.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep0.png' %}"><img src="{% static 'img/awsloginstep0.png' %}" width="500px"></a>
 </p>
 
 <p>
 Then note your AWS User Name and AWS Password. You will be prompted for these credentials later on. 
-<a href="{% static 'img/awsloginstep1.png' %}"><img src="{% static 'img/awsloginstep1.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep1.png' %}"><img src="{% static 'img/awsloginstep1.png' %}" width="500px"></a>
 </p>
 
 <div id="Managing Large Uploads with the AWS console-Step 2: Logging in to AWS"><h2 id="Step 2: Logging in to AWS" class="header"><a href="#Managing Large Uploads with the AWS console-Step 2: Logging in to AWS">Step 2: Logging in to AWS</a></h2></div>
 <p>
 Next, we will login to AWS. You can access AWS through the link at the bottom of each analysis page: 
-<a href="{% static 'img/awsloginstep2.png' %}"><img src="{% static 'img/awsloginstep2.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep2.png' %}"><img src="{% static 'img/awsloginstep2.png' %}" width="500px"></a>
 </p>
 
 <p>
 This will take you to the AWS login page. On this first page, make sure to click "IAM user" instead of "Root user", and enter "neurocaas" in the Account ID box:
-<a href="{% static 'img/awsloginstep3.png' %}"><img src="{% static 'img/awsloginstep3.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep3.png' %}"><img src="{% static 'img/awsloginstep3.png' %}" width="500px"></a>
 </p>
 
 <p>
 Finally, you will be asked to enter an IAM user name and Password for the NeuroCAAS account. Enter the AWS User Name and AWS Password here from your account profile: 
-<a href="{% static 'img/awsloginstep4.png' %}"><img src="{% static 'img/awsloginstep4.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep4.png' %}"><img src="{% static 'img/awsloginstep4.png' %}" width="500px"></a>
 </p>
 
 <div id="Managing Large Uploads with the AWS console-Step 3: Uploading Data"><h2 id="Step 3: Uploading Data" class="header"><a href="#Managing Large Uploads with the AWS console-Step 3: Uploading Data">Step 3: Uploading Data</a></h2></div>
 <p>
 Now, you should see a page that says "Amazon S3". You will be dropped into a folder that represents your personal data storage for the particular analysis page that you logged in through. Note that you can also freely upload, organize and delete data here, but you will not be able to download input data back to yourself, access to any other user data, or any other features of AWS. Go ahead and drag and drop the data you want to upload onto the page: 
-<a href="{% static 'img/awsloginstep5.png' %}"><img src="{% static 'img/awsloginstep5.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep5.png' %}"><img src="{% static 'img/awsloginstep5.png' %}" width="500px"></a>
 </p>
 
 <p>
 You will then be taken to a summary page where you will be asked to confirm the upload that you started (total number of files, file size, etc.). If everything looks good, click the orange Upload button:
-<a href="{% static 'img/awsloginstep6.png' %}"><img src="{% static 'img/awsloginstep6.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep6.png' %}"><img src="{% static 'img/awsloginstep6.png' %}" width="500px"></a>
 </p>
 
 <p>
 The file will then begin uploading. Note that you should not interrupt the internet connection (putting your computer to sleep, for example) while this is going on, as it will cause the upload to fail. 
-<a href="{% static 'img/awsloginstep7.png' %}"><img src="{% static 'img/awsloginstep7.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep7.png' %}"><img src="{% static 'img/awsloginstep7.png' %}" width="500px"></a>
 </p>
 
 <p>
 Once the upload has succeeded, you will see the new data in the page. Once you go back to the NeuroCAAS page, you will see your data there as well, ready to be analyzed in jobs. 
-<a href="{% static 'img/awsloginstep8.png' %}"><img src="{% static 'img/awsloginstep8.png' %}" width="500px"></a>
-<a href="{% static 'img/awsloginstep9.png' %}"><img src="{% static 'img/awsloginstep9.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep8.png' %}"><img src="{% static 'img/awsloginstep8.png' %}" width="500px"></a>
+<br><a href="{% static 'img/awsloginstep9.png' %}"><img src="{% static 'img/awsloginstep9.png' %}" width="500px"></a>
 </p>
 
     </div>
