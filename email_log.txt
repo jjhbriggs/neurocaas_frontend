@@ -38,3 +38,193 @@
 2021-04-02 13:04:36:INFO:root:1 new users created.
 2021-04-02 13:04:36:INFO:root:-----------------------------------
 2021-04-02 13:04:36:INFO:root:1 affiliates were registered
+2021-05-03 22:10:01:INFO:root:Found data in user_config_template
+2021-05-03 22:10:01:INFO:root:Starting iam and ana_group creation for usertestaddgmailus-east-1
+2021-05-03 22:10:01:INFO:root:Finished iam and ana_group creation for usertestaddgmailus-east-1
+2021-05-03 22:10:01:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials y26sm985716qtf.66 - gsmtp')
+2021-05-03 22:10:01:INFO:root:-----------------------------------
+2021-05-03 22:10:01:INFO:root:1 new users created.
+2021-05-03 22:10:01:INFO:root:-----------------------------------
+2021-05-03 22:10:01:INFO:root:1 affiliates were registered
+2021-05-03 22:15:57:INFO:root:Found data in user_config_template
+2021-05-03 22:15:57:INFO:root:Starting iam and ana_group creation for usertestaddgmailus-east-1
+2021-05-03 22:15:57:INFO:root:Finished iam and ana_group creation for usertestaddgmailus-east-1
+2021-05-03 22:15:57:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials v127sm9681903qkh.37 - gsmtp')
+2021-05-03 22:15:57:INFO:root:-----------------------------------
+2021-05-03 22:15:57:INFO:root:1 new users created.
+2021-05-03 22:15:57:INFO:root:-----------------------------------
+2021-05-03 22:15:57:INFO:root:1 affiliates were registered
+2021-05-04 20:26:40:INFO:root:Found data in user_config_template
+2021-05-04 20:26:40:INFO:root:Starting iam and ana_group creation for userbilalus-east-1
+2021-05-04 20:26:40:INFO:root:Finished iam and ana_group creation for userbilalus-east-1
+2021-05-04 20:26:41:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials z4sm3445376qtv.7 - gsmtp')
+2021-05-04 20:26:41:INFO:root:-----------------------------------
+2021-05-04 20:26:41:INFO:root:1 new users created.
+2021-05-04 20:26:41:INFO:root:-----------------------------------
+2021-05-04 20:26:41:INFO:root:1 affiliates were registered
+2021-05-06 15:41:44:INFO:root:Found data in user_config_template
+2021-05-06 15:41:44:INFO:root:Starting iam and ana_group creation for usernrg2148columbiaus-east-1
+2021-05-06 15:41:44:INFO:root:Finished iam and ana_group creation for usernrg2148columbiaus-east-1
+2021-05-06 15:41:45:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials 2sm2430009qtr.64 - gsmtp')
+2021-05-06 15:41:45:INFO:root:-----------------------------------
+2021-05-06 15:41:45:INFO:root:1 new users created.
+2021-05-06 15:41:45:INFO:root:-----------------------------------
+2021-05-06 15:41:45:INFO:root:1 affiliates were registered
+2021-05-07 21:36:56:INFO:root:Found data in user_config_template
+2021-05-07 21:36:56:INFO:root:Starting iam and ana_group creation for usertestmultiple1gmailus-east-1
+2021-05-07 21:36:56:INFO:root:Finished iam and ana_group creation for usertestmultiple1gmailus-east-1
+2021-05-07 21:36:57:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials h10sm6004005qkh.47 - gsmtp')
+2021-05-07 21:36:57:INFO:root:-----------------------------------
+2021-05-07 21:36:57:INFO:root:1 new users created.
+2021-05-07 21:36:57:INFO:root:-----------------------------------
+2021-05-07 21:36:57:INFO:root:1 affiliates were registered
+2021-05-07 21:41:11:INFO:root:Found data in user_config_template
+2021-05-07 21:41:11:INFO:root:Starting iam and ana_group creation for usertestmultiple1gmailus-east-1
+2021-05-07 21:41:11:INFO:root:Finished iam and ana_group creation for usertestmultiple1gmailus-east-1
+2021-05-07 21:41:12:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials l8sm5703275qtv.18 - gsmtp')
+2021-05-07 21:41:12:INFO:root:Starting iam and ana_group creation for usertestmultiple1agmailus-east-1
+2021-05-07 21:41:12:INFO:root:Finished iam and ana_group creation for usertestmultiple1agmailus-east-1
+2021-05-07 21:41:12:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials f2sm5942540qkh.76 - gsmtp')
+2021-05-07 21:41:12:INFO:root:Starting iam and ana_group creation for usertestmultiple1bgmailus-east-1
+2021-05-07 21:41:12:INFO:root:Finished iam and ana_group creation for usertestmultiple1bgmailus-east-1
+2021-05-07 21:41:13:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials t7sm5524619qtq.87 - gsmtp')
+2021-05-07 21:41:13:INFO:root:-----------------------------------
+2021-05-07 21:41:13:INFO:root:3 new users created.
+2021-05-07 21:41:13:INFO:root:-----------------------------------
+2021-05-07 21:41:13:INFO:root:1 affiliates were registered
+2021-05-07 21:44:20:INFO:root:Found data in user_config_template
+2021-05-07 21:44:20:INFO:root:Starting iam and ana_group creation for usertestmultiple1gmailus-east-1
+2021-05-07 21:44:20:INFO:root:Finished iam and ana_group creation for usertestmultiple1gmailus-east-1
+2021-05-07 21:44:20:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials e7sm5766633qth.27 - gsmtp')
+2021-05-07 21:44:20:INFO:root:-----------------------------------
+2021-05-07 21:44:20:INFO:root:1 new users created.
+2021-05-07 21:44:20:INFO:root:-----------------------------------
+2021-05-07 21:44:20:INFO:root:1 affiliates were registered
+2021-05-07 21:48:42:INFO:root:Found data in user_config_template
+2021-05-07 21:48:42:INFO:root:Starting iam and ana_group creation for usertestmgmailus-east-1
+2021-05-07 21:48:42:INFO:root:Finished iam and ana_group creation for usertestmgmailus-east-1
+2021-05-07 21:48:43:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials x7sm5684832qts.42 - gsmtp')
+2021-05-07 21:48:43:INFO:root:-----------------------------------
+2021-05-07 21:48:43:INFO:root:1 new users created.
+2021-05-07 21:48:43:INFO:root:-----------------------------------
+2021-05-07 21:48:43:INFO:root:1 affiliates were registered
+2021-05-07 21:51:52:INFO:root:Found data in user_config_template
+2021-05-07 21:51:52:INFO:root:Starting iam and ana_group creation for usertestmgmailus-east-1
+2021-05-07 21:51:52:INFO:root:Finished iam and ana_group creation for usertestmgmailus-east-1
+2021-05-07 21:51:52:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials l188sm5676393qkd.77 - gsmtp')
+2021-05-07 21:51:52:INFO:root:Starting iam and ana_group creation for usertestm2gmailus-east-1
+2021-05-07 21:51:52:INFO:root:Finished iam and ana_group creation for usertestm2gmailus-east-1
+2021-05-07 21:51:53:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials i10sm5317444qko.68 - gsmtp')
+2021-05-07 21:51:53:INFO:root:Starting iam and ana_group creation for usertestm3gmailus-east-1
+2021-05-07 21:51:53:INFO:root:Finished iam and ana_group creation for usertestm3gmailus-east-1
+2021-05-07 21:51:53:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials h10sm6033384qkh.47 - gsmtp')
+2021-05-07 21:51:53:INFO:root:-----------------------------------
+2021-05-07 21:51:53:INFO:root:3 new users created.
+2021-05-07 21:51:53:INFO:root:-----------------------------------
+2021-05-07 21:51:53:INFO:root:1 affiliates were registered
+2021-05-07 21:57:46:INFO:root:Found data in user_config_template
+2021-05-07 21:57:46:INFO:root:Starting iam and ana_group creation for usertestmgmailus-east-1
+2021-05-07 21:57:46:INFO:root:Finished iam and ana_group creation for usertestmgmailus-east-1
+2021-05-07 21:57:46:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials a189sm5705102qkd.46 - gsmtp')
+2021-05-07 21:57:46:INFO:root:Starting iam and ana_group creation for usertestm2gmailus-east-1
+2021-05-07 21:57:46:INFO:root:Finished iam and ana_group creation for usertestm2gmailus-east-1
+2021-05-07 21:57:46:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials 195sm5765749qkj.1 - gsmtp')
+2021-05-07 21:57:46:INFO:root:Starting iam and ana_group creation for usertestm3gmailus-east-1
+2021-05-07 21:57:46:INFO:root:Finished iam and ana_group creation for usertestm3gmailus-east-1
+2021-05-07 21:57:47:WARNING:root:SMTP Client failed:
+(535, b'5.7.8 Username and Password not accepted. Learn more at\n5.7.8  https://support.google.com/mail/?p=BadCredentials f12sm5978055qtj.26 - gsmtp')
+2021-05-07 21:57:47:INFO:root:-----------------------------------
+2021-05-07 21:57:47:INFO:root:3 new users created.
+2021-05-07 21:57:47:INFO:root:-----------------------------------
+2021-05-07 21:57:47:INFO:root:1 affiliates were registered
+2021-05-07 22:19:15:INFO:root:Found data in user_config_template
+2021-05-07 22:19:15:INFO:root:Starting iam and ana_group creation for userbhaiderlabgmailus-east-1
+2021-05-07 22:41:25:INFO:root:Found data in user_config_template
+2021-05-07 22:41:25:INFO:root:Starting iam and ana_group creation for usertestmgmailus-east-1
+2021-05-07 22:58:12:INFO:root:Found data in user_config_template
+2021-05-07 22:58:12:INFO:root:Starting iam and ana_group creation for usertestoldsystemgmailus-east-1
+2021-05-07 23:01:47:INFO:root:Found data in user_config_template
+2021-05-07 23:01:47:INFO:root:Starting iam and ana_group creation for usertestissuegmailus-east-1
+2021-05-07 23:13:16:INFO:root:Found data in user_config_template
+2021-05-07 23:13:16:INFO:root:Starting iam and ana_group creation for useragostonlajkogmailus-east-1
+2021-05-07 23:13:24:INFO:root:Found data in user_config_template
+2021-05-07 23:13:24:INFO:root:Starting iam and ana_group creation for userekb2154columbiaus-east-1
+2021-05-07 23:13:36:INFO:root:Found data in user_config_template
+2021-05-07 23:13:36:INFO:root:Starting iam and ana_group creation for userbhaiderlabgmailus-east-1
+2021-05-07 23:13:41:INFO:root:Found data in user_config_template
+2021-05-07 23:13:41:INFO:root:Starting iam and ana_group creation for userchurchlandgus-east-1
+2021-05-07 23:13:51:INFO:root:Found data in user_config_template
+2021-05-07 23:13:51:INFO:root:Starting iam and ana_group creation for userep3023columbiaus-east-1
+2021-05-07 23:14:04:INFO:root:Found data in user_config_template
+2021-05-07 23:14:04:INFO:root:Starting iam and ana_group creation for usercpe2108columbiaus-east-1
+2021-05-07 23:14:11:INFO:root:Found data in user_config_template
+2021-05-07 23:14:11:INFO:root:Starting iam and ana_group creation for userrfk12pittus-east-1
+2021-05-07 23:14:35:INFO:root:Found data in user_config_template
+2021-05-07 23:14:35:INFO:root:Starting iam and ana_group creation for userfengus-east-1
+2021-05-08 23:09:37:INFO:root:Found data in user_config_template
+2021-05-08 23:09:37:INFO:root:Starting iam and ana_group creation for userbhaiderlabgmailus-east-1
+2021-05-08 23:09:39:INFO:root:Found data in user_config_template
+2021-05-08 23:09:39:INFO:root:Starting iam and ana_group creation for useragostonlajkogmailus-east-1
+2021-05-08 23:09:43:INFO:root:Found data in user_config_template
+2021-05-08 23:09:43:INFO:root:Starting iam and ana_group creation for useraw3057columbiaus-east-1
+2021-05-08 23:09:48:INFO:root:Found data in user_config_template
+2021-05-08 23:09:48:INFO:root:Starting iam and ana_group creation for userem3406columbiaus-east-1
+2021-05-08 23:09:51:INFO:root:Found data in user_config_template
+2021-05-08 23:09:51:INFO:root:Starting iam and ana_group creation for useraf3024columbiaus-east-1
+2021-05-08 23:10:01:INFO:root:Found data in user_config_template
+2021-05-08 23:10:01:INFO:root:Starting iam and ana_group creation for usertgabe94gmailus-east-1
+2021-05-08 23:10:02:INFO:root:Found data in user_config_template
+2021-05-08 23:10:02:INFO:root:Starting iam and ana_group creation for usercoutocshlus-east-1
+2021-05-08 23:45:33:INFO:root:Found data in user_config_template
+2021-05-08 23:45:33:INFO:root:Starting iam and ana_group creation for usertestmgmailus-east-1
+2021-05-08 23:46:58:INFO:root:Found data in user_config_template
+2021-05-08 23:46:58:INFO:root:Starting iam and ana_group creation for useraw3057columbiaus-east-1
+2021-05-08 23:47:23:INFO:root:Found data in user_config_template
+2021-05-08 23:47:23:INFO:root:Starting iam and ana_group creation for userav2686columbiaus-east-1
+2021-05-08 23:48:38:INFO:root:Found data in user_config_template
+2021-05-08 23:48:38:INFO:root:Starting iam and ana_group creation for usercoutouclaus-east-1
+2021-05-08 23:53:58:INFO:root:Found data in user_config_template
+2021-05-08 23:53:58:INFO:root:Starting iam and ana_group creation for usersl2993columbiaus-east-1
+2021-05-08 23:57:03:INFO:root:Found data in user_config_template
+2021-05-08 23:57:03:INFO:root:Starting iam and ana_group creation for usersl2993columbiaus-east-1
+2021-05-08 23:57:15:INFO:root:Found data in user_config_template
+2021-05-08 23:57:15:INFO:root:Starting iam and ana_group creation for userrfk12pittus-east-1
+2021-05-08 23:57:32:INFO:root:Found data in user_config_template
+2021-05-08 23:57:32:INFO:root:Starting iam and ana_group creation for usersunandus-east-1
+2021-05-08 23:57:37:INFO:root:Found data in user_config_template
+2021-05-08 23:57:37:INFO:root:Starting iam and ana_group creation for usercoutouclaus-east-1
+2021-05-09 00:00:26:INFO:root:Found data in user_config_template
+2021-05-09 00:00:26:INFO:root:Starting iam and ana_group creation for userkarayelsedefgmailus-east-1
+2021-05-09 00:00:28:INFO:root:Found data in user_config_template
+2021-05-09 00:00:28:INFO:root:Starting iam and ana_group creation for usernrg2148columbiaus-east-1
+2021-05-09 00:00:51:INFO:root:Found data in user_config_template
+2021-05-09 00:00:51:INFO:root:Starting iam and ana_group creation for userjlu39ucscus-east-1
+2021-05-09 00:10:36:INFO:root:Found data in user_config_template
+2021-05-09 00:10:36:INFO:root:Starting iam and ana_group creation for usersilviaus-east-1
+2021-05-09 00:10:42:INFO:root:Found data in user_config_template
+2021-05-09 00:10:42:INFO:root:Starting iam and ana_group creation for usersunandus-east-1
+2021-05-09 00:10:45:INFO:root:Found data in user_config_template
+2021-05-09 00:10:45:INFO:root:Starting iam and ana_group creation for usersl2993columbiaus-east-1
+2021-05-09 00:10:47:INFO:root:Found data in user_config_template
+2021-05-09 00:10:47:INFO:root:Starting iam and ana_group creation for userrfk12pittus-east-1
+2021-05-09 00:10:50:INFO:root:Found data in user_config_template
+2021-05-09 00:10:50:INFO:root:Starting iam and ana_group creation for usersd3470columbiaus-east-1
+2021-05-09 00:10:53:INFO:root:Found data in user_config_template
+2021-05-09 00:10:53:INFO:root:Starting iam and ana_group creation for userrsatapatistus-east-1
+2021-05-09 00:10:54:INFO:root:Found data in user_config_template
+2021-05-09 00:10:54:INFO:root:Starting iam and ana_group creation for userpaulus-east-1

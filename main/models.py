@@ -34,7 +34,7 @@ class Analysis(Base):
     #: Groups with access to use this analysis.
     groups = models.ManyToManyField(AnaGroup)
 
-    config_template = models.ForeignKey(ConfigTemplate, on_delete=models.CASCADE, null=True)
+    config_template = models.ForeignKey(ConfigTemplate, on_delete=models.CASCADE, blank=True, null=True)
 
     # detail fields of analysis
     #: Short description of analysis.
