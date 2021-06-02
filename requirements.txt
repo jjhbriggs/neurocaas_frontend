@@ -96,7 +96,7 @@ tornado==6.0.3
 traitlets==4.3.2
 troposphere==2.5.0
 tzlocal==2.1
-urllib3==1.25.3
+urllib3==1.26.5
 wcwidth==0.1.7
 websocket-client==0.57.0
 Werkzeug==1.0.1
