@@ -228,3 +228,13 @@
 2021-05-09 00:10:53:INFO:root:Starting iam and ana_group creation for userrsatapatistus-east-1
 2021-05-09 00:10:54:INFO:root:Found data in user_config_template
 2021-05-09 00:10:54:INFO:root:Starting iam and ana_group creation for userpaulus-east-1
+2021-05-10 15:54:42:INFO:root:Found data in user_config_template
+2021-05-10 15:54:42:INFO:root:Starting iam and ana_group creation for usernicholasg101gmailus-east-1
+2021-05-12 14:10:12:INFO:root:Found data in user_config_template
+2021-05-12 14:10:12:INFO:root:Starting iam and ana_group creation for usernicholasg101gmailus-east-1
+2021-06-07 06:14:09:INFO:root:Found data in user_config_template
+2021-06-07 06:14:09:INFO:root:Starting iam and ana_group creation for usertgus-east-1
+2021-06-07 17:38:00:INFO:root:Found data in user_config_template
+2021-06-07 17:38:00:INFO:root:Starting iam and ana_group creation for useremukamelucsdus-east-1
+2021-06-07 20:11:01:INFO:root:Found data in user_config_template
+2021-06-07 20:11:01:INFO:root:Starting iam and ana_group creation for userpbtauexus-east-1
