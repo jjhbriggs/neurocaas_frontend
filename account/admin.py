@@ -3,6 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from .forms import *
 from .models import *
+from main.models import *
 import time
 #from subprocess import Popen, PIPE
 import subprocess
@@ -11,6 +12,9 @@ import os
 import sys
 from django.contrib import messages
 import getpass
+from django.shortcuts import render
+from django.http import HttpResponseRedirect
+
 
 # Register your models here.
 user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
@@ -118,6 +122,65 @@ def remove_IAM(modeladmin, request, queryset):
             messages.error(request, "A user was selected that did not contain a valid IAM")
 remove_IAM.short_description = "Remove associated IAM from cloudformation stacks and django db"
 
+#: redirects to intermediate page which lets you change the permissions of a specific queryset. Then this should call iam_create after updating perms as in analysis_deploy.py
+
+def changeGroupPermissions(modeladmin, request, queryset):
+    logfile = open('logs/iam_change_perms_log.txt','w')
+    logfile.write("pre apply\n")
+    logfile.write(json.dumps(request.POST))
+    logfile.write("\nafter post data")
+    group_access = []
+    if 'apply' in request.POST:
+        logfile.write("Hit apply")
+        # The user clicked submit on the intermediate form.
+        # Perform our update action:
+        path = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
+        for usr in queryset:  
+            if len(IAM.objects.filter(user=usr)) == 0:
+                messages.error(request, "Select a user with an IAM")
+                continue
+            stack = "group-" + IAM.objects.filter(user=usr)[0].group.name
+            new_path = path + "/" + stack
+            if os.path.isdir(new_path):
+                try:
+                    with open(new_path + "/user_config_template.json") as f:
+                        try:
+                            data_array = json.load(f)
+                            #pipelines = data_array['UXData']["Affiliates"][0]["Pipelines"]
+                            pipelines = []
+                            for ana in Analysis.objects.all():
+                                if(ana.bucket_name in request.POST):
+                                    pipelines.append(ana.bucket_name)
+                                    group_access.append(ana)
+                            data_array['UXData']["Affiliates"][0]["Pipelines"] = pipelines
+                            with open(new_path + "/user_config_template.json", 'w') as outfile:
+                                json.dump(data_array, outfile)
+                            logfile.write("Succeeded on stack: " + stack)
+                        except:
+                            logfile.write("Failed on stack: " + stack)
+                except:
+                    logfile.write("ignored folder: " + new_path)
+        # Redirect to our admin view after our update has 
+        # completed with a nice little info message saying 
+        # our models have been updated:
+        messages.add_message(request, messages.INFO, "Configuration file change probably worked.... attempting redeployment.")
+        # registerIAM goes here, but calling the function wasn't working for some reason
+        register_IAM(modeladmin, request, queryset)
+        for usr in queryset:
+            for ana in Analysis.objects.all():
+                if ana in group_access:
+                    if not IAM.objects.filter(user=usr)[0].group in ana.groups.all():
+                        ana.groups.add(IAM.objects.filter(user=usr)[0].group)
+                else:
+                    if IAM.objects.filter(user=usr)[0].group in ana.groups.all():
+                        ana.groups.remove(IAM.objects.filter(user=usr)[0].group)
+
+        return HttpResponseRedirect(request.get_full_path())
+    return render(request,
+                      'admin/change_ana_access.html',
+                      context={'analyses':Analysis.objects.all(), 'changeiams':queryset})
+    
+changeGroupPermissions.short_description = "Change Group Permissions"
 
 class UserAdministrator(UserAdmin):
     # The forms to add and change user instances
@@ -136,7 +199,7 @@ class UserAdministrator(UserAdmin):
             'fields': ('email', 'password1', 'password2', 'has_migrated_pwd', 'first_name', 'last_name', 'data_transfer_permission','use_code','requested_group_name','requested_group_code',)}
          ),
     )
-    actions = [register_IAM, remove_IAM]
+    actions = [register_IAM, remove_IAM, changeGroupPermissions]
     def has_IAM_attached(self, obj):
         if len(IAM.objects.filter(user=obj)) == 1:
             return True

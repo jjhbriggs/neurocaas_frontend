@@ -13,14 +13,12 @@
         </div>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-6">
         <!-- Config data Area -->
         <div class="mt-2">
             <h3>Create a new Config File</h3>
+            <i><b><span class="text-danger">This page is still in development, so the generated configuration should be verified manually. <br>---THIS PAGE IS CURRENTLY BROKEN----</span></b></i>
             <hr>
-            <h3><span class="text-danger">This page is still in development, and may be unstable. Results may be incorrect or inconsistent, and UI may be broken.</span></h3>
-            <hr>
-            <h4><span class="text-warning">"Nuerocaas parameters" are not yet supported.</span></h4>
             <!-- Config Jstree Area -->
             <div class="table-div no-left-margin">
                 <div id="config_div" class="text-left">
@@ -31,7 +29,45 @@
 
             <!-- Config file Uploading Area    for="{{ field.id_for_label }}"-->
             <div class="upload-div" id="config-area">
+            
             <form method="post">
+                <p>New Config File Name </p>
+                <p style="font-size:14px;">(no '/', no file extension)</p>
+                <div class="form-group  row">
+                    <label class="col-5 col-form-label" for="file_name">Name:</label>
+                    <div class="col-7">
+                        <input class="form-control" for="file_name" name="file_name" placeholder="Enter a file name"></label>
+                    </div>
+                </div>
+                <p>Fields</p>
+                <ul>
+                {% for key, val in data.items %}
+                    
+                    {% if key|slice:":9" == 'SYS_NCAP_' and val|slice:":24" == 'SYS_NCAP_UL_ENTER_PREFIX' %}
+                        <hr /><ul>{{ val|slice:"25:" }}
+                    {% elif val == 'SYS_NCAP_UL_EXIT_PREFIX' %}
+                        <hr /></ul> 
+                    {% else %}
+                        <li>
+                            <div class="form-group  row">
+                                <label class="col-5 col-form-label" for="{{ key }}">{{ key }}:</label>
+                                <div class="col-7">
+                                    <input class="form-control" type="text" for="{{ key }}" name="{{ key }}" value="{{ val }}">
+                                </div>
+                            </div>
+                        </li>
+                    {% endif %}
+                    
+                {% endfor %}
+                </ul>
+                <div class="mt-2 table-div">
+                <div class="col-11" >
+                    <button type="submit" style="margin: 1em;" value="Create">Create</button>
+                </div>
+                </div>
+            </form>
+
+            {% comment %} <form method="post">
                 <p>New Config File Name </p>
                 <p style="font-size:14px;">(no '/', no file extension)</p>
                 <div class="form-group  row">
@@ -106,16 +142,16 @@
             <!-- #END Config file Uploading Area    -->
 
             
-            </form>
-        </div>
+            </form> {% endcomment %}
+            </div>
         <!-- #END Config data Area -->
 
-    </div>
+        </div>
     <!--# END Uploading Area    -->
-    
-    <div class="col-md-8">
+    </div>
+    <div class="col-md-6">
         <h3>Sample Config File</h3>
-        <i>For variable type and functionality reference</i>
+        <i>For comment  and verification reference</i>
         <hr>
             <div class="result-div" style="text-align: left; line-height: normal; padding: 3px">
                 <link rel="stylesheet"
@@ -124,7 +160,7 @@
                 <script>hljs.initHighlightingOnLoad();</script>
                 <pre><code class="yaml">{{ config_sample }}</code></pre>
             </div>
-        </div>
+    </div>
 </div>
 
 {% endblock %}
