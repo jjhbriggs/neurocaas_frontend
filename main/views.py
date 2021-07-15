@@ -426,7 +426,7 @@ class ConfigView(LoginRequiredMixin, View):
 
             ct = str(int(time.time()))
             f = open("config_generations/config_file" + ct + ".yaml", "w")
-            f.write(str(yaml.dump(unflatten(field_data))))
+            f.write(str(yaml.dump(unflatten(field_data))).replace("\'", ""))
             f.close()
             file_name = request.POST.get("file_name", None).replace("/","")
             

@@ -17,7 +17,8 @@
         <!-- Config data Area -->
         <div class="mt-2">
             <h3>Create a new Config File</h3>
-            <i><b><span class="text-danger">This page is still in development, so the generated configuration should be verified manually. <br>---THIS PAGE IS CURRENTLY BROKEN----</span></b></i>
+            <i><span class="text-danger">This page is still in development, so the auto-generated configuration file should be verified manually to ensure it is correct.</span></i>
+            <br><i>The generated configuration file will be saved in the configurations panel of this analysis, and can be used, viewed, or downloaded there.</i>
             <hr>
             <!-- Config Jstree Area -->
             <div class="table-div no-left-margin">
@@ -28,7 +29,7 @@
             <!-- #END Config Jstree Area -->
 
             <!-- Config file Uploading Area    for="{{ field.id_for_label }}"-->
-            <div class="upload-div" id="config-area">
+            <div class="upload-div" id="config-area" >
             
             <form method="post">
                 <p>New Config File Name </p>
@@ -40,11 +41,11 @@
                     </div>
                 </div>
                 <p>Fields</p>
-                <ul>
+                <ul style="list-style-type:none;">
                 {% for key, val in data.items %}
                     
                     {% if key|slice:":9" == 'SYS_NCAP_' and val|slice:":24" == 'SYS_NCAP_UL_ENTER_PREFIX' %}
-                        <hr /><ul>{{ val|slice:"25:" }}
+                        <hr /><ul style="list-style-type:none;">{{ val|slice:"25:" }}
                     {% elif val == 'SYS_NCAP_UL_EXIT_PREFIX' %}
                         <hr /></ul> 
                     {% else %}
@@ -148,6 +149,7 @@
 
         </div>
     <!--# END Uploading Area    -->
+    <a href="/process/{{analysis.id}}">Back to Analysis</a>
     </div>
     <div class="col-md-6">
         <h3>Sample Config File</h3>
