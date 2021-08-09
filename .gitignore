@@ -24,3 +24,4 @@ ncap/.env
 neurocaas
 ncap_user_creds
 logs
+config_generations
