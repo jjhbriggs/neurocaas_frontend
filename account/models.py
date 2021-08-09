@@ -10,6 +10,7 @@ from django.core.validators import RegexValidator
 import random
 import string
 import uuid
+import datetime as dt
 
 class Base(models.Model):
     """
@@ -45,8 +46,10 @@ class User(AbstractBaseUser):
     A new user is created every time someone signs up using their email through the website.
     """
     objects = UserManager()
-    #: Date/time when user was added.
+    #: Date when user was added.
     date_added = models.DateField(auto_now=False, auto_now_add=True)
+    #: Time when user was added. Note: seperate from date_added due to dev process. Originally date_added was unused, however has since seen use as an indentifier for iam credentials. However daily is not specific enough, so time was added, but existing identifiers used day only. 
+    time_added = models.TimeField(default=dt.time.min, blank=True)
     #: Date/time when user was updated.
     date_updated = models.DateField(auto_now=True)
     #: Email associated with the user. Users are identified by this email address.

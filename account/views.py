@@ -12,6 +12,9 @@ from ncap.backends import authenticate
 import json
 from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
+from django.core.mail import send_mail
+import logging
+
 
 # Create your views here.
 
@@ -106,8 +109,38 @@ class SignUpView(View):
             # create AWS Request object for created user
             aws_req = AWSRequest(user=user)
             aws_req.save()
+            logging.basicConfig(filename="email_log.txt",
+                            filemode='a',
+                            format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+                            datefmt="%Y-%m-%d %H:%M:%S",
+                            level=logging.DEBUG)
             if user.email[-3:] == "edu":
                 generateIAMForEDU(user)
+                try:
+                    body_string = "This is an auto-generated email to let you know that " + user.email + " was just auto-approved for signup. This email is not confirmation that credential generation was successful, only that it is currently being attempted."
+                    send_mail(
+                        'SYSTEM: Auto-Generating for EDU user: ' + user.email,
+                        body_string,
+                        'neurocaas@gmail.com',
+                        ['neurocaas@gmail.com'],
+                        fail_silently=False,
+                    )
+                except Exception as e:
+                    pass
+                    logging.warning("SMTP Client failed:\n" + str(e))
+            else:
+                try:
+                    body_string = "This is an auto-generated email to let you know that " + user.email + " just signed up for Neurocaas. This user was not auto-approved for signup, and can be approved manually on the admin page."
+                    send_mail(
+                        'SYSTEM: ' + user.email + ' is Pending Approval',
+                        body_string,
+                        'neurocaas@gmail.com',
+                        ['neurocaas@gmail.com'],
+                        fail_silently=False,
+                    )
+                except Exception as e:
+                    pass
+                    logging.warning("SMTP Client failed:\n" + str(e))
             messages.success(request, 'Successfully Registered, Please wait for email from us!')
             next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
             return redirect(next_url)

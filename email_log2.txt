@@ -1,0 +1,37 @@
+2021-08-04 22:17:01:INFO:root:Found data in user_config_template
+2021-08-04 22:17:01:INFO:root:Starting iam and ana_group creation for usertesterr208041628035200us-east-1
+2021-08-04 22:20:51:INFO:root:Found data in user_config_template
+2021-08-04 22:20:51:INFO:root:Starting iam and ana_group creation for usertesterr308041628035200us-east-1
+2021-08-04 22:20:51:INFO:root:attempting bucket: dlc-ncap-web
+2021-08-04 22:20:51:INFO:root:attempting bucket: locanmf-ncap-web
+2021-08-04 22:20:51:INFO:root:attempting bucket: caiman-ncap-web
+2021-08-04 22:20:51:INFO:root:attempting bucket: pmd-ncap-web
+2021-08-04 22:20:51:INFO:root:attempting bucket: dgp-refactor
+2021-08-04 22:20:51:INFO:root:attempting bucket: ensemble-dgp
+2021-08-04 22:20:51:INFO:root:attempting bucket: wfield-preprocess
+2021-08-05 17:59:10:INFO:root:Found data in user_config_template
+2021-08-05 17:59:10:INFO:root:Starting iam and ana_group creation for usermichaelschar1624924800us-east-1
+2021-08-05 17:59:10:INFO:root:attempting bucket: label-job-create-web
+2021-08-05 17:59:10:INFO:root:Finished iam and ana_group creation for usermichaelschar1624924800us-east-1
+2021-08-05 17:59:12:INFO:root:-----------------------------------
+2021-08-05 17:59:12:INFO:root:1 new users created.
+2021-08-05 17:59:12:INFO:root:-----------------------------------
+2021-08-05 17:59:12:INFO:root:1 affiliates were registered
+2021-08-09 17:42:16:INFO:root:Found data in user_config_template
+2021-08-09 17:42:16:INFO:root:Starting iam and ana_group creation for usertesttime3gma1628530715us-east-1
+2021-08-09 17:42:16:INFO:root:attempting bucket: dlc-ncap-web
+2021-08-09 17:42:16:INFO:root:attempting bucket: locanmf-ncap-web
+2021-08-09 17:42:16:INFO:root:attempting bucket: caiman-ncap-web
+2021-08-09 17:42:16:INFO:root:attempting bucket: pmd-ncap-web
+2021-08-09 17:42:16:INFO:root:attempting bucket: dgp-refactor
+2021-08-09 17:42:16:INFO:root:attempting bucket: ensemble-dgp
+2021-08-09 17:42:16:INFO:root:attempting bucket: wfield-preprocess
+2021-08-09 17:50:34:INFO:root:Found data in user_config_template
+2021-08-09 17:50:34:INFO:root:Starting iam and ana_group creation for usertesttime4gma1628531312us-east-1
+2021-08-09 17:50:34:INFO:root:attempting bucket: dlc-ncap-web
+2021-08-09 17:50:34:INFO:root:attempting bucket: locanmf-ncap-web
+2021-08-09 17:50:34:INFO:root:attempting bucket: caiman-ncap-web
+2021-08-09 17:50:34:INFO:root:attempting bucket: pmd-ncap-web
+2021-08-09 17:50:35:INFO:root:attempting bucket: dgp-refactor
+2021-08-09 17:50:35:INFO:root:attempting bucket: ensemble-dgp
+2021-08-09 17:50:35:INFO:root:attempting bucket: wfield-preprocess

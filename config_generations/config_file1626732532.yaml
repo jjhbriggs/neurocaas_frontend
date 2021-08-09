@@ -1,0 +1,8 @@
+__duration__: 220
+ensemble_size: 9
+jobnb: 1
+mode: train
+nb_frames: 5
+seed: 5
+testing: True
+videotype: mp4

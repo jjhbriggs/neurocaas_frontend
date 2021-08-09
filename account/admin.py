@@ -15,6 +15,9 @@ import getpass
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
+#these imports look werid but because of datetime imports in other modules, it needs to be done this way here
+from datetime import datetime
+import datetime as dt
 
 # Register your models here.
 user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
@@ -50,20 +53,39 @@ def register_IAM(modeladmin, request, queryset):
                     process.communicate()
                 user_config_array = {}
                 #: Fill correct JSON data for cloudformation
-                with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
-                    user_config_array = json.load(f)
-                    affiliate = user_config_array['UXData']["Affiliates"][0]
-                    if (not usr.email[0:15].replace('@', '').split('.', 1)[0] in affiliate["UserNames"]) and (not usr.email in affiliate["ContactEmail"]):
-                        if not group_exists:
-                            affiliate["AffiliateName"] = usr.requested_group_name
-                            affiliate["UserNames"] = [usr.email[0:25].replace('@', '').split('.', 1)[0]]
-                            affiliate["ContactEmail"] = [usr.email]
+                
+                try:
+                    with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
+                        user_config_array = json.load(f)
+                        affiliate = user_config_array['UXData']["Affiliates"][0]
+
+                        #try:
+                        _timestamp = int(datetime.combine(usr.date_added, usr.time_added).timestamp())
+                        #except Exception as e:
+                        username = ""
+                        dotChunks = usr.email.replace('@', '').split('.')
+                        
+                        for index,chunk in enumerate(dotChunks):
+                            if index != len(dotChunks) - 1:
+                                username += chunk
+                        username = username[0:12] + str(_timestamp)
+                        if (not username in affiliate["UserNames"]):
+                            if not group_exists:
+                                affiliate["AffiliateName"] = usr.requested_group_name
+                                # affiliate["UserNames"] = [usr.email[0:25].replace('@', '').split('.', 1)[0]]
+                                affiliate["UserNames"] = [username]
+                                affiliate["ContactEmail"] = [usr.email]
+                                #affiliate["ContactEmail"] = ["unset"]
+                            else:
+                                #affiliate["UserNames"].append(usr.email[0:25].replace('@', '').split('.', 1)[0])
+                                affiliate["UserNames"] = [username]
                         else:
-                            affiliate["UserNames"].append(usr.email[0:25].replace('@', '').split('.', 1)[0])
-                            affiliate["ContactEmail"].append(usr.email)
-                    user_config_array['UXData']["Affiliates"][0] = affiliate
-                with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
-                    json.dump(user_config_array, outfile)
+                            messages.error(request, "Backend error: Duplicate Username or Email. (Ignore if this is an access change)")
+                        user_config_array['UXData']["Affiliates"][0] = affiliate
+                    with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
+                        json.dump(user_config_array, outfile)
+                except Exception as e: 
+                    messages.error(request, "Backend error: " + e)
                 #: Call deploy.sh script to deploy these resources
                 command = 'source ~/ncap/venv/bin/activate && source activate /home/ubuntu/ncap/neurocaas && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
                 outfile = open('logs/iam_creation_out_log.txt','w')
@@ -97,10 +119,9 @@ def remove_IAM(modeladmin, request, queryset):
                 user_config_array = json.load(f)
                 affiliate = user_config_array['UXData']["Affiliates"][0]
                 curren_un = current_iam.aws_user.replace(user_config_array['Lambda']['LambdaConfig']['REGION'],'')
-                if (curren_un in affiliate["UserNames"]) and (usr.email in affiliate["ContactEmail"]):
+                if (curren_un in affiliate["UserNames"]):
                     #: Then IAM exists in the data, and you can Remove the IAM 
                     affiliate["UserNames"].remove(curren_un)
-                    affiliate["ContactEmail"].remove(usr.email)
                 user_config_array['UXData']["Affiliates"][0] = affiliate
             with open(os.path.join(user_profiles, 'group-' + str(current_group), 'user_config_template.json'), 'w') as outfile:
                 json.dump(user_config_array, outfile)

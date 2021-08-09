@@ -8,6 +8,8 @@ import json
 import os
 import sys
 from django.contrib import messages
+from datetime import datetime
+
 '''
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
@@ -83,10 +85,11 @@ class UserCreationForm(forms.ModelForm):
         if user.use_code:
             user.requested_group_name = AnaGroup.objects.filter(code=self.clean_group_code()).first()
         else:
-            user.requested_group_name = user.email.replace('@', '').replace('.', '').replace('_', '-') + str(int(round(time.time())))
+            user.requested_group_name = user.email.replace('@', '').replace('.', '').replace('_', '-')[0:12] + str(int(round(time.time())))
         user.requested_group_code = self.clean_group_code()
         
         user.has_migrated_pwd = True
+        user.time_added = datetime.now().time()
         
         if commit:
             user.save()

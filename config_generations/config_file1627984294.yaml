@@ -1,0 +1,14 @@
+anntype: Keypoint
+bodyparts: [tube_top, tube_bottom, tongue_end_l, tongue_end_r,
+  bad_frame]
+dataformat: folders
+datasetname: tongue_v1.3
+finaldatabucket: labeljobfinaldata
+fullinstruct: tube top is the upper and left tube edge;               tongue_end_l
+  is the left point of the tongue with maximal curvature
+jobname: tongue_v1.3
+numframes2pick: 50
+shortintruct: please label
+skeleton: [[tube_top, tube_bottom],[ tongue_end_l, tongue_end_r],[
+  bad_frame]]
+users: [[Michael, michael.schartner@internationalbrainlab.org]]

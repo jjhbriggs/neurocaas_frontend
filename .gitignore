@@ -20,6 +20,7 @@ db.sqlite3
 db.sqlite3-journal
 db_backups
 ncap/.env
+.env
 neurocaas
 ncap_user_creds
 logs
