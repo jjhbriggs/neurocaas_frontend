@@ -3,7 +3,8 @@ from django.db import models
 from datetime import datetime
 from account.models import Base, AnaGroup
 import uuid
-    
+from django.core.validators import RegexValidator
+
 
 def rand_id():
     return str(uuid.uuid1())
@@ -23,12 +24,15 @@ class ConfigTemplate(Base):
 class Analysis(Base):
     """Analysis Model. Contains specific analysis options and details."""
     
+    prefix_validator = RegexValidator(r'^job__.+_$', 'Input needs to match format job__bucketname_.')
+
     #: Name of Process.
     analysis_name = models.CharField(max_length=100, help_text='Name of Process', unique=True)
     #: Prefix of result folder name.
-    result_prefix = models.CharField(max_length=100, help_text='Prefix of result folder name')
+    result_prefix = models.CharField(max_length=100, help_text='Prefix of result folder name. FORMAT: job__bucketName_', validators=[prefix_validator])
     #: S3 Bucket Name.
     bucket_name = models.CharField(max_length=100, help_text='Bucket Name')
+    
     #: Custom Analysis option.
     custom = models.BooleanField(help_text='Custom Analysis option', default=False)
     #: Groups with access to use this analysis.

@@ -17,6 +17,7 @@ import collections
 import json
 import string
 import random
+
 # Create your views here.
 class IntroView(View):
     """
