@@ -34,4 +34,5 @@ jobs:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           command: coverage run manage.py test .
-      - codecov/upload 
+      - codecov/upload: 
+        file: {{ coverage_report_filepath }}
