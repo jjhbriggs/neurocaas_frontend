@@ -24,6 +24,6 @@ ncap/.env
 neurocaas
 ncap_user_creds
 logs
-config_generations
+config_generations/
 email_log.txt
 email_log2.txt
