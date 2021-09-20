@@ -6,6 +6,7 @@ orbs:
   # so you dont have to copy and paste it everywhere.
   # See the orb documentation here: https://circleci.com/developer/orbs/orb/circleci/python
   python: circleci/python@1.2
+  codecov: codecov/codecov@3.1.0
 
 workflows:
   my-workflow:
@@ -33,3 +34,4 @@ jobs:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           command: coverage run manage.py test .
+      - codecov/upload
