@@ -600,8 +600,8 @@ class ExtraUtilsTest(TestCase):
     def test_get_name_only(self):
         self.assertEqual(get_name_only("path/to/folder"), "folder")
     def test_generate_folder(self):
-        self.assertContains(generate_folder(), "static/downloads")
-    def test_upload_file_to_s3(self):
+        self.assertEqual("static/downloads" in generate_folder(), True)
+    def test_up_and_down_file_to_s3(self):
         res_key = '%s/temp/test.txt' % self.group
         f = open("test.txt", "a")
         f.write("Test content")
@@ -609,12 +609,10 @@ class ExtraUtilsTest(TestCase):
         ret = upload_file_to_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=res_key, file_path="test.txt")
         print(ret)
         self.assertIsNotNone(ret)
-    def test_download_file_from_s3(self):
         res_folder = '%s/temp' % self.group
         ret = download_file_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, key="test.txt", folder=res_folder)
         print(ret)
         self.assertIsNotNone(ret)
-    def test_download_directory_from_s3(self):
         res_folder = '%s/temp' % self.group
         ret = download_directory_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
         print(ret)
