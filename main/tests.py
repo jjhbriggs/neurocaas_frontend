@@ -505,6 +505,19 @@ class ConfigViewTest(TestCase):
             signature="Signature"
         )
         self.analysis.groups.add(self.group)
+        self.analysis2 = Analysis.objects.create(
+            analysis_name="Test Analysis2",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
+            custom=False,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
         # login here
         form = {
             'email': 'test@test.com',
