@@ -608,7 +608,6 @@ class ExtraUtilsTest(TestCase):
         f.close()
         ret = upload_file_to_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=res_key, file_path="test.txt")
         print(ret)
-        self.assertIsNotNone(ret)
         res_folder = '%s/temp' % self.group
         ret = download_file_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, key="test.txt", folder=res_folder)
         print(ret)
