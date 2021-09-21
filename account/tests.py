@@ -444,18 +444,3 @@ class IAM_Admin_Action_Test(TestCase):
         data = {'action': 'remove_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
         response = self.client.post('/admin/account/user/', data, follow=True)
         self.assertContains(response, "A user was selected that did not contain a valid IAM")
-    def test_iam_removal_gives_gives_success(self):
-        """Test that starting the remove_IAM command with an iam and group will send the initialization message."""
-
-        user = User.objects.filter(email='test2@test.com').first()
-        user.requested_group_name = "unitTestGroup"
-        user.save()
-        group = AnaGroup.objects.create(name="unitTestGroup")
-        IAM.objects.create(user=user,
-                           aws_user="AWS user",
-                           aws_access_key="AWS access key",
-                           aws_secret_access_key="AWS secret key",
-                           group=group)
-        data = {'action': 'remove_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
-        response = self.client.post('/admin/account/user/', data, follow=True)
-        self.assertContains(response, "The IAM Removal Process has started. Please check back later to see if your resources have been removed.")
