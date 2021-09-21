@@ -4,6 +4,7 @@ from django.urls import reverse
 from .models import *
 from .managers import UserManager
 import json
+from django.contrib.messages import get_messages
 class UserTestCase(TestCase):
     """
     Class for testing user information.
@@ -406,4 +407,49 @@ class IAMCreateTest(TestCase):
         response = self.client.post('/iamcreate/', {'file':""})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/iamcreate/?error=emptyfile')
-    
+
+class IAM_Admin_Action_Test(TestCase):
+    """
+    Class for testing the creation, deployment, and removal of an IAM
+    """
+    def setUp(self):
+        """Create basic test user and associate it with a basic test IAM and group."""
+        user = User.objects.create_user('test2@test.com', password='test')
+        user.first_name = "Test2"
+        user.last_name = "User"
+        usera = User.objects.create_superuser('testadmin@test.com', password='test')
+        usera.first_name = "Test Admin"
+        usera.last_name = "User"
+        usera.save()
+        form = {
+            'email': 'testadmin@test.com',
+            'password': 'test',
+        }
+        self.client.post('/login/', form)
+
+    def test_iam_creation_gives_success(self):
+        """Test that starting the register_IAM command results in a successful start message."""
+
+        user = User.objects.filter(email='test2@test.com').first()
+        user.requested_group_name = "unitTestGroup"
+        user.save()
+        data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
+        response = self.client.post('/admin/account/user/', data, follow=True)
+        #print([m.message for m in get_messages(response.wsgi_request)])
+        self.assertContains(response, "The IAM Creation Process has started. Please check back later to see if your resources have been created.")
+    def test_iam_creation_gives_error_on_no_group(self):
+        """Test that starting the register_IAM command without an intended group name results in a successful start message."""
+
+        data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
+        response = self.client.post('/admin/account/user/', data, follow=True)
+        #print([m.message for m in get_messages(response.wsgi_request)])
+        self.assertContains(response, "System error, requested group name blank")
+    def test_iam_creation_gives_gives_error_on_duplicate(self):
+        """Test that starting the register_IAM command on a duplicate (non-access change) results in an error given."""
+
+        user = User.objects.filter(email='test2@test.com').first()
+        user.requested_group_name = "unitTestGroup"
+        user.save()
+        data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
+        response = self.client.post('/admin/account/user/', data, follow=True)
+        self.assertContains(response, "Backend error: Duplicate Username or Email. (Ignore if this is an access change)")

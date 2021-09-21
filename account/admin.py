@@ -27,7 +27,7 @@ def register_IAM(modeladmin, request, queryset):
     #: Register IAM for every user in query
     for usr in queryset:  
         try:
-            #: Check that the user doesn't have an IAM already
+            #: Check that the user doesn't have an IAM already -- Removed for access change, always passes now.
             if True or len(IAM.objects.filter(user=usr)) == 0:
                 if usr.requested_group_name == "":
                     messages.error(request, "System error, requested group name blank")
