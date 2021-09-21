@@ -435,14 +435,14 @@ class IAM_Admin_Action_Test(TestCase):
         user.save()
         data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
         response = self.client.post('/admin/account/user/', data, follow=True)
-        #print([m.message for m in get_messages(response.wsgi_request)])
+        print([m.message for m in get_messages(response.wsgi_request)])
         self.assertContains(response, "The IAM Creation Process has started. Please check back later to see if your resources have been created.")
     def test_iam_creation_gives_error_on_no_group(self):
         """Test that starting the register_IAM command without an intended group name results in a successful start message."""
 
         data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
         response = self.client.post('/admin/account/user/', data, follow=True)
-        #print([m.message for m in get_messages(response.wsgi_request)])
+        print([m.message for m in get_messages(response.wsgi_request)])
         self.assertContains(response, "System error, requested group name blank")
     def test_iam_creation_gives_gives_error_on_duplicate(self):
         """Test that starting the register_IAM command on a duplicate (non-access change) results in an error given."""
@@ -452,4 +452,5 @@ class IAM_Admin_Action_Test(TestCase):
         user.save()
         data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
         response = self.client.post('/admin/account/user/', data, follow=True)
+        print([m.message for m in get_messages(response.wsgi_request)])
         self.assertContains(response, "Backend error: Duplicate Username or Email. (Ignore if this is an access change)")
