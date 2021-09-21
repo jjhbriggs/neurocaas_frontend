@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 # Create your tests here.
-from .models import Analysis
+from .models import Analysis, ConfigTemplate
 from account.models import *
 import os
 from .utils import *
@@ -485,7 +485,7 @@ class ConfigViewTest(TestCase):
                                       aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
                                       aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
                                       group=self.group)
-        self.configTemplate = Analysis.objects.create(
+        self.configTemplate = ConfigTemplate.objects.create(
             config_name="Test Config",
             orig_yaml="__sample_field__: 'sample'",
         )
