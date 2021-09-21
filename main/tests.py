@@ -6,6 +6,8 @@ from account.models import *
 import os
 from .utils import *
 import json
+import yaml
+from .views import flatten, unflatten
 
 class AnalysisTestCase(TestCase):
     """Class for testing IAM connected to analyses."""
@@ -542,7 +544,7 @@ class ConfigViewTest(TestCase):
         """Check that getting the config information does not display if the user does not have permissions for the analysis."""
         
         response = self.client.get('/config/%s' % self.analysis2.id)
-        self.assertEqual(response.status_code, 302)
+        self.assertContains(response, "Your AWS group doesn't have permission to use this analysis.")
         self.assertEqual(response['Location'], '/')
         
     def test_post_fail_to_config_view(self):
@@ -550,3 +552,6 @@ class ConfigViewTest(TestCase):
 
         response = self.client.post('/config/%s' % self.analysis.id, {'fail':'fail'}, follow=True)
         self.assertContains(response, "Config Error: ")
+    def test_flatten_and_unflatten(self):
+        field_data = yaml.safe_load(self.analysis.config_template.orig_yaml)
+        self.assertEqual(unflatten(flatten(field_data).items()), field_data)

@@ -21,5 +21,5 @@ urlpatterns = [
     path('results/<int:ana_id>', ResultView.as_view(), name='get_results'),
 
     # ================================
-    path('test/', TestView.as_view(), name='test_page')
+    #path('test/', TestView.as_view(), name='test_page')
 ]
