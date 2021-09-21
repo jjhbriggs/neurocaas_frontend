@@ -555,3 +555,73 @@ class ConfigViewTest(TestCase):
     def test_flatten_and_unflatten(self):
         field_data = yaml.safe_load(self.analysis.config_template.orig_yaml)
         self.assertEqual(unflatten(flatten(field_data)), field_data)
+
+class ExtraUtilsTest(TestCase):
+    """Class for extra tests on utils.py."""
+
+    def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
+        
+        self.user = User.objects.create_user('test@test.com', password='test')
+        self.user.first_name = "Jack"
+        self.user.last_name = "Briggs"
+        self.user.save()
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
+        self.iam = IAM.objects.create(user=self.user,
+                                      aws_user="jbriggs",
+                                      aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
+                                      aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+                                      group=self.group)
+        self.analysis = Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
+            custom=False,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+        self.analysis.groups.add(self.group)
+        # login here
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+    def test_convert_size(self):
+        self.assertEqual(convert_size(1024), "1024 B")
+        self.assertEqual(convert_size(2048), "2.0 KB")
+        self.assertEqual(convert_size(2097152), "2.0 MB")
+        self.assertEqual(convert_size(2147483648), "2.0 GB")
+    def test_get_name_only(self):
+        self.assertEqual(get_name_only("path/to/folder"), "folder")
+    def test_generate_folder(self):
+        self.assertContains(generate_folder(), "static/downloads")
+    def test_upload_file_to_s3(self):
+        res_key = '%s/temp/test.txt' % self.group
+        f = open("test.txt", "a")
+        f.write("Test content")
+        f.close()
+        ret = upload_file_to_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=res_key, file_path="test.txt")
+        print(ret)
+        self.assertIsNotNone(ret)
+    def test_download_file_from_s3(self):
+        res_folder = '%s/temp' % self.group
+        ret = download_file_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, key="test.txt", folder=res_folder)
+        print(ret)
+        self.assertIsNotNone(ret)
+    def test_download_directory_from_s3(self):
+        res_folder = '%s/temp' % self.group
+        ret = download_directory_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        print(ret)
+        self.assertIsNotNone(ret)
+
+        
+        
+
+        
+
