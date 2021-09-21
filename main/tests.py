@@ -467,4 +467,73 @@ class ResultViewTest(TestCase):
         self.assertEqual(data['status'], 200)
         self.assertNotEqual(data["result_links"], "")
         self.assertEqual(data["end"], True)
-  
+
+
+class ConfigViewTest(TestCase):
+    """Class for testing the process view."""
+    
+    def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
+        
+        self.user = User.objects.create_user('test@test.com', password='test')
+        self.user.first_name = "Test"
+        self.user.last_name = "Test"
+        self.user.save()
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
+        self.iam = IAM.objects.create(user=self.user,
+                                      aws_user="jbriggs",
+                                      aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
+                                      aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+                                      group=self.group)
+        self.configTemplate = Analysis.objects.create(
+            config_name="Test Config",
+            orig_yaml="__sample_field__: 'sample'",
+        )
+        
+        self.analysis = Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
+            custom=False,
+            config_template=self.configTemplate,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+        self.analysis.groups.add(self.group)
+        # login here
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+        
+    def test_get_config_view(self):
+        """Check that the config information displays properly."""
+        
+        response = self.client.get('/config/%s' % self.analysis.id)
+        self.assertEqual(response.context['analysis'], self.analysis)
+        self.assertEqual(response.context['iam'], self.iam)
+        self.assertIsNotNone(response.context['id1'])
+        self.assertIsNotNone(response.context['id2'])
+        self.assertEqual(response.context["logged_in"], True)
+        self.assertEqual(response.context["user"], self.user)
+        self.assertEqual(response.context["config_sample"], "__sample_field__: 'sample'")
+        self.assertIsNotNone(response.context['data'])
+        
+    def test_no_perms_get_config(self):
+        """Check that getting the config information does not display if the user does not have permissions for the analysis."""
+        
+        response = self.client.get('/config/%s' % self.analysis2.id)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/')
+        
+    def test_post_fail_to_config_view(self):
+        """Check that posting file fails. Won't be able to test success case due to need for local file access."""
+
+        response = self.client.post('/config/%s' % self.analysis.id, {'fail':'fail'}, follow=True)
+        self.assertContains(response, "Config Error: ")
