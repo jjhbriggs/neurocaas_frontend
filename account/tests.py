@@ -410,7 +410,8 @@ class IAMCreateTest(TestCase):
 
 class IAM_Admin_Action_Test(TestCase):
     """
-    Class for testing the creation, deployment, and removal of an IAM
+    Class for testing basic errors on the creation/deployment of IAM (Can't test actual IAM creation without access to local files git doesn't see)
+    Test removal of IAM
     """
     def setUp(self):
         """Create basic test user and associate it with a basic test IAM and group."""
@@ -427,30 +428,34 @@ class IAM_Admin_Action_Test(TestCase):
         }
         self.client.post('/login/', form)
 
-    def test_iam_creation_gives_success(self):
-        """Test that starting the register_IAM command results in a successful start message."""
-
-        user = User.objects.filter(email='test2@test.com').first()
-        user.requested_group_name = "unitTestGroup"
-        user.save()
-        data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
-        response = self.client.post('/admin/account/user/', data, follow=True)
-        print([m.message for m in get_messages(response.wsgi_request)])
-        self.assertContains(response, "The IAM Creation Process has started. Please check back later to see if your resources have been created.")
     def test_iam_creation_gives_error_on_no_group(self):
-        """Test that starting the register_IAM command without an intended group name results in a successful start message."""
+        """Test that starting the register_IAM command without an intended group name results in an error message."""
 
         data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
         response = self.client.post('/admin/account/user/', data, follow=True)
-        print([m.message for m in get_messages(response.wsgi_request)])
+        #print([m.message for m in get_messages(response.wsgi_request)])
         self.assertContains(response, "System error, requested group name blank")
-    def test_iam_creation_gives_gives_error_on_duplicate(self):
-        """Test that starting the register_IAM command on a duplicate (non-access change) results in an error given."""
+    def test_iam_removal_gives_gives_error_on_no_IAM(self):
+        """Test that starting the remove_IAM command without an IAM in the user causes an error."""
 
         user = User.objects.filter(email='test2@test.com').first()
         user.requested_group_name = "unitTestGroup"
         user.save()
-        data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
+        data = {'action': 'remove_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
         response = self.client.post('/admin/account/user/', data, follow=True)
-        print([m.message for m in get_messages(response.wsgi_request)])
-        self.assertContains(response, "Backend error: Duplicate Username or Email. (Ignore if this is an access change)")
+        self.assertContains(response, "A user was selected that did not contain a valid IAM")
+    def test_iam_removal_gives_gives_success(self):
+        """Test that starting the remove_IAM command with an iam and group will send the initialization message."""
+
+        user = User.objects.filter(email='test2@test.com').first()
+        user.requested_group_name = "unitTestGroup"
+        user.save()
+        group = AnaGroup.objects.create(name="unitTestGroup")
+        IAM.objects.create(user=user,
+                           aws_user="AWS user",
+                           aws_access_key="AWS access key",
+                           aws_secret_access_key="AWS secret key",
+                           group=group)
+        data = {'action': 'remove_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
+        response = self.client.post('/admin/account/user/', data, follow=True)
+        self.assertContains(response, "The IAM Removal Process has started. Please check back later to see if your resources have been removed.")
