@@ -451,5 +451,5 @@ class IAM_Admin_Action_Test(TestCase):
         user.requested_group_name = "unitTestGroup"
         user.save()
         data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
-        response = self.client.post('/admin/account/user/', data, follow=True) 
+        response = self.client.post('/admin/account/user/', data, follow=True)
         self.assertContains(response, "Backend error: Duplicate Username or Email. (Ignore if this is an access change)")
