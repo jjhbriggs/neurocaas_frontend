@@ -1,7 +1,7 @@
 NeuroCAAS Website
 =================
 
-[![Build Status](https://travis-ci.org/jjhbriggs/neurocaas_frontend.svg?branch=master)](https://travis-ci.org/jjhbriggs/neurocaas_frontend)
+[![CircleCI](https://circleci.com/gh/jjhbriggs/neurocaas_frontend.svg?style=shield)](https://circleci.com/gh/jjhbriggs/neurocaas_frontend)
 [![codecov](https://codecov.io/gh/jjhbriggs/neurocaas_frontend/branch/master/graph/badge.svg)](https://codecov.io/gh/jjhbriggs/neurocaas_frontend)
 [![DOI](https://zenodo.org/badge/276722731.svg)](https://zenodo.org/badge/latestdoi/276722731)
 
