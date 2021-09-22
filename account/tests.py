@@ -428,14 +428,14 @@ class IAM_Admin_Action_Test(TestCase):
         }
         self.client.post('/login/', form)
 
-    def test_iam_creation_gives_error_on_no_group(self):
-        """Test that starting the register_IAM command without an intended group name results in an error message."""
+    # def test_iam_creation_gives_error_on_no_group(self):
+    #     """Test that starting the register_IAM command without an intended group name results in an error message."""
 
-        data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
-        response = self.client.post('/admin/account/user/', data, follow=True)
-        #print([m.message for m in get_messages(response.wsgi_request)])
-        self.assertContains(response, "System error, requested group name blank")
-    def test_iam_removal_gives_gives_error_on_no_IAM(self):
+    #     data = {'action': 'register_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
+    #     response = self.client.post('/admin/account/user/', data, follow=True)
+    #     #print([m.message for m in get_messages(response.wsgi_request)])
+    #     self.assertContains(response, "System error, requested group name blank")
+    def test_iam_removal_gives_error_on_no_IAM(self):
         """Test that starting the remove_IAM command without an IAM in the user causes an error."""
 
         user = User.objects.filter(email='test2@test.com').first()
