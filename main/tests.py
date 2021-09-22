@@ -630,6 +630,12 @@ class ExtraUtilsTest(TestCase):
     def test_get_files_detail_list_err(self):
         ret = get_files_detail_list(iam=self.iam, bucket=self.analysis.bucket_name, folder="THROW_ERROR")
         self.assertEqual(ret, [])
+    def test_download_file_from_s3_err(self):
+        key = "THROW/ERROR"
+        file_key = "%s/%s" % (self.group.name, key)
+        folder = generate_folder()
+        ret = download_file_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=file_key, folder=folder)
+        self.assertIsNone(ret)
 
         
 
