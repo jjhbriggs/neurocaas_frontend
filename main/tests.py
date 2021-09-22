@@ -607,18 +607,32 @@ class ExtraUtilsTest(TestCase):
         f.write("Test content")
         f.close()
         ret = upload_file_to_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=res_key, file_path="test.txt")
-        print(ret)
-
         key = "temp/test.txt"
         file_key = "%s/%s" % (self.group.name, key)
         folder = generate_folder()
         ret = download_file_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=file_key, folder=folder)
-        print(ret)
         self.assertIsNotNone(ret)
         res_folder = '%s/temp' % self.group
         ret = download_directory_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
-        print(ret)
         self.assertIsNotNone(ret)
+    def test_get_last_modified_timestamp_err(self):
+        ret = get_last_modified_timestamp(iam=self.iam, bucket=self.analysis.bucket_name, key="THROW_ERROR")
+        self.assertEqual(ret, 0)
+    def test_get_file_content_err(self):
+        ret = get_file_content(iam=self.iam, bucket=self.analysis.bucket_name, key="THROW_ERROR")
+        self.assertIsNone(ret)
+    def test_get_data_set_logs(self):
+        ret = get_data_set_logs(iam=self.iam, bucket=self.analysis.bucket_name, timestamp="1")
+        self.assertIsNotNone(ret)
+    def test_get_job_list_err(self):
+        ret = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder="THROW_ERROR")
+        self.assertEqual(ret, [])
+    def test_get_files_detail_list_err(self):
+        ret = get_files_detail_list(iam=self.iam, bucket=self.analysis.bucket_name, folder="THROW_ERROR")
+        self.assertEqual(ret, [])
+
+        
+
 
         
         
