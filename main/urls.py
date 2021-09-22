@@ -20,6 +20,4 @@ urlpatterns = [
     path('user_files/<int:ana_id>', UserFilesView.as_view(), name='get_user_files'),
     path('results/<int:ana_id>', ResultView.as_view(), name='get_results'),
 
-    # ================================
-    path('test/', TestView.as_view(), name='test_page')
 ]

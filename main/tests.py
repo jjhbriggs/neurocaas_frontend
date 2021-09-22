@@ -1,11 +1,13 @@
 from django.test import TestCase
 
 # Create your tests here.
-from .models import Analysis
+from .models import Analysis, ConfigTemplate
 from account.models import *
 import os
 from .utils import *
 import json
+import yaml
+from .views import flatten, unflatten
 
 class AnalysisTestCase(TestCase):
     """Class for testing IAM connected to analyses."""
@@ -467,4 +469,170 @@ class ResultViewTest(TestCase):
         self.assertEqual(data['status'], 200)
         self.assertNotEqual(data["result_links"], "")
         self.assertEqual(data["end"], True)
-  
+
+
+class ConfigViewTest(TestCase):
+    """Class for testing the process view."""
+    
+    def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
+        
+        self.user = User.objects.create_user('test@test.com', password='test')
+        self.user.first_name = "Test"
+        self.user.last_name = "Test"
+        self.user.save()
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
+        self.iam = IAM.objects.create(user=self.user,
+                                      aws_user="jbriggs",
+                                      aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
+                                      aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+                                      group=self.group)
+        self.configTemplate = ConfigTemplate.objects.create(
+            config_name="Test Config",
+            orig_yaml="__sample_field__: 'sample'",
+        )
+        
+        self.analysis = Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
+            custom=False,
+            config_template=self.configTemplate,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+        self.analysis.groups.add(self.group)
+        self.analysis2 = Analysis.objects.create(
+            analysis_name="Test Analysis2",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
+            custom=False,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+        # login here
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+        
+    def test_get_config_view(self):
+        """Check that the config information displays properly."""
+        
+        response = self.client.get('/config/%s' % self.analysis.id)
+        self.assertEqual(response.context['analysis'], self.analysis)
+        self.assertEqual(response.context['iam'], self.iam)
+        self.assertIsNotNone(response.context['id1'])
+        self.assertIsNotNone(response.context['id2'])
+        self.assertEqual(response.context["logged_in"], True)
+        self.assertEqual(response.context["user"], self.user)
+        self.assertEqual(response.context["config_sample"], "__sample_field__: 'sample'")
+        self.assertIsNotNone(response.context['data'])
+        
+    def test_no_perms_get_config(self):
+        """Check that getting the config information does not display if the user does not have permissions for the analysis."""
+        
+        response = self.client.get('/config/%s' % self.analysis2.id)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/')
+        
+    def test_post_fail_to_config_view(self):
+        """Check that posting file fails. Won't be able to test success case due to need for local file access."""
+
+        response = self.client.post('/config/%s' % self.analysis.id, {'fail':'fail'}, follow=True)
+        self.assertContains(response, "Config Error: ")
+    def test_flatten_and_unflatten(self):
+        field_data = yaml.safe_load(self.analysis.config_template.orig_yaml)
+        self.assertEqual(unflatten(flatten(field_data)), field_data)
+
+class ExtraUtilsTest(TestCase):
+    """Class for extra tests on utils.py."""
+
+    def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
+        
+        self.user = User.objects.create_user('test@test.com', password='test')
+        self.user.first_name = "Jack"
+        self.user.last_name = "Briggs"
+        self.user.save()
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
+        self.iam = IAM.objects.create(user=self.user,
+                                      aws_user="jbriggs",
+                                      aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
+                                      aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+                                      group=self.group)
+        self.analysis = Analysis.objects.create(
+            analysis_name="Test Analysis",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
+            custom=False,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
+        self.analysis.groups.add(self.group)
+        # login here
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+    def test_convert_size(self):
+        self.assertEqual(convert_size(1024), "1024 B")
+        self.assertEqual(convert_size(2048), "2.0 KB")
+        self.assertEqual(convert_size(2097152), "2.0 MB")
+        self.assertEqual(convert_size(2147483648), "2.0 GB")
+    def test_get_name_only(self):
+        self.assertEqual(get_name_only("path/to/folder"), "folder")
+    def test_generate_folder(self):
+        self.assertEqual("static/downloads" in generate_folder(), True)
+    def test_up_and_down_file_to_s3(self):
+        res_key = '%s/temp/test.txt' % self.group
+        f = open("test.txt", "a")
+        f.write("Test content")
+        f.close()
+        ret = upload_file_to_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=res_key, file_path="test.txt")
+        key = "temp/test.txt"
+        file_key = "%s/%s" % (self.group.name, key)
+        folder = generate_folder()
+        ret = download_file_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=file_key, folder=folder)
+        self.assertIsNotNone(ret)
+        res_folder = '%s/temp' % self.group
+        ret = download_directory_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        self.assertIsNotNone(ret)
+    def test_get_last_modified_timestamp_err(self):
+        ret = get_last_modified_timestamp(iam=self.iam, bucket=self.analysis.bucket_name, key="THROW_ERROR")
+        self.assertEqual(ret, 0)
+    def test_get_file_content_err(self):
+        ret = get_file_content(iam=self.iam, bucket=self.analysis.bucket_name, key="THROW_ERROR")
+        self.assertIsNone(ret)
+    def test_get_data_set_logs(self):
+        ret = get_data_set_logs(iam=self.iam, bucket=self.analysis.bucket_name, timestamp="1")
+        self.assertIsNotNone(ret)
+    def test_get_job_list_err(self):
+        ret = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder="THROW_ERROR")
+        self.assertEqual(ret, [])
+    def test_get_files_detail_list_err(self):
+        ret = get_files_detail_list(iam=self.iam, bucket=self.analysis.bucket_name, folder="THROW_ERROR")
+        self.assertEqual(ret, [])
+    def test_download_file_from_s3_err(self):
+        key = "THROW/ERROR"
+        file_key = "%s/%s" % (self.group.name, key)
+        folder = generate_folder()
+        ret = download_file_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=file_key, folder=folder)
+        self.assertIsNone(ret)

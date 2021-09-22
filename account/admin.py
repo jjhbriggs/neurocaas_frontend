@@ -22,12 +22,12 @@ import datetime as dt
 # Register your models here.
 user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
 #: Registers IAM Automatically with AWS and the Django DB
-def register_IAM(modeladmin, request, queryset):
+def register_IAM(modeladmin, request, queryset): # pragma: no cover
     current_p = 0
     #: Register IAM for every user in query
     for usr in queryset:  
         try:
-            #: Check that the user doesn't have an IAM already
+            #: Check that the user doesn't have an IAM already -- Removed for access change, always passes now.
             if True or len(IAM.objects.filter(user=usr)) == 0:
                 if usr.requested_group_name == "":
                     messages.error(request, "System error, requested group name blank")
@@ -110,7 +110,7 @@ def remove_IAM(modeladmin, request, queryset):
     #: Remove IAM for every user in query
     for usr in queryset:  
         #: Check that the user has an IAM already
-        if len(IAM.objects.filter(user=usr)) > 0:
+        if len(IAM.objects.filter(user=usr)) > 0:   # pragma: no cover
             user_config_array = {}
             current_iam = IAM.objects.filter(user=usr).first()
             current_group = current_iam.group
@@ -145,7 +145,7 @@ remove_IAM.short_description = "Remove associated IAM from cloudformation stacks
 
 #: redirects to intermediate page which lets you change the permissions of a specific queryset. Then this should call iam_create after updating perms as in analysis_deploy.py
 
-def changeGroupPermissions(modeladmin, request, queryset):
+def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
     logfile = open('logs/iam_change_perms_log.txt','w')
     logfile.write("pre apply\n")
     logfile.write(json.dumps(request.POST))
