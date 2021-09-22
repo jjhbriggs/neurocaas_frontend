@@ -636,12 +636,3 @@ class ExtraUtilsTest(TestCase):
         folder = generate_folder()
         ret = download_file_from_s3(iam=self.iam, bucket=self.analysis.bucket_name, key=file_key, folder=folder)
         self.assertIsNone(ret)
-
-        
-
-
-        
-        
-
-        
-
