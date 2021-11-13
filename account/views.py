@@ -34,14 +34,22 @@ def generateIAMForEDU(usr):
     with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
         user_config_array = json.load(f)
         affiliate = user_config_array['UXData']["Affiliates"][0]
-        if (not usr.email[0:15].replace('@', '').split('.', 1)[0] in affiliate["UserNames"]) and (not usr.email in affiliate["ContactEmail"]):
+
+        _timestamp = int(datetime.combine(usr.date_added, usr.time_added).timestamp())
+        username = ""
+        dotChunks = usr.email.replace('@', '').split('.')
+        
+        for index,chunk in enumerate(dotChunks):
+            if index != len(dotChunks) - 1:
+                username += chunk
+        username = username[0:12] + str(_timestamp)
+        if (not username in affiliate["UserNames"]):
             if not group_exists:
                 affiliate["AffiliateName"] = usr.requested_group_name
-                affiliate["UserNames"] = [usr.email[0:25].replace('@', '').split('.', 1)[0]]
+                affiliate["UserNames"] = [username]
                 affiliate["ContactEmail"] = [usr.email]
             else:
-                affiliate["UserNames"].append(usr.email[0:25].replace('@', '').split('.', 1)[0])
-                affiliate["ContactEmail"].append(usr.email)
+                affiliate["UserNames"] = [username]
         user_config_array['UXData']["Affiliates"][0] = affiliate
     with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
         json.dump(user_config_array, outfile)

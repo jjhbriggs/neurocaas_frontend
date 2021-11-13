@@ -18,13 +18,20 @@ from django.http import HttpResponseRedirect
 #these imports look werid but because of datetime imports in other modules, it needs to be done this way here
 from datetime import datetime
 import datetime as dt
+import logging
 
 # Register your models here.
 user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
 #: Registers IAM Automatically with AWS and the Django DB
 def register_IAM(modeladmin, request, queryset): # pragma: no cover
     current_p = 0
+    logging.basicConfig(filename="logs/registration_log.txt",
+                            filemode='a',
+                            format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
+                            datefmt="%Y-%m-%d %H:%M:%S",
+                            level=logging.INFO)
     #: Register IAM for every user in query
+    logging.info("Log started")
     for usr in queryset:  
         try:
             #: Check that the user doesn't have an IAM already -- Removed for access change, always passes now.
@@ -59,9 +66,7 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
                         user_config_array = json.load(f)
                         affiliate = user_config_array['UXData']["Affiliates"][0]
 
-                        #try:
                         _timestamp = int(datetime.combine(usr.date_added, usr.time_added).timestamp())
-                        #except Exception as e:
                         username = ""
                         dotChunks = usr.email.replace('@', '').split('.')
                         
@@ -72,20 +77,19 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
                         if (not username in affiliate["UserNames"]):
                             if not group_exists:
                                 affiliate["AffiliateName"] = usr.requested_group_name
-                                # affiliate["UserNames"] = [usr.email[0:25].replace('@', '').split('.', 1)[0]]
                                 affiliate["UserNames"] = [username]
                                 affiliate["ContactEmail"] = [usr.email]
-                                #affiliate["ContactEmail"] = ["unset"]
                             else:
-                                #affiliate["UserNames"].append(usr.email[0:25].replace('@', '').split('.', 1)[0])
                                 affiliate["UserNames"] = [username]
+                            messages.add_message(request, messages.INFO, "Username requested " + username)
+                            logging.info("USERNAME: " + username)
                         else:
                             messages.error(request, "Backend error: Duplicate Username or Email. (Ignore if this is an access change)")
                         user_config_array['UXData']["Affiliates"][0] = affiliate
                     with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
                         json.dump(user_config_array, outfile)
                 except Exception as e: 
-                    messages.error(request, "Backend error: " + e)
+                    messages.error(request, "Backend error: " + str(e))
                 #: Call deploy.sh script to deploy these resources
                 command = 'source ~/ncap/venv/bin/activate && source activate /home/ubuntu/ncap/neurocaas && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
                 outfile = open('logs/iam_creation_out_log.txt','w')
@@ -101,7 +105,8 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
                 current_p = current_p + 1
             else:
                 messages.error(request, "A User with an existing IAM was selected")
-        except Exception:
+        except Exception as e:
+            messages.error(request, "Backend Error: " + str(e))
             pass
 register_IAM.short_description = "Generate an IAM and Group for this user in django db and cloudformation"
 #: Removes IAM Automatically with AWS and the Django DB
@@ -182,10 +187,8 @@ def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
                 except:
                     logfile.write("ignored folder: " + new_path)
         # Redirect to our admin view after our update has 
-        # completed with a nice little info message saying 
-        # our models have been updated:
+        # completed with a  message  
         messages.add_message(request, messages.INFO, "Configuration file change probably worked.... attempting redeployment.")
-        # registerIAM goes here, but calling the function wasn't working for some reason
         register_IAM(modeladmin, request, queryset)
         for usr in queryset:
             for ana in Analysis.objects.all():
