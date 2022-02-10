@@ -25,7 +25,7 @@ cryptography==3.4.8
 cycler==0.10.0
 dateparser==1.0.0
 decorator==5.1.0
-Django==3.2.7
+Django==2.2.27
 django-environ==0.7.0
 django-rest-framework==0.1.0
 django-suit==0.2.28
