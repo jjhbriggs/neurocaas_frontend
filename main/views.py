@@ -84,28 +84,28 @@ class ChangePermissionView(View):
             path = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
             if len(IAM.objects.filter(user=curr_user)) == 0:
                 messages.error(request, "Select a user with an IAM")
-                continue
-            stack = "group-" + curr_iam.group.name
-            new_path = path + "/" + stack
-            if os.path.isdir(new_path):
-                try:
-                    with open(new_path + "/user_config_template.json") as f:
-                        try:
-                            data_array = json.load(f)
-                            #pipelines = data_array['UXData']["Affiliates"][0]["Pipelines"]
-                            pipelines = []
-                            for ana in Analysis.objects.all():
-                                if(ana.bucket_name in request.POST):
-                                    pipelines.append(ana.bucket_name)
-                                    group_access.append(ana)
-                            data_array['UXData']["Affiliates"][0]["Pipelines"] = pipelines
-                            with open(new_path + "/user_config_template.json", 'w') as outfile:
-                                json.dump(data_array, outfile)
-                            logfile.write("Succeeded on stack: " + stack)
-                        except:
-                            logfile.write("Failed on stack: " + stack)
-                except:
-                    logfile.write("ignored folder: " + new_path)
+            else:    
+                stack = "group-" + curr_iam.group.name
+                new_path = path + "/" + stack
+                if os.path.isdir(new_path):
+                    try:
+                        with open(new_path + "/user_config_template.json") as f:
+                            try:
+                                data_array = json.load(f)
+                                #pipelines = data_array['UXData']["Affiliates"][0]["Pipelines"]
+                                pipelines = []
+                                for ana in Analysis.objects.all():
+                                    if(ana.bucket_name in request.POST):
+                                        pipelines.append(ana.bucket_name)
+                                        group_access.append(ana)
+                                data_array['UXData']["Affiliates"][0]["Pipelines"] = pipelines
+                                with open(new_path + "/user_config_template.json", 'w') as outfile:
+                                    json.dump(data_array, outfile)
+                                logfile.write("Succeeded on stack: " + stack)
+                            except:
+                                logfile.write("Failed on stack: " + stack)
+                    except:
+                        logfile.write("ignored folder: " + new_path)
             # Redirect to our admin view after our update has 
             # completed with a  message  
             messages.add_message(request, messages.INFO, "Configuration file change probably worked.... attempting redeployment. Please wait ~10 minutes.")
