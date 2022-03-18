@@ -16,7 +16,7 @@ class Command(BaseCommand):
         parser.add_argument('pipe_dir', nargs='+', type=str)
 
     def handle(self, *args, **options):
-        logging.basicConfig(filename="email_log2.txt",
+        logging.basicConfig(filename="logs/credential_registration_log.txt",
                             filemode='a',
                             format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
                             datefmt="%Y-%m-%d %H:%M:%S",
@@ -72,7 +72,8 @@ class Command(BaseCommand):
                             for bucket in pipelines:
                                 logging.info("attempting bucket: " + bucket)
                                 analysis_to_add = Analysis.objects.filter(bucket_name=bucket).first()
-                                analysis_to_add.groups.add(new_group) #tmp erorr here: nontype no attr groups
+                                if analysis_to_add is not None:
+                                    analysis_to_add.groups.add(new_group) 
                             logging.info('Finished iam and ana_group creation for user' + creds['Username'] + region)
                             try:
                                 body_string = "Dear " + user.get_full_name() + ",\n\nYour NeuroCAAS Registration was successful, and you have been granted access to begin running analyses.\n\nRegards,\nThe NeuroCAAS Team"
