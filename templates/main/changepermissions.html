@@ -8,9 +8,7 @@ Select up to five analysis you want to have access to (you can add more later). 
 </p>  
   {% for analysis in analyses %}
     <input type="checkbox" id="{{ analysis.bucket_name }}" name="{{ analysis.bucket_name }}" value="on">
-    <font color="white">
-    <label for="{{ analysis.bucket_name }}"> {{ analysis.analysis_name }}</label><br>
-    </font>
+    <label for="{{ analysis.bucket_name }}"style="color:white"> {{ analysis.analysis_name }}</label><br>
   {% endfor %}
     {% for changeiam in changeiams %}
     <input type="hidden" name="_selected_action" value="{{ changeiam.pk }}" />
