@@ -119,7 +119,7 @@ class ChangePermissionView(View):
                         ana.groups.remove(curr_iam.group)
 
             ## not sure how to best format this 
-            return HttpResponseRedirect("home/")
+            return HttpResponseRedirect("/home/")
 
 
         return render(request=request,
