@@ -122,8 +122,8 @@ class ChangePermissionView(View):
             return HttpResponseRedirect("home/")
 
 
-        return render(request,
-                          template,
+        return render(request=request,
+                          template_name=self.template_name,
                           context={'analyses':Analysis.objects.all(), 'changeiams':[curr_user]})
 
 
