@@ -97,7 +97,8 @@ class ChangePermissionView(View):
             if len(IAM.objects.filter(user=curr_user)) == 0:
                 messages.error(request, "Select a user with an IAM")
             else:    
-                stack = "group-" + curr_iam.group.name
+                iam_group = curr_iam[0].group
+                stack = "group-" + iam_group.name
                 new_path = path + "/" + stack
                 if os.path.isdir(new_path):
                     try:
@@ -124,11 +125,11 @@ class ChangePermissionView(View):
             register_IAM("unused_arg", request, [curr_user])
             for ana in Analysis.objects.all():
                 if ana in group_access:
-                    if not curr_iam.group in ana.groups.all():
-                        ana.groups.add(curr_iam.group)
+                    if not iam_group in ana.groups.all():
+                        ana.groups.add(iam_group)
                 else:
-                    if curr_iam.group in ana.groups.all():
-                        ana.groups.remove(curr_iam.group)
+                    if iam_group in ana.groups.all():
+                        ana.groups.remove(iam_group)
 
             ## not sure how to best format this 
             return HttpResponseRedirect("profile")
