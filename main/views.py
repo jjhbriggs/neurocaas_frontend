@@ -68,6 +68,19 @@ class ChangePermissionView(View):
     template_name = "main/changepermissions.html"
 
     def get(self, request):
+
+
+        return render(request=request,
+                          template_name=self.template_name,
+                          context={
+                              'analyses':Analysis.objects.all(),
+                              'changeiams':[curr_user],
+                              'iam': get_current_iam(request),
+                              'user': get_current_user(request),
+                              'logged_in': not request.user.is_anonymous
+                              })
+
+    def post(self,request):    
         ## TODO: can these files be accessed from here? 
         logfile = open('logs/iam_change_perms_log.txt','w')
         logfile.write("pre apply\n")
@@ -120,18 +133,6 @@ class ChangePermissionView(View):
 
             ## not sure how to best format this 
             return HttpResponseRedirect("profile")
-
-
-        return render(request=request,
-                          template_name=self.template_name,
-                          context={
-                              'analyses':Analysis.objects.all(),
-                              'changeiams':[curr_user],
-                              'iam': get_current_iam(request),
-                              'user': get_current_user(request),
-                              'logged_in': not request.user.is_anonymous
-                              })
-
 
 class PermissionView(View):
     """
