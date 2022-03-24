@@ -133,7 +133,7 @@ class ChangePermissionView(View):
                         ana.groups.remove(iam_group)
 
             ## not sure how to best format this 
-            return HttpResponseRedirect("profile")
+            return HttpResponseRedirect("/profile/")
 
 class PermissionView(View):
     """
