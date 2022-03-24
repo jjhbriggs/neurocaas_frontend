@@ -124,7 +124,13 @@ class ChangePermissionView(View):
 
         return render(request=request,
                           template_name=self.template_name,
-                          context={'analyses':Analysis.objects.all(), 'changeiams':[curr_user]})
+                          context={
+                              'analyses':Analysis.objects.all(),
+                              'changeiams':[curr_user],
+                              'iam': get_current_iam(request),
+                              'user': get_current_user(request),
+                              'logged_in': not request.user.is_anonymous
+                              })
 
 
 class PermissionView(View):
