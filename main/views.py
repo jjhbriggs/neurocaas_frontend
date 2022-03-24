@@ -1,4 +1,5 @@
 from base64 import b64encode
+from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
