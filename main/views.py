@@ -109,7 +109,7 @@ class ChangePermissionView(View):
             # Redirect to our admin view after our update has 
             # completed with a  message  
             messages.add_message(request, messages.INFO, "Configuration file change probably worked.... attempting redeployment. Please wait ~10 minutes.")
-            register_IAM("unused_arg", request, queryset)
+            register_IAM("unused_arg", request, [curr_user])
             for ana in Analysis.objects.all():
                 if ana in group_access:
                     if not curr_iam.group in ana.groups.all():
