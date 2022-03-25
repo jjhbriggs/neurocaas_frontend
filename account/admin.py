@@ -84,7 +84,7 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
                             messages.add_message(request, messages.INFO, "Username requested " + username)
                             logging.info("USERNAME: " + username)
                         else:
-                            messages.error(request, "Backend error: Duplicate Username or Email. (Ignore if this is an access change)")
+                            messages.warning(request, "[IGNORE IF ACCESS CHANGE] Backend error: Duplicate Username or Email. ")
                         user_config_array['UXData']["Affiliates"][0] = affiliate
                     with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
                         json.dump(user_config_array, outfile)
@@ -188,7 +188,7 @@ def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
                     logfile.write("ignored folder: " + new_path)
         # Redirect to our admin view after our update has 
         # completed with a  message  
-        messages.add_message(request, messages.INFO, "Configuration file change probably worked.... attempting redeployment.")
+        messages.add_message(request, messages.INFO, "Attempting permission redeployment...")
         register_IAM(modeladmin, request, queryset)
         for usr in queryset:
             for ana in Analysis.objects.all():

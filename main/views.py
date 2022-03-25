@@ -1,5 +1,4 @@
 from base64 import b64encode
-from django.http import HttpResponseRedirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, QueryDict
 from django.shortcuts import render, redirect
@@ -133,7 +132,7 @@ class ChangePermissionView(View):
                         ana.groups.remove(iam_group)
 
             ## not sure how to best format this 
-            return HttpResponseRedirect("/profile/")
+            return redirect('/profile')
 
 class PermissionView(View):
     """
@@ -500,7 +499,7 @@ class ConfigView(LoginRequiredMixin, View):
             return redirect(request.path_info)
         except Exception as e:
             messages.error(request, "Config Error: "+str(e))
-            return redirect('/')
+            return redirect(request.path_info)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ProcessView(LoginRequiredMixin, View):
