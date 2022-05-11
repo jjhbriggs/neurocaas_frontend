@@ -23,8 +23,17 @@ import logging
 # Register your models here.
 user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
 #: Registers IAM Automatically with AWS and the Django DB
+def make_username(usr):
+    _timestamp = int(datetime.combine(usr.date_added, usr.time_added).timestamp())
+    username = ""
+    dotChunks = usr.email.replace('@', '').split('.')
+    
+    for index,chunk in enumerate(dotChunks):
+        if index != len(dotChunks) - 1:
+            username += chunk
+    username = username[0:12] + str(_timestamp)
+    return username
 def register_IAM(modeladmin, request, queryset): # pragma: no cover
-    current_p = 0
     logging.basicConfig(filename="logs/registration_log.txt",
                             filemode='a',
                             format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
@@ -37,78 +46,72 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
             #: Check that the user doesn't have an IAM already -- Removed for access change, always passes now.
             if True or len(IAM.objects.filter(user=usr)) == 0:
                 if usr.requested_group_name == "":
-                    messages.error(request, "System error, requested group name blank")
+                    if request!=None:
+                        messages.error(request, "System error, requested group name blank")
                     continue
                 #: Check for existing IAM group in resources for cloudformation
                 group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name)))
                 #: Generate one if there isn't an existing folder
                 if not group_exists:
                     command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
-                    '''process = subprocess.Popen([command],
-                                stdout=subprocess.PIPE, 
-                                stderr=subprocess.PIPE,
-                                shell=True)
-                    stdout, stderr = process.communicate()'''
-                    outfile = open('logs/iam_creation_out_log_1.txt','w')
-                    errfile = open('logs/iam_creation_err_log_1.txt','w')
-
                     process = subprocess.Popen([command],
-                                    stdout=outfile, 
-                                    stderr=errfile,
+                                    stdout=None, 
+                                    stderr=None,
                                     shell=True, 
                                     executable='/bin/bash')
                     process.communicate()
                 user_config_array = {}
                 #: Fill correct JSON data for cloudformation
-                
+                outfile2 = open('logs/tmp.txt','w')
+                outfile2.write(str(usr.requested_group_name) + "!\n")
                 try:
                     with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
                         user_config_array = json.load(f)
-                        affiliate = user_config_array['UXData']["Affiliates"][0]
+                        user_exists = False
+                        username = make_username(usr)
+                        for aff in user_config_array['UXData']["Affiliates"]:
+                            if username in aff["UserNames"]:
+                                user_exists = True
 
-                        _timestamp = int(datetime.combine(usr.date_added, usr.time_added).timestamp())
-                        username = ""
-                        dotChunks = usr.email.replace('@', '').split('.')
-                        
-                        for index,chunk in enumerate(dotChunks):
-                            if index != len(dotChunks) - 1:
-                                username += chunk
-                        username = username[0:12] + str(_timestamp)
-                        if (not username in affiliate["UserNames"]):
-                            if not group_exists:
-                                affiliate["AffiliateName"] = usr.requested_group_name
-                                affiliate["UserNames"] = [username]
-                                affiliate["ContactEmail"] = [usr.email]
-                            else:
-                                affiliate["UserNames"] = [username]
-                            messages.add_message(request, messages.INFO, "Username requested " + username)
-                            logging.info("USERNAME: " + username)
+                        if user_exists:
+                            if request!=None:
+                                messages.warning(request, "[IGNORE IF ACCESS CHANGE] Duplicate Username or Email. ")
                         else:
-                            messages.warning(request, "[IGNORE IF ACCESS CHANGE] Backend error: Duplicate Username or Email. ")
-                        user_config_array['UXData']["Affiliates"][0] = affiliate
+                            affiliate = user_config_array['UXData']["Affiliates"][0]
+                            if group_exists:
+                                affiliate["UserNames"].append(username)
+                                affiliate["ContactEmail"].append(usr.email)
+                            else:
+                                affiliate["AffiliateName"] = usr.requested_group_name
+                                affiliate["ContactEmail"] = [usr.email]
+                                affiliate["UserNames"] = [username]
+                            user_config_array['UXData']["Affiliates"][0] = affiliate
+                                
                     with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
                         json.dump(user_config_array, outfile)
                 except Exception as e: 
-                    messages.error(request, "Backend error: " + str(e))
+                    if request!=None:
+                        messages.error(request, "Backend error 1: " + str(e))
                 #: Call deploy.sh script to deploy these resources
                 command = 'source ~/ncap/venv/bin/activate && source activate /home/ubuntu/ncap/neurocaas && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
                 outfile = open('logs/iam_creation_out_log.txt','w')
                 errfile = open('logs/iam_creation_err_log.txt','w')
-
                 process = subprocess.Popen([command],
                                 stdout=outfile, 
                                 stderr=errfile,
                                 shell=True, 
                                 executable='/bin/bash')
                 process.communicate()
-                messages.add_message(request, messages.INFO, "The IAM Creation Process has started. Please check back later to see if your resources have been created.")
-                current_p = current_p + 1
+                if request!=None:
+                    messages.add_message(request, messages.INFO, "The IAM Creation Process has started. Please check back later to see if your resources have been created.")
             else:
-                messages.error(request, "A User with an existing IAM was selected")
+                if request!=None:
+                    messages.error(request, "A User with an existing IAM was selected")
         except Exception as e:
-            messages.error(request, "Backend Error: " + str(e))
+            if request!=None:
+                messages.error(request, "Backend Error: " + str(e))
             pass
-register_IAM.short_description = "Generate an IAM and Group for this user in django db and cloudformation"
+register_IAM.short_description = "Generate IAMs for selected users"
 #: Removes IAM Automatically with AWS and the Django DB
 def remove_IAM(modeladmin, request, queryset):
     current_p = 0
@@ -146,7 +149,7 @@ def remove_IAM(modeladmin, request, queryset):
             current_iam.delete()
         else:
             messages.error(request, "A user was selected that did not contain a valid IAM")
-remove_IAM.short_description = "Remove associated IAM from cloudformation stacks and django db"
+remove_IAM.short_description = "Remove IAMs for selected users [Run before deleting]"
 
 #: redirects to intermediate page which lets you change the permissions of a specific queryset. Then this should call iam_create after updating perms as in analysis_deploy.py
 
@@ -204,13 +207,13 @@ def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
                       'admin/change_ana_access.html',
                       context={'analyses':Analysis.objects.all(), 'changeiams':queryset})
     
-changeGroupPermissions.short_description = "Change Group Permissions"
+changeGroupPermissions.short_description = "Update Group Perms"
 
 class UserAdministrator(UserAdmin):
     # The forms to add and change user instances
     add_form = UserCreationForm
 
-    list_display = ('email', 'is_admin', "has_IAM_attached", 'has_migrated_pwd', 'first_name', 'last_name', 'use_code', 'requested_group_name', 'requested_group_code',)
+    list_display = ('email', 'is_admin', "IAM_attached", 'last_name', 'use_code', 'requested_group_name', 'requested_group_code',)
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name', 'use_code', 'requested_group_name', 'requested_group_code')}),
@@ -224,11 +227,11 @@ class UserAdministrator(UserAdmin):
          ),
     )
     actions = [register_IAM, remove_IAM, changeGroupPermissions]
-    def has_IAM_attached(self, obj):
+    def IAM_attached(self, obj):
         if len(IAM.objects.filter(user=obj)) == 1:
             return True
         return False
-    has_IAM_attached.boolean = True
+    IAM_attached.boolean = True
 
     search_fields = ('email',)
     ordering = ('email',)
@@ -238,8 +241,10 @@ class UserAdministrator(UserAdmin):
 
 @admin.register(IAM)
 class IAMAdmin(admin.ModelAdmin):
-    list_display = ('user', 'aws_user', 'aws_access_key', 'aws_pwd', 'group', 'created_on')
+    list_display = ('user', 'aws_user', 'aws_access_key', 'group', 'created_on')
     readonly_fields = ['group']
+    search_fields = ('user',)
+    ordering = ('aws_user',)
 
 
 @admin.register(AWSRequest)

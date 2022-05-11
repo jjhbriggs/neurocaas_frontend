@@ -44,49 +44,56 @@ class Command(BaseCommand):
                 num_new_users = 0
                 #: Find all users to create in pipedir
                 for username in usernames:
+                    logging.info("Found config username: " + username)
                     with open(os.path.join(full_path, "NCAP_KEY_AUTO_" + username + ".csv"), 'r') as data: 
-                        for creds in csv.DictReader(data): 
-                            #: IAM and ana_group creation
-                            email = affiliate["ContactEmail"][num_new_users]
-                            logging.info('Starting iam and ana_group creation for user' + creds['Username'] + region)
-                            user = User.objects.filter(email=email).first()
-                            new_group = AnaGroup.objects.filter(name=ana_name)
-                            if len(new_group) == 0:
-                                new_group = AnaGroup.objects.create(name=ana_name)
-                            else:
-                                new_group = new_group.first()
+                        try:
+                            for creds in csv.DictReader(data): 
+                                #: IAM and ana_group creation
+                                email = affiliate["ContactEmail"][num_new_users]
+                                logging.info('Starting iam and ana_group creation for user' + creds['Username'] + region)
+                                user = User.objects.filter(email=email).first()
+                                new_group = AnaGroup.objects.filter(name=ana_name)
+                                if len(new_group) == 0:
+                                    new_group = AnaGroup.objects.create(name=ana_name)
+                                else:
+                                    new_group = new_group.first()
 
-                            iam_pwd = ""
-                            with open(os.path.join(pipedir, 'compiled_users.json')) as f2:
-                                user_pwd_array = json.load(f2)
-                                iam_pwd = user_pwd_array['Outputs']['Password' + username]['Value']
-                                #------user_config_array['Outputs']['Passwordtestmultiplegmail']['Value']
-                            if len(IAM.objects.filter(user=user)) == 0:
-                                iam = IAM.objects.create(user=user,
-                                                    aws_user=creds['Username'] + region,
-                                                    aws_access_key=creds['Access Key'],
-                                                    aws_secret_access_key=creds['Secret Access Key'],
-                                                    aws_pwd = iam_pwd,
-                                                    group=new_group)
-                            #: Register group with listed buckets
-                            for bucket in pipelines:
-                                logging.info("attempting bucket: " + bucket)
-                                analysis_to_add = Analysis.objects.filter(bucket_name=bucket).first()
-                                if analysis_to_add is not None:
-                                    analysis_to_add.groups.add(new_group) 
-                            logging.info('Finished iam and ana_group creation for user' + creds['Username'] + region)
-                            try:
-                                body_string = "Dear " + user.get_full_name() + ",\n\nYour NeuroCAAS Registration was successful, and you have been granted access to begin running analyses.\n\nRegards,\nThe NeuroCAAS Team"
-                                send_mail(
-                                    'NeuroCAAS Registration Complete',
-                                    body_string,
-                                    'neurocaas@gmail.com',
-                                    [user.email],
-                                    fail_silently=False,
-                                )
-                            except Exception as e:
-                                logging.warning("SMTP Client failed:\n" + str(e))
-                            num_new_users += 1
+                                iam_pwd = ""
+                                with open(os.path.join(pipedir, 'compiled_users.json')) as f2:
+                                    try:
+                                        user_pwd_array = json.load(f2)
+                                        iam_pwd = user_pwd_array['Outputs']['Password' + username]['Value']
+                                    except Exception as e:
+                                        logging.error("Error2: " + str(e))
+                                    #------user_config_array['Outputs']['Passwordtestmultiplegmail']['Value']
+                                if len(IAM.objects.filter(user=user)) == 0:
+                                    iam = IAM.objects.create(user=user,
+                                                        aws_user=creds['Username'] + region,
+                                                        aws_access_key=creds['Access Key'],
+                                                        aws_secret_access_key=creds['Secret Access Key'],
+                                                        aws_pwd = iam_pwd,
+                                                        group=new_group)
+                                #: Register group with listed buckets
+                                for bucket in pipelines:
+                                    logging.info("attempting bucket: " + bucket)
+                                    analysis_to_add = Analysis.objects.filter(bucket_name=bucket).first()
+                                    if analysis_to_add is not None:
+                                        analysis_to_add.groups.add(new_group) 
+                                logging.info('Finished iam and ana_group creation for user' + creds['Username'] + region)
+                                try:
+                                    body_string = "Dear " + user.get_full_name() + ",\n\nYour NeuroCAAS Registration was successful, and you have been granted access to begin running analyses.\n\nRegards,\nThe NeuroCAAS Team"
+                                    send_mail(
+                                        'NeuroCAAS Registration Complete',
+                                        body_string,
+                                        'neurocaas@gmail.com',
+                                        [user.email],
+                                        fail_silently=False,
+                                    )
+                                except Exception as e:
+                                    logging.warning("SMTP Client failed:\n" + str(e))
+                                num_new_users += 1
+                        except Exception as e:
+                            logging.error("Error: " + str(e))
                 if num_new_users == 0:
                     logging.warning('No user credentials found in ' + full_path + ' matching usernames in user_config_template')
                 else:
