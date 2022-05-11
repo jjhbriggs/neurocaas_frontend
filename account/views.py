@@ -18,55 +18,7 @@ from account.admin import register_IAM
 from main.utils import get_current_user
 
 
-# Create your views here.
-
-
-# def generateIAMForEDU(usr):
-#     user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
-#     group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name)))
-#     if not group_exists:
-#         command = 'source /home/ubuntu/ncap/venv/bin/activate && bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
-#         process = subprocess.Popen([command],
-#                     stdout=subprocess.PIPE, 
-#                     stderr=subprocess.PIPE,
-#                     shell=True, 
-#                     executable='/bin/bash')
-#         stdout, stderr = process.communicate()
-#     user_config_array = {}
-#     with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
-#         user_config_array = json.load(f)
-#         affiliate = user_config_array['UXData']["Affiliates"][0]
-
-#         _timestamp = int(datetime.combine(usr.date_added, usr.time_added).timestamp())
-#         username = ""
-#         dotChunks = usr.email.replace('@', '').split('.')
-        
-#         for index,chunk in enumerate(dotChunks):
-#             if index != len(dotChunks) - 1:
-#                 username += chunk
-#         username = username[0:12] + str(_timestamp)
-#         if (not username in affiliate["UserNames"]):
-#             if not group_exists:
-#                 affiliate["AffiliateName"] = usr.requested_group_name
-#                 affiliate["UserNames"] = [username]
-#                 affiliate["ContactEmail"] = [usr.email]
-#             else:
-#                 affiliate["UserNames"] = [username]
-#         user_config_array['UXData']["Affiliates"][0] = affiliate
-#     with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
-#         json.dump(user_config_array, outfile)
-#     command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
-#     outfile = open('logs/iam_creation_out_log.txt','w')
-#     errfile = open('logs/iam_creation_err_log.txt','w')
-
-#     process = subprocess.Popen([command],
-#                     stdout=outfile, 
-#                     stderr=errfile,
-#                     shell=True, 
-#                     executable='/bin/bash')
-#     process.communicate()
-#     return True
-
+# Create your views here
 
 class LoginView(View):
     """
