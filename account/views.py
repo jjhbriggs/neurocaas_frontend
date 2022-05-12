@@ -15,8 +15,6 @@ from django.contrib.auth.views import PasswordChangeView
 from django.core.mail import send_mail
 import logging
 from account.admin import register_IAM
-from main.utils import get_current_user
-
 
 # Create your views here
 

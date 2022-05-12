@@ -68,7 +68,10 @@ class ChangePermissionView(View):
     template_name = "main/changepermissions.html"
 
     def get(self, request):
-
+        iam = get_current_iam(request)
+        if not iam:
+            messages.error(request, "You do not have AWS credentials, please contact neurocaas@gmail.com to obtain access")
+            return redirect('/')
 
         return render(request=request,
                           template_name=self.template_name,
@@ -86,9 +89,12 @@ class ChangePermissionView(View):
         logfile.write(json.dumps(request.POST))
         logfile.write("\nafter post data")
         group_access = []
-        ## Getting current user and iam. 
+        ## Getting current user and iam.
         curr_iam = get_current_iam(request),
         curr_user =  get_current_user(request)
+        if not curr_iam or not curr_user:
+            messages.error(request, "You must have an IAM to complete this action.")
+            return redirect('/profile')
         if 'apply' in request.POST:
             logfile.write("Hit apply")
             # The user clicked submit on the intermediate form.
@@ -412,7 +418,6 @@ class UserFilesView(LoginRequiredMixin, View):
             "data_sets": data_sets,
             "configs": configs
         })
-#TEST VIEW
 def flatten(d, parent_key='', sep='.'):
     items = []
     for k, v in d.items():
@@ -437,7 +442,7 @@ def unflatten(dictionary):
 @method_decorator(csrf_exempt, name='dispatch')
 class ConfigView(LoginRequiredMixin, View):
     """
-        Processing View.
+        Config View.
     """
     template_name = "main/config.html"
 
