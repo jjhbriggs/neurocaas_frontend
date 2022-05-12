@@ -1,122 +1,105 @@
+import os
+import json
+import subprocess
+from datetime import datetime
+
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
-from .forms import *
-from .models import *
-from main.models import *
-import time
-#from subprocess import Popen, PIPE
-import subprocess
-import json
-import os
-import sys
 from django.contrib import messages
-import getpass
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
-#these imports look werid but because of datetime imports in other modules, it needs to be done this way here
-from datetime import datetime
-import datetime as dt
-import logging
+from .forms import *
+from .models import *
+from main.models import *
 
 # Register your models here.
 user_profiles = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
 #: Registers IAM Automatically with AWS and the Django DB
 def make_username(usr):
+    """
+        'Make' a username from the users email and time of creation.
+        Will always make the same username when called on the same user.
+    """
     _timestamp = int(datetime.combine(usr.date_added, usr.time_added).timestamp())
     username = ""
-    dotChunks = usr.email.replace('@', '').split('.')
-    
-    for index,chunk in enumerate(dotChunks):
-        if index != len(dotChunks) - 1:
+    dot_chunks = usr.email.replace('@', '').split('.')
+
+    for index,chunk in enumerate(dot_chunks):
+        if index != len(dot_chunks) - 1:
             username += chunk
     username = username[0:12] + str(_timestamp)
     return username
 def register_IAM(modeladmin, request, queryset): # pragma: no cover
-    logging.basicConfig(filename="logs/registration_log.txt",
-                            filemode='a',
-                            format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
-                            datefmt="%Y-%m-%d %H:%M:%S",
-                            level=logging.INFO)
     #: Register IAM for every user in query
-    logging.info("Log started")
-    for usr in queryset:  
+    for usr in queryset:
         try:
-            #: Check that the user doesn't have an IAM already -- Removed for access change, always passes now.
-            if True or len(IAM.objects.filter(user=usr)) == 0:
-                if usr.requested_group_name == "":
-                    if request!=None:
-                        messages.error(request, "System error, requested group name blank")
-                    continue
-                #: Check for existing IAM group in resources for cloudformation
-                group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name)))
-                #: Generate one if there isn't an existing folder
-                if not group_exists:
-                    command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
-                    process = subprocess.Popen([command],
-                                    stdout=None, 
-                                    stderr=None,
-                                    shell=True, 
-                                    executable='/bin/bash')
-                    process.communicate()
-                user_config_array = {}
-                #: Fill correct JSON data for cloudformation
-                outfile2 = open('logs/tmp.txt','w')
-                outfile2.write(str(usr.requested_group_name) + "!\n")
-                try:
-                    with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
-                        user_config_array = json.load(f)
-                        user_exists = False
-                        username = make_username(usr)
-                        for aff in user_config_array['UXData']["Affiliates"]:
-                            if username in aff["UserNames"]:
-                                user_exists = True
-
-                        if user_exists:
-                            if request!=None:
-                                messages.warning(request, "[IGNORE IF ACCESS CHANGE] Duplicate Username or Email. ")
-                        else:
-                            affiliate = user_config_array['UXData']["Affiliates"][0]
-                            if group_exists:
-                                affiliate["UserNames"].append(username)
-                                affiliate["ContactEmail"].append(usr.email)
-                            else:
-                                affiliate["AffiliateName"] = usr.requested_group_name
-                                affiliate["ContactEmail"] = [usr.email]
-                                affiliate["UserNames"] = [username]
-                            user_config_array['UXData']["Affiliates"][0] = affiliate
-                                
-                    with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
-                        json.dump(user_config_array, outfile)
-                except Exception as e: 
-                    if request!=None:
-                        messages.error(request, "Backend error 1: " + str(e))
-                #: Call deploy.sh script to deploy these resources
-                command = 'source ~/ncap/venv/bin/activate && source activate /home/ubuntu/ncap/neurocaas && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
-                outfile = open('logs/iam_creation_out_log.txt','w')
-                errfile = open('logs/iam_creation_err_log.txt','w')
+            if usr.requested_group_name == "":
+                if request is not None:
+                    messages.error(request, "System error, requested group name blank")
+                continue
+            #: Check for existing IAM group in resources for cloudformation
+            group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name)))
+            #: Generate one if there isn't an existing folder
+            if not group_exists:
+                command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
                 process = subprocess.Popen([command],
-                                stdout=outfile, 
-                                stderr=errfile,
-                                shell=True, 
+                                stdout=None,
+                                stderr=None,
+                                shell=True,
                                 executable='/bin/bash')
                 process.communicate()
-                if request!=None:
-                    messages.add_message(request, messages.INFO, "The IAM Creation Process has started. Please check back later to see if your resources have been created.")
-            else:
-                if request!=None:
-                    messages.error(request, "A User with an existing IAM was selected")
+            user_config_array = {}
+            #: Fill correct JSON data for cloudformation
+            try:
+                with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
+                    user_config_array = json.load(f)
+                    user_exists = False
+                    username = make_username(usr)
+                    for aff in user_config_array['UXData']["Affiliates"]:
+                        if username in aff["UserNames"]:
+                            user_exists = True
+                    if user_exists:
+                        if request!=None:
+                            messages.warning(request, "[IGNORE IF ACCESS CHANGE] Duplicate Username or Email. ")
+                    else:
+                        affiliate = user_config_array['UXData']["Affiliates"][0]
+                        if group_exists:
+                            affiliate["UserNames"].append(username)
+                            affiliate["ContactEmail"].append(usr.email)
+                        else:
+                            affiliate["AffiliateName"] = usr.requested_group_name
+                            affiliate["ContactEmail"] = [usr.email]
+                            affiliate["UserNames"] = [username]
+                        user_config_array['UXData']["Affiliates"][0] = affiliate
+
+                with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
+                    json.dump(user_config_array, outfile)
+            except Exception as e:
+                if request is not None:
+                    messages.error(request, "Backend error 1: " + str(e))
+            #: Call deploy.sh script to deploy these resources
+            command = 'source ~/ncap/venv/bin/activate && source activate /home/ubuntu/ncap/neurocaas && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
+            outfile = open('logs/iam_creation_out_log.txt','a')
+            errfile = open('logs/iam_creation_err_log.txt','a')
+            process = subprocess.Popen([command],
+                            stdout=outfile, 
+                            stderr=errfile,
+                            shell=True, 
+                            executable='/bin/bash')
+            process.communicate()
+            if request is not None:
+                messages.add_message(request, messages.INFO, 
+                "The IAM Creation Process has started. Please check back later to see if your resources have been created.")
         except Exception as e:
-            if request!=None:
-                messages.error(request, "Backend Error: " + str(e))
-            pass
+            if request is not None:
+                messages.error(request, "Backend Error 0: " + str(e))
 register_IAM.short_description = "Generate IAMs for selected users"
 #: Removes IAM Automatically with AWS and the Django DB
 def remove_IAM(modeladmin, request, queryset):
-    current_p = 0
     #: Remove IAM for every user in query
-    for usr in queryset:  
+    for usr in queryset:
         #: Check that the user has an IAM already
         if len(IAM.objects.filter(user=usr)) > 0:   # pragma: no cover
             user_config_array = {}
@@ -128,32 +111,31 @@ def remove_IAM(modeladmin, request, queryset):
                 affiliate = user_config_array['UXData']["Affiliates"][0]
                 curren_un = current_iam.aws_user.replace(user_config_array['Lambda']['LambdaConfig']['REGION'],'')
                 if (curren_un in affiliate["UserNames"]):
-                    #: Then IAM exists in the data, and you can Remove the IAM 
+                    #: Then IAM exists in the data, and you can Remove the IAM
                     affiliate["UserNames"].remove(curren_un)
                 user_config_array['UXData']["Affiliates"][0] = affiliate
             with open(os.path.join(user_profiles, 'group-' + str(current_group), 'user_config_template.json'), 'w') as outfile:
                 json.dump(user_config_array, outfile)
             #: Call deploy.sh script to deploy these resources
             command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(current_group) + ' &')
-            outfile = open('logs/iam_removal_out_log.txt','w')
-            errfile = open('logs/iam_removal_err_log.txt','w')
+            outfile = open('logs/iam_removal_out_log.txt','a')
+            errfile = open('logs/iam_removal_err_log.txt','a')
             process = subprocess.Popen([command],
-                            stdout=outfile, 
+                            stdout=outfile,
                             stderr=errfile,
-                            shell=True, 
+                            shell=True,
                             executable='/bin/bash')
             process.communicate()
             messages.add_message(request, messages.INFO, "The IAM Removal Process has started. Please check back later to see if your resources have been removed.")
-            current_p = current_p + 1
             #: Remove IAM from django db
             current_iam.delete()
         else:
             messages.error(request, "A user was selected that did not contain a valid IAM")
 remove_IAM.short_description = "Remove IAMs for selected users [Run before deleting]"
 
-#: redirects to intermediate page which lets you change the permissions of a specific queryset. Then this should call iam_create after updating perms as in analysis_deploy.py
-
 def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
+    #: redirects to intermediate page which lets you change the permissions of a specific queryset. 
+    #: Then this should call iam_create after updating perms as in analysis_deploy.py
     logfile = open('logs/iam_change_perms_log.txt','w')
     logfile.write("pre apply\n")
     logfile.write(json.dumps(request.POST))
