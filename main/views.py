@@ -521,7 +521,7 @@ class ProcessView(LoginRequiredMixin, View):
             return redirect('/')
 
         iam = get_current_iam(request)
-        if False:
+        if current_user.cred_expire is None or datetime.today().date() > current_user.cred_expire: #regenerate credentials if they have expired
             try:
                 credential_response = build_credentials(current_user.group, analysis)
             except Exception as e:
