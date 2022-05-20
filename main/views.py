@@ -515,11 +515,11 @@ class ProcessView(LoginRequiredMixin, View):
 
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
-        iam = get_current_iam(request)
+        #iam = get_current_iam(request)
 
-        if not analysis.check_iam(iam):
-            messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
-            return redirect('/')
+        #if not analysis.check_iam(iam):
+        #    messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
+        #    return redirect('/')
 
         # convert aws keys to base64 string
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")

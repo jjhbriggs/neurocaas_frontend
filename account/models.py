@@ -11,32 +11,33 @@ import random
 import string
 import uuid
 import datetime as dt
+from main.models import Analysis
+from .base_model import Base
 
-class Base(models.Model):
-    """
-    Base Class which other Models inherit from.
+# class Base(models.Model):
+#     """
+#     Base Class which other Models inherit from.
 
-    Contains timestamp information about the model.
-    """
-    #: Date/time when record was created.
-    created_on = models.DateTimeField(auto_now_add=True, db_index=True,
-                                      help_text='(Read-only) Date/time when record was created.')
-    #: Date/time when record was updated.
-    updated_on = models.DateTimeField(auto_now=True, db_index=True,
-                                      help_text='(Read-only) Date/time when record was updated.')
-    def save(self, *args, **kwargs):
-        """Overriden save function to change 'updated_on' to reflect proper update time"""
-        if self.pk is not None:
-            self.updated_on = datetime.utcnow()
-        super(Base, self).save(*args, **kwargs)
-    class Meta:
-        abstract = True
+#     Contains timestamp information about the model.
+#     """
+#     #: Date/time when record was created.
+#     created_on = models.DateTimeField(auto_now_add=True, db_index=True,
+#                                       help_text='(Read-only) Date/time when record was created.')
+#     #: Date/time when record was updated.
+#     updated_on = models.DateTimeField(auto_now=True, db_index=True,
+#                                       help_text='(Read-only) Date/time when record was updated.')
+#     def save(self, *args, **kwargs):
+#         """Overriden save function to change 'updated_on' to reflect proper update time"""
+#         if self.pk is not None:
+#             self.updated_on = datetime.utcnow()
+#         super(Base, self).save(*args, **kwargs)
+#     class Meta:
+#         abstract = True
 
 
 STATUS_PENDING = 'P'
 STATUS_COMPLETED = 'C'
 STATUS_DENIED = 'D'
-
 class AnaGroup(Base):
     """
     AnaGroup model.
@@ -46,6 +47,7 @@ class AnaGroup(Base):
     #: Name of the group.
     name = models.CharField(max_length=50, help_text='Group Name', unique=True)
     code = models.CharField(max_length=6,blank=False, default=uuid.uuid4().hex.upper()[0:6])
+    analyses = models.ManyToManyField(Analysis, blank=True, null=True)
     
     
     #: Returns name of the group.

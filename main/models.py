@@ -1,7 +1,8 @@
 from django.db import models
 # Create your models here.
 from datetime import datetime
-from account.models import Base, AnaGroup
+from account.base_model import Base
+#from account.models import AnaGroup
 import uuid
 from django.core.validators import RegexValidator
 
@@ -36,7 +37,7 @@ class Analysis(Base):
     #: Custom Analysis option.
     custom = models.BooleanField(help_text='Custom Analysis option', default=False)
     #: Groups with access to use this analysis.
-    groups = models.ManyToManyField(AnaGroup)
+    groups_TOBEDELETED = models.ManyToManyField('account.AnaGroup')
 
     config_template = models.ForeignKey(ConfigTemplate, on_delete=models.CASCADE, blank=True, null=True)
 
@@ -62,9 +63,9 @@ class Analysis(Base):
 
     def check_iam(self, iam):
         """Check's if the user's IAM Group has permission to access this analysis"""
-        for group in self.groups.all():
-            if iam.group == group:
-                return True
+        # for group in self.groups.all():
+        #     if iam.group == group:
+        #         return True
         return False
 
     class Meta:
