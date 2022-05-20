@@ -20,8 +20,6 @@ import requests
 
 import ctypes
 
-CLOCK_REALTIME = 0
-
 def time_millis():
     return int((datetime.datetime.utcnow() - datetime.datetime(1970, 1, 1)).total_seconds() * 1000)
 def progress_bar(seconds):
@@ -161,7 +159,7 @@ def usage_demo():
                   "Enter to clean up and complete this demo.")
     finally:
         teardown(role)
-        print("Thanks!")
+        print("Teardown Complete")
 
 
 if __name__ == '__main__':
