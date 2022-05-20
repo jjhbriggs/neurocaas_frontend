@@ -198,7 +198,7 @@ class UserAdministrator(UserAdmin):
     list_display = ('email', 'is_admin', "IAM_attached", 'last_name', 'use_code', 'requested_group_name', 'requested_group_code','group')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name', 'use_code', 'requested_group_name', 'requested_group_code','group')}),
+        (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name', 'use_code', 'requested_group_name', 'requested_group_code','group','cred_expire')}),
         ('Permissions', {'fields': ('data_transfer_permission',)}),
     )
 

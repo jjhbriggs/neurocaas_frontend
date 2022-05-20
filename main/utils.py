@@ -1,11 +1,16 @@
 import json
 import os
+import sys
 import shutil
 import time
 import boto3
+import datetime
+import urllib.parse
+import requests
 
 from account.models import *
 from .models import Analysis
+from .sts_utils import *
 
 def get_current_iam(request):
     """
@@ -23,7 +28,8 @@ def s3_resource(iam):
     return boto3.resource(
             's3',
             aws_access_key_id=iam.aws_access_key,
-            aws_secret_access_key=iam.aws_secret_access_key)
+            aws_secret_access_key=iam.aws_secret_access_key,
+            aws_session_token=iam.aws_session_token)
 
 
 def get_current_analysis(ana_id):
@@ -352,3 +358,17 @@ def create_submit_json(iam, bucket, key, json_data):
         Body=(bytes(json.dumps(json_data).encode('UTF-8')))
     )
     print("successfully created submit.json")
+
+def build_credentials(group, analysis):
+    #: Returns object with temporary credentials
+
+    iam_resource = boto3.resource('iam')
+    role = setup(iam_resource)
+    sts_client = boto3.client('sts')
+    return generate_credentials(role.arn, 'AssumeRoleDemoSession', sts_client, group.name, analysis.bucket_name) 
+
+def reassign_iam(iam, temp_credentials):
+    iam.aws_access_key = temp_credentials['AccessKeyId']
+    iam.aws_secret_access_key = temp_credentials['SecretAccessKey']
+    iam.aws_session_token = temp_credentials['SessionToken']
+    iam.save()

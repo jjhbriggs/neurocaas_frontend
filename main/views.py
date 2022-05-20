@@ -515,12 +515,22 @@ class ProcessView(LoginRequiredMixin, View):
 
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
-        if not analysis in get_current_user(request).group.analyses.all():
+        current_user = get_current_user(request)
+        if not analysis in current_user.group.analyses.all():
             messages.error(request, "Your group doesn't have permission to use this analysis.")
             return redirect('/')
-            
-        iam = get_current_iam(request)
 
+        iam = get_current_iam(request)
+        if False:
+            try:
+                credential_response = build_credentials(current_user.group, analysis)
+            except Exception as e:
+                messages.error(request, str(e))
+                return redirect('/')
+            current_user.cred_expire = credential_response['Expiration']
+            current_user.save()
+            reassign_iam(iam, credential_response)
+        
         # convert aws keys to base64 string
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")

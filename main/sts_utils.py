@@ -1,6 +1,7 @@
 # Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
-# Modified
+#
+# Modified by John Briggs
 # See https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/python/example_code/sts/sts_temporary_credentials#code-examples
 # for original code and unit tests
 """
@@ -65,7 +66,7 @@ def setup(iam_resource):
     return role
 
 
-def construct_federated_url(assume_role_arn, session_name, issuer, sts_client):
+def generate_credentials(assume_role_arn, session_name, sts_client, group_name, bucket_name):
     """
     Constructs a URL that gives federated users direct access to the AWS Management
     Console.
@@ -84,43 +85,13 @@ def construct_federated_url(assume_role_arn, session_name, issuer, sts_client):
     :param session_name: The name for the STS session.
     :param issuer: The organization that issues the URL.
     :param sts_client: A Boto3 STS instance that can assume the role.
+    :param group_name: group name
+    :param bucket_name: bucket name
     :return: The federated URL.
     """
     response = sts_client.assume_role(
-        RoleArn=assume_role_arn, RoleSessionName=session_name, Tags=[{"Key": "access-bucket","Value": "epi-ncap-copy2"},{"Key": "access-group","Value": "testagmailed1652990497"}]) #testagmailed1652990497
-    temp_credentials = response['Credentials']
-    print(f"Response: {response}\n\n")
-    print(f"Assumed role {assume_role_arn} and got temporary credentials.")
-
-    session_data = {
-        'sessionId': temp_credentials['AccessKeyId'],
-        'sessionKey': temp_credentials['SecretAccessKey'],
-        'sessionToken': temp_credentials['SessionToken']
-    }
-    aws_federated_signin_endpoint = 'https://signin.aws.amazon.com/federation'
-
-    # Make a request to the AWS federation endpoint to get a sign-in token.
-    # The requests.get function URL-encodes the parameters and builds the query string
-    # before making the request.
-    response = requests.get(
-        aws_federated_signin_endpoint,
-        params={
-            'Action': 'getSigninToken',
-            'SessionDuration': str(datetime.timedelta(hours=12).seconds),
-            'Session': json.dumps(session_data)
-        })
-    signin_token = json.loads(response.text)
-    print(f"Got a sign-in token from the AWS sign-in federation endpoint.")
-
-    # Make a federated URL that can be used to sign into the AWS Management Console.
-    query_string = urllib.parse.urlencode({
-        'Action': 'login',
-        'Issuer': issuer,
-        'Destination': 'https://console.aws.amazon.com/',
-        'SigninToken': signin_token['SigninToken']
-    })
-    federated_url = f'{aws_federated_signin_endpoint}?{query_string}'
-    return federated_url
+        RoleArn=assume_role_arn, RoleSessionName=session_name, Tags=[{"Key": "access-bucket","Value": bucket_name},{"Key": "access-group","Value": group_name}])
+    return response['Credentials']
 
 
 def teardown(role):
@@ -136,29 +107,16 @@ def teardown(role):
     print(f"Deleted {role.name}.")
 
 
-def usage_demo():
-    """Drives the demonstration."""
-    print('-'*88)
-    print(f"Welcome to the AWS Security Token Service federated URL demo.")
-    print('-'*88)
-    iam_resource = boto3.resource('iam')
-    role = setup(iam_resource)
-    sts_client = boto3.client('sts')
-    try:
-        federated_url = construct_federated_url(
-            role.arn, 'AssumeRoleDemoSession', 'example.org', sts_client)
-        print("Constructed a federated URL that can be used to connect to the "
-              "AWS Management Console with role-defined permissions:")
-        print('-'*88)
-        print(federated_url)
-        print('-'*88)
-        _ = input("Copy and paste the above URL into a browser to open the AWS "
-                  "Management Console with limited permissions. When done, press "
-                  "Enter to clean up and complete this demo.")
-    finally:
-        teardown(role)
-        print("Teardown Complete")
-
-
-if __name__ == '__main__':
-    usage_demo()
+# def usage_demo():
+#     """Drives the demonstration."""
+#     print('-'*88)
+#     print(f"Welcome to the AWS Security Token Service federated URL demo.")
+#     print('-'*88)
+#     iam_resource = boto3.resource('iam')
+#     role = setup(iam_resource)
+#     sts_client = boto3.client('sts')
+#     try:
+#         federated_url = generate_credentials(role.arn, 'AssumeRoleDemoSession', sts_client)
+#     # finally:
+#     #     teardown(role)
+#     #     print("Teardown Complete")
