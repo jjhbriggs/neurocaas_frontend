@@ -200,7 +200,7 @@ class AnalysisIntroView(View):
         iam = get_current_iam(request)
         access = False
         if not request.user.is_anonymous and iam:
-            access = analysis.check_iam(iam)
+            access = analysis in get_current_user(request).group.analyses.all()
         return render(
             request=request,
             template_name=self.template_name,
@@ -250,7 +250,7 @@ class JobListView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
         results_folder = '%s/results' % iam.group
 
-        if not analysis.check_iam(iam):
+        if not analysis in get_current_user(request).group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
@@ -276,7 +276,7 @@ class JobDetailView(LoginRequiredMixin, View):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
 
-        if not analysis.check_iam(iam):
+        if not analysis in get_current_user(request).group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
@@ -453,7 +453,7 @@ class ConfigView(LoginRequiredMixin, View):
         if analysis.config_template is None:
             messages.error(request, "No config template for this analysis yet.")
             return redirect('/')
-        if not analysis.check_iam(iam):
+        if not analysis in get_current_user(request).group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
@@ -515,11 +515,11 @@ class ProcessView(LoginRequiredMixin, View):
 
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
-        #iam = get_current_iam(request)
-
-        #if not analysis.check_iam(iam):
-        #    messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
-        #    return redirect('/')
+        if not analysis in get_current_user(request).group.analyses.all():
+            messages.error(request, "Your group doesn't have permission to use this analysis.")
+            return redirect('/')
+            
+        iam = get_current_iam(request)
 
         # convert aws keys to base64 string
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")

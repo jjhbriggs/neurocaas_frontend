@@ -53,6 +53,9 @@ class AnaGroup(Base):
     #: Returns name of the group.
     def __str__(self):
         return self.name
+    class Meta:
+        verbose_name = 'Group'
+        verbose_name_plural = 'Groups'
 
 class User(AbstractBaseUser):
     """

@@ -37,7 +37,7 @@ class Analysis(Base):
     #: Custom Analysis option.
     custom = models.BooleanField(help_text='Custom Analysis option', default=False)
     #: Groups with access to use this analysis.
-    groups_TOBEDELETED = models.ManyToManyField('account.AnaGroup')
+    groups_TOBEDELETED = models.ManyToManyField('account.AnaGroup') #renamed temporarily so that data persists but anything referencing it will break.
 
     config_template = models.ForeignKey(ConfigTemplate, on_delete=models.CASCADE, blank=True, null=True)
 
