@@ -37,6 +37,20 @@ STATUS_PENDING = 'P'
 STATUS_COMPLETED = 'C'
 STATUS_DENIED = 'D'
 
+class AnaGroup(Base):
+    """
+    AnaGroup model.
+
+    All users belong to a group.
+    """
+    #: Name of the group.
+    name = models.CharField(max_length=50, help_text='Group Name', unique=True)
+    code = models.CharField(max_length=6,blank=False, default=uuid.uuid4().hex.upper()[0:6])
+    
+    
+    #: Returns name of the group.
+    def __str__(self):
+        return self.name
 
 class User(AbstractBaseUser):
     """
@@ -58,6 +72,8 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=100, default="", blank=True)
     #: Last Name of User.
     last_name = models.CharField(max_length=100, default="", blank=True)
+
+    group = models.ForeignKey(AnaGroup, on_delete=models.SET_NULL, null=True)
     
     has_migrated_pwd = models.BooleanField(default=False)
     
@@ -107,22 +123,6 @@ class User(AbstractBaseUser):
         """Returns True. """
         # Simplest possible answer: Yes, always
         return True
-
-class AnaGroup(Base):
-    """
-    AnaGroup model.
-
-    All users belong to a group.
-    """
-    #: Name of the group.
-    name = models.CharField(max_length=50, help_text='Group Name', unique=True)
-    
-    code = models.CharField(max_length=6,blank=False, default=uuid.uuid4().hex.upper()[0:6])
-    
-    
-    #: Returns name of the group.
-    def __str__(self):
-        return self.name
 
 
 class IAM(Base):

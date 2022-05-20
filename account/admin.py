@@ -195,17 +195,17 @@ class UserAdministrator(UserAdmin):
     # The forms to add and change user instances
     add_form = UserCreationForm
 
-    list_display = ('email', 'is_admin', "IAM_attached", 'last_name', 'use_code', 'requested_group_name', 'requested_group_code',)
+    list_display = ('email', 'is_admin', "IAM_attached", 'last_name', 'use_code', 'requested_group_name', 'requested_group_code','group')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name', 'use_code', 'requested_group_name', 'requested_group_code')}),
+        (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name', 'use_code', 'requested_group_name', 'requested_group_code','group')}),
         ('Permissions', {'fields': ('data_transfer_permission',)}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'has_migrated_pwd', 'first_name', 'last_name', 'data_transfer_permission','use_code','requested_group_name','requested_group_code',)}
+            'fields': ('email', 'password1', 'password2', 'has_migrated_pwd', 'first_name', 'last_name', 'data_transfer_permission','use_code','requested_group_name','requested_group_code','group')}
          ),
     )
     actions = [register_IAM, remove_IAM, changeGroupPermissions]
