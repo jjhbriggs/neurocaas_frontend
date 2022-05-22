@@ -156,35 +156,3 @@ class IAM(Base):
     def __str__(self):
         """Returns AWS IAM Username."""
         return self.aws_user
-
-    def save(self, *args, **kwargs):
-        """Overriden save function to update the AWSRequest class associated with this IAM user. 
-        Changes the AWSRequest status to 'Completed.'"""
-        aws_req = AWSRequest.objects.filter(user=self.user).first()
-        if aws_req:
-            aws_req.status = STATUS_COMPLETED
-            aws_req.save()
-        super(IAM, self).save(*args, **kwargs)
-
-
-class AWSRequest(Base):
-    """
-    AWSRequest class which holds basic information about the status of a user account.
-
-    A user can have a status of 'Pending,' 'Completed,' or 'Denied,' depending on the approval status of their account
-    """
-    STATUS_CHOICES = (
-        (STATUS_PENDING, 'Pending'),
-        (STATUS_DENIED, 'Denied'),
-        (STATUS_COMPLETED, 'Completed'),
-    )
-    #: The user which this AWSRequest is associated with.
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    #: The status of this user's account. ('Pending,' 'Completed,' or 'Denied')
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES, default=STATUS_PENDING,
-                              help_text="Status of request")
-
-    def __str__(self):
-        """Returns the email of the account associated with this AWSRequest"""
-        return self.user.email
-

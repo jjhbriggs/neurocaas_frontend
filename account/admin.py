@@ -228,12 +228,6 @@ class IAMAdmin(admin.ModelAdmin):
     search_fields = ('user',)
     ordering = ('aws_user',)
 
-
-@admin.register(AWSRequest)
-class AWSAdmin(admin.ModelAdmin):
-    list_display = ('user', 'status', 'created_on')
-
-
 @admin.register(AnaGroup)
 class AWSAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'created_on')
@@ -241,5 +235,3 @@ class AWSAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdministrator)
 admin.site.unregister(Group)
-# admin.site.register(IAM)
-# admin.site.register(AWSRequest)

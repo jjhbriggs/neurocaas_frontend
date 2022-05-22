@@ -66,9 +66,6 @@ class SignUpView(View):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # create AWS Request object for created user
-            aws_req = AWSRequest(user=user)
-            aws_req.save()
             logging.basicConfig(filename="email_log.txt",
                             filemode='a',
                             format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
@@ -116,11 +113,9 @@ class ProfileView(LoginRequiredMixin, View):
     template_name = "account/profile.html"
 
     def get(self, request):
-        aws_req = AWSRequest.objects.filter(user=request.user).first()
         iam = IAM.objects.filter(user=request.user).first()
         return render(request, template_name=self.template_name, context={
             "user": request.user,
-            "aws_req": aws_req,
             'iam': IAM.objects.filter(user=request.user).first() if request.user.is_authenticated else None,
             'user': request.user if not request.user.is_anonymous else None,
             'logged_in': not request.user.is_anonymous
@@ -133,21 +128,6 @@ class ProfileView(LoginRequiredMixin, View):
             messages.success(request, 'Successfully updated!')
 
         return redirect('profile')
-
-
-class AWSCredRequestView(LoginRequiredMixin, View):
-    """
-        AWS Credentials Request object View
-     """
-    def get(self, request):
-        aws_req = AWSRequest.objects.filter(user=request.user).first()
-        if aws_req:
-            aws_req.status = STATUS_PENDING
-        else:
-            aws_req = AWSRequest(user=request.user)
-        aws_req.save()
-        return redirect('profile')
-
 
 class ChangePWD2(LoginRequiredMixin, View):
     """
@@ -227,10 +207,6 @@ class IamCreateView(AdminMixin, View):
                         #new_user = User(email=email)
                         new_user = User.objects.create_user(email, password=password)
                         new_user.save()
-
-                    if AWSRequest.objects.filter(user=new_user).count() == 0:
-                        aws_req = AWSRequest(user=new_user)
-                        aws_req.save()
 
                     if AnaGroup.objects.filter(name=group_name).count() > 0:
                         new_group = AnaGroup.objects.filter(name=group_name).first()

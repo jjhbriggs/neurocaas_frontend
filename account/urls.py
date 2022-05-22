@@ -8,7 +8,6 @@ urlpatterns = [
     path('signup/', SignUpView.as_view(), name='signup'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name="logout"),
-    path('aws_cred_request/', AWSCredRequestView.as_view(), name='aws_cred_request'),
     path('instruction/', TemplateView.as_view(template_name="account/instruction.html"), name='instruction'),
     path('iamcreate/', IamCreateView.as_view(), name='iam_create_view'),
     path('changepwd/', ChangePWD2.as_view(), name='change_password'),
