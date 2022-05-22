@@ -18,6 +18,9 @@ import collections
 import json
 import string
 import random
+from datetime import datetime as dt
+import pytz
+
 
 # Create your views here.
 class IntroView(View):
@@ -521,7 +524,7 @@ class ProcessView(LoginRequiredMixin, View):
             return redirect('/')
 
         iam = get_current_iam(request)
-        if current_user.cred_expire is None or datetime.today().date() > current_user.cred_expire: #regenerate credentials if they have expired
+        if current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire: #regenerate credentials if they have expired
             try:
                 credential_response = build_credentials(current_user.group, analysis)
             except Exception as e:
