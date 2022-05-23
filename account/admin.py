@@ -95,7 +95,7 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
         except Exception as e:
             if request is not None:
                 messages.error(request, "Backend Error 0: " + str(e))
-register_IAM.short_description = "Generate IAMs for selected users"
+register_IAM.short_description = "[LEGACY] Generate IAMs for selected users"
 #: Removes IAM Automatically with AWS and the Django DB
 def remove_IAM(modeladmin, request, queryset):
     #: Remove IAM for every user in query
@@ -131,7 +131,7 @@ def remove_IAM(modeladmin, request, queryset):
             current_iam.delete()
         else:
             messages.error(request, "A user was selected that did not contain a valid IAM")
-remove_IAM.short_description = "Remove IAMs for selected users [Run before deleting]"
+remove_IAM.short_description = "[LEGACY] Remove IAMs for selected users [Run before deleting]"
 
 def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
     #: redirects to intermediate page which lets you change the permissions of a specific queryset. 
@@ -189,7 +189,7 @@ def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
                       'admin/change_ana_access.html',
                       context={'analyses':Analysis.objects.all(), 'changeiams':queryset})
     
-changeGroupPermissions.short_description = "Update Group Perms"
+changeGroupPermissions.short_description = "[LEGACY] Update Group Perms"
 
 class UserAdministrator(UserAdmin):
     # The forms to add and change user instances
@@ -218,8 +218,6 @@ class UserAdministrator(UserAdmin):
     search_fields = ('email',)
     ordering = ('email',)
     filter_horizontal = ()
-
-
 
 @admin.register(IAM)
 class IAMAdmin(admin.ModelAdmin):

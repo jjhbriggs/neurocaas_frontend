@@ -372,3 +372,46 @@ def reassign_iam(iam, temp_credentials):
     iam.aws_secret_access_key = temp_credentials['SecretAccessKey']
     iam.aws_session_token = temp_credentials['SessionToken']
     iam.save()
+
+def construct_federated_url(iam, issuer, bucket):
+    """
+    Constructs a URL that gives federated users direct access to the AWS Management
+    Console.
+       Builds a URL that can be used in a browser to navigate to the AWS federation
+       endpoint, includes the sign-in token for authentication, and redirects to
+       the AWS Management Console with permissions defined by the role that was
+       specified in step 1.
+
+    :param issuer: The organization that issues the URL.
+    :return: The federated URL.
+    """
+
+    session_data = {
+        'sessionId': iam.aws_access_key,
+        'sessionKey': iam.aws_secret_access_key,
+        'sessionToken': iam.aws_session_token
+    }
+    aws_federated_signin_endpoint = 'https://signin.aws.amazon.com/federation'
+
+    # Make a request to the AWS federation endpoint to get a sign-in token.
+    # The requests.get function URL-encodes the parameters and builds the query string
+    # before making the request.
+    response = requests.get(
+        aws_federated_signin_endpoint,
+        params={
+            'Action': 'getSigninToken',
+            'SessionDuration': str(datetime.timedelta(hours=12).seconds),
+            'Session': json.dumps(session_data)
+        })
+    signin_token = json.loads(response.text)
+    print(f"Got a sign-in token from the AWS sign-in federation endpoint.")
+
+    # Make a federated URL that can be used to sign into the AWS Management Console.
+    query_string = urllib.parse.urlencode({
+        'Action': 'login',
+        'Issuer': issuer,
+        'Destination': 'https://s3.console.aws.amazon.com/s3/buckets/'+bucket+'?region=us-east-1&prefix='+iam.group.name+'/inputs/&showversions=false',
+        'SigninToken': signin_token['SigninToken']
+    })
+    federated_url = f'{aws_federated_signin_endpoint}?{query_string}'
+    return federated_url

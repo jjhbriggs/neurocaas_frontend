@@ -548,7 +548,8 @@ class ProcessView(LoginRequiredMixin, View):
             'iam': iam,
             'user': get_current_user(request),
             'logged_in': not request.user.is_anonymous,
-            'analysis': analysis
+            'analysis': analysis,
+            'federated_url': construct_federated_url(iam,'neurocaas@gmail.com', analysis.bucket_name)
         })
 
     def post(self, request, ana_id):

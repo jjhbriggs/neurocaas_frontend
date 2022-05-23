@@ -14,30 +14,6 @@ import datetime as dt
 from main.models import Analysis
 from .base_model import Base
 
-# class Base(models.Model):
-#     """
-#     Base Class which other Models inherit from.
-
-#     Contains timestamp information about the model.
-#     """
-#     #: Date/time when record was created.
-#     created_on = models.DateTimeField(auto_now_add=True, db_index=True,
-#                                       help_text='(Read-only) Date/time when record was created.')
-#     #: Date/time when record was updated.
-#     updated_on = models.DateTimeField(auto_now=True, db_index=True,
-#                                       help_text='(Read-only) Date/time when record was updated.')
-#     def save(self, *args, **kwargs):
-#         """Overriden save function to change 'updated_on' to reflect proper update time"""
-#         if self.pk is not None:
-#             self.updated_on = datetime.utcnow()
-#         super(Base, self).save(*args, **kwargs)
-#     class Meta:
-#         abstract = True
-
-
-STATUS_PENDING = 'P'
-STATUS_COMPLETED = 'C'
-STATUS_DENIED = 'D'
 class AnaGroup(Base):
     """
     AnaGroup model.
@@ -156,3 +132,6 @@ class IAM(Base):
     def __str__(self):
         """Returns AWS IAM Username."""
         return self.aws_user
+    class Meta:
+        verbose_name = 'IAM'
+        verbose_name_plural = 'IAMs'
