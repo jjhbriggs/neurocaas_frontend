@@ -5,6 +5,8 @@ from account.base_model import Base
 import uuid
 from django.core.validators import RegexValidator
 
+def rand_id():
+    return str(uuid.uuid1())
 class ConfigTemplate(Base):
     """
     ConfigTemplate model.

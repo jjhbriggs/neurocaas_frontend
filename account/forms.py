@@ -35,17 +35,11 @@ class UserCreationForm(forms.ModelForm):
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
     #: Email associated with the user. Users are identified by this email address. [Jflag repet w/ meta?]
     email = forms.CharField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-control'}))
-    #CODE_CHOICES=[('True','Join existing IAM group'),
-    #                ('False','Create new IAM group')]
-    #: True is use existing group, False is make new group
-    #use_code = forms.ChoiceField(label='Select and then fill in the respective field', choices=CODE_CHOICES, widget=forms.RadioSelect)
+
     use_code = forms.BooleanField(label='Use Group Code', required=False)
     
     group_code = forms.CharField(label='Group Code', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    #group_name = forms.CharField(label='New Group Name (Must be unique)', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-    #first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    #last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control'}))
     class Meta:
         """The Meta class creates form fields from model fields. 
         In this case the model being used is :class:`~account.models.User`, and the user's :attr:`~account.models.User.email`
@@ -72,12 +66,7 @@ class UserCreationForm(forms.ModelForm):
         if self.cleaned_data.get("use_code") == True and len(AnaGroup.objects.filter(code=code)) == 0:
             raise forms.ValidationError("Your join group code is wrong. Make sure you are using only capital letters and numbers")
         return code
-    #return UserManager.create_user(email, clean_password2())
-    '''def save(self, commit=True):
-        user = super(UserCreationForm, self).save(commit=False)
-        if commit:
-            user.save()
-        return user'''
+
     def save(self, commit=True):
         user = super(UserCreationForm, self).save(commit=False)
         user.set_password(self.clean_password2())
