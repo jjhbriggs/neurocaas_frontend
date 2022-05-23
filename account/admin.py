@@ -199,13 +199,13 @@ class UserAdministrator(UserAdmin):
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name', 'use_code', 'requested_group_code','group','cred_expire')}),
-        ('Permissions', {'fields': ('data_transfer_permission',)}),
+        #('Permissions', {'fields': ('data_transfer_permission',)}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'has_migrated_pwd', 'first_name', 'last_name', 'data_transfer_permission','use_code','requested_group_name','requested_group_code','group')}
+            'fields': ('email', 'password1', 'password2', 'has_migrated_pwd', 'first_name', 'last_name','use_code','requested_group_name','requested_group_code','group')}
          ),
     )
     actions = [register_IAM, remove_IAM, changeGroupPermissions]

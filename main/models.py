@@ -5,7 +5,7 @@ from account.base_model import Base
 import uuid
 from django.core.validators import RegexValidator
 
-def rand_id():
+def rand_id(): #not really sure what this is used for but migrations don't build without it.
     return str(uuid.uuid1())
 class ConfigTemplate(Base):
     """

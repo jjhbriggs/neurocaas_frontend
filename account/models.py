@@ -91,6 +91,16 @@ class User(AbstractBaseUser):
     def __str__(self):
         """Returns email of user."""
         return self.email
+        
+    def has_perm(self, perm, obj=None):
+        """Returns True. """
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        """Returns True. """
+        # Simplest possible answer: Yes, always
+        return True
 
 class IAM(Base):
     """
