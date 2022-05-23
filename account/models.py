@@ -23,7 +23,7 @@ class AnaGroup(Base):
     #: Name of the group.
     name = models.CharField(max_length=50, help_text='Group Name', unique=True)
     code = models.CharField(max_length=6,blank=False, default=uuid.uuid4().hex.upper()[0:6])
-    analyses = models.ManyToManyField(Analysis, blank=True, null=True)
+    analyses = models.ManyToManyField(Analysis, blank=True)
     
     
     #: Returns name of the group.
@@ -91,7 +91,7 @@ class User(AbstractBaseUser):
     def __str__(self):
         """Returns email of user."""
         return self.email
-        
+
     def has_perm(self, perm, obj=None):
         """Returns True. """
         # Simplest possible answer: Yes, always
