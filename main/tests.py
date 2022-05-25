@@ -38,7 +38,7 @@ class AnalysisTestCase(TestCase):
             signature="Signature"
         )
 
-        analysis.groups.add(group)
+        group.analyses.add(analysis)
 
     def test_check_iam_with_analysis(self):
         """Test the current IAM is the same which is associated with the analysis request."""
@@ -67,7 +67,7 @@ class AnalysisListViewTest(TestCase):
             demo_link="Demo page link1",
             signature="Signature1"
         )
-        analysis1.groups.add(group1)
+        group1.analyses.add(analysis1)
 
         analysis2 = Analysis.objects.create(
             analysis_name="Test Analysis2",
@@ -82,7 +82,7 @@ class AnalysisListViewTest(TestCase):
             demo_link="Demo page link2",
             signature="Signature2"
         )
-        analysis2.groups.add(group2)
+        group2.analyses.add(analysis2)
 
     def test_analysis_list_view(self):
         """Check that the the two analyses are displayed correctly."""
@@ -124,7 +124,7 @@ class AnalysisIntroViewTest(TestCase):
             signature="Signature"
         )
 
-        analysis.groups.add(group)
+        group.analyses.add(analysis)
 
     def test_with_intro_view(self):
         """Checks that the proper analysis details are returned when visiting the analysis intro view."""
@@ -161,7 +161,7 @@ class JobListViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.analysis.groups.add(self.group)
+        self.group.analyses.add(self.analysis)
         self.analysis2 = Analysis.objects.create(
             analysis_name="Test Analaysis (No perms)",
             result_prefix="job__cianalysispermastack_",
@@ -222,7 +222,7 @@ class JobDetailViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.analysis.groups.add(self.group)
+        self.group.analyses.add(self.analysis)
         self.analysis2 = Analysis.objects.create(
             analysis_name="Test Analaysis (No perms)",
             result_prefix="job__cianalysispermastack_",
@@ -293,7 +293,7 @@ class UserFilesViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.analysis.groups.add(self.group)
+        self.group.analyses.add(self.analysis)
         # login here
         form = {
             'email': 'test@test.com',
@@ -340,7 +340,7 @@ class ProcessViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.analysis.groups.add(self.group)
+        self.group.analyses.add(self.analysis)
         self.analysis2 = Analysis.objects.create(
             analysis_name="Test Analaysis (No perms)",
             result_prefix="job__cianalysispermastack_",
@@ -442,7 +442,7 @@ class ResultViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.analysis.groups.add(self.group)
+        self.group.analyses.add(self.analysis)
         # login here
         form = {
             'email': 'test@test.com',
@@ -506,7 +506,7 @@ class ConfigViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.analysis.groups.add(self.group)
+        self.group.analyses.add(self.analysis)
         self.analysis2 = Analysis.objects.create(
             analysis_name="Test Analysis2",
             result_prefix="job__cianalysispermastack_",
@@ -585,7 +585,7 @@ class ExtraUtilsTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.analysis.groups.add(self.group)
+        self.group.analyses.add(self.analysis)
         # login here
         form = {
             'email': 'test@test.com',
