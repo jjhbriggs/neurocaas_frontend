@@ -76,7 +76,7 @@ class UserCreationForm(forms.ModelForm):
         else:
             user.requested_group_name = user.email.replace('@', '').replace('.', '').replace('_', '-')[0:12] + str(int(round(time.time())))
         user.requested_group_code = self.clean_group_code()
-        
+        user.group = AnaGroup.objects.create(name=user.requested_group_name)
         user.has_migrated_pwd = True
         user.time_added = datetime.now().time()
         

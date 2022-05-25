@@ -223,7 +223,7 @@ class UserAdministrator(UserAdmin):
 class IAMAdmin(admin.ModelAdmin):
     list_display = ('user', 'aws_user', 'aws_access_key', 'group', 'created_on')
     readonly_fields = ['group']
-    search_fields = ('user',)
+    search_fields = ('user__name',)
     ordering = ('aws_user',)
 
 @admin.register(AnaGroup)

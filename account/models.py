@@ -113,7 +113,7 @@ class IAM(Base):
     #: AWS account username.
     aws_user = models.CharField(max_length=155, help_text="AWS account username")
     #: AWS access key
-    aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id", unique=True)
+    aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id")
     #: AWS secret access key
     aws_secret_access_key = models.CharField(max_length=255, help_text="AWS Secret key")
 

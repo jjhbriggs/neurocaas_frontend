@@ -180,7 +180,7 @@ def get_last_modified_timestamp(iam, bucket, key):
     obj = s3.Object(bucket, key)
     try:
         body = obj.get()
-        _date = datetime.strptime(body['ResponseMetadata']['HTTPHeaders']['last-modified'], '%a, %d %b %Y %H:%M:%S GMT')
+        _date = datetime.datetime.strptime(body['ResponseMetadata']['HTTPHeaders']['last-modified'], '%a, %d %b %Y %H:%M:%S GMT')
         return _date.timestamp()
     except Exception as e:
         print(e)

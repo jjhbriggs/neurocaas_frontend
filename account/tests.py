@@ -34,7 +34,6 @@ class UserTestCase(TestCase):
                            aws_access_key="AWS access key",
                            aws_secret_access_key="AWS secret key",
                            group=group)
-        AWSRequest.objects.create(user=usr1)
 
     def test_get_full_name_with_user(self):
         """Test that user's full name is returned accurately"""
@@ -62,11 +61,9 @@ class UserTestCase(TestCase):
         user1 = User.objects.get(email="test1@test.com")
         iam = IAM.objects.get(user=user1)
         group = AnaGroup.objects.get(name="test group")
-        aws_cred = AWSRequest.objects.get(user=user1)
         self.assertEqual(str(user1), 'test1@test.com')
         self.assertEqual(str(iam), "AWS user")
         self.assertEqual(str(group), "test group")
-        self.assertEqual(str(aws_cred), 'test1@test.com')
 class UserLoginViewTest(TestCase):
     """
     Class for testing user login.
@@ -197,7 +194,6 @@ class ChangePWDTest(TestCase):
         user.last_name = "User"
         user.save()
         group = AnaGroup.objects.create(name="test group")
-        AWSRequest.objects.create(user=user)
         IAM.objects.create(user=user,
                            aws_user="AWS user",
                            aws_access_key="AWS access key",
@@ -244,51 +240,6 @@ class ChangePWDTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.request['PATH_INFO'], '/changepwd/')
 
-class AWSCredViewTest(TestCase):
-    """
-    Class for testing AWS Credential View.
-    """
-    def setUp(self):
-        """Create basic test users"""
-        user = User.objects.create_user('test@test.com', password='test')
-        user.first_name = "Test1"
-        user.last_name = "User"
-        user.save()
-        aws_req = AWSRequest.objects.create(user=user)
-        user2 = User.objects.create_user('test2@test.com', password='test')
-        user2.first_name = "Test2"
-        user2.last_name = "User"
-        user2.save()
-        
-    def test_existing_cred_request(self):
-        """Test that accessing the AWS Cred Request View with an existing request switches its state to pending and redirects to profile."""
-        # login here
-        form = {
-            'email': 'test@test.com',
-            'password': 'test',
-        }
-        self.client.post('/login/', form)
-        
-        response = self.client.get('/aws_cred_request/')
-        self.assertEqual(AWSRequest.objects.filter(user=User.objects.filter(email='test@test.com').first()).first().status, STATUS_PENDING)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], '/profile/')
-    def test_no_cred_request(self):
-        """Test that accessing the AWS Cred Request View without an existing request creates one and redirects to profile."""
-        # login here
-        form = {
-            'email': 'test2@test.com',
-            'password': 'test',
-        }
-        self.client.post('/login/', form)
-        
-        response = self.client.get('/aws_cred_request/')
-        user = User.objects.filter(email='test@test.com').first()
-        self.assertEqual(AWSRequest.objects.filter(user=user).first().user, user)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], '/profile/')
-
-
 class ProfileViewTest(TestCase):
     """
     Class for testing the user profile page.
@@ -300,7 +251,6 @@ class ProfileViewTest(TestCase):
         user.last_name = "User"
         user.save()
         group = AnaGroup.objects.create(name="test group")
-        AWSRequest.objects.create(user=user)
         IAM.objects.create(user=user,
                            aws_user="AWS user",
                            aws_access_key="AWS access key",
@@ -318,7 +268,6 @@ class ProfileViewTest(TestCase):
         """Test that checking the profile view of a logged in user displays the user's email, name, and IAM username."""
         response = self.client.get('/profile/')
         self.assertEqual(response.context['user'].email, "test@test.com")
-        self.assertEqual(response.context['aws_req'].user.get_full_name(), "Test1 User")
         self.assertEqual(response.context['iam'].aws_user, "AWS user")
 
     def test_profile_view_with_post_request(self):
@@ -383,7 +332,6 @@ class IAMCreateTest(TestCase):
         user = User.objects.create_user('test@test.com', password='test')
         user.save()
         group = AnaGroup.objects.create(name="test_group")
-        AWSRequest.objects.create(user=user)
         IAM.objects.create(user=user,
                            aws_user="test_user",
                            aws_access_key="AWS access key",

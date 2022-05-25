@@ -202,7 +202,7 @@ class AnalysisIntroView(View):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
         access = False
-        if not request.user.is_anonymous and iam:
+        if not request.user.is_anonymous and iam and get_current_user(request).group:
             access = analysis in get_current_user(request).group.analyses.all()
         return render(
             request=request,
@@ -253,7 +253,7 @@ class JobListView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
         results_folder = '%s/results' % iam.group
 
-        if not analysis in get_current_user(request).group.analyses.all():
+        if  get_current_user(request).group and not analysis in get_current_user(request).group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
@@ -279,7 +279,7 @@ class JobDetailView(LoginRequiredMixin, View):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
 
-        if not analysis in get_current_user(request).group.analyses.all():
+        if get_current_user(request).group and not analysis in get_current_user(request).group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
@@ -456,7 +456,7 @@ class ConfigView(LoginRequiredMixin, View):
         if analysis.config_template is None:
             messages.error(request, "No config template for this analysis yet.")
             return redirect('/')
-        if not analysis in get_current_user(request).group.analyses.all():
+        if get_current_user(request).group and not analysis in get_current_user(request).group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
@@ -519,7 +519,7 @@ class ProcessView(LoginRequiredMixin, View):
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
         current_user = get_current_user(request)
-        if not analysis in current_user.group.analyses.all():
+        if get_current_user(request).group and not analysis in current_user.group.analyses.all():
             messages.error(request, "Your group doesn't have permission to use this analysis.")
             return redirect('/')
 

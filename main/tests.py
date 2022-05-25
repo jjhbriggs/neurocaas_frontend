@@ -40,13 +40,6 @@ class AnalysisTestCase(TestCase):
 
         group.analyses.add(analysis)
 
-    def test_check_iam_with_analysis(self):
-        """Test the current IAM is the same which is associated with the analysis request."""
-
-        analysis = Analysis.objects.get(bucket_name='Test bucket')
-        iam = IAM.objects.get(aws_user='AWS user')
-        self.assertIs(analysis.check_iam(iam), True)
-
 
 class AnalysisListViewTest(TestCase):
     """Class for testing the list view of analyses."""
@@ -139,8 +132,8 @@ class JobListViewTest(TestCase):
     def setUp(self):
         """Setup user, group, IAM, and analysis. Login IAM."""
         self.user = User.objects.create_user('test@test.com', password='test')
-        self.user.first_name = "Jack"
-        self.user.last_name = "Briggs"
+        self.user.first_name = "Test"
+        self.user.last_name = "User"
         self.user.save()
         self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,
@@ -148,6 +141,17 @@ class JobListViewTest(TestCase):
                                       aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
                                       aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
                                       group=self.group)
+
+        self.user2 = User.objects.create_user('test2@test.com', password='test')
+        self.user2.first_name = "Test"
+        self.user2.last_name = "User"
+        self.user2.save()
+        self.group2 = AnaGroup.objects.create(name="frontendtravisci_NOACCESS")
+        self.iam2 = IAM.objects.create(user=self.user2,
+                                      aws_user="jbriggs",
+                                      aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
+                                      aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+                                      group=self.group2)
         self.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
             result_prefix="job__cianalysispermastack_",
@@ -162,36 +166,29 @@ class JobListViewTest(TestCase):
             signature="Signature"
         )
         self.group.analyses.add(self.analysis)
-        self.analysis2 = Analysis.objects.create(
-            analysis_name="Test Analaysis (No perms)",
-            result_prefix="job__cianalysispermastack_",
-            bucket_name="cianalysispermastack",
-            custom=False,
-            short_description="Short Description",
-            long_description="Long Description",
-            paper_link="Paper Link",
-            git_link="Github Link",
-            bash_link="Bash Script Link",
-            demo_link="Demo page link",
-            signature="Signature"
-        )
+        
+    def test_job_list_view(self):
+        """Check that history of user's analyses are displayed properly."""
         # login here
         form = {
             'email': 'test@test.com',
             'password': 'test',
         }
         r = self.client.post('/login/', form)
-    def test_job_list_view(self):
-        """Check that history of user's analyses are displayed properly."""
-        
         response = self.client.get('/history/%s' % self.analysis.id)
         self.assertEqual(response.context['analysis'], self.analysis)
         self.assertEqual(response.context['iam'], self.iam)
         self.assertIsNotNone(response.context['job_list'])
     def test_no_perms_job_list_view(self):
         """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
-        
-        response = self.client.get('/history/%s' % self.analysis2.id)
+        # login here
+        form = {
+            'email': 'test2@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+        response = self.client.get('/history/%s' % self.analysis.id)
+        print(response.content)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
         
@@ -244,6 +241,7 @@ class JobDetailViewTest(TestCase):
         r = self.client.post('/login/', form)
         
         res_folder = '%s/results' % self.group
+
         job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
         
         self.job_id = job_list[0]['name']
@@ -259,6 +257,7 @@ class JobDetailViewTest(TestCase):
         """Check that detail of a user's previous analysis is not displayed if the user doesn't have permission to access to the analysis."""
         
         response = self.client.get('/history/' + str(self.analysis2.id) + '/' + self.job_id)
+        print(response)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
         
@@ -360,12 +359,14 @@ class ProcessViewTest(TestCase):
             'password': 'test',
         }
         r = self.client.post('/login/', form)
+        print(r)
         
     def test_get_process_view(self):
         """Check that getting the process information displays properly."""
         
         response = self.client.get('/process/%s' % self.analysis.id)
-
+        print(response.context)
+        self.assertNotEqual(response.context, None)
         self.assertEqual(response.context['analysis'], self.analysis)
         self.assertEqual(response.context['iam'], self.iam)
         self.assertIsNotNone(response.context['id1'])
@@ -420,8 +421,8 @@ class ResultViewTest(TestCase):
         """Setup user, group, IAM, and analysis. Login IAM."""
         
         self.user = User.objects.create_user('test@test.com', password='test')
-        self.user.first_name = "Jack"
-        self.user.last_name = "Briggs"
+        self.user.first_name = "Test"
+        self.user.last_name = "User"
         self.user.save()
         self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,

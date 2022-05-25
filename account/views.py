@@ -70,9 +70,16 @@ class SignUpView(View):
                             filemode='a',
                             format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
                             datefmt="%Y-%m-%d %H:%M:%S",
-                            level=logging.DEBUG)
+                            level=logging.INFO)
             if user.email[-3:] == "edu":
-                register_IAM("unused_arg", request, [user])
+                iam = IAM.objects.create(user=user,
+                           aws_user="No creds yet",
+                           aws_access_key="No creds yet",
+                           aws_secret_access_key="No creds yet",
+                           aws_pwd = 'No password set',
+                           group=user.group)
+                logging.info(iam.user.group)
+                #register_IAM("unused_arg", request, [user])
                 try:
                     body_string = "This is an auto-generated email to let you know that " + user.email + " was just auto-approved for signup. This email is not confirmation that credential generation was successful, only that it is currently being attempted."
                     send_mail(
