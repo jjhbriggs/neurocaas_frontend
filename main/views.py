@@ -536,10 +536,12 @@ class ProcessView(LoginRequiredMixin, View):
         # convert aws keys to base64 string
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+        session_token = b64encode(b64encode(iam.aws_session_token.encode('utf-8'))).decode("utf-8")
 
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
+            'id3': session_token,
             'bucket': analysis.bucket_name,
             "data_set_dir": "%s/inputs" % iam.group.name,
             "config_dir": "%s/configs" % iam.group.name,
