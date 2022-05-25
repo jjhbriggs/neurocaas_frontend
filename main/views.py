@@ -252,8 +252,7 @@ class JobListView(LoginRequiredMixin, View):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
         results_folder = '%s/results' % iam.group
-
-        if  get_current_user(request).group and not analysis in get_current_user(request).group.analyses.all():
+        if get_current_user(request).group and not analysis in get_current_user(request).group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
