@@ -324,11 +324,13 @@ class ProcessViewTest(TestCase):
     def setUp(self):
         """Setup user, group, IAM, and analysis. Login IAM."""
         
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.user = User.objects.create_user('test@test.com', password='test')
         self.user.first_name = "Test"
         self.user.last_name = "User"
+        self.user.group = self.group
         self.user.save()
-        self.group = AnaGroup.objects.create(name="frontendtravisci")
+        
         self.iam = IAM.objects.create(user=self.user,
                                       aws_user="jbriggs",
                                       aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
@@ -568,7 +570,6 @@ class ConfigViewTest(TestCase):
         r = self.client.post('/login/', form)
 
         response = self.client.post('/config/%s' % self.analysis.id, {'fail':'fail'}, follow=True)
-        print(response.content)
         self.assertContains(response, "Config Error: ")
     def test_flatten_and_unflatten(self):
         field_data = yaml.safe_load(self.analysis.config_template.orig_yaml)
