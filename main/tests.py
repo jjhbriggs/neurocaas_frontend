@@ -236,6 +236,10 @@ class JobDetailViewTest(TestCase):
                                       aws_access_key='tbd',
                                       aws_secret_access_key='tbd',
                                       group=self.group2) 
+        res_folder = '%s/results' % self.group
+
+        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        self.job_id = job_list[0]['name']
     def test_job_detail_view(self):
         """Check that detail of a user's previous analysis are displayed properly."""
         form = {
@@ -243,13 +247,7 @@ class JobDetailViewTest(TestCase):
             'password': 'test',
         }
         r = self.client.post('/login/', form)
-        res_folder = '%s/results' % self.group
-        print(self.iam.aws_access_key)
-        print(self.iam.aws_secret_access_key)
-        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
-        print("JL")
-        print(job_list)
-        self.job_id = job_list[0]['name']
+        
         response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
         
         self.assertEqual(response.context['analysis'], self.analysis)
@@ -264,10 +262,10 @@ class JobDetailViewTest(TestCase):
         r = self.client.post('/login/', form)
         res_folder = '%s/results' % self.group2
 
-        job_list = get_job_list(iam=self.iam2, bucket=self.analysis.bucket_name, folder=res_folder)
-        
-        self.job_id = job_list[0]['name']
+        job_list2 = get_job_list(iam=self.iam2, bucket=self.analysis.bucket_name, folder=res_folder)
         response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
+        
+        self.assertEqual(len(job_list2),0)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
         
@@ -327,8 +325,8 @@ class ProcessViewTest(TestCase):
         """Setup user, group, IAM, and analysis. Login IAM."""
         
         self.user = User.objects.create_user('test@test.com', password='test')
-        self.user.first_name = "Jack"
-        self.user.last_name = "Briggs"
+        self.user.first_name = "Test"
+        self.user.last_name = "User"
         self.user.save()
         self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,
@@ -485,22 +483,10 @@ class ConfigViewTest(TestCase):
     
     def setUp(self):
         """Setup user, group, IAM, and analysis. Login IAM."""
-        
-        self.user = User.objects.create_user('test@test.com', password='test')
-        self.user.first_name = "Test"
-        self.user.last_name = "Test"
-        self.user.save()
-        self.group = AnaGroup.objects.create(name="frontendtravisci")
-        self.iam = IAM.objects.create(user=self.user,
-                                      aws_user="jbriggs",
-                                      aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
-                                      aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
-                                      group=self.group)
         self.configTemplate = ConfigTemplate.objects.create(
             config_name="Test Config",
             orig_yaml="__sample_field__: 'sample'",
         )
-        
         self.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
             result_prefix="job__cianalysispermastack_",
@@ -515,29 +501,41 @@ class ConfigViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
+        self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.group.analyses.add(self.analysis)
-        self.analysis2 = Analysis.objects.create(
-            analysis_name="Test Analysis2",
-            result_prefix="job__cianalysispermastack_",
-            bucket_name="cianalysispermastack",
-            custom=False,
-            short_description="Short Description",
-            long_description="Long Description",
-            paper_link="Paper Link",
-            git_link="Github Link",
-            bash_link="Bash Script Link",
-            demo_link="Demo page link",
-            signature="Signature"
-        )
-        # login here
+        self.group.save()
+        self.user = User.objects.create_user('test@test.com', password='test')
+        self.user.first_name = "Test"
+        self.user.last_name = "User"
+        self.user.group = self.group
+        self.user.save()
+        self.iam = IAM.objects.create(user=self.user,
+                                      aws_user="jbriggs",
+                                      aws_access_key='tbd',
+                                      aws_secret_access_key='tbd',
+                                      group=self.group)
+        credential_response = build_credentials(self.group, self.analysis)
+        reassign_iam(self.iam, credential_response)
+
+        self.group2 = AnaGroup.objects.create(name="NOACCESS")
+        self.user2 = User.objects.create_user('test2@test.com', password='test')
+        self.user2.first_name = "Test2"
+        self.user2.last_name = "User2"
+        self.user2.group = self.group2
+        self.user2.save()
+        self.iam2 = IAM.objects.create(user=self.user2,
+                                      aws_user="jbriggs",
+                                      aws_access_key='tbd',
+                                      aws_secret_access_key='tbd',
+                                      group=self.group2) 
+        
+    def test_get_config_view(self):
+        """Check that the config information displays properly."""
         form = {
             'email': 'test@test.com',
             'password': 'test',
         }
         r = self.client.post('/login/', form)
-        
-    def test_get_config_view(self):
-        """Check that the config information displays properly."""
         
         response = self.client.get('/config/%s' % self.analysis.id)
         self.assertEqual(response.context['analysis'], self.analysis)
@@ -551,15 +549,26 @@ class ConfigViewTest(TestCase):
         
     def test_no_perms_get_config(self):
         """Check that getting the config information does not display if the user does not have permissions for the analysis."""
+        form = {
+            'email': 'test2@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
         
-        response = self.client.get('/config/%s' % self.analysis2.id)
+        response = self.client.get('/config/%s' % self.analysis.id)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
         
     def test_post_fail_to_config_view(self):
-        """Check that posting file fails. Won't be able to test success case due to need for local file access."""
+        """Check that posting file fails."""
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
 
         response = self.client.post('/config/%s' % self.analysis.id, {'fail':'fail'}, follow=True)
+        print(response.content)
         self.assertContains(response, "Config Error: ")
     def test_flatten_and_unflatten(self):
         field_data = yaml.safe_load(self.analysis.config_template.orig_yaml)

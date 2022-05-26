@@ -475,7 +475,10 @@ class ConfigView(LoginRequiredMixin, View):
         # convert aws keys to base64 string
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-        session_token = b64encode(b64encode(iam.aws_session_token.encode('utf-8'))).decode("utf-8")
+        if not iam.fixed_creds:
+            session_token = b64encode(b64encode(iam.aws_session_token.encode('utf-8'))).decode("utf-8")
+        else:
+            session_token = ''
 
         field_data = yaml.safe_load(analysis.config_template.orig_yaml)
         field_copy = {}
