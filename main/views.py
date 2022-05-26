@@ -257,7 +257,7 @@ class JobListView(LoginRequiredMixin, View):
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
-        if current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire: #regenerate credentials if they have expired
+        if not iam.fixed_creds and (current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire): #regenerate credentials if they have expired
             try:
                 credential_response = build_credentials(current_user.group, analysis)
             except Exception as e:
@@ -538,7 +538,7 @@ class ProcessView(LoginRequiredMixin, View):
             return redirect('/')
 
         iam = get_current_iam(request)
-        if current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire: #regenerate credentials if they have expired
+        if not iam.fixed_creds and (current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire): #regenerate credentials if they have expired
             try:
                 credential_response = build_credentials(current_user.group, analysis)
             except Exception as e:
@@ -551,7 +551,12 @@ class ProcessView(LoginRequiredMixin, View):
         # convert aws keys to base64 string
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
-        session_token = b64encode(b64encode(iam.aws_session_token.encode('utf-8'))).decode("utf-8")
+        if not iam.fixed_creds:
+            session_token = b64encode(b64encode(iam.aws_session_token.encode('utf-8'))).decode("utf-8")
+            federated_url = construct_federated_url(iam,'neurocaas@gmail.com', analysis.bucket_name)
+        else:
+            session_token = ''
+            federated_url = ''
 
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
@@ -565,7 +570,7 @@ class ProcessView(LoginRequiredMixin, View):
             'user': get_current_user(request),
             'logged_in': not request.user.is_anonymous,
             'analysis': analysis,
-            'federated_url': construct_federated_url(iam,'neurocaas@gmail.com', analysis.bucket_name)
+            'federated_url': federated_url
         })
 
     def post(self, request, ana_id):
@@ -595,7 +600,7 @@ class ProcessView(LoginRequiredMixin, View):
                            bucket=analysis.bucket_name,
                            key=submit_key,
                            json_data=submit_data)
-
+        
         return JsonResponse({
             "status": True,
             "timestamp": cur_timestamp,

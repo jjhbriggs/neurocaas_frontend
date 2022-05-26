@@ -123,6 +123,8 @@ class IAM(Base):
     # group = models.CharField(max_length=255, help_text='Group Name', default='bendeskylab')
     aws_pwd = models.CharField(max_length=255, help_text="AWS account password")
 
+    fixed_creds = models.BooleanField(default=False)
+
     def __str__(self):
         """Returns AWS IAM Username."""
         return self.aws_user

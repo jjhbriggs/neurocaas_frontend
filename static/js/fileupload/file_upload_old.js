@@ -281,7 +281,7 @@ FileUpload.prototype ={
         // Handle files of file tag
         var handleFiles = function(_this, files) {
             if (!_this.bucket){
-                alert("Select a bucket for uploading");
+                alert("Select a bucket for uploading!");
                 return;
             }
             files = [...files];

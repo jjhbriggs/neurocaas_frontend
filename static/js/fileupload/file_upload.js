@@ -64,7 +64,7 @@ FileUpload.prototype ={
             this.s3 = new AWS.S3({
                 accessKeyId: atob(atob(sender.id1)),
                 secretAccessKey: atob(atob(sender.id2)),
-                sessionToken : atob(atob(sender.id3))
+                //sessionToken : atob(atob(sender.id3))
             });
             console.log(accessKeyId);
 
@@ -293,7 +293,7 @@ FileUpload.prototype ={
         // Handle files of file tag
         var handleFiles = function(_this, files) {
             if (!_this.bucket){
-                alert("Select a bucket for uploading");
+                alert("Select a bucket for uploading.");
                 return;
             }
             //files = [...files];
