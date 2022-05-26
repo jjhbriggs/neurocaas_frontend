@@ -251,10 +251,23 @@ class JobListView(LoginRequiredMixin, View):
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
+        current_user = get_current_user(request)
         results_folder = '%s/results' % iam.group
-        if get_current_user(request).group and not analysis in get_current_user(request).group.analyses.all():
+        if current_user.group and not analysis in current_user.group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
+
+        if current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire: #regenerate credentials if they have expired
+            try:
+                credential_response = build_credentials(current_user.group, analysis)
+            except Exception as e:
+                messages.error(request, str(e))
+                return redirect('/')
+            current_user.cred_expire = credential_response['Expiration']
+            current_user.save()
+            reassign_iam(iam, credential_response)
+
+
         job_list = get_job_list(iam=iam, bucket=analysis.bucket_name, folder=results_folder)
         return render(
             request=request,

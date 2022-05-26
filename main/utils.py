@@ -249,7 +249,8 @@ def get_job_list(iam, bucket, folder):
         """
     s3 = boto3.client('s3',
                       aws_access_key_id=iam.aws_access_key,
-                      aws_secret_access_key=iam.aws_secret_access_key)
+                      aws_secret_access_key=iam.aws_secret_access_key,
+                      aws_session_token=iam.aws_session_token)
     prefix = "%s/" % folder
     job_key_list = []
     try:
