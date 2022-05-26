@@ -16,6 +16,7 @@ FileUpload.prototype ={
     progressBar: null,
     id1: null,
     id2: null,
+    id3: null,
     file: null,
     bucket: null,
     subfolder: null,
@@ -38,10 +39,11 @@ FileUpload.prototype ={
     contentious: false,
     current_file_id: 0,
     files: [],
-    init: function(form_id, id1, id2, bucket, subfolder, file_tag_id, trigger=null, contentious=false){
+    init: function(form_id, id1, id2, id3, bucket, subfolder, file_tag_id, trigger=null, contentious=false){
         this.form_id = form_id;
         this.id1 = id1;
         this.id2 = id2;
+        this.id3 = id3;
         this.bucket = bucket;
         this.subfolder = subfolder;
         this.file_tag_id = file_tag_id;
@@ -62,6 +64,7 @@ FileUpload.prototype ={
             this.s3 = new AWS.S3({
                 accessKeyId: atob(atob(sender.id1)),
                 secretAccessKey: atob(atob(sender.id2)),
+                sessionToken : atob(atob(sender.id3))
             });
 
             // function completeMultipartUpload

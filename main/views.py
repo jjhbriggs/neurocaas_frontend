@@ -462,6 +462,7 @@ class ConfigView(LoginRequiredMixin, View):
         # convert aws keys to base64 string
         secret_key = b64encode(b64encode(iam.aws_secret_access_key.encode('utf-8'))).decode("utf-8")
         access_id = b64encode(b64encode(iam.aws_access_key.encode('utf-8'))).decode("utf-8")
+        session_token = b64encode(b64encode(iam.aws_session_token.encode('utf-8'))).decode("utf-8")
 
         field_data = yaml.safe_load(analysis.config_template.orig_yaml)
         field_copy = {}
@@ -478,6 +479,7 @@ class ConfigView(LoginRequiredMixin, View):
         return render(request=request, template_name=self.template_name, context={
             "id1": access_id,
             "id2": secret_key,
+            'id3': session_token,
             "title": analysis.analysis_name,
             'iam': iam,
             'user': get_current_user(request),
