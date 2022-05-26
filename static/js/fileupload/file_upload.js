@@ -64,9 +64,8 @@ FileUpload.prototype ={
             this.s3 = new AWS.S3({
                 accessKeyId: atob(atob(sender.id1)),
                 secretAccessKey: atob(atob(sender.id2)),
-                //sessionToken : atob(atob(sender.id3))
+                sessionToken : atob(atob(sender.id3))
             });
-            console.log(accessKeyId);
 
             // function completeMultipartUpload
             completeMultipartUpload = function(_this, s3, doneParams) {
