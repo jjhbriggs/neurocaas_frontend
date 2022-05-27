@@ -195,14 +195,14 @@ class UserAdministrator(UserAdmin):
     list_display = ('email', 'is_admin', 'last_name')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name')}),
+        (None, {'fields': ('email', 'password', 'first_name', 'last_name')}),
         #('Permissions', {'fields': ('data_transfer_permission',)}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'has_migrated_pwd', 'first_name', 'last_name')}
+            'fields': ('email', 'password1', 'password2', 'first_name', 'last_name')}
          ),
     )
     actions = [register_IAM, remove_IAM, changeGroupPermissions]
@@ -219,14 +219,14 @@ class UserAdministrator(UserAdmin):
 @admin.register(IAM)
 class IAMAdmin(admin.ModelAdmin):
     list_display = ('user', 'aws_user', 'aws_access_key', 'group', 'created_on', 'cred_expire')
-    readonly_fields = ['group']
+    readonly_fields = ['cred_expire','user']
     search_fields = ('user__name',)
     ordering = ('-created_on',)
 
 @admin.register(AnaGroup)
 class AWSAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'created_on')
-    readonly_fields=('code',)
+    readonly_fields=('name','code',)
 
 admin.site.register(User, UserAdministrator)
 admin.site.unregister(Group)

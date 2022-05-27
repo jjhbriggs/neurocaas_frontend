@@ -77,7 +77,6 @@ class UserCreationForm(forms.ModelForm):
             new_group = AnaGroup.objects.filter(code=self.clean_group_code()).first()
         else:
             new_group = AnaGroup.objects.create(name=groupname_from_user(user))
-        user.has_migrated_pwd = True
         if commit:
             user.save()
         iam = IAM.objects.create(user=user,

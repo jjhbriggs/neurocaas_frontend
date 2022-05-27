@@ -14,6 +14,9 @@ import datetime as dt
 from main.models import Analysis
 from .base_model import Base
 
+def group_uuid():
+        return uuid.uuid4().hex.upper()[0:6]
+
 class AnaGroup(Base):
     """
     AnaGroup model.
@@ -22,13 +25,15 @@ class AnaGroup(Base):
     """
     #: Name of the group.
     name = models.CharField(max_length=50, help_text='Group Name', unique=True)
-    code = models.CharField(max_length=6,blank=False, default=uuid.uuid4().hex.upper()[0:6])
+    code = models.CharField(max_length=6,blank=False, default=group_uuid)
     analyses = models.ManyToManyField(Analysis, blank=True)
     
     
     #: Returns name of the group.
     def __str__(self):
         return self.name
+    #: makes a uuid
+   
     class Meta:
         verbose_name = 'Group'
         verbose_name_plural = 'Groups'
@@ -53,15 +58,8 @@ class User(AbstractBaseUser):
     first_name = models.CharField(max_length=100, default="", blank=True)
     #: Last Name of User.
     last_name = models.CharField(max_length=100, default="", blank=True)
-
-    #group = models.ForeignKey(AnaGroup, on_delete=models.SET_NULL, null=True)
-    
-    has_migrated_pwd = models.BooleanField(default=False)
-    
+        
     alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
-    #requested_group_name = models.CharField(max_length=50, default="", blank=True, validators=[alphanumeric])
-    #requested_group_code = models.CharField(max_length=6, default="", blank=True, validators=[alphanumeric])
-    #use_code = models.BooleanField(default=False)
 
     #unique=True,
     USERNAME_FIELD = 'email'
@@ -121,9 +119,9 @@ class IAM(Base):
     group = models.ForeignKey(AnaGroup, on_delete=models.CASCADE)
     # group = models.CharField(max_length=255, help_text='Group Name', default='bendeskylab')
     #aws_pwd = models.CharField(max_length=255, help_text="AWS account password")
-    cred_expire = models.DateTimeField(null=True,blank=True)
+    cred_expire = models.DateTimeField(null=True,blank=True,help_text='Time Temporary Credentials Expire',)
 
-    fixed_creds = models.BooleanField(default=False)
+    fixed_creds = models.BooleanField(default=False,help_text='User Gets Permanent Credentials',)
 
     def __str__(self):
         """Returns AWS IAM Username."""
