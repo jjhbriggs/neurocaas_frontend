@@ -50,7 +50,7 @@ class Command(BaseCommand):
                             for creds in csv.DictReader(data): 
                                 #: IAM and ana_group creation
                                 email = affiliate["ContactEmail"][num_new_users]
-                                logging.info('Starting iam and ana_group creation for user' + creds['Username'] + region)
+                                logging.info('Starting iam and ana_group creation for user: ' + creds['Username'] + region)
                                 user = User.objects.filter(email=email).first()
                                 new_group = AnaGroup.objects.filter(name=ana_name)
                                 if len(new_group) == 0:
@@ -58,27 +58,33 @@ class Command(BaseCommand):
                                 else:
                                     new_group = new_group.first()
 
-                                iam_pwd = ""
                                 with open(os.path.join(pipedir, 'compiled_users.json')) as f2:
                                     try:
                                         user_pwd_array = json.load(f2)
-                                        iam_pwd = user_pwd_array['Outputs']['Password' + username]['Value']
                                     except Exception as e:
                                         logging.error("Error2: " + str(e))
                                     #------user_config_array['Outputs']['Passwordtestmultiplegmail']['Value']
-                                if len(IAM.objects.filter(user=user)) == 0:
+                                if len(IAM.objects.filter(user=user)) == 0: #this shouldn't be 0 if made from console
                                     iam = IAM.objects.create(user=user,
                                                         aws_user=creds['Username'] + region,
                                                         aws_access_key=creds['Access Key'],
                                                         aws_secret_access_key=creds['Secret Access Key'],
-                                                        aws_pwd = iam_pwd,
+                                                        aws_session_token = 'No Session Token for Fixed Creds',
                                                         group=new_group)
+                                else:
+                                    iam = IAM.objects.filter(user=user).first()
+                                    iam.aws_user=creds['Username'] + region
+                                    iam.aws_access_key=creds['Access Key']
+                                    iam.aws_secret_access_key=creds['Secret Access Key']
+                                    iam.aws_session_token='No token yet'
+                                    iam.fixed_creds = True
+                                    iam.save()
                                 #: Register group with listed buckets
                                 for bucket in pipelines:
                                     logging.info("attempting bucket: " + bucket)
                                     analysis_to_add = Analysis.objects.filter(bucket_name=bucket).first()
                                     if analysis_to_add is not None:
-                                        analysis_to_add.groups.add(new_group) 
+                                        new_group.analyses.add(analysis_to_add)
                                 logging.info('Finished iam and ana_group creation for user' + creds['Username'] + region)
                                 try:
                                     body_string = "Dear " + user.get_full_name() + ",\n\nYour NeuroCAAS Registration was successful, and you have been granted access to begin running analyses.\n\nRegards,\nThe NeuroCAAS Team"

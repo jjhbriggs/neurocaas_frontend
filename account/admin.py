@@ -35,15 +35,11 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
     #: Register IAM for every user in query
     for usr in queryset:
         try:
-            if usr.requested_group_name == "":
-                if request is not None:
-                    messages.error(request, "System error, requested group name blank")
-                continue
             #: Check for existing IAM group in resources for cloudformation
-            group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name)))
+            group_exists = os.path.isdir(os.path.join(user_profiles, 'group-' + IAM.objects.filter(user=usr).first().group.name))
             #: Generate one if there isn't an existing folder
             if not group_exists:
-                command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + str(usr.requested_group_name)
+                command = 'source ~/ncap/venv/bin/activate && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && bash ' + str(os.path.join(user_profiles, 'iac_utils/configure.sh')) + ' group-' + IAM.objects.filter(user=usr).first().group.name
                 process = subprocess.Popen([command],
                                 stdout=None,
                                 stderr=None,
@@ -53,10 +49,10 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
             user_config_array = {}
             #: Fill correct JSON data for cloudformation
             try:
-                with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json')) as f:
+                with open(os.path.join(user_profiles, 'group-' + IAM.objects.filter(user=usr).first().group.name, 'user_config_template.json')) as f:
                     user_config_array = json.load(f)
                     user_exists = False
-                    username = make_username(usr)
+                    username = groupname_from_user(usr)
                     for aff in user_config_array['UXData']["Affiliates"]:
                         if username in aff["UserNames"]:
                             user_exists = True
@@ -69,18 +65,18 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
                             affiliate["UserNames"].append(username)
                             affiliate["ContactEmail"].append(usr.email)
                         else:
-                            affiliate["AffiliateName"] = usr.requested_group_name
+                            affiliate["AffiliateName"] = IAM.objects.filter(user=usr).first().group.name
                             affiliate["ContactEmail"] = [usr.email]
                             affiliate["UserNames"] = [username]
                         user_config_array['UXData']["Affiliates"][0] = affiliate
 
-                with open(os.path.join(user_profiles, 'group-' + str(usr.requested_group_name), 'user_config_template.json'), 'w') as outfile:
+                with open(os.path.join(user_profiles, 'group-' + IAM.objects.filter(user=usr).first().group.name, 'user_config_template.json'), 'w') as outfile:
                     json.dump(user_config_array, outfile)
             except Exception as e:
                 if request is not None:
                     messages.error(request, "Backend error 1: " + str(e))
             #: Call deploy.sh script to deploy these resources
-            command = 'source ~/ncap/venv/bin/activate && source activate /home/ubuntu/ncap/neurocaas && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + str(usr.requested_group_name) + ' &')
+            command = 'source ~/ncap/venv/bin/activate && source activate /home/ubuntu/ncap/neurocaas && cd ~/ncap/neurocaas/ncap_iac/user_profiles/iac_utils && ./deploy.sh ' + os.path.join(user_profiles,'group-' + IAM.objects.filter(user=usr).first().group.name + ' &')
             outfile = open('logs/iam_creation_out_log.txt','a')
             errfile = open('logs/iam_creation_err_log.txt','a')
             process = subprocess.Popen([command],
@@ -95,7 +91,7 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
         except Exception as e:
             if request is not None:
                 messages.error(request, "Backend Error 0: " + str(e))
-register_IAM.short_description = "[LEGACY] Generate IAMs for selected users"
+register_IAM.short_description = "[Fixed Cred] Generate IAMs for selected users"
 #: Removes IAM Automatically with AWS and the Django DB
 def remove_IAM(modeladmin, request, queryset):
     #: Remove IAM for every user in query
@@ -109,7 +105,8 @@ def remove_IAM(modeladmin, request, queryset):
             with open(os.path.join(user_profiles, 'group-' + str(current_group), 'user_config_template.json')) as f:
                 user_config_array = json.load(f)
                 affiliate = user_config_array['UXData']["Affiliates"][0]
-                curren_un = current_iam.aws_user.replace(user_config_array['Lambda']['LambdaConfig']['REGION'],'')
+                #curren_un = current_iam.aws_user.replace(user_config_array['Lambda']['LambdaConfig']['REGION'],'')
+                curren_un = current_iam
                 if (curren_un in affiliate["UserNames"]):
                     #: Then IAM exists in the data, and you can Remove the IAM
                     affiliate["UserNames"].remove(curren_un)
@@ -131,7 +128,7 @@ def remove_IAM(modeladmin, request, queryset):
             current_iam.delete()
         else:
             messages.error(request, "A user was selected that did not contain a valid IAM")
-remove_IAM.short_description = "[LEGACY] Remove IAMs for selected users [Run before deleting]"
+remove_IAM.short_description = "[Fixed Cred] Remove IAMs for selected users [Run before deleting]"
 
 def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
     #: redirects to intermediate page which lets you change the permissions of a specific queryset. 
@@ -189,23 +186,23 @@ def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
                       'admin/change_ana_access.html',
                       context={'analyses':Analysis.objects.all(), 'changeiams':queryset})
     
-changeGroupPermissions.short_description = "[LEGACY] Update Group Perms"
+changeGroupPermissions.short_description = "[Fixed Cred] Update Group Perms"
 
 class UserAdministrator(UserAdmin):
     # The forms to add and change user instances
     add_form = UserCreationForm
 
-    list_display = ('email', 'is_admin', 'last_name', 'requested_group_code','group')
+    list_display = ('email', 'is_admin', 'last_name')
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name', 'use_code', 'requested_group_code','group','cred_expire')}),
+        (None, {'fields': ('email', 'password', 'has_migrated_pwd', 'first_name', 'last_name')}),
         #('Permissions', {'fields': ('data_transfer_permission',)}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'has_migrated_pwd', 'first_name', 'last_name','use_code','requested_group_name','requested_group_code','group')}
+            'fields': ('email', 'password1', 'password2', 'has_migrated_pwd', 'first_name', 'last_name')}
          ),
     )
     actions = [register_IAM, remove_IAM, changeGroupPermissions]
@@ -221,10 +218,10 @@ class UserAdministrator(UserAdmin):
 
 @admin.register(IAM)
 class IAMAdmin(admin.ModelAdmin):
-    list_display = ('user', 'aws_user', 'aws_access_key', 'group', 'created_on')
+    list_display = ('user', 'aws_user', 'aws_access_key', 'group', 'created_on', 'cred_expire')
     readonly_fields = ['group']
     search_fields = ('user__name',)
-    ordering = ('aws_user',)
+    ordering = ('-created_on',)
 
 @admin.register(AnaGroup)
 class AWSAdmin(admin.ModelAdmin):

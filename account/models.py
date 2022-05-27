@@ -59,11 +59,10 @@ class User(AbstractBaseUser):
     has_migrated_pwd = models.BooleanField(default=False)
     
     alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters are allowed.')
-    requested_group_name = models.CharField(max_length=50, default="", blank=True, validators=[alphanumeric])
-    requested_group_code = models.CharField(max_length=6, default="", blank=True, validators=[alphanumeric])
-    use_code = models.BooleanField(default=False)
+    #requested_group_name = models.CharField(max_length=50, default="", blank=True, validators=[alphanumeric])
+    #requested_group_code = models.CharField(max_length=6, default="", blank=True, validators=[alphanumeric])
+    #use_code = models.BooleanField(default=False)
 
-    cred_expire = models.DateTimeField(null=True,blank=True)
     #unique=True,
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -111,23 +110,24 @@ class IAM(Base):
     #: The User this IAM is associated with.
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     #: AWS account username.
-    aws_user = models.CharField(max_length=155, help_text="AWS account username")
+    aws_user = models.CharField(max_length=155, help_text="AWS account username", blank=True, null=True)
     #: AWS access key
     aws_access_key = models.CharField(max_length=255, help_text="AWS Access key id")
     #: AWS secret access key
     aws_secret_access_key = models.CharField(max_length=255, help_text="AWS Secret key")
 
-    aws_session_token = models.CharField(max_length=255, help_text="AWS session token", null=True,blank=True)
+    aws_session_token = models.CharField(max_length=255, help_text="AWS session token")
     #: The group this IAM is associated with
     group = models.ForeignKey(AnaGroup, on_delete=models.CASCADE)
     # group = models.CharField(max_length=255, help_text='Group Name', default='bendeskylab')
-    aws_pwd = models.CharField(max_length=255, help_text="AWS account password")
+    #aws_pwd = models.CharField(max_length=255, help_text="AWS account password")
+    cred_expire = models.DateTimeField(null=True,blank=True)
 
     fixed_creds = models.BooleanField(default=False)
 
     def __str__(self):
         """Returns AWS IAM Username."""
-        return self.aws_user
+        return self.user.email
     class Meta:
         verbose_name = 'IAM'
         verbose_name_plural = 'IAMs'

@@ -72,8 +72,8 @@ class ChangePermissionView(View):
 
     def get(self, request):
         iam = get_current_iam(request)
-        if not iam:
-            messages.error(request, "You do not have AWS credentials, please contact neurocaas@gmail.com to obtain access")
+        if not iam or not iam.fixed_creds:
+            messages.error(request, "You do not have permanent AWS credentials, please contact neurocaas@gmail.com to obtain access")
             return redirect('/')
 
         return render(request=request,
@@ -93,10 +93,10 @@ class ChangePermissionView(View):
         logfile.write("\nafter post data")
         group_access = []
         ## Getting current user and iam.
-        curr_iam = get_current_iam(request),
+        curr_iam = get_current_iam(request)
         curr_user =  get_current_user(request)
-        if not curr_iam or not curr_user:
-            messages.error(request, "You must have an IAM to complete this action.")
+        if not curr_iam or not curr_user or not curr_iam.fixed_creds:
+            messages.error(request, "You must have an permanent IAM to complete this action.")
             return redirect('/profile')
         if 'apply' in request.POST:
             logfile.write("Hit apply")
@@ -106,7 +106,7 @@ class ChangePermissionView(View):
             if len(IAM.objects.filter(user=curr_user)) == 0:
                 messages.error(request, "Select a user with an IAM")
             else:    
-                iam_group = curr_iam[0].group
+                iam_group = curr_iam.group
                 stack = "group-" + iam_group.name
                 new_path = path + "/" + stack
                 if os.path.isdir(new_path):
@@ -134,11 +134,11 @@ class ChangePermissionView(View):
             register_IAM("unused_arg", request, [curr_user])
             for ana in Analysis.objects.all():
                 if ana in group_access:
-                    if not iam_group in ana.groups.all():
-                        ana.groups.add(iam_group)
+                    if not ana in iam_group.analyses.all():
+                        iam_group.analyses.add(ana)
                 else:
-                    if iam_group in ana.groups.all():
-                        ana.groups.remove(iam_group)
+                    if ana in iam_group.analyses.all():
+                        iam_group.analyses.remove(ana)
 
             ## not sure how to best format this 
             return redirect('/profile')
@@ -251,20 +251,19 @@ class JobListView(LoginRequiredMixin, View):
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
-        current_user = get_current_user(request)
         results_folder = '%s/results' % iam.group
         if iam.group and not analysis in iam.group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
-        if not iam.fixed_creds and (current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire): #regenerate credentials if they have expired
+        if not iam.fixed_creds and (iam.cred_expire is None or pytz.utc.localize(dt.today()) > iam.cred_expire): #regenerate credentials if they have expired
             try:
                 credential_response = build_credentials(iam.group, analysis)
             except Exception as e:
                 messages.error(request, str(e))
                 return redirect('/')
-            current_user.cred_expire = credential_response['Expiration']
-            current_user.save()
+            iam.cred_expire = credential_response['Expiration']
+            iam.save()
             reassign_iam(iam, credential_response)
 
 
@@ -291,7 +290,7 @@ class JobDetailView(LoginRequiredMixin, View):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
 
-        if get_current_user(request).group and not analysis in get_current_user(request).group.analyses.all():
+        if iam.group and not analysis in iam.group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
@@ -468,7 +467,7 @@ class ConfigView(LoginRequiredMixin, View):
         if analysis.config_template is None:
             messages.error(request, "No config template for this analysis yet.")
             return redirect('/')
-        if get_current_user(request).group and not analysis in get_current_user(request).group.analyses.all():
+        if iam.group and not analysis in iam.group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
@@ -535,21 +534,20 @@ class ProcessView(LoginRequiredMixin, View):
 
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
-        current_user = get_current_user(request)
         iam = get_current_iam(request)
         if iam.group and not analysis in iam.group.analyses.all():
             messages.error(request, "Your group doesn't have permission to use this analysis.")
             return redirect('/')
 
         
-        if not iam.fixed_creds and (current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire): #regenerate credentials if they have expired
+        if not iam.fixed_creds and (iam.cred_expire is None or pytz.utc.localize(dt.today()) > iam.cred_expire): #regenerate credentials if they have expired
             try:
                 credential_response = build_credentials(iam.group, analysis)
             except Exception as e:
                 messages.error(request, str(e))
                 return redirect('/')
-            current_user.cred_expire = credential_response['Expiration']
-            current_user.save()
+            iam.cred_expire = credential_response['Expiration']
+            iam.save()
             reassign_iam(iam, credential_response)
         
         # convert aws keys to base64 string

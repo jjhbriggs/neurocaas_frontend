@@ -25,6 +25,11 @@ def get_current_user(request):
         """
     return request.user if not request.user.is_anonymous else None
 def s3_resource(iam):
+    if iam.fixed_creds:
+        return boto3.resource(
+            's3',
+            aws_access_key_id=iam.aws_access_key,
+            aws_secret_access_key=iam.aws_secret_access_key)
     return boto3.resource(
             's3',
             aws_access_key_id=iam.aws_access_key,
@@ -247,7 +252,12 @@ def get_job_list(iam, bucket, folder):
         @return:
                 folder list of jobs
         """
-    s3 = boto3.client('s3',
+    if iam.fixed_creds:
+        s3 = boto3.client('s3',
+                      aws_access_key_id=iam.aws_access_key,
+                      aws_secret_access_key=iam.aws_secret_access_key)
+    else:
+        s3 = boto3.client('s3',
                       aws_access_key_id=iam.aws_access_key,
                       aws_secret_access_key=iam.aws_secret_access_key,
                       aws_session_token=iam.aws_session_token)
@@ -360,6 +370,8 @@ def create_submit_json(iam, bucket, key, json_data):
     )
     print("successfully created submit.json")
 
+def groupname_from_user(user):
+    return (user.email.replace('@', '').replace('.', '').replace('_', '-')[0:12] + str((user.time_added.hour * 60 + user.time_added.minute) * 60 + user.time_added.second))
 def build_credentials(group, analysis):
     #: Returns object with temporary credentials
 

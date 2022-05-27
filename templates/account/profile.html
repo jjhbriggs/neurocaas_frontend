@@ -4,6 +4,11 @@
 
 {% block content %}
 
+    <style>
+        input.disabled{
+            background-color : #EBEBE4 !important;
+        }
+    </style>
     <div class="container">
         <div class="col-xl-6 offset-xl-3 col-md-12">
             <!-- Title -->
@@ -35,70 +40,76 @@
                     </div>
                     <!-- #END Last Name -->
 					<div class="form-group row pb-3">
-                        <label class="col-5 col-form-label">Email <span class="danger">*</span> </label>
+                        <label class="col-5 col-form-label">Email </label>
                         <div class="col-7">
-                            <input class="form-control" type="text"  value="{{user.email}}" disabled>
+                            <input class="form-control disabled" type="text"  value="{{user.email}}" disabled>
                         </div>
                     </div>
                     <!-- AWS User Name -->
                     
                     <div class="form-group row pb-3">
-                        <label class="col-5 col-form-label">AWS User Name <span class="danger">*</span> </label>
+                        <label class="col-5 col-form-label">AWS User Name <sup>&dagger;</sup> </label>
                         <div class="col-7">
-                            <input class="form-control" type="text"  value="{{iam.aws_user}}" disabled>
+                            <input class="form-control disabled" type="text"  value="{{iam.aws_user}}" disabled>
                         </div>
                     </div>
                     <!-- #END AWS User Name -->
 
                     <!-- AWS Access Key -->
                     <div class="form-group row pb-3">
-                        <label class="col-5 col-form-label">AWS Access Key <span class="danger">*</span></label>
+                        <label class="col-5 col-form-label">AWS Access Key</label>
                         <div class="col-7">
-                            <input class="form-control" type="text"  value="{{iam.aws_access_key}}" disabled>
+                            <input class="form-control disabled" type="text"  value="{{iam.aws_access_key}}" disabled>
                         </div>
                     </div>
                     <!-- #END AWS Access Key -->
 
                     <!-- AWS Secret Access Key -->
                     <div class="form-group row pb-3">
-                        <label class="col-5 col-form-label">AWS Secret Access Key <span class="danger">*</span></label>
+                        <label class="col-5 col-form-label">AWS Secret Access Key</label>
                         <div class="col-7">
-                            <input class="form-control" type="text"  value="{{iam.aws_secret_access_key}}" disabled>
+                            <input class="form-control disabled" type="text"  value="{{iam.aws_secret_access_key}}" disabled>
                         </div>
                     </div>
                     <!-- #END AWS Secret Access Key -->
 
                     <!-- AWS pwd -->
                     <div class="form-group row pb-3">
-                        <label class="col-5 col-form-label">AWS Password <span class="danger">*</span></label>
+                        <label class="col-5 col-form-label">AWS Session Token <sup>&Dagger;</sup></label>
                         <div class="col-7">
-                            <input class="form-control" type="text"  value="{{iam.aws_pwd}}" disabled>
+                            <input class="form-control disabled" type="text"  value="{{iam.aws_session_token}}" disabled>
                         </div>
                     </div>
                     <!-- #END AWS pwd -->
 
                     <!-- Group Share Code -->
                     <div class="form-group row pb-3">
-                        <label class="col-5 col-form-label">Group Share Code <span class="danger">*</span></label>
+                        <label class="col-5 col-form-label">Group Share Code</label>
                         <div class="col-7">
-                            <input class="form-control" type="text"  value="{{iam.group.code}}" disabled>
+                            <input class="form-control disabled" type="text"  value="{{iam.group.code}}" disabled>
                         </div>
                     </div>
                     <!-- #END Group Share Code -->
 
                     <!-- AWS S3 Bucket For Datasets and config files -->
                     <div class="form-group row pb-3">
-                        <label class="col-5 col-form-label">S3 Bucket For Datasets and config files <span class="danger">*</span></label>
+                        <label class="col-5 col-form-label">S3 Bucket For Datasets and config files</label>
                         <div class="col-7">
-                            <input class="form-control" type="text"  value="{{iam.group.name}}" disabled>
+                            <input class="form-control disabled" type="text" value="{{iam.group.name}}" disabled>
                         </div>
                     </div>
                     
                     <div class="form-group row pb-3">
                         <a href="/changepwd/">Change Password</a>
-                        <a href="/changeperms/">Change Permissions</a>
+                        {% if iam.fixed_creds %}
+                            <a href="/changeperms/">Change Permissions</a>
+                        {% endif %}
+                        
                     </div>
-                    
+                    <div class="form-group row">
+                        <span style="font-size: 15px;">&dagger; Not needed for temporary credential user</span>
+                        <span style="font-size: 15px;">&Dagger; Not needed for fixed credential user</span>
+                    </div>
                     <!-- #END S3 Bucket For Datasets and config files -->
 
                    
