@@ -15,7 +15,9 @@ arrow==1.1.1
     #   -r requirements.in
     #   jinja2-time
 asgiref==3.4.1
-    # via django
+    # via
+    #   -r requirements.in
+    #   django
 asn1crypto==1.4.0
     # via -r requirements.in
 attrs==21.2.0
@@ -44,7 +46,9 @@ backcall==0.2.0
     #   -r requirements.in
     #   ipython
 backports.zoneinfo==0.2.1
-    # via tzlocal
+    # via
+    #   -r requirements.in
+    #   tzlocal
 binaryornot==0.4.4
     # via
     #   -r requirements.in
@@ -78,6 +82,8 @@ chardet==4.0.0
     #   -r requirements.in
     #   binaryornot
     #   requests
+charset-normalizer==2.0.6
+    # via -r requirements.in
 chevron==0.14.0
     # via
     #   -r requirements.in
@@ -90,10 +96,15 @@ click==7.1.2
     #   cookiecutter
     #   flask
     #   mkdocs
+    #   pip-tools
 colorama==0.4.3
     # via
     #   -r requirements.in
     #   awscli
+colorclass==2.2.0
+    # via
+    #   -r requirements.in
+    #   pip-upgrader
 cookiecutter==1.7.3
     # via
     #   -r requirements.in
@@ -108,6 +119,8 @@ cycler==0.10.0
     # via
     #   -r requirements.in
     #   matplotlib
+dataclasses==0.8
+    # via -r requirements.in
 dateparser==1.0.0
     # via
     #   -r requirements.in
@@ -117,7 +130,7 @@ decorator==5.1.0
     #   -r requirements.in
     #   ipython
     #   traitlets
-django==2.2.24
+django==3.2.7
     # via
     #   -r requirements.in
     #   djangorestframework
@@ -135,6 +148,10 @@ docker==4.2.2
     # via
     #   -r requirements.in
     #   aws-sam-cli
+docopt==0.6.2
+    # via
+    #   -r requirements.in
+    #   pip-upgrader
 docutils==0.15.2
     # via
     #   -r requirements.in
@@ -148,7 +165,9 @@ flask==1.1.4
 future==0.18.2
     # via -r requirements.in
 ghp-import==2.0.1
-    # via mkdocs
+    # via
+    #   -r requirements.in
+    #   mkdocs
 gunicorn==20.1.0
     # via -r requirements.in
 idna==2.10
@@ -165,12 +184,17 @@ importlib-metadata==4.8.1
     #   jsonschema
     #   markdown
     #   mkdocs
+    #   pep517
     #   pluggy
     #   pytest
 importlib-resources==5.2.2
-    # via backports.zoneinfo
+    # via
+    #   -r requirements.in
+    #   backports.zoneinfo
 iniconfig==1.1.1
-    # via pytest
+    # via
+    #   -r requirements.in
+    #   pytest
 ipython==7.16.1
     # via -r requirements.in
 ipython-genutils==0.2.0
@@ -225,7 +249,9 @@ markupsafe==2.0.1
 matplotlib==3.1.0
     # via -r requirements.in
 mergedeep==1.3.4
-    # via mkdocs
+    # via
+    #   -r requirements.in
+    #   mkdocs
 mkdocs==1.2.2
     # via
     #   -r requirements.in
@@ -240,12 +266,17 @@ packaging==21.0
     # via
     #   -r requirements.in
     #   mkdocs
+    #   pip-upgrader
     #   pytest
     #   sphinx
 parso==0.8.2
     # via
     #   -r requirements.in
     #   jedi
+pep517==0.11.0
+    # via
+    #   -r requirements.in
+    #   pip-tools
 pexpect==4.8.0
     # via
     #   -r requirements.in
@@ -254,6 +285,10 @@ pickleshare==0.7.5
     # via
     #   -r requirements.in
     #   ipython
+pip-tools==6.2.0
+    # via -r requirements.in
+pip-upgrader==1.4.15
+    # via -r requirements.in
 pluggy==1.0.0
     # via
     #   -r requirements.in
@@ -313,7 +348,9 @@ python-dateutil==2.8.2
     #   ghp-import
     #   matplotlib
 python-slugify==5.0.2
-    # via cookiecutter
+    # via
+    #   -r requirements.in
+    #   cookiecutter
 pytz==2021.1
     # via
     #   -r requirements.in
@@ -328,7 +365,6 @@ pyyaml==5.4.1
     #   cfn-flip
     #   mkdocs
     #   pydoc-markdown
-    #   pyyaml-env-tag
     #   serverlessrepo
 pyyaml-env-tag==0.1
     # via mkdocs
@@ -342,6 +378,7 @@ requests==2.25.1
     #   aws-sam-cli
     #   cookiecutter
     #   docker
+    #   pip-upgrader
     #   sphinx
 rsa==4.7.2
     # via
@@ -410,10 +447,22 @@ sqlparse==0.4.2
     # via
     #   -r requirements.in
     #   django
+terminaltables==3.1.0
+    # via
+    #   -r requirements.in
+    #   pip-upgrader
 text-unidecode==1.3
-    # via python-slugify
+    # via
+    #   -r requirements.in
+    #   python-slugify
 toml==0.10.2
-    # via pytest
+    # via
+    #   -r requirements.in
+    #   pytest
+tomli==1.2.1
+    # via
+    #   -r requirements.in
+    #   pep517
 tomlkit==0.7.2
     # via
     #   -r requirements.in
@@ -430,6 +479,7 @@ troposphere==3.0.3
     # via -r requirements.in
 typing-extensions==3.10.0.2
     # via
+    #   -r requirements.in
     #   arrow
     #   asgiref
     #   importlib-metadata
@@ -445,6 +495,7 @@ urllib3==1.26.6
     #   requests
 watchdog==2.1.2
     # via
+    #   -r requirements.in
     #   aws-sam-cli
     #   mkdocs
 wcwidth==0.2.5
@@ -460,7 +511,9 @@ werkzeug==1.0.1
     #   -r requirements.in
     #   flask
 wheel==0.37.0
-    # via aws-lambda-builders
+    # via
+    #   aws-lambda-builders
+    #   pip-tools
 whichcraft==0.6.1
     # via -r requirements.in
 zipp==3.5.0
@@ -468,6 +521,8 @@ zipp==3.5.0
     #   -r requirements.in
     #   importlib-metadata
     #   importlib-resources
+    #   pep517
 
 # The following packages are considered to be unsafe in a requirements file:
+# pip
 # setuptools
