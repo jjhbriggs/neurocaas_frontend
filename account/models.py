@@ -54,7 +54,7 @@ class User(AbstractBaseUser):
     #: Last Name of User.
     last_name = models.CharField(max_length=100, default="", blank=True)
 
-    group = models.ForeignKey(AnaGroup, on_delete=models.SET_NULL, null=True)
+    #group = models.ForeignKey(AnaGroup, on_delete=models.SET_NULL, null=True)
     
     has_migrated_pwd = models.BooleanField(default=False)
     

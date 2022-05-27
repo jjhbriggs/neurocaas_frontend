@@ -202,8 +202,8 @@ class AnalysisIntroView(View):
         analysis = Analysis.objects.get(pk=ana_id)
         iam = get_current_iam(request)
         access = False
-        if not request.user.is_anonymous and iam and get_current_user(request).group:
-            access = analysis in get_current_user(request).group.analyses.all()
+        if not request.user.is_anonymous and iam and iam.group:
+            access = analysis in iam.group.analyses.all()
         return render(
             request=request,
             template_name=self.template_name,
@@ -253,13 +253,13 @@ class JobListView(LoginRequiredMixin, View):
         iam = get_current_iam(request)
         current_user = get_current_user(request)
         results_folder = '%s/results' % iam.group
-        if current_user.group and not analysis in current_user.group.analyses.all():
+        if iam.group and not analysis in iam.group.analyses.all():
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
         if not iam.fixed_creds and (current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire): #regenerate credentials if they have expired
             try:
-                credential_response = build_credentials(current_user.group, analysis)
+                credential_response = build_credentials(iam.group, analysis)
             except Exception as e:
                 messages.error(request, str(e))
                 return redirect('/')
@@ -536,14 +536,15 @@ class ProcessView(LoginRequiredMixin, View):
     def get(self, request, ana_id):
         analysis = Analysis.objects.get(pk=ana_id)
         current_user = get_current_user(request)
-        if get_current_user(request).group and not analysis in current_user.group.analyses.all():
+        iam = get_current_iam(request)
+        if iam.group and not analysis in iam.group.analyses.all():
             messages.error(request, "Your group doesn't have permission to use this analysis.")
             return redirect('/')
 
-        iam = get_current_iam(request)
+        
         if not iam.fixed_creds and (current_user.cred_expire is None or pytz.utc.localize(dt.today()) > current_user.cred_expire): #regenerate credentials if they have expired
             try:
-                credential_response = build_credentials(current_user.group, analysis)
+                credential_response = build_credentials(iam.group, analysis)
             except Exception as e:
                 messages.error(request, str(e))
                 return redirect('/')

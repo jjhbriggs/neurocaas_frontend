@@ -81,6 +81,12 @@ class UserCreationForm(forms.ModelForm):
             user.group = AnaGroup.objects.create(name=user.requested_group_name)
         else:
             user.group = group_search[0]
+        iam = IAM.objects.create(user=user,
+                        aws_user="No creds yet",
+                        aws_access_key="No creds yet",
+                        aws_secret_access_key="No creds yet",
+                        aws_pwd = 'No password set',
+                        group=iam.group)
         user.has_migrated_pwd = True
         user.time_added = datetime.now().time()
         
