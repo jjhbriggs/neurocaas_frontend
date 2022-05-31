@@ -175,13 +175,14 @@ class JobListView(LoginRequiredMixin, View):
             messages.error(request, "Your AWS group doesn't have permission to use this analysis.")
             return redirect('/')
 
-        if not iam.fixed_creds and (iam.cred_expire is None or pytz.utc.localize(dt.today()) > iam.cred_expire): #regenerate credentials if they have expired
+        if not iam.fixed_creds and (iam.cred_expire is None or pytz.utc.localize(dt.today()) > iam.cred_expire or iam.creds_ana != analysis): #regenerate credentials if they have expired
             try:
                 credential_response = build_credentials(iam.group, analysis)
             except Exception as e:
                 messages.error(request, str(e))
                 return redirect('/')
             iam.cred_expire = credential_response['Expiration']
+            iam.creds_ana = analysis
             iam.save()
             reassign_iam(iam, credential_response)
 
@@ -459,13 +460,14 @@ class ProcessView(LoginRequiredMixin, View):
             return redirect('/')
 
         
-        if not iam.fixed_creds and (iam.cred_expire is None or pytz.utc.localize(dt.today()) > iam.cred_expire): #regenerate credentials if they have expired
+        if not iam.fixed_creds and (iam.cred_expire is None or pytz.utc.localize(dt.today()) > iam.cred_expire or iam.creds_ana != analysis): #regenerate credentials if they have expired
             try:
                 credential_response = build_credentials(iam.group, analysis)
             except Exception as e:
                 messages.error(request, str(e))
                 return redirect('/')
             iam.cred_expire = credential_response['Expiration']
+            iam.creds_ana = analysis
             iam.save()
             reassign_iam(iam, credential_response)
         

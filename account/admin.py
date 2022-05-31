@@ -229,6 +229,7 @@ class IAMAdmin(admin.ModelAdmin):
     list_display = ('user', 'aws_user', 'aws_access_key', 'group', 'created_on', 'cred_expire')
     readonly_fields = ['cred_expire','user']
     search_fields = ('user__email',)
+    exclude = ('creds_ana',)
     ordering = ('-created_on',)
 
 @admin.register(AnaGroup)

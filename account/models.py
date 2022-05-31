@@ -116,11 +116,10 @@ class IAM(Base):
     aws_session_token = models.CharField(max_length=255, help_text="AWS session token")
     #: The group this IAM is associated with
     group = models.ForeignKey(AnaGroup, on_delete=models.CASCADE)
-    # group = models.CharField(max_length=255, help_text='Group Name', default='bendeskylab')
-    #aws_pwd = models.CharField(max_length=255, help_text="AWS account password")
-    cred_expire = models.DateTimeField(null=True,blank=True,help_text='Time Temporary Credentials Expire',)
 
+    cred_expire = models.DateTimeField(null=True,blank=True,help_text='Time Temporary Credentials Expire',)
     fixed_creds = models.BooleanField(default=False,help_text='User Gets Permanent Credentials',)
+    creds_ana = models.ForeignKey(Analysis, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         """Returns AWS IAM Username."""
