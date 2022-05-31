@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import View
 
 from account.forms import UserLoginForm, UserCreationForm
-from account.admin import register_IAM
 from .models import *
 from .utils import *
 from django.contrib import messages
@@ -62,86 +61,6 @@ class AnalysisListView(View):
                           'user': get_current_user(request),
                           'logged_in': not request.user.is_anonymous
                       })
-
-class ChangePermissionView(View):
-    """
-        Change IAM Permission Page View.
-    """
-
-    template_name = "main/changepermissions.html"
-
-    def get(self, request):
-        iam = get_current_iam(request)
-        if not iam or not iam.fixed_creds:
-            messages.error(request, "You do not have permanent AWS credentials, please contact neurocaas@gmail.com to obtain access")
-            return redirect('/')
-
-        return render(request=request,
-                          template_name=self.template_name,
-                          context={
-                              'analyses':Analysis.objects.all(),
-                              'iam': get_current_iam(request),
-                              'user': get_current_user(request),
-                              'logged_in': not request.user.is_anonymous
-                              })
-
-    def post(self,request):    
-        ## TODO: can these files be accessed from here? 
-        logfile = open('logs/iam_change_perms_log.txt','w')
-        logfile.write("pre apply\n")
-        logfile.write(json.dumps(request.POST))
-        logfile.write("\nafter post data")
-        group_access = []
-        ## Getting current user and iam.
-        curr_iam = get_current_iam(request)
-        curr_user =  get_current_user(request)
-        if not curr_iam or not curr_user or not curr_iam.fixed_creds:
-            messages.error(request, "You must have an permanent IAM to complete this action.")
-            return redirect('/profile')
-        if 'apply' in request.POST:
-            logfile.write("Hit apply")
-            # The user clicked submit on the intermediate form.
-            # Perform our update action:
-            path = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
-            if len(IAM.objects.filter(user=curr_user)) == 0:
-                messages.error(request, "Select a user with an IAM")
-            else:    
-                iam_group = curr_iam.group
-                stack = "group-" + iam_group.name
-                new_path = path + "/" + stack
-                if os.path.isdir(new_path):
-                    try:
-                        with open(new_path + "/user_config_template.json") as f:
-                            try:
-                                data_array = json.load(f)
-                                #pipelines = data_array['UXData']["Affiliates"][0]["Pipelines"]
-                                pipelines = []
-                                for ana in Analysis.objects.all():
-                                    if(ana.bucket_name in request.POST):
-                                        pipelines.append(ana.bucket_name)
-                                        group_access.append(ana)
-                                data_array['UXData']["Affiliates"][0]["Pipelines"] = pipelines
-                                with open(new_path + "/user_config_template.json", 'w') as outfile:
-                                    json.dump(data_array, outfile)
-                                logfile.write("Succeeded on stack: " + stack)
-                            except:
-                                logfile.write("Failed on stack: " + stack)
-                    except:
-                        logfile.write("ignored folder: " + new_path)
-            # Redirect to our admin view after our update has 
-            # completed with a  message  
-            messages.add_message(request, messages.INFO, "Configuration file change probably worked.... attempting redeployment. Please wait ~10 minutes.")
-            register_IAM("unused_arg", request, [curr_user])
-            for ana in Analysis.objects.all():
-                if ana in group_access:
-                    if not ana in iam_group.analyses.all():
-                        iam_group.analyses.add(ana)
-                else:
-                    if ana in iam_group.analyses.all():
-                        iam_group.analyses.remove(ana)
-
-            ## not sure how to best format this 
-            return redirect('/profile')
 
 class PermissionView(View):
     """
@@ -679,3 +598,86 @@ class ResultView(LoginRequiredMixin, View):
             "result_links": result_links,
             "end": end_flag
         })
+
+#--------------------------------------------------------------------
+
+# OLD CHANGE PERMISSIONS VIEW. No longer needed with new update, since users can no longer change their own permissions
+# class ChangePermissionView(View):
+#     """
+#         Change IAM Permission Page View.
+#     """
+
+#     template_name = "main/changepermissions.html"
+
+#     def get(self, request):
+#         iam = get_current_iam(request)
+#         if not iam or not iam.fixed_creds:
+#             messages.error(request, "You do not have permanent AWS credentials, please contact neurocaas@gmail.com to obtain access")
+#             return redirect('/')
+
+#         return render(request=request,
+#                           template_name=self.template_name,
+#                           context={
+#                               'analyses':Analysis.objects.all(),
+#                               'iam': get_current_iam(request),
+#                               'user': get_current_user(request),
+#                               'logged_in': not request.user.is_anonymous
+#                               })
+
+#     def post(self,request):    
+#         ## TODO: can these files be accessed from here? 
+#         logfile = open('logs/iam_change_perms_log.txt','w')
+#         logfile.write("pre apply\n")
+#         logfile.write(json.dumps(request.POST))
+#         logfile.write("\nafter post data")
+#         group_access = []
+#         ## Getting current user and iam.
+#         curr_iam = get_current_iam(request)
+#         curr_user =  get_current_user(request)
+#         if not curr_iam or not curr_user or not curr_iam.fixed_creds:
+#             messages.error(request, "You must have an permanent IAM to complete this action.")
+#             return redirect('/profile')
+#         if 'apply' in request.POST:
+#             logfile.write("Hit apply")
+#             # The user clicked submit on the intermediate form.
+#             # Perform our update action:
+#             path = "/home/ubuntu/ncap/neurocaas/ncap_iac/user_profiles"
+#             if len(IAM.objects.filter(user=curr_user)) == 0:
+#                 messages.error(request, "Select a user with an IAM")
+#             else:    
+#                 iam_group = curr_iam.group
+#                 stack = "group-" + iam_group.name
+#                 new_path = path + "/" + stack
+#                 if os.path.isdir(new_path):
+#                     try:
+#                         with open(new_path + "/user_config_template.json") as f:
+#                             try:
+#                                 data_array = json.load(f)
+#                                 #pipelines = data_array['UXData']["Affiliates"][0]["Pipelines"]
+#                                 pipelines = []
+#                                 for ana in Analysis.objects.all():
+#                                     if(ana.bucket_name in request.POST):
+#                                         pipelines.append(ana.bucket_name)
+#                                         group_access.append(ana)
+#                                 data_array['UXData']["Affiliates"][0]["Pipelines"] = pipelines
+#                                 with open(new_path + "/user_config_template.json", 'w') as outfile:
+#                                     json.dump(data_array, outfile)
+#                                 logfile.write("Succeeded on stack: " + stack)
+#                             except:
+#                                 logfile.write("Failed on stack: " + stack)
+#                     except:
+#                         logfile.write("ignored folder: " + new_path)
+#             # Redirect to our admin view after our update has 
+#             # completed with a  message  
+#             messages.add_message(request, messages.INFO, "Configuration file change probably worked.... attempting redeployment. Please wait ~10 minutes.")
+#             legacy_register_iam("unused_arg", request, [curr_user])
+#             for ana in Analysis.objects.all():
+#                 if ana in group_access:
+#                     if not ana in iam_group.analyses.all():
+#                         iam_group.analyses.add(ana)
+#                 else:
+#                     if ana in iam_group.analyses.all():
+#                         iam_group.analyses.remove(ana)
+
+#             ## not sure how to best format this 
+#             return redirect('/profile')

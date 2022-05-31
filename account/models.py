@@ -26,8 +26,7 @@ class AnaGroup(Base):
     #: Name of the group.
     name = models.CharField(max_length=50, help_text='Group Name', unique=True)
     code = models.CharField(max_length=6,blank=False, default=group_uuid)
-    analyses = models.ManyToManyField(Analysis, blank=True)
-    
+    analyses = models.ManyToManyField(Analysis, blank=True)    
     
     #: Returns name of the group.
     def __str__(self):

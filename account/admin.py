@@ -31,7 +31,7 @@ def make_username(usr):
             username += chunk
     username = username[0:12] + str(_timestamp)
     return username
-def register_IAM(modeladmin, request, queryset): # pragma: no cover
+def legacy_register_iam(modeladmin, request, queryset): # pragma: no cover
     #: Register IAM for every user in query
     for usr in queryset:
         try:
@@ -91,9 +91,9 @@ def register_IAM(modeladmin, request, queryset): # pragma: no cover
         except Exception as e:
             if request is not None:
                 messages.error(request, "Backend Error 0: " + str(e))
-register_IAM.short_description = "[Fixed Cred] Generate IAMs for selected users"
+legacy_register_iam.short_description = "[Fixed Cred] Generate IAMs for selected users"
 #: Removes IAM Automatically with AWS and the Django DB
-def remove_IAM(modeladmin, request, queryset):
+def legacy_remove_iam(modeladmin, request, queryset):
     #: Remove IAM for every user in query
     for usr in queryset:
         #: Check that the user has an IAM already
@@ -128,15 +128,12 @@ def remove_IAM(modeladmin, request, queryset):
             current_iam.delete()
         else:
             messages.error(request, "A user was selected that did not contain a valid IAM")
-remove_IAM.short_description = "[Fixed Cred] Remove IAMs for selected users [Run before deleting]"
+legacy_remove_iam.short_description = "[Fixed Cred] Remove IAMs for selected users [Run before deleting]"
 
-def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
+def legacy_change_group_perms(modeladmin, request, queryset):  # pragma: no cover
     #: redirects to intermediate page which lets you change the permissions of a specific queryset. 
     #: Then this should call iam_create after updating perms as in analysis_deploy.py
     logfile = open('logs/iam_change_perms_log.txt','w')
-    logfile.write("pre apply\n")
-    logfile.write(json.dumps(request.POST))
-    logfile.write("\nafter post data")
     group_access = []
     if 'apply' in request.POST:
         logfile.write("Hit apply")
@@ -171,7 +168,7 @@ def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
         # Redirect to our admin view after our update has 
         # completed with a  message  
         messages.add_message(request, messages.INFO, "Attempting permission redeployment...")
-        register_IAM(modeladmin, request, queryset)
+        legacy_register_iam(modeladmin, request, queryset)
         for usr in queryset:
             for ana in Analysis.objects.all():
                 if ana in group_access:
@@ -186,7 +183,19 @@ def changeGroupPermissions(modeladmin, request, queryset):  # pragma: no cover
                       'admin/change_ana_access.html',
                       context={'analyses':Analysis.objects.all(), 'changeiams':queryset})
     
-changeGroupPermissions.short_description = "[Fixed Cred] Update Group Perms"
+legacy_change_group_perms.short_description = "[Fixed Cred] Update Group Perms"
+
+def grant_noncustom_access(modeladmin, request, queryset): # pragma: no cover
+    analyses = list(Analysis.objects.filter(custom=False))
+    for group in queryset:
+        group.analyses.add(*analyses)
+grant_noncustom_access.short_description = "Grant Default Access (Non-custom analyses)"
+
+def grant_all_access(modeladmin, request, queryset): # pragma: no cover
+    analyses = list(Analysis.objects.all())
+    for group in queryset:
+        group.analyses.add(*analyses)
+grant_all_access.short_description = "Grant Access To ALL Analyses (Reviewer/Debug Use)"
 
 class UserAdministrator(UserAdmin):
     # The forms to add and change user instances
@@ -196,7 +205,6 @@ class UserAdministrator(UserAdmin):
     list_filter = ('is_admin',)
     fieldsets = (
         (None, {'fields': ('email', 'password', 'first_name', 'last_name')}),
-        #('Permissions', {'fields': ('data_transfer_permission',)}),
     )
 
     add_fieldsets = (
@@ -205,7 +213,7 @@ class UserAdministrator(UserAdmin):
             'fields': ('email', 'password1', 'password2', 'first_name', 'last_name')}
          ),
     )
-    actions = [register_IAM, remove_IAM, changeGroupPermissions]
+    actions = [legacy_register_iam, legacy_remove_iam, legacy_change_group_perms]
     def IAM_attached(self, obj):
         if len(IAM.objects.filter(user=obj)) == 1:
             return True
@@ -224,9 +232,10 @@ class IAMAdmin(admin.ModelAdmin):
     ordering = ('-created_on',)
 
 @admin.register(AnaGroup)
-class AWSAdmin(admin.ModelAdmin):
+class GroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'created_on')
     readonly_fields=('name','code',)
+    actions = [grant_noncustom_access,grant_all_access]
 
 admin.site.register(User, UserAdministrator)
 admin.site.unregister(Group)

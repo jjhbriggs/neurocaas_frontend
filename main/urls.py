@@ -10,7 +10,7 @@ urlpatterns = [
     path('analysis/<int:ana_id>', AnalysisIntroView.as_view(), name='analysis_intro'),
     path('freq_qa/', QAView.as_view(), name='frequent_qa'),
     path('permissions/', PermissionView.as_view(), name='permissions'),
-    path('changeperms/', ChangePermissionView.as_view(), name='changeperms'),
+    
     path('history/<int:ana_id>', JobListView.as_view(), name='job_history'),
     path('history/<int:ana_id>/<str:job_id>', JobDetailView.as_view(), name='job_detail'),
     path('files/<int:ana_id>/', FilesView.as_view(), name='file_view'),
@@ -20,5 +20,6 @@ urlpatterns = [
     path('largefiledocs/', LFDView.as_view(), name='lfd'),
     path('user_files/<int:ana_id>', UserFilesView.as_view(), name='get_user_files'),
     path('results/<int:ana_id>', ResultView.as_view(), name='get_results'),
+    #path('changeperms/', ChangePermissionView.as_view(), name='changeperms'),
 
 ]

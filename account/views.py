@@ -14,7 +14,7 @@ from django.contrib import messages
 from django.contrib.auth.views import PasswordChangeView
 from django.core.mail import send_mail
 import logging
-from account.admin import register_IAM
+from account.admin import grant_noncustom_access
 
 # Create your views here
 
@@ -39,11 +39,7 @@ class LoginView(View):
                              password=form.data['password'])
         if user:
             login(request, user)
-            
-            if user.has_migrated_pwd:
-            	next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
-            else:
-            	next_url = '/password_reset/'
+            next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
             return redirect(next_url)
 
         messages.error(request=request, message="Invalid Credentials, Try again!")
@@ -72,8 +68,7 @@ class SignUpView(View):
                             datefmt="%Y-%m-%d %H:%M:%S",
                             level=logging.INFO)
             if user.email[-3:] == "edu":
-                logging.info(iam.group)
-                #register_IAM("unused_arg", request, [user])
+                grant_noncustom_access(None,request,[IAM.objects.filter(user=user).first().group])
                 try:
                     body_string = "This is an auto-generated email to let you know that " + user.email + " was just auto-approved for signup. This email is not confirmation that credential generation was successful, only that it is currently being attempted."
                     send_mail(
@@ -147,7 +142,6 @@ class ChangePWD2(LoginRequiredMixin, View):
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user = form.save()
-            user.has_migrated_pwd = True
             user.save()
             update_session_auth_hash(request, user)  # Important!
             messages.success(request, 'Your password was successfully updated!')
