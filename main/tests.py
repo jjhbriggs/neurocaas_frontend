@@ -522,6 +522,7 @@ class ConfigViewTest(TestCase):
         cls.group = AnaGroup.objects.create(name="frontendtravisci")
         cls.group.analyses.add(cls.analysis)
         cls.group.save()
+        
         #cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
     @classmethod
     def tearDownClass(cls):
