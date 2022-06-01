@@ -522,7 +522,7 @@ class ConfigViewTest(TestCase):
         cls.group = AnaGroup.objects.create(name="frontendtravisci")
         cls.group.analyses.add(cls.analysis)
         cls.group.save()
-        cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
+        #cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
     @classmethod
     def tearDownClass(cls):
         sts_teardown_all(testing=True)
@@ -541,7 +541,7 @@ class ConfigViewTest(TestCase):
                                       aws_access_key='tbd',
                                       aws_secret_access_key='tbd',
                                       group=self.group)
-        reassign_iam(self.iam, self.credential_response)
+        #reassign_iam(self.iam, self.credential_response)
 
         self.group2 = AnaGroup.objects.create(name="NOACCESS")
         self.user2 = User.objects.create_user('test2@test.com', password='test')
