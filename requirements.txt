@@ -86,7 +86,7 @@ pyparsing==2.4.0
 pyrsistent==0.16.0
 PySocks==1.7.0
 pytest==5.4.1
-python-dateutil==2.8.0
+python-dateutil
 python-slugify==5.0.2
 pytz==2019.1
 PyYAML==5.4
