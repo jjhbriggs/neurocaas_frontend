@@ -82,7 +82,6 @@ class AnalysisListViewTest(TestCase):
         self.assertQuerysetEqual(response.context['custom_analyses'], ['<Analysis: Test Analysis2>'])
         self.assertEqual(response.context['iam'], None)
 
-
 class AnalysisIntroViewTest(TestCase):
     """Class for testing analysis intro view."""
     def setUp(self):
@@ -120,7 +119,6 @@ class AnalysisIntroViewTest(TestCase):
         analysis = Analysis.objects.filter(analysis_name='Test Analysis').first()
         self.assertEqual(response.context['analysis'], analysis)
         self.assertEqual(response.context['iam'], None)
-
 
 class JobListViewTest(TestCase):
     """Class for testing the job list view."""
