@@ -93,7 +93,7 @@ PyYAML==5.4
 pyyaml_env_tag==0.1
 regex==2020.7.14
 requests==2.23.0
-rsa==4.7
+rsa
 s3transfer==0.3.3
 serverlessrepo==0.1.9
 six==1.12.0
