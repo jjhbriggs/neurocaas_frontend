@@ -22,7 +22,7 @@ jobs:
     # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
     # Then run your tests!
     # CircleCI will report the results back to your VCS provider.
-    parallelism: 4
+    parallelism: 1
     steps:
       - checkout
       - python/install-packages:
