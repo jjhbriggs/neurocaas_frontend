@@ -40,6 +40,8 @@ jobs:
             printf '%s\n' 'jbriggs' $AWS_ACCESS_KEY $AWS_SECRET_ACCESS_KEY | paste -sd ',' >> cred.csv
             echo "Hopefully made file"
             cat cred.csv
+            aws configure list 
             aws configure import --csv  file://cred.csv
+            aws configure list 
             coverage run manage.py test main
             bash <(curl -s https://codecov.io/bash)
