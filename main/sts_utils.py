@@ -44,7 +44,7 @@ def setup(iam_resource):
     :return: The newly created role.
     """
     role = iam_resource.create_role(
-        RoleName=unique_name('role'),
+        RoleName=unique_name('role'), MaxSessionDuration=43200,
         AssumeRolePolicyDocument=json.dumps({
             'Version': '2012-10-17',
             'Statement': [
@@ -90,7 +90,7 @@ def generate_credentials(assume_role_arn, session_name, sts_client, group_name, 
     :return: The federated URL.
     """
     response = sts_client.assume_role(
-        RoleArn=assume_role_arn, RoleSessionName=session_name, Tags=[{"Key": "access-bucket","Value": bucket_name},{"Key": "access-group","Value": group_name}])
+        RoleArn=assume_role_arn, RoleSessionName=session_name, DurationSeconds=43200, Tags=[{"Key": "access-bucket","Value": bucket_name},{"Key": "access-group","Value": group_name}])
     return response['Credentials']
 
 
