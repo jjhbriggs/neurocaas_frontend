@@ -32,4 +32,4 @@ jobs:
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
-          command: coverage run manage.py test . && bash <(curl -s https://codecov.io/bash)
+          command: coverage run manage.py test main && bash <(curl -s https://codecov.io/bash)
