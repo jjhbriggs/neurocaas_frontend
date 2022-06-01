@@ -11,6 +11,8 @@ import requests
 from account.models import *
 from .models import Analysis
 from .sts_utils import *
+from datetime import timedelta 
+import pytz
 
 def get_current_iam(request):
     """
@@ -372,11 +374,12 @@ def create_submit_json(iam, bucket, key, json_data):
 
 def groupname_from_user(user):
     return (user.email.replace('@', '').replace('.', '').replace('_', '-')[0:12] + str((user.time_added.hour * 60 + user.time_added.minute) * 60 + user.time_added.second))
-def build_credentials(group, analysis):
+def build_credentials(group, analysis,testing=False):
     #: Returns object with temporary credentials
 
     iam_resource = boto3.resource('iam')
-    role = setup(iam_resource)
+    name_function = unique_testing_name if testing else unique_name
+    role = setup(iam_resource,name_function)
     sts_client = boto3.client('sts')
     return generate_credentials(role.arn, 'AssumeRoleDemoSession', sts_client, group.name, analysis.bucket_name) 
 
@@ -428,3 +431,10 @@ def construct_federated_url(iam, issuer, bucket):
     })
     federated_url = f'{aws_federated_signin_endpoint}?{query_string}'
     return federated_url
+def _deletion_filter(role):
+    return role.role_name.startswith("sts-role-") and pytz.utc.localize(datetime.datetime.now()) > (role.create_date+timedelta(seconds=role.max_session_duration)).astimezone(pytz.utc)
+def _deletion_filter_testing(role):
+    return role.role_name.startswith("sts-testing-role-")
+def sts_teardown_all(testing=False):
+    for role in filter(_deletion_filter_testing if testing else _deletion_filter,boto3.resource('iam').roles.all()):
+        teardown(role)

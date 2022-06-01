@@ -5,7 +5,6 @@ from .models import Analysis, ConfigTemplate
 from account.models import *
 import os
 from .utils import *
-import json
 import yaml
 from .views import flatten, unflatten
 
@@ -126,9 +125,9 @@ class AnalysisIntroViewTest(TestCase):
 
 class JobListViewTest(TestCase):
     """Class for testing the job list view."""
-    def setUp(self):
-        """Setup user, group, IAM, and analysis. Login IAM."""
-        self.analysis = Analysis.objects.create(
+    @classmethod
+    def setUpClass(cls):
+        cls.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
             result_prefix="job__cianalysispermastack_",
             bucket_name="cianalysispermastack",
@@ -141,7 +140,18 @@ class JobListViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.group = AnaGroup.objects.create(name="frontendtravisci")
+        cls.group = AnaGroup.objects.create(name="frontendtravisci")
+        cls.group.analyses.add(cls.analysis)
+        cls.group.save()
+        cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
+    @classmethod
+    def tearDownClass(cls):
+        sts_teardown_all(testing=True)
+        cls.group.delete()
+        cls.analysis.delete()
+
+    def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
         self.user = User.objects.create_user('test@test.com', password='test')
         self.user.first_name = "Test"
         self.user.last_name = "User"
@@ -152,9 +162,8 @@ class JobListViewTest(TestCase):
                                       aws_access_key='tbd',
                                       aws_secret_access_key='tbd',
                                       group=self.group)
-        credential_response = build_credentials(self.group, self.analysis)
-        reassign_iam(self.iam, credential_response)
-
+        
+        reassign_iam(self.iam, self.credential_response)
         self.group2 = AnaGroup.objects.create(name="NOACCESS")
         self.user2 = User.objects.create_user('test2@test.com', password='test')
         self.user2.first_name = "Test2"
@@ -191,12 +200,12 @@ class JobListViewTest(TestCase):
         response = self.client.get('/history/%s' % self.analysis.id)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
-        
+
 class JobDetailViewTest(TestCase):
     """Class for testing the job detail view."""
-    def setUp(self):
-        """Setup user, group, IAM, and analysis. Login IAM."""
-        self.analysis = Analysis.objects.create(
+    @classmethod
+    def setUpClass(cls):
+        cls.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
             result_prefix="job__cianalysispermastack_",
             bucket_name="cianalysispermastack",
@@ -209,9 +218,18 @@ class JobDetailViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.group = AnaGroup.objects.create(name="frontendtravisci")
-        self.group.analyses.add(self.analysis)
-        self.group.save()
+        cls.group = AnaGroup.objects.create(name="frontendtravisci")
+        cls.group.analyses.add(cls.analysis)
+        cls.group.save()
+        cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
+    @classmethod
+    def tearDownClass(cls):
+        sts_teardown_all(testing=True)
+        cls.group.delete()
+        cls.analysis.delete()
+
+    def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
         self.user = User.objects.create_user('test@test.com', password='test')
         self.user.first_name = "Test"
         self.user.last_name = "User"
@@ -222,8 +240,7 @@ class JobDetailViewTest(TestCase):
                                       aws_access_key='tbd',
                                       aws_secret_access_key='tbd',
                                       group=self.group)
-        credential_response = build_credentials(self.group, self.analysis)
-        reassign_iam(self.iam, credential_response)
+        reassign_iam(self.iam, self.credential_response)
 
         self.group2 = AnaGroup.objects.create(name="NOACCESS")
         self.user2 = User.objects.create_user('test2@test.com', password='test')
@@ -269,8 +286,6 @@ class JobDetailViewTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
         
-        
-        
 class UserFilesViewTest(TestCase):
     """Class for testing the user files view."""
     
@@ -278,8 +293,8 @@ class UserFilesViewTest(TestCase):
         """Setup user, group, IAM, and analysis. Login IAM."""
         
         self.user = User.objects.create_user('test@test.com', password='test')
-        self.user.first_name = "Jack"
-        self.user.last_name = "Briggs"
+        self.user.first_name = "Test"
+        self.user.last_name = "User"
         self.user.save()
         self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,
@@ -320,6 +335,8 @@ class UserFilesViewTest(TestCase):
         
 class ProcessViewTest(TestCase):
     """Class for testing the process view."""
+    #: Note when this is loaded it makes 'non-testing' sts roles, but its fine as they will be eventually by system use.
+    #: Alternative would involve passing testing variables to the view or something similarly unnessecary 
     
     def setUp(self):
         """Setup user, group, IAM, and analysis. Login IAM."""
@@ -424,7 +441,7 @@ class ProcessViewTest(TestCase):
         
 class ResultViewTest(TestCase):
     """Class for testing the result view."""
-    
+    #: See ProcessViewTest note
     def setUp(self):
         """Setup user, group, IAM, and analysis. Login IAM."""
         
@@ -482,19 +499,18 @@ class ResultViewTest(TestCase):
 
 class ConfigViewTest(TestCase):
     """Class for testing the process view."""
-    
-    def setUp(self):
-        """Setup user, group, IAM, and analysis. Login IAM."""
-        self.configTemplate = ConfigTemplate.objects.create(
+    @classmethod
+    def setUpClass(cls):
+        cls.configTemplate = ConfigTemplate.objects.create(
             config_name="Test Config",
             orig_yaml="__sample_field__: 'sample'",
         )
-        self.analysis = Analysis.objects.create(
+        cls.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
             result_prefix="job__cianalysispermastack_",
             bucket_name="cianalysispermastack",
             custom=False,
-            config_template=self.configTemplate,
+            config_template=cls.configTemplate,
             short_description="Short Description",
             long_description="Long Description",
             paper_link="Paper Link",
@@ -503,9 +519,18 @@ class ConfigViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
-        self.group = AnaGroup.objects.create(name="frontendtravisci")
-        self.group.analyses.add(self.analysis)
-        self.group.save()
+        cls.group = AnaGroup.objects.create(name="frontendtravisci")
+        cls.group.analyses.add(cls.analysis)
+        cls.group.save()
+        cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
+    @classmethod
+    def tearDownClass(cls):
+        sts_teardown_all(testing=True)
+        cls.group.delete()
+        cls.analysis.delete()
+        cls.configTemplate.delete()
+    def setUp(self):
+        """Setup user, group, IAM, and analysis. Login IAM."""
         self.user = User.objects.create_user('test@test.com', password='test')
         self.user.first_name = "Test"
         self.user.last_name = "User"
@@ -516,8 +541,7 @@ class ConfigViewTest(TestCase):
                                       aws_access_key='tbd',
                                       aws_secret_access_key='tbd',
                                       group=self.group)
-        credential_response = build_credentials(self.group, self.analysis)
-        reassign_iam(self.iam, credential_response)
+        reassign_iam(self.iam, self.credential_response)
 
         self.group2 = AnaGroup.objects.create(name="NOACCESS")
         self.user2 = User.objects.create_user('test2@test.com', password='test')
@@ -582,8 +606,8 @@ class ExtraUtilsTest(TestCase):
         """Setup user, group, IAM, and analysis. Login IAM."""
         
         self.user = User.objects.create_user('test@test.com', password='test')
-        self.user.first_name = "Jack"
-        self.user.last_name = "Briggs"
+        self.user.first_name = "Test"
+        self.user.last_name = "User"
         self.user.save()
         self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.iam = IAM.objects.create(user=self.user,

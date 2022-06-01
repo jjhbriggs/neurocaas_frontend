@@ -62,7 +62,7 @@ class UserTestCase(TestCase):
         iam = IAM.objects.get(user=user1)
         group = AnaGroup.objects.get(name="test group")
         self.assertEqual(str(user1), 'test1@test.com')
-        self.assertEqual(str(iam), "AWS user")
+        self.assertEqual(str(iam), "test1@test.com")
         self.assertEqual(str(group), "test group")
 class UserLoginViewTest(TestCase):
     """
@@ -73,13 +73,7 @@ class UserLoginViewTest(TestCase):
         user = User.objects.create_user('test1@test.com', password='test')
         user.first_name = "Test1"
         user.last_name = "User"
-        user.has_migrated_pwd = True
         user.save()
-        user2 = User.objects.create_user('test2@test.com', password='test')
-        user2.first_name = "Test1"
-        user2.last_name = "User"
-        user2.has_migrated_pwd = False
-        user2.save()
         #user = User.objects.create(email="test1@test.com", first_name="Test1", last_name="User")
         group = AnaGroup.objects.create(name="test group")
         IAM.objects.create(user=user,
@@ -97,15 +91,6 @@ class UserLoginViewTest(TestCase):
         response = self.client.post('/login/', form, follow=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.request['PATH_INFO'], '/profile/')
-    def test_login_view_with_iam_non_migrated(self):
-        """Test that logging in with email logins in and redirects to change password page successfully if the user has not yet made a password."""
-        form = {
-            'email': 'test2@test.com',
-            'password': 'test',
-        }
-        response = self.client.post('/login/', form, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.request['PATH_INFO'], '/password_reset/')
     def test_failed_login_view_with_iam(self):
         """Test that logging in with incorrect credentials doesnt logins in and redirects to this login page."""
         form = {
@@ -383,12 +368,12 @@ class IAM_Admin_Action_Test(TestCase):
     #     response = self.client.post('/admin/account/user/', data, follow=True)
     #     #print([m.message for m in get_messages(response.wsgi_request)])
     #     self.assertContains(response, "System error, requested group name blank")
-    def test_iam_removal_gives_error_on_no_IAM(self):
-        """Test that starting the remove_IAM command without an IAM in the user causes an error."""
+    # def test_iam_removal_gives_error_on_no_IAM(self):
+    #     """Test that starting the remove_IAM command without an IAM in the user causes an error."""
 
-        user = User.objects.filter(email='test2@test.com').first()
-        user.requested_group_name = "unitTestGroup"
-        user.save()
-        data = {'action': 'remove_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
-        response = self.client.post('/admin/account/user/', data, follow=True)
-        self.assertContains(response, "A user was selected that did not contain a valid IAM")
+    #     user = User.objects.filter(email='test2@test.com').first()
+    #     user.requested_group_name = "unitTestGroup"
+    #     user.save()
+    #     data = {'action': 'remove_IAM', '_selected_action': User.objects.filter(email='test2@test.com').values_list('pk', flat=True)}
+    #     response = self.client.post('/admin/account/user/', data, follow=True)
+    #     self.assertContains(response, "A user was selected that did not contain a valid IAM")

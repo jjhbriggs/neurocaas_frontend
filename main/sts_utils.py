@@ -32,9 +32,10 @@ def progress_bar(seconds):
 
 def unique_name(base_name):
     return f'sts-{base_name}-{time_millis()}'
+def unique_testing_name(base_name):
+    return f'sts-testing-{base_name}-{time_millis()}'
 
-
-def setup(iam_resource):
+def setup(iam_resource,name_function):
     """
     Creates a role that can be assumed by the current user.
     Attaches a policy that allows only Amazon S3 read-only access.
@@ -44,7 +45,7 @@ def setup(iam_resource):
     :return: The newly created role.
     """
     role = iam_resource.create_role(
-        RoleName=unique_name('role'), MaxSessionDuration=43200,
+        RoleName=name_function('role'), MaxSessionDuration=43200,
         AssumeRolePolicyDocument=json.dumps({
             'Version': '2012-10-17',
             'Statement': [
@@ -105,18 +106,3 @@ def teardown(role):
         print(f"Detached {attached.policy_name}.")
     role.delete()
     print(f"Deleted {role.name}.")
-
-
-# def usage_demo():
-#     """Drives the demonstration."""
-#     print('-'*88)
-#     print(f"Welcome to the AWS Security Token Service federated URL demo.")
-#     print('-'*88)
-#     iam_resource = boto3.resource('iam')
-#     role = setup(iam_resource)
-#     sts_client = boto3.client('sts')
-#     try:
-#         federated_url = generate_credentials(role.arn, 'AssumeRoleDemoSession', sts_client)
-#     # finally:
-#     #     teardown(role)
-#     #     print("Teardown Complete")

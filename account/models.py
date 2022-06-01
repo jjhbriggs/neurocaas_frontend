@@ -117,9 +117,10 @@ class IAM(Base):
     #: The group this IAM is associated with
     group = models.ForeignKey(AnaGroup, on_delete=models.CASCADE)
 
-    cred_expire = models.DateTimeField(null=True,blank=True,help_text='Time Temporary Credentials Expire',)
-    fixed_creds = models.BooleanField(default=False,help_text='User Gets Permanent Credentials',)
-    creds_ana = models.ForeignKey(Analysis, on_delete=models.SET_NULL, null=True, blank=True)
+    #: Details to handle credential management.
+    cred_expire = models.DateTimeField(null=True,blank=True,help_text='Time Temporary Credentials Expire',) #: credential expire time
+    fixed_creds = models.BooleanField(default=False,help_text='User Gets Permanent Credentials',) #: Bool to give fixed creds or not
+    creds_ana = models.ForeignKey(Analysis, on_delete=models.SET_NULL, null=True, blank=True) #: Attached analysis 
 
     def __str__(self):
         """Returns AWS IAM Username."""

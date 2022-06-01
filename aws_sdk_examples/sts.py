@@ -143,6 +143,8 @@ def usage_demo():
     print('-'*88)
     iam_resource = boto3.resource('iam')
     role = setup(iam_resource)
+    print(json.dumps(role))
+    print(type(role))
     sts_client = boto3.client('sts')
     try:
         federated_url = construct_federated_url(
