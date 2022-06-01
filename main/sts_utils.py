@@ -87,7 +87,7 @@ def generate_credentials(assume_role_arn, session_name, sts_client, group_name, 
     :param sts_client: A Boto3 STS instance that can assume the role.
     :param group_name: group name
     :param bucket_name: bucket name
-    :return: The federated URL.
+    :return: The federated URL. 
     """
     response = sts_client.assume_role(
         RoleArn=assume_role_arn, RoleSessionName=session_name, DurationSeconds=43200, Tags=[{"Key": "access-bucket","Value": bucket_name},{"Key": "access-group","Value": group_name}])
