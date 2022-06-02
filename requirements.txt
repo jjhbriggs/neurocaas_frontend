@@ -7,7 +7,7 @@ attrs==19.3.0
 aws-lambda-builders==1.0.0
 aws-sam-cli==1.0.0
 aws-sam-translator==1.25.0
-aws-cli
+awscli
 Babel==2.8.0
 backcall==0.1.0
 backports.zoneinfo==0.2.1
