@@ -122,7 +122,8 @@ class AnalysisIntroViewTest(TestCase):
 
 class JobListViewTest(TestCase):
     """Class for testing the job list view."""
-    if os.environ.get('CI') is None or not os.environ.get('CI'):
+    #if os.environ.get('CI') is None or not os.environ.get('CI'):
+    if True:
         @classmethod
         def setUpClass(cls):
             cls.analysis = Analysis.objects.create(
@@ -201,7 +202,8 @@ class JobListViewTest(TestCase):
 
 class JobDetailViewTest(TestCase):
     """Class for testing the job detail view."""
-    if os.environ.get('CI') is None or not os.environ.get('CI'):
+    #if os.environ.get('CI') is None or not os.environ.get('CI'):
+    if True:
         @classmethod
         def setUpClass(cls):
             cls.analysis = Analysis.objects.create(
@@ -352,6 +354,7 @@ class ProcessViewTest(TestCase):
                                       aws_user="jbriggs",
                                       aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
                                       aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+                                      fixed_creds=True,
                                       group=self.group)
         self.analysis = Analysis.objects.create(
             analysis_name="Test Analysis",
@@ -498,7 +501,8 @@ class ResultViewTest(TestCase):
 
 class ConfigViewTest(TestCase):
     """Class for testing the process view."""
-    if os.environ.get('CI') is None or not os.environ.get('CI'):
+    #if os.environ.get('CI') is None or not os.environ.get('CI'):
+    if True:
         @classmethod
         def setUpClass(cls):
             cls.configTemplate = ConfigTemplate.objects.create(
