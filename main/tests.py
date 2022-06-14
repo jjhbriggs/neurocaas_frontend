@@ -120,173 +120,165 @@ class AnalysisIntroViewTest(TestCase):
         self.assertEqual(response.context['analysis'], analysis)
         self.assertEqual(response.context['iam'], None)
 
-class JobListViewTest(TestCase):
-    """Class for testing the job list view."""
-    #if os.environ.get('CI') is None or not os.environ.get('CI'):
-    @classmethod
-    def setUpClass(cls):
-        Analysis.objects.all().delete()
-        AnaGroup.objects.all().delete()
-        cls.analysis = Analysis.objects.create(
-            analysis_name="Test Analysis",
-            result_prefix="job__cianalysispermastack_",
-            bucket_name="cianalysispermastack",
-            custom=False,
-            short_description="Short Description",
-            long_description="Long Description",
-            paper_link="Paper Link",
-            git_link="Github Link",
-            bash_link="Bash Script Link",
-            demo_link="Demo page link",
-            signature="Signature"
-        )
-        cls.group = AnaGroup.objects.create(name="frontendtravisci")
-        cls.group.analyses.add(cls.analysis)
-        cls.group.save()
-        cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
-    @classmethod
-    def tearDownClass(cls):
-        sts_teardown_all(testing=True)
-        cls.group.delete()
-        cls.analysis.delete()
+# class JobListViewTest(TestCase):
+#     """Class for testing the job list view."""
+#     #if os.environ.get('CI') is None or not os.environ.get('CI'):
 
-    def setUp(self):
-        """Setup user, group, IAM, and analysis. Login IAM."""
-        self.user = User.objects.create_user('test@test.com', password='test')
-        self.user.first_name = "Test"
-        self.user.last_name = "User"
-        self.user.group = self.group
-        self.user.save()
-        self.iam = IAM.objects.create(user=self.user,
-                                    aws_user="jbriggs",
-                                    aws_access_key='tbd',
-                                    aws_secret_access_key='tbd',
-                                    group=self.group)
+#     def setUp(self):
+#         """Setup user, group, IAM, and analysis. Login IAM."""
+#         self.analysis = Analysis.objects.create(
+#             analysis_name="Test Analysis",
+#             result_prefix="job__cianalysispermastack_",
+#             bucket_name="cianalysispermastack",
+#             custom=False,
+#             short_description="Short Description",
+#             long_description="Long Description",
+#             paper_link="Paper Link",
+#             git_link="Github Link",
+#             bash_link="Bash Script Link",
+#             demo_link="Demo page link",
+#             signature="Signature"
+#         )
+#         self.group = AnaGroup.objects.create(name="frontendtravisci")
+#         self.group.analyses.add(self.analysis)
+#         self.group.save()
+#         self.credential_response = build_credentials(self.group, self.analysis, testing=True)
+#         self.user = User.objects.create_user('test@test.com', password='test')
+#         self.user.first_name = "Test"
+#         self.user.last_name = "User"
+#         self.user.group = self.group
+#         self.user.save()
+#         self.iam = IAM.objects.create(user=self.user,
+#                                     aws_user="jbriggs",
+#                                     aws_access_key='tbd',
+#                                     aws_secret_access_key='tbd',
+#                                     group=self.group)
         
-        reassign_iam(self.iam, self.credential_response)
-        self.group2 = AnaGroup.objects.create(name="NOACCESS")
-        self.user2 = User.objects.create_user('test2@test.com', password='test')
-        self.user2.first_name = "Test2"
-        self.user2.last_name = "User2"
-        self.user2.group = self.group2
-        self.user2.save()
-        self.iam2 = IAM.objects.create(user=self.user2,
-                                    aws_user="jbriggs",
-                                    aws_access_key='tbd',
-                                    aws_secret_access_key='tbd',
-                                    group=self.group2)
-        
-        self.group.analyses.add(self.analysis)        
-    def test_job_list_view(self):
-        """Check that history of user's analyses are displayed properly."""
-        # login here
-        form = {
-            'email': 'test@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
-        response = self.client.get('/history/%s' % self.analysis.id)
-        self.assertEqual(response.context['analysis'], self.analysis)
-        self.assertEqual(response.context['iam'], self.iam)
-        self.assertIsNotNone(response.context['job_list'])
-    def test_no_perms_job_list_view(self):
-        """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
-        # login here
-        form = {
-            'email': 'test2@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
-        response = self.client.get('/history/%s' % self.analysis.id)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], '/')
+#         reassign_iam(self.iam, self.credential_response)
+#         self.group2 = AnaGroup.objects.create(name="NOACCESS")
+#         self.user2 = User.objects.create_user('test2@test.com', password='test')
+#         self.user2.first_name = "Test2"
+#         self.user2.last_name = "User2"
+#         self.user2.group = self.group2
+#         self.user2.save()
+#         self.iam2 = IAM.objects.create(user=self.user2,
+#                                     aws_user="jbriggs",
+#                                     aws_access_key='tbd',
+#                                     aws_secret_access_key='tbd',
+#                                     group=self.group2)
 
-class JobDetailViewTest(TestCase):
-    """Class for testing the job detail view."""
-    #if os.environ.get('CI') is None or not os.environ.get('CI'):
-    @classmethod
-    def setUpClass(cls):
-        cls.analysis = Analysis.objects.create(
-            analysis_name="Test Analysis",
-            result_prefix="job__cianalysispermastack_",
-            bucket_name="cianalysispermastack",
-            custom=False,
-            short_description="Short Description",
-            long_description="Long Description",
-            paper_link="Paper Link",
-            git_link="Github Link",
-            bash_link="Bash Script Link",
-            demo_link="Demo page link",
-            signature="Signature"
-        )
-        cls.group = AnaGroup.objects.create(name="frontendtravisci")
-        cls.group.analyses.add(cls.analysis)
-        cls.group.save()
-        cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
-    @classmethod
-    def tearDownClass(cls):
-        sts_teardown_all(testing=True)
-        cls.group.delete()
-        cls.analysis.delete()
+#     def test_job_list_view(self):
+#         """Check that history of user's analyses are displayed properly."""
+#         # login here
+#         form = {
+#             'email': 'test@test.com',
+#             'password': 'test',
+#         }
+#         r = self.client.post('/login/', form)
+#         response = self.client.get('/history/%s' % self.analysis.id)
+#         self.assertEqual(response.context['analysis'], self.analysis)
+#         self.assertEqual(response.context['iam'], self.iam)
+#         self.assertIsNotNone(response.context['job_list'])
+#     def test_no_perms_job_list_view(self):
+#         """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
+#         # login here
+#         form = {
+#             'email': 'test2@test.com',
+#             'password': 'test',
+#         }
+#         r = self.client.post('/login/', form)
+#         response = self.client.get('/history/%s' % self.analysis.id)
+#         self.assertEqual(response.status_code, 302)
+#         self.assertEqual(response['Location'], '/')
+#     def tearDown(self):
+#         sts_teardown_all(testing=True)
 
-    def setUp(self):
-        """Setup user, group, IAM, and analysis. Login IAM."""
-        self.user = User.objects.create_user('test@test.com', password='test')
-        self.user.first_name = "Test"
-        self.user.last_name = "User"
-        self.user.group = self.group
-        self.user.save()
-        self.iam = IAM.objects.create(user=self.user,
-                                    aws_user="jbriggs",
-                                    aws_access_key='tbd',
-                                    aws_secret_access_key='tbd',
-                                    group=self.group)
+# class JobDetailViewTest(TestCase):
+#     """Class for testing the job detail view."""
+#     #if os.environ.get('CI') is None or not os.environ.get('CI'):
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.analysis = Analysis.objects.create(
+#             analysis_name="Test Analysis",
+#             result_prefix="job__cianalysispermastack_",
+#             bucket_name="cianalysispermastack",
+#             custom=False,
+#             short_description="Short Description",
+#             long_description="Long Description",
+#             paper_link="Paper Link",
+#             git_link="Github Link",
+#             bash_link="Bash Script Link",
+#             demo_link="Demo page link",
+#             signature="Signature"
+#         )
+#         cls.group = AnaGroup.objects.create(name="frontendtravisci")
+#         cls.group.analyses.add(cls.analysis)
+#         cls.group.save()
+#         cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
+#     @classmethod
+#     def tearDownClass(cls):
+#         sts_teardown_all(testing=True)
+#         cls.group.delete()
+#         cls.analysis.delete()
+
+#     def setUp(self):
+#         """Setup user, group, IAM, and analysis. Login IAM."""
+#         self.user = User.objects.create_user('test@test.com', password='test')
+#         self.user.first_name = "Test"
+#         self.user.last_name = "User"
+#         self.user.group = self.group
+#         self.user.save()
+#         self.iam = IAM.objects.create(user=self.user,
+#                                     aws_user="jbriggs",
+#                                     aws_access_key='tbd',
+#                                     aws_secret_access_key='tbd',
+#                                     group=self.group)
                                     
-        reassign_iam(self.iam, self.credential_response)
+#         reassign_iam(self.iam, self.credential_response)
 
-        self.group2 = AnaGroup.objects.create(name="NOACCESS")
-        self.user2 = User.objects.create_user('test2@test.com', password='test')
-        self.user2.first_name = "Test2"
-        self.user2.last_name = "User2"
-        self.user2.group = self.group2
-        self.user2.save()
-        self.iam2 = IAM.objects.create(user=self.user2,
-                                    aws_user="jbriggs",
-                                    aws_access_key='tbd',
-                                    aws_secret_access_key='tbd',
-                                    group=self.group2) 
-        res_folder = '%s/results' % self.group
+#         self.group2 = AnaGroup.objects.create(name="NOACCESS")
+#         self.user2 = User.objects.create_user('test2@test.com', password='test')
+#         self.user2.first_name = "Test2"
+#         self.user2.last_name = "User2"
+#         self.user2.group = self.group2
+#         self.user2.save()
+#         self.iam2 = IAM.objects.create(user=self.user2,
+#                                     aws_user="jbriggs",
+#                                     aws_access_key='tbd',
+#                                     aws_secret_access_key='tbd',
+#                                     group=self.group2) 
+#         res_folder = '%s/results' % self.group
 
-        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
-        self.job_id = job_list[0]['name']
-    def test_job_detail_view(self):
-        """Check that detail of a user's previous analysis are displayed properly."""
-        form = {
-            'email': 'test@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
+#         job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+#         self.job_id = job_list[0]['name']
+#     def test_job_detail_view(self):
+#         """Check that detail of a user's previous analysis are displayed properly."""
+#         form = {
+#             'email': 'test@test.com',
+#             'password': 'test',
+#         }
+#         r = self.client.post('/login/', form)
         
-        response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
+#         response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
         
-        self.assertEqual(response.context['analysis'], self.analysis)
-        self.assertEqual(response.context['iam'], self.iam)
-        self.assertIsNotNone(response.context['job_detail'])
-    def test_no_perms_job_list_view(self):
-        """Check that detail of a user's previous analysis is not displayed if the user doesn't have permission to access to the analysis."""
-        form = {
-            'email': 'test2@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
-        res_folder = '%s/results' % self.group2
+#         self.assertEqual(response.context['analysis'], self.analysis)
+#         self.assertEqual(response.context['iam'], self.iam)
+#         self.assertIsNotNone(response.context['job_detail'])
+#     def test_no_perms_job_list_view(self):
+#         """Check that detail of a user's previous analysis is not displayed if the user doesn't have permission to access to the analysis."""
+#         form = {
+#             'email': 'test2@test.com',
+#             'password': 'test',
+#         }
+#         r = self.client.post('/login/', form)
+#         res_folder = '%s/results' % self.group2
 
-        job_list2 = get_job_list(iam=self.iam2, bucket=self.analysis.bucket_name, folder=res_folder)
-        response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
+#         job_list2 = get_job_list(iam=self.iam2, bucket=self.analysis.bucket_name, folder=res_folder)
+#         response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
         
-        self.assertEqual(len(job_list2),0)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], '/')
+#         self.assertEqual(len(job_list2),0)
+#         self.assertEqual(response.status_code, 302)
+#         self.assertEqual(response['Location'], '/')
     
 class UserFilesViewTest(TestCase):
     """Class for testing the user files view."""
@@ -499,108 +491,108 @@ class ResultViewTest(TestCase):
         self.assertNotEqual(data["result_links"], "")
         self.assertEqual(data["end"], True)
 
-class ConfigViewTest(TestCase):
-    """Class for testing the process view."""
-    @classmethod
-    def setUpClass(cls):
-        cls.configTemplate = ConfigTemplate.objects.create(
-            config_name="Test Config",
-            orig_yaml="__sample_field__: 'sample'",
-        )
-        cls.analysis = Analysis.objects.create(
-            analysis_name="Test Analysis",
-            result_prefix="job__cianalysispermastack_",
-            bucket_name="cianalysispermastack",
-            custom=False,
-            config_template=cls.configTemplate,
-            short_description="Short Description",
-            long_description="Long Description",
-            paper_link="Paper Link",
-            git_link="Github Link",
-            bash_link="Bash Script Link",
-            demo_link="Demo page link",
-            signature="Signature"
-        )
-        cls.group = AnaGroup.objects.create(name="frontendtravisci")
-        cls.group.analyses.add(cls.analysis)
-        cls.group.save()
+# class ConfigViewTest(TestCase):
+#     """Class for testing the process view."""
+#     @classmethod
+#     def setUpClass(cls):
+#         cls.configTemplate = ConfigTemplate.objects.create(
+#             config_name="Test Config",
+#             orig_yaml="__sample_field__: 'sample'",
+#         )
+#         cls.analysis = Analysis.objects.create(
+#             analysis_name="Test Analysis",
+#             result_prefix="job__cianalysispermastack_",
+#             bucket_name="cianalysispermastack",
+#             custom=False,
+#             config_template=cls.configTemplate,
+#             short_description="Short Description",
+#             long_description="Long Description",
+#             paper_link="Paper Link",
+#             git_link="Github Link",
+#             bash_link="Bash Script Link",
+#             demo_link="Demo page link",
+#             signature="Signature"
+#         )
+#         cls.group = AnaGroup.objects.create(name="frontendtravisci")
+#         cls.group.analyses.add(cls.analysis)
+#         cls.group.save()
         
-        #cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
-    @classmethod
-    def tearDownClass(cls):
-        sts_teardown_all(testing=True)
-        cls.group.delete()
-        cls.analysis.delete()
-        cls.configTemplate.delete()
-    def setUp(self):
-        """Setup user, group, IAM, and analysis. Login IAM."""
-        self.user = User.objects.create_user('test@test.com', password='test')
-        self.user.first_name = "Test"
-        self.user.last_name = "User"
-        self.user.group = self.group
-        self.user.save()
-        self.iam = IAM.objects.create(user=self.user,
-                                    aws_user="jbriggs",
-                                    aws_access_key='tbd',
-                                    aws_secret_access_key='tbd',
-                                    group=self.group)
-        #reassign_iam(self.iam, self.credential_response)
+#         #cls.credential_response = build_credentials(cls.group, cls.analysis, testing=True)
+#     @classmethod
+#     def tearDownClass(cls):
+#         sts_teardown_all(testing=True)
+#         cls.group.delete()
+#         cls.analysis.delete()
+#         cls.configTemplate.delete()
+#     def setUp(self):
+#         """Setup user, group, IAM, and analysis. Login IAM."""
+#         self.user = User.objects.create_user('test@test.com', password='test')
+#         self.user.first_name = "Test"
+#         self.user.last_name = "User"
+#         self.user.group = self.group
+#         self.user.save()
+#         self.iam = IAM.objects.create(user=self.user,
+#                                     aws_user="jbriggs",
+#                                     aws_access_key='tbd',
+#                                     aws_secret_access_key='tbd',
+#                                     group=self.group)
+#         #reassign_iam(self.iam, self.credential_response)
 
-        self.group2 = AnaGroup.objects.create(name="NOACCESS")
-        self.user2 = User.objects.create_user('test2@test.com', password='test')
-        self.user2.first_name = "Test2"
-        self.user2.last_name = "User2"
-        self.user2.group = self.group2
-        self.user2.save()
-        self.iam2 = IAM.objects.create(user=self.user2,
-                                    aws_user="jbriggs",
-                                    aws_access_key='tbd',
-                                    aws_secret_access_key='tbd',
-                                    group=self.group2) 
+#         self.group2 = AnaGroup.objects.create(name="NOACCESS")
+#         self.user2 = User.objects.create_user('test2@test.com', password='test')
+#         self.user2.first_name = "Test2"
+#         self.user2.last_name = "User2"
+#         self.user2.group = self.group2
+#         self.user2.save()
+#         self.iam2 = IAM.objects.create(user=self.user2,
+#                                     aws_user="jbriggs",
+#                                     aws_access_key='tbd',
+#                                     aws_secret_access_key='tbd',
+#                                     group=self.group2) 
         
-    def test_get_config_view(self):
-        """Check that the config information displays properly."""
-        form = {
-            'email': 'test@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
+#     def test_get_config_view(self):
+#         """Check that the config information displays properly."""
+#         form = {
+#             'email': 'test@test.com',
+#             'password': 'test',
+#         }
+#         r = self.client.post('/login/', form)
         
-        response = self.client.get('/config/%s' % self.analysis.id)
-        self.assertEqual(response.context['analysis'], self.analysis)
-        self.assertEqual(response.context['iam'], self.iam)
-        self.assertIsNotNone(response.context['id1'])
-        self.assertIsNotNone(response.context['id2'])
-        self.assertEqual(response.context["logged_in"], True)
-        self.assertEqual(response.context["user"], self.user)
-        self.assertEqual(response.context["config_sample"], "__sample_field__: 'sample'")
-        self.assertIsNotNone(response.context['data'])
+#         response = self.client.get('/config/%s' % self.analysis.id)
+#         self.assertEqual(response.context['analysis'], self.analysis)
+#         self.assertEqual(response.context['iam'], self.iam)
+#         self.assertIsNotNone(response.context['id1'])
+#         self.assertIsNotNone(response.context['id2'])
+#         self.assertEqual(response.context["logged_in"], True)
+#         self.assertEqual(response.context["user"], self.user)
+#         self.assertEqual(response.context["config_sample"], "__sample_field__: 'sample'")
+#         self.assertIsNotNone(response.context['data'])
         
-    def test_no_perms_get_config(self):
-        """Check that getting the config information does not display if the user does not have permissions for the analysis."""
-        form = {
-            'email': 'test2@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
+#     def test_no_perms_get_config(self):
+#         """Check that getting the config information does not display if the user does not have permissions for the analysis."""
+#         form = {
+#             'email': 'test2@test.com',
+#             'password': 'test',
+#         }
+#         r = self.client.post('/login/', form)
         
-        response = self.client.get('/config/%s' % self.analysis.id)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], '/')
+#         response = self.client.get('/config/%s' % self.analysis.id)
+#         self.assertEqual(response.status_code, 302)
+#         self.assertEqual(response['Location'], '/')
         
-    def test_post_fail_to_config_view(self):
-        """Check that posting file fails."""
-        form = {
-            'email': 'test@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
+#     def test_post_fail_to_config_view(self):
+#         """Check that posting file fails."""
+#         form = {
+#             'email': 'test@test.com',
+#             'password': 'test',
+#         }
+#         r = self.client.post('/login/', form)
 
-        response = self.client.post('/config/%s' % self.analysis.id, {'fail':'fail'}, follow=True)
-        self.assertContains(response, "Config Error: ")
-    def test_flatten_and_unflatten(self):
-        field_data = yaml.safe_load(self.analysis.config_template.orig_yaml)
-        self.assertEqual(unflatten(flatten(field_data)), field_data)
+#         response = self.client.post('/config/%s' % self.analysis.id, {'fail':'fail'}, follow=True)
+#         self.assertContains(response, "Config Error: ")
+#     def test_flatten_and_unflatten(self):
+#         field_data = yaml.safe_load(self.analysis.config_template.orig_yaml)
+#         self.assertEqual(unflatten(flatten(field_data)), field_data)
 
 class ExtraUtilsTest(TestCase):
     """Class for extra tests on utils.py."""
