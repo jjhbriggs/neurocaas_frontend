@@ -142,7 +142,11 @@ class JobListViewTest(TestCase):
         self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.group.analyses.add(self.analysis)
         self.group.save()
-        
+        self.group2 = AnaGroup.objects.create(name="NOACCESS")
+
+    def test_job_list_view_unfixed(self):
+        """Check that history of user's analyses are displayed properly."""
+
         #: User with unfixed creds and access
         self.user = User.objects.create_user('test@test.com', password='test')
         self.user.first_name = "Test"
@@ -154,18 +158,19 @@ class JobListViewTest(TestCase):
                                     aws_secret_access_key='tbd',
                                     group=self.group)
         reassign_iam(self.iam, build_credentials(self.group, self.analysis, testing=True))
-
-        #: User with unfixed creds and no access
-        self.group2 = AnaGroup.objects.create(name="NOACCESS")
-        self.user2 = User.objects.create_user('test2@test.com', password='test')
-        self.user2.first_name = "Test2"
-        self.user2.last_name = "User2"
-        self.user2.group = self.group2
-        self.user2.save()
-        self.iam2 = IAM.objects.create(user=self.user2,
-                                    aws_access_key='tbd',
-                                    aws_secret_access_key='tbd',
-                                    group=self.group2)
+        # login here
+        form = {
+            'email': 'test@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+        response = self.client.get('/history/%s' % self.analysis.id)
+        self.assertEqual(response.context['analysis'], self.analysis)
+        self.assertEqual(response.context['iam'], self.iam)
+        self.assertIsNotNone(response.context['job_list'])
+        sts_teardown_all(testing=True)
+    def test_job_list_view_fixed(self):
+        """Check that history of user's analyses are displayed properly."""
 
         #: User with fixed creds and access
         self.usera = User.objects.create_user('testa@test.com', password='test')
@@ -180,6 +185,43 @@ class JobListViewTest(TestCase):
                                     fixed_creds=True,
                                     group=self.group)
 
+        # login here
+        form = {
+            'email': 'testa@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+        response = self.client.get('/history/%s' % self.analysis.id)
+        self.assertEqual(response.context['analysis'], self.analysis)
+        self.assertEqual(response.context['iam'], self.iama)
+        self.assertIsNotNone(response.context['job_list'])
+    def test_no_perms_job_list_view_unfixed(self):
+        """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
+
+        #: User with unfixed creds and no access
+        
+        self.user2 = User.objects.create_user('test2@test.com', password='test')
+        self.user2.first_name = "Test2"
+        self.user2.last_name = "User2"
+        self.user2.group = self.group2
+        self.user2.save()
+        self.iam2 = IAM.objects.create(user=self.user2,
+                                    aws_access_key='tbd',
+                                    aws_secret_access_key='tbd',
+                                    group=self.group2)
+
+        # login here
+        form = {
+            'email': 'test2@test.com',
+            'password': 'test',
+        }
+        r = self.client.post('/login/', form)
+        response = self.client.get('/history/%s' % self.analysis.id)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['Location'], '/')
+        sts_teardown_all(testing=True)
+    def test_no_perms_job_list_view_fixed(self):
+        """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
         #: User with fixed creds and no access
 
         self.user2a = User.objects.create_user('test2a@test.com', password='test')
@@ -194,45 +236,6 @@ class JobListViewTest(TestCase):
                                     fixed_creds=True,
                                     group=self.group2)
 
-    def test_job_list_view_unfixed(self):
-        """Check that history of user's analyses are displayed properly."""
-        # login here
-        form = {
-            'email': 'test@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
-        response = self.client.get('/history/%s' % self.analysis.id)
-        self.assertEqual(response.context['analysis'], self.analysis)
-        self.assertEqual(response.context['iam'], self.iam)
-        self.assertIsNotNone(response.context['job_list'])
-        sts_teardown_all(testing=True)
-    def test_job_list_view_fixed(self):
-        """Check that history of user's analyses are displayed properly."""
-        # login here
-        form = {
-            'email': 'testa@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
-        response = self.client.get('/history/%s' % self.analysis.id)
-        self.assertEqual(response.context['analysis'], self.analysis)
-        self.assertEqual(response.context['iam'], self.iama)
-        self.assertIsNotNone(response.context['job_list'])
-    def test_no_perms_job_list_view_unfixed(self):
-        """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
-        # login here
-        form = {
-            'email': 'test2@test.com',
-            'password': 'test',
-        }
-        r = self.client.post('/login/', form)
-        response = self.client.get('/history/%s' % self.analysis.id)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], '/')
-        sts_teardown_all(testing=True)
-    def test_no_perms_job_list_view_fixed(self):
-        """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
         # login here
         form = {
             'email': 'test2a@test.com',
