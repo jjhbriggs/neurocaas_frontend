@@ -13,7 +13,7 @@ backcall==0.1.0
 backports.zoneinfo==0.2.1
 binaryornot==0.4.4
 boto3==1.13.26
-botocore
+botocore==1.16.26
 certifi==2020.4.5.1
 cffi==1.12.3
 cfn-flip==1.2.1
@@ -94,7 +94,7 @@ pyyaml_env_tag==0.1
 regex==2020.7.14
 requests==2.23.0
 rsa==4.7
-s3transfer
+s3transfer==0.3.3
 serverlessrepo==0.1.9
 six==1.12.0
 snowballstemmer==2.0.0
