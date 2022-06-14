@@ -206,6 +206,7 @@ class JobListViewTest(TestCase):
         self.assertEqual(response.context['analysis'], self.analysis)
         self.assertEqual(response.context['iam'], self.iam)
         self.assertIsNotNone(response.context['job_list'])
+        sts_teardown_all(testing=True)
     def test_job_list_view_fixed(self):
         """Check that history of user's analyses are displayed properly."""
         # login here
@@ -229,6 +230,7 @@ class JobListViewTest(TestCase):
         response = self.client.get('/history/%s' % self.analysis.id)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
+        sts_teardown_all(testing=True)
     def test_no_perms_job_list_view_fixed(self):
         """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
         # login here
@@ -240,8 +242,6 @@ class JobListViewTest(TestCase):
         response = self.client.get('/history/%s' % self.analysis.id)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
-    def tearDown(self):
-        sts_teardown_all(testing=True)
 
 # class JobDetailViewTest(TestCase):
 #     """Class for testing the job detail view."""
