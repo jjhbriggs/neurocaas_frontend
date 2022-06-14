@@ -379,7 +379,7 @@ def build_credentials(group, analysis,testing=False):
     iam_res = boto3.resource('iam',aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'), aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'))
     name_function = unique_testing_name if testing else unique_name
     role = setup(iam_res,name_function)
-    sts_client = boto3.client('sts')
+    sts_client = boto3.client('sts',aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'), aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'))
     return generate_credentials(role.arn, 'AssumeRoleDemoSession', sts_client, group.name, analysis.bucket_name) 
 
 def reassign_iam(iam, temp_credentials):
