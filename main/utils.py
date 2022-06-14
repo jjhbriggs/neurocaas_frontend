@@ -38,7 +38,6 @@ def s3_resource(iam):
             aws_secret_access_key=iam.aws_secret_access_key,
             aws_session_token=iam.aws_session_token)
 
-
 def get_current_analysis(ana_id):
     """
         Get current analysis from analysis id stored in session.
@@ -377,9 +376,9 @@ def groupname_from_user(user):
 def build_credentials(group, analysis,testing=False):
     #: Returns object with temporary credentials
 
-    iam_resource = boto3.resource('iam')
+    iam_res = boto3.resource('iam',aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'), aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'))
     name_function = unique_testing_name if testing else unique_name
-    role = setup(iam_resource,name_function)
+    role = setup(iam_res,name_function)
     sts_client = boto3.client('sts')
     return generate_credentials(role.arn, 'AssumeRoleDemoSession', sts_client, group.name, analysis.bucket_name) 
 
@@ -436,5 +435,5 @@ def _deletion_filter(role):
 def _deletion_filter_testing(role):
     return role.role_name.startswith("sts-testing-role-")
 def sts_teardown_all(testing=False):
-    for role in filter(_deletion_filter_testing if testing else _deletion_filter,boto3.resource('iam').roles.all()):
+    for role in filter(_deletion_filter_testing if testing else _deletion_filter,boto3.resource('iam',aws_access_key_id=os.environ.get('AWS_ACCESS_KEY'), aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')).roles.all()):
         teardown(role)
