@@ -13,7 +13,7 @@ backcall==0.1.0
 backports.zoneinfo==0.2.1
 binaryornot==0.4.4
 boto3==1.13.26
-botocore==1.26.10
+botocore==1.16.26
 certifi==2020.4.5.1
 cffi==1.12.3
 cfn-flip==1.2.1
@@ -41,7 +41,7 @@ docopt==0.6.2
 docutils==0.14
 Flask==1.0.4
 future==0.18.2
-ghp-import==2.0.1
+ghp-import
 gunicorn==20.0.4
 idna==2.8
 imagesize==1.2.0
@@ -86,7 +86,7 @@ pyparsing==2.4.0
 pyrsistent==0.16.0
 PySocks==1.7.0
 pytest==5.4.1
-python-dateutil==2.8.0
+python-dateutil
 python-slugify==5.0.2
 pytz==2019.1
 PyYAML==5.4
@@ -94,7 +94,7 @@ pyyaml_env_tag==0.1
 regex==2020.7.14
 requests==2.23.0
 rsa==4.7
-s3transfer==0.5.2
+s3transfer==0.3.3
 serverlessrepo==0.1.9
 six==1.12.0
 snowballstemmer==2.0.0
@@ -117,7 +117,7 @@ traitlets==4.3.2
 troposphere==2.5.0
 typing-extensions==3.10.0.2
 tzlocal==2.1
-urllib3==1.26.5
+urllib3
 watchdog==2.1.2
 wcwidth==0.1.7
 websocket-client==0.57.0
