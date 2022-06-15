@@ -101,6 +101,8 @@ def teardown(role):
 
     :param role: The demo role.
     """
+    if role is None:
+        return
     for attached in role.attached_policies.all():
         role.detach_policy(PolicyArn=attached.arn)
         print(f"Detached {attached.policy_name}.")
