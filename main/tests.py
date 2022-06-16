@@ -270,10 +270,6 @@ class JobDetailViewTest(TestCase):
         self.group.save()
         self.group2 = AnaGroup.objects.create(name="NOACCESS")
 
-        res_folder = '%s/results' % self.group
-
-        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
-        self.job_id = job_list[0]['name']
     def test_job_list_view_unfixed(self):
         """Check that history of user's analyses are displayed properly."""
 
@@ -288,6 +284,10 @@ class JobDetailViewTest(TestCase):
                                     aws_secret_access_key='tbd',
                                     group=self.group)
         reassign_iam(self.iam, build_credentials(self.group, self.analysis, testing=True))
+
+        res_folder = '%s/results' % self.group
+        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        self.job_id = job_list[0]['name']
         # login here
         form = {
             'email': 'test@test.com',
@@ -314,7 +314,9 @@ class JobDetailViewTest(TestCase):
                                     aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
                                     fixed_creds=True,
                                     group=self.group)
-
+        res_folder = '%s/results' % self.group
+        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        self.job_id = job_list[0]['name']
         # login here
         form = {
             'email': 'testa@test.com',
@@ -339,7 +341,9 @@ class JobDetailViewTest(TestCase):
                                     aws_access_key='tbd',
                                     aws_secret_access_key='tbd',
                                     group=self.group2)
-
+        res_folder = '%s/results' % self.group
+        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        self.job_id = job_list[0]['name']
         # login here
         form = {
             'email': 'test2@test.com',
@@ -365,7 +369,9 @@ class JobDetailViewTest(TestCase):
                                     aws_secret_access_key='tbd',
                                     fixed_creds=True,
                                     group=self.group2)
-
+        res_folder = '%s/results' % self.group
+        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        self.job_id = job_list[0]['name']
         # login here
         form = {
             'email': 'test2a@test.com',
