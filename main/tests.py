@@ -264,11 +264,38 @@ class JobDetailViewTest(TestCase):
             demo_link="Demo page link",
             signature="Signature"
         )
+        self.analysis2 = Analysis.objects.create(
+            analysis_name="Test Analaysis (No perms)",
+            result_prefix="job__cianalysispermastack_",
+            bucket_name="cianalysispermastack",
+            custom=False,
+            short_description="Short Description",
+            long_description="Long Description",
+            paper_link="Paper Link",
+            git_link="Github Link",
+            bash_link="Bash Script Link",
+            demo_link="Demo page link",
+            signature="Signature"
+        )
         
         self.group = AnaGroup.objects.create(name="frontendtravisci")
         self.group.analyses.add(self.analysis)
         self.group.save()
         self.group2 = AnaGroup.objects.create(name="NOACCESS")
+        self.usera = User.objects.create_user('testa@test.com', password='test')
+        self.usera.first_name = "Test"
+        self.usera.last_name = "User"
+        self.usera.group = self.group
+        self.usera.save()
+        self.iama = IAM.objects.create(user=self.usera,
+                                    aws_user="jbriggs",
+                                    aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
+                                    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
+                                    fixed_creds=True,
+                                    group=self.group)
+        res_folder = '%s/results' % self.group
+        job_list = get_job_list(iam=self.iama, bucket=self.analysis.bucket_name, folder=res_folder)
+        self.job_id = job_list[0]['name']
 
     def test_job_list_view_unfixed(self):
         """Check that history of user's analyses are displayed properly."""
@@ -297,26 +324,12 @@ class JobDetailViewTest(TestCase):
         response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
         self.assertEqual(response.context['analysis'], self.analysis)
         self.assertEqual(response.context['iam'], self.iam)
-        self.assertIsNotNone(response.context['job_list'])
+        self.assertIsNotNone(response.context['job_detail'])
         #sts_teardown_all(testing=True)
     def test_job_list_view_fixed(self):
         """Check that history of user's analyses are displayed properly."""
 
         #: User with fixed creds and access
-        self.usera = User.objects.create_user('testa@test.com', password='test')
-        self.usera.first_name = "Test"
-        self.usera.last_name = "User"
-        self.usera.group = self.group
-        self.usera.save()
-        self.iama = IAM.objects.create(user=self.usera,
-                                    aws_user="jbriggs",
-                                    aws_access_key=os.environ.get('AWS_ACCESS_KEY'),
-                                    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'),
-                                    fixed_creds=True,
-                                    group=self.group)
-        res_folder = '%s/results' % self.group
-        job_list = get_job_list(iam=self.iama, bucket=self.analysis.bucket_name, folder=res_folder)
-        self.job_id = job_list[0]['name']
         # login here
         form = {
             'email': 'testa@test.com',
@@ -326,7 +339,7 @@ class JobDetailViewTest(TestCase):
         response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
         self.assertEqual(response.context['analysis'], self.analysis)
         self.assertEqual(response.context['iam'], self.iama)
-        self.assertIsNotNone(response.context['job_list'])
+        self.assertIsNotNone(response.context['job_detail'])
     def test_no_perms_job_list_view_unfixed(self):
         """Check that history of user's analyses is not displayed if the user doesn't have permission to access to the analysis."""
 
@@ -341,16 +354,13 @@ class JobDetailViewTest(TestCase):
                                     aws_access_key='tbd',
                                     aws_secret_access_key='tbd',
                                     group=self.group2)
-        res_folder = '%s/results' % self.group2
-        job_list = get_job_list(iam=self.iam2, bucket=self.analysis.bucket_name, folder=res_folder)
-        self.job_id = job_list[0]['name']
         # login here
         form = {
             'email': 'test2@test.com',
             'password': 'test',
         }
         r = self.client.post('/login/', form)
-        response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
+        response = self.client.get('/history/' + str(self.analysis2.id) + '/' + self.job_id)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
         #sts_teardown_all(testing=True)
@@ -369,16 +379,13 @@ class JobDetailViewTest(TestCase):
                                     aws_secret_access_key='tbd',
                                     fixed_creds=True,
                                     group=self.group2)
-        res_folder = '%s/results' % self.group2
-        job_list = get_job_list(iam=self.iam2a, bucket=self.analysis.bucket_name, folder=res_folder)
-        self.job_id = job_list[0]['name']
         # login here
         form = {
             'email': 'test2a@test.com',
             'password': 'test',
         }
         r = self.client.post('/login/', form)
-        response = self.client.get('/history/' + str(self.analysis.id) + '/' + self.job_id)
+        response = self.client.get('/history/' + str(self.analysis2.id) + '/' + self.job_id)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['Location'], '/')
     
