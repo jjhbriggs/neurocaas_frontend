@@ -315,7 +315,7 @@ class JobDetailViewTest(TestCase):
                                     fixed_creds=True,
                                     group=self.group)
         res_folder = '%s/results' % self.group
-        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        job_list = get_job_list(iam=self.iama, bucket=self.analysis.bucket_name, folder=res_folder)
         self.job_id = job_list[0]['name']
         # login here
         form = {
@@ -341,8 +341,8 @@ class JobDetailViewTest(TestCase):
                                     aws_access_key='tbd',
                                     aws_secret_access_key='tbd',
                                     group=self.group2)
-        res_folder = '%s/results' % self.group
-        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        res_folder = '%s/results' % self.group2
+        job_list = get_job_list(iam=self.iam2, bucket=self.analysis.bucket_name, folder=res_folder)
         self.job_id = job_list[0]['name']
         # login here
         form = {
@@ -369,8 +369,8 @@ class JobDetailViewTest(TestCase):
                                     aws_secret_access_key='tbd',
                                     fixed_creds=True,
                                     group=self.group2)
-        res_folder = '%s/results' % self.group
-        job_list = get_job_list(iam=self.iam, bucket=self.analysis.bucket_name, folder=res_folder)
+        res_folder = '%s/results' % self.group2
+        job_list = get_job_list(iam=self.iam2a, bucket=self.analysis.bucket_name, folder=res_folder)
         self.job_id = job_list[0]['name']
         # login here
         form = {
