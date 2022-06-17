@@ -72,18 +72,19 @@ class UserCreationForm(forms.ModelForm):
         user = super(UserCreationForm, self).save(commit=False)
         user.set_password(self.clean_password2())
         user.time_added = datetime.now().time()
-        
-        if self.cleaned_data.get("use_code"):
-            new_group = AnaGroup.objects.filter(code=self.clean_group_code()).first()
-        else:
-            new_group = AnaGroup.objects.create(name=groupname_from_user(user))
         if commit:
             user.save()
-        iam = IAM.objects.create(user=user,
-                        aws_access_key="No creds yet",
-                        aws_secret_access_key="No creds yet",
-                        aws_session_token = 'No token yet',
-                        group=new_group)
+            if self.cleaned_data.get("use_code"):
+                new_group = AnaGroup.objects.filter(code=self.clean_group_code()).first()
+            else:
+                new_group = AnaGroup.objects.create(name=groupname_from_user(user))
+            new_group.save()
+            iam = IAM.objects.create(user=user,
+                            aws_access_key="No creds yet",
+                            aws_secret_access_key="No creds yet",
+                            aws_session_token = 'No token yet',
+                            group=new_group)
+            iam.save()
         #user.requested_group_name = user.email.replace('@', '').replace('.', '').replace('_', '-')[0:12] + str(int(round(time.time())))
         #user.requested_group_code = self.clean_group_code()
         # group_search = AnaGroup.objects.filter(name=user.requested_group_name)

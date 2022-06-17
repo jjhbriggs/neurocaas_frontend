@@ -241,8 +241,21 @@ class IAMAdmin(admin.ModelAdmin):
 @admin.register(AnaGroup)
 class GroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'created_on')
-    readonly_fields=('name','code',)
+    search_fields = ('name',)
+    readonly_fields=('code',)
     actions = [grant_noncustom_access,grant_all_access]
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # editing an existing object
+            return self.readonly_fields + ('name',)
+        return self.readonly_fields
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super(GroupAdmin, self).get_search_results(request, queryset, search_term)
+        try:
+            for iam in IAM.objects.filter(user__email__icontains=search_term):
+                queryset |= AnaGroup.objects.filter(pk=iam.group.pk)
+        except:
+            pass
+        return queryset, use_distinct
 
 admin.site.register(User, UserAdministrator)
 admin.site.unregister(Group)
