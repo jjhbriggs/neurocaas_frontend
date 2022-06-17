@@ -197,12 +197,17 @@ def grant_all_access(modeladmin, request, queryset): # pragma: no cover
         group.analyses.add(*analyses)
 grant_all_access.short_description = "Grant Access To ALL Analyses (Reviewer/Debug Use)"
 
+class IAMInline(admin.StackedInline):
+  model = IAM
+  extra=0
+
 class UserAdministrator(UserAdmin):
     # The forms to add and change user instances
     add_form = UserCreationForm
 
     list_display = ('email', 'is_admin', 'last_name')
     list_filter = ('is_admin',)
+
     fieldsets = (
         (None, {'fields': ('email', 'password', 'first_name', 'last_name')}),
     )
@@ -213,6 +218,7 @@ class UserAdministrator(UserAdmin):
             'fields': ('email', 'password1', 'password2', 'first_name', 'last_name')}
          ),
     )
+    inlines = [IAMInline,]
     actions = [legacy_register_iam, legacy_remove_iam, legacy_change_group_perms]
     def IAM_attached(self, obj):
         if len(IAM.objects.filter(user=obj)) == 1:
