@@ -9,6 +9,8 @@ from django.contrib.auth.models import Group
 from django.contrib import messages
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.utils.html import format_html
 
 from .forms import *
 from .models import *
@@ -200,6 +202,11 @@ grant_all_access.short_description = "Grant Access To ALL Analyses (Reviewer/Deb
 class IAMInline(admin.StackedInline):
   model = IAM
   extra=0
+  readonly_fields = ['cred_expire','user', 'group_link']
+  
+  def group_link(self, obj):
+        link = reverse("admin:account_anagroup_change", args=[obj.group_id])
+        return format_html('<a href="{}">{}</a>', link, obj.group.name)
 
 class UserAdministrator(UserAdmin):
     # The forms to add and change user instances
@@ -233,10 +240,14 @@ class UserAdministrator(UserAdmin):
 @admin.register(IAM)
 class IAMAdmin(admin.ModelAdmin):
     list_display = ('user', 'aws_user', 'aws_access_key', 'group', 'created_on', 'cred_expire')
-    readonly_fields = ['cred_expire','user']
+    readonly_fields = ['cred_expire','user', 'group_link']
     search_fields = ('user__email',)
     exclude = ('creds_ana',)
     ordering = ('-created_on',)
+
+    def group_link(self, obj):
+        link = reverse("admin:account_anagroup_change", args=[obj.group_id])
+        return format_html('<a href="{}">{}</a>', link, obj.group.name)
 
 @admin.register(AnaGroup)
 class GroupAdmin(admin.ModelAdmin):
