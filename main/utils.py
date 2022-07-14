@@ -383,7 +383,6 @@ def build_credentials(group, analysis,testing=False):
     return generate_credentials(role.arn, 'AssumeRoleDemoSession', sts_client, group.name, analysis.bucket_name) 
 
 def reassign_iam(iam, temp_credentials):
-    return
     iam.aws_access_key = temp_credentials['AccessKeyId']
     iam.aws_secret_access_key = temp_credentials['SecretAccessKey']
     iam.aws_session_token = temp_credentials['SessionToken']
