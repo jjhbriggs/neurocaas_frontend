@@ -67,34 +67,34 @@ class SignUpView(View):
                             format='%(asctime)s:%(levelname)s:%(name)s:%(message)s',
                             datefmt="%Y-%m-%d %H:%M:%S",
                             level=logging.INFO)
-            if user.email[-3:] == "edu":
-                grant_noncustom_access(None,request,[IAM.objects.filter(user=user).first().group])
-                try:
-                    body_string = "This is an auto-generated email to let you know that " + user.email + " was just auto-approved for signup. This email is not confirmation that credential generation was successful, only that it is currently being attempted."
-                    send_mail(
-                        'SYSTEM: Auto-Generating for EDU user: ' + user.email,
-                        body_string,
-                        'neurocaas@gmail.com',
-                        ['neurocaas@gmail.com'],
-                        fail_silently=False,
-                    )
-                except Exception as e:
-                    pass
-                    logging.warning("SMTP Client failed:\n" + str(e))
-            else:
-                try:
-                    body_string = "This is an auto-generated email to let you know that " + user.email + " just signed up for Neurocaas. This user was not auto-approved for signup, and can be approved manually on the admin page."
-                    send_mail(
-                        'SYSTEM: ' + user.email + ' is Pending Approval',
-                        body_string,
-                        'neurocaas@gmail.com',
-                        ['neurocaas@gmail.com'],
-                        fail_silently=False,
-                    )
-                except Exception as e:
-                    pass
-                    logging.warning("SMTP Client failed:\n" + str(e))
-            messages.success(request, 'Successfully Registered, Please wait for email from us!')
+            # if user.email[-3:] == "edu":
+            grant_noncustom_access(None,request,[IAM.objects.filter(user=user).first().group])
+            try:
+                body_string = "This is an auto-generated email to let you know that " + user.email + " was just auto-approved for signup. This email is not confirmation that credential generation was successful, only that it is currently being attempted."
+                send_mail(
+                    'SYSTEM: Auto-Generating for EDU user: ' + user.email,
+                    body_string,
+                    'neurocaas@gmail.com',
+                    ['neurocaas@gmail.com'],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                pass
+                logging.warning("SMTP Client failed:\n" + str(e))
+            # else:
+            #     try:
+            #         body_string = "This is an auto-generated email to let you know that " + user.email + " just signed up for Neurocaas. This user was not auto-approved for signup, and can be approved manually on the admin page."
+            #         send_mail(
+            #             'SYSTEM: ' + user.email + ' is Pending Approval',
+            #             body_string,
+            #             'neurocaas@gmail.com',
+            #             ['neurocaas@gmail.com'],
+            #             fail_silently=False,
+            #         )
+            #     except Exception as e:
+            #         pass
+            #         logging.warning("SMTP Client failed:\n" + str(e))
+            messages.success(request, 'Successfully Registered!')
             next_url = request.POST.get('next') if 'next' in request.POST else 'profile'
             return redirect(next_url)
             # return redirect('profile')
