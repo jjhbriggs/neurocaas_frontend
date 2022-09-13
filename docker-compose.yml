@@ -1,0 +1,22 @@
+version: '3.9'
+
+services: 
+  django:
+    image: ncap_django
+    build: .
+    ports:
+      - 5000:5000
+    expose:
+      - 5000
+    volumes: 
+     - .:/home/ncapdev/ncap/
+    env_file:
+      - ./.env
+  nginx:
+    image: nginx
+    build: ./nginx/
+    ports:
+        - 80:80
+    volumes:
+      - ./nginx/ncap.conf:/etc/nginx/conf.d/ncap.conf
+      - ./docs/:/home/ncapdev/ncap/docs/
