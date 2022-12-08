@@ -14,7 +14,7 @@ backports.zoneinfo==0.2.1
 binaryornot==0.4.4
 boto3==1.23.10
 botocore==1.26.10
-certifi==2020.4.5.1
+certifi==2022.12.7
 cffi==1.12.3
 cfn-flip==1.2.1
 chardet==3.0.4
